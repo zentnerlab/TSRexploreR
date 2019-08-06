@@ -16,17 +16,17 @@
 #' @return ggplot2 object
 #'
 #' @export
-#' @rdname correlation_matrix_plot-methods
+#' @rdname plot_tss_corr-methods
 
 setGeneric(
-	"plot_corr_matrix",
-	function(experiment, ...) standardGeneric("plot_corr_matrix")
+	"plot_tss_corr",
+	function(experiment, ...) standardGeneric("plot_tss_corr")
 )
 
-#' @rdname correlation_matrix_plot-methods
+#' @rdname plot_tss_corr-methods
 
 setMethod(
-	"plot_corr_matrix", signature="tsr_object",
+	"plot_tss_corr", signature="tsr_object",
 	function(experiment, corr_metric=c("pearson", "spearman")) {
 		## Prepare data for plotting.
 		corr.matrix <- experiment@TMM %>%
@@ -48,6 +48,48 @@ setMethod(
 				panel.grid=element_blank(),
 				axis.title=element_blank()
 			)
+
+		return(p)
+	}
+)
+
+#' Replicate Scatter Plot
+#'
+#' Scatter plots to explore replicate concordance.
+#'
+#' @include tsrexplorer.R
+#'
+#' @import tibble
+#' @import dplyr
+#' @import ggplot2
+#' @importFrom purrr discard
+#' @importFrom gtools combinations
+#' @importFrom stringr str_replace_all
+#'
+#' @param experiment tsrexplorer object with TMM normalized counts
+#' @param sample_1 First sample name to plot
+#' @param sample_2 Second sample name to plot
+#'
+#' @return ggplot2 object
+#'
+#' @export
+#' @rdname plot_tss_scatter-methods
+
+setGeneric(
+	"plot_tss_scatter",
+	function(experiment, ...) standardGeneric("plot_tss_scatter")
+)
+
+#' @rdname plot_tss_scatter-methods
+
+setMethod(
+	"plot_tss_scatter", signature="tsr_object",
+	function(experiment, sample_1, sample_2) {
+		p <- ggplot(experiment@TMM, aes_string(x=sample_1, y=sample_2)) +
+			geom_point(size=0.25, color="#431352") +
+			theme_bw() +
+			scale_fill_viridis_d() +
+			geom_abline(intercept=0, slope=1, lty=2)
 
 		return(p)
 	}
