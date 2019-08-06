@@ -3,11 +3,13 @@ setClass(
 	"tsr_object",
 	representation(
 		experiment = "list",
+		samples = "vector",
 		cores = "numeric",
 		TMM = "tbl"
 	),
 	prototype(
 		experiment = list(),
+		samples = c(),
 		cores = NA_real_,
 		TMM = tibble()
 	)
@@ -29,5 +31,5 @@ setClass(
 
 tsr_explorer <- function(experiment, cores=1) {
 		cores <- as.integer(cores)
-		new("tsr_object", experiment=experiment, cores=cores)
+		new("tsr_object", experiment=experiment, samples=names(experiment), cores=cores)
 }
