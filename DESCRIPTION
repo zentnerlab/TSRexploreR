@@ -11,3 +11,19 @@ Description: This package analyzes STRIPE-seq data by generating various plots a
 License: MIT
 Encoding: UTF-8
 LazyData: true
+Imports:
+    dplyr,
+    purrr,
+    ggplot2,
+    gtools,
+    tibble,
+    stringr,
+    GenomicRanges,
+    GenomicFeatures,
+    biostrings,
+    Rsamtools,
+    rtracklayer,
+    ChIPseeker,
+    Gviz,
+    edgeR,
+    TSRchitect
