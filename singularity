@@ -1,0 +1,50 @@
+
+bootstrap: docker
+From: continuumio/miniconda3
+
+%post
+
+## Prepare Conda
+## ----------
+
+## Add conda to path.
+
+export PATH=$PATH:/opt/conda/bin
+
+## Update conda.
+
+conda update -n base -y -c defaults conda
+
+## Install Conda Environment
+## ----------
+
+## Create environment.
+
+conda create -n tsrexplorer -y -c conda-forge -c bioconda \
+r-tidyverse \
+r-devtools \
+r-eulerr \
+r-ggseqlogo \
+r-gtools \
+bioconductor-genomicranges \
+bioconductor-genomicfeatures \
+bioconductor-biostrings \
+bioconductor-rsamtools \
+bioconductor-rtracklayer \
+bioconductor-chipseeker \
+bioconductor-gviz \
+bioconductor-edger
+
+## Update environment.
+
+conda update -n tsrexplorer -y -c conda-forge -c bioconda --all
+
+## Clean up extra files.
+
+conda clean -y --all
+
+%environment
+
+## Add software to environment
+
+export PATH=/opt/conda/envs/tsrexplorer/bin:$PATH
