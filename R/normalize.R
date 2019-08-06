@@ -16,17 +16,17 @@
 #' @return tibble of TMM normalized read counts
 #'
 #' @export
-#' @rdname tmm_normalize-methods
+#' @rdname normalize-methods
 
 setGeneric(
-	"tmm_normalize",
-	function(experiment) standardGeneric("tmm_normalize"),
+	"normalize",
+	function(experiment) standardGeneric("normalize"),
 )
 
-#' @rdname tmm_normalize-methods
+#' @rdname normalize-methods
 
 setMethod(
-	"tmm_normalize", signature="tsr_object",
+	"normalize", signature="tsr_object",
 	function(experiment) {
 		tss_granges <- experiment@experiment_info
 		
