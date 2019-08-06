@@ -19,3 +19,6 @@ Imports:
     magrittr,
     tidyr
 RoxygenNote: 6.1.1
+Collate: 
+    'tsrexplorer.R'
+    'tmm_normalize.R'

@@ -2,6 +2,8 @@
 #'
 #' Using edgeR to TMM normalize TSSs
 #'
+#' @include tsrexplorer.R
+#'
 #' @import tibble
 #' @import dplyr
 #' @import edgeR
@@ -24,7 +26,7 @@ setGeneric(
 #' @rdname tmm_normalize-methods
 
 setMethod(
-	"tmm_normalize", signature="tsrexplorer",
+	"tmm_normalize", signature="tsr_object",
 	function(experiment) {
 		tss_granges <- experiment@experiment_info
 		

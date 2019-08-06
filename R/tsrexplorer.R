@@ -6,18 +6,16 @@
 #' @slot organism Organism name
 #' @slot cores Number of CPU cores/threads available
 #' @slot TMM TMM normalized TSS read counts
-#'
-#' @export
 
 setClass(
-	"tsrexplorer",
+	"tsr_object",
 	representation(
 		experiment_info = "list",
 		organism = "character",
 		cores = "numeric",
 		TMM = "tbl"
 	),
-		prototype(
+	prototype(
 		experiment_info = list(),
 		organism = NA_character_,
 		cores = NA_real_,
@@ -33,13 +31,13 @@ setClass(
 #'
 #' @return A tsrexplorer object
 #'
-#' @examples TSRexplorer(TSSs, "S. cerevisiae", 4)
+#' @examples tsrexplorer(TSSs, "S. cerevisiae", 4)
 #'
 #' @importFrom GenomicRanges GRanges
 #'
 #' @export
 
-TSRexplorer <- function(experiment_info, organism=NA_character_, cores=1) {
+tsrexplorer <- function(experiment_info, cores=1) {
 		cores <- as.integer(cores)
-		new("tsrexplorer", experiment_info=experiment_info, organism=organism, cores=cores)
+		new("tsr_object", experiment_info=experiment_info, cores=cores)
 }
