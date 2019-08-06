@@ -31,5 +31,5 @@ generate correlation matrix
 ```
 corr_plot <- plot_corr_matrix(exp, corr_metric="pearson")
 
-ggsave(ggsave("corr.pdf", corr_plot, device=cairo_pdf, height=5.5, width=7))
+ggsave("corr.pdf", corr_plot, device=cairo_pdf, height=5.5, width=7)
 ```
