@@ -53,6 +53,7 @@ tss_sequences <- function(experiment, sample, genome_assembly, threshold = 1, di
 #' @import tibble
 #' @import ggplot2
 #' @import ggseqlogo
+#' @importFrom Biostrings DNAStringSet
 #'
 #' @param tss_sequences Sequences surrounding TSS generated with tss_sequences
 #'
@@ -78,6 +79,56 @@ plot_sequence_logo <- function(tss_sequences) {
 	p <- ggplot() +
 		geom_logo(consensus_matrix, col_scheme = viridis_bases) +
 		theme_logo()
+
+	return(p)
+}
+
+#' Plot Sequence Colormap
+#'
+#' Make a sequence colormap for the sequences around TSSs.
+#'
+#' @import tibble
+#' @import ggplot2
+#' @importFrom dplyr mutate
+#' @importFrom stringr str_split
+#' @importFrom tidyr gather
+#' @importFrom Biostrings DNAStringSet
+#' @importFrom BiocGenerics width
+#'
+#' @param tss_sequences Sequences surrounding TSS generated with tss_sequences
+#'
+#' @return ggplot2 object of sequence colormap
+#'
+#' @export
+#' @rdname plot_sequence_colormap-function
+
+plot_sequence_colormap <- function(tss_sequences) {
+	## Get sequence length
+	sequence_length <- tss_sequences %>%
+		width(.) %>% unique / 2
+
+	## Format data for plotting
+	tss_sequences <- tss_sequences %>%
+		as.character %>%
+		str_split(pattern = "", simplify = TRUE) %>%
+		as_tibble(.name_repair="unique") %>%
+		setNames(c(-sequence_length:-1, 1:sequence_length)) %>%
+		rowid_to_column(var = "sequence") %>%
+		gather(key = "Position", value = "base", -sequence) %>%
+		mutate(Position = factor(Position, levels=c(-sequence_length:-1, 1:sequence_length)))
+
+	## Plot sequence colormap
+	p <- ggplot(tss_sequences, aes(x=Position, y=sequence)) +
+		geom_tile(aes(fill=base)) +
+		scale_fill_viridis_d() +
+		theme_minimal() +
+		theme(
+			axis.title.y=element_blank(),
+			axis.text.y=element_blank(),
+			legend.title=element_blank(),
+			axis.title.x=element_text(size=16, margin=margin(t=15)),
+			panel.grid=element_blank()
+		)
 
 	return(p)
 }
