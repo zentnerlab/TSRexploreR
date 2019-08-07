@@ -6,7 +6,7 @@
 #' @include tsrexplorer.R
 #'
 #' @import tibble
-#' @importFrom GenomicRanges GRanges resize
+#' @importFrom GenomicRanges GRanges resize score
 #' @importFrom dplyr filter count mutate
 #' @importFrom Rsamtools FaFile getSeq
 #' @importFrom magrittr %>%
@@ -25,7 +25,7 @@ dinucleotide_frequencies <- function(experiment, sample, genome_assembly, thresh
 
 	## Filter TSSs and get sequences.
 	sequences <- experiment@experiment[[sample]] %>%
-		filter(~.[score(.) >= threshold]) %>%
+		.[score(.) >= threshold] %>%
 		resize(., width=2, fix="end") %>%
 		getSeq(assembly, .)
 
