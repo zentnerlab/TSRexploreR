@@ -5,10 +5,10 @@
 #' @include tsrexplorer.R
 #'
 #' @import tibble
-#' @import dplyr
 #' @import ggplot2
-#' @importFrom magrittr %>%
+#' @importFrom dplyr select mutate
 #' @importFrom tidyr gather
+#' @importFrom magrittr %>%
 #'
 #' @param experiment tsrexplorer object with TMM normalized counts
 #' @param corr_metric Correlation metric ("pearson", "spearman")
@@ -21,7 +21,7 @@
 plot_tss_corr <- function(experiment, corr_metric=c("pearson", "spearman")) {
 	## Prepare data for plotting.
 	corr.matrix <- experiment@TMM %>%
-		dplyr::select(-TSS_position) %>%
+		select(-TSS_position) %>%
 		as.matrix %>%
 		cor(., method = corr_metric) %>%
 		as_tibble(rownames = "sample_1", .name_repair="unique") %>%
@@ -50,11 +50,7 @@ plot_tss_corr <- function(experiment, corr_metric=c("pearson", "spearman")) {
 #' @include tsrexplorer.R
 #'
 #' @import tibble
-#' @import dplyr
 #' @import ggplot2
-#' @importFrom purrr discard
-#' @importFrom gtools combinations
-#' @importFrom stringr str_replace_all
 #'
 #' @param experiment tsrexplorer object with TMM normalized counts
 #' @param sample_1 First sample name to plot

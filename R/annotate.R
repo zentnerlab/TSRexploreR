@@ -5,8 +5,8 @@
 #'
 #' @include tsrexplorer.R
 #'
-#' @import dplyr
 #' @import tibble
+#' @importFrom magrittr %>%
 #' @importFrom ChIPseeker annotatePeak
 #' @importFrom purrr map
 #' @importFrom GenomicFeatures makeTxDbFromGFF

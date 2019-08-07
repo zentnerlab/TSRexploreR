@@ -5,8 +5,8 @@
 #' @include tsrexplorer.R
 #'
 #' @import tibble
-#' @import dplyr
-#' @import edgeR
+#' @importFrom dplyr bind_rows mutate select
+#' @importFrom edgeR DGEList calcNormFactors cpm
 #' @importFrom tidyr spread
 #' @importFrom purrr map
 #' @importFrom magrittr %>%
