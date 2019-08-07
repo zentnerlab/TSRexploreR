@@ -21,5 +21,6 @@ Imports:
 RoxygenNote: 6.1.1
 Collate: 
     'tsrexplorer.R'
+    'annotate.R'
     'correlation.R'
     'normalize.R'

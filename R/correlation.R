@@ -16,42 +16,32 @@
 #' @return ggplot2 object
 #'
 #' @export
-#' @rdname plot_tss_corr-methods
+#' @rdname plot_tss_corr-function
 
-setGeneric(
-	"plot_tss_corr",
-	function(experiment, ...) standardGeneric("plot_tss_corr")
-)
-
-#' @rdname plot_tss_corr-methods
-
-setMethod(
-	"plot_tss_corr", signature="tsr_object",
-	function(experiment, corr_metric=c("pearson", "spearman")) {
-		## Prepare data for plotting.
-		corr.matrix <- experiment@TMM %>%
-			dplyr::select(-TSS_position) %>%
-			as.matrix %>%
-			cor(., method = corr_metric) %>%
-			as_tibble(rownames = "sample_1", .name_repair="unique") %>%
-			gather(key = "sample_2", value = corr_metric, -sample_1) %>%
-			mutate(corr_metric = round(corr_metric, 3))
+plot_tss_corr <- function(experiment, corr_metric=c("pearson", "spearman")) {
+	## Prepare data for plotting.
+	corr.matrix <- experiment@TMM %>%
+		dplyr::select(-TSS_position) %>%
+		as.matrix %>%
+		cor(., method = corr_metric) %>%
+		as_tibble(rownames = "sample_1", .name_repair="unique") %>%
+		gather(key = "sample_2", value = corr_metric, -sample_1) %>%
+		mutate(corr_metric = round(corr_metric, 3))
 	
-		## Plot correlation matrix.
-		p <- ggplot(corr.matrix, aes(x=sample_1, y=sample_2, fill=corr_metric, label=corr_metric)) +
-			geom_tile(color="white", lwd=0.5) +
-			geom_label(color="white", label.size=NA, fill=NA) +
-			scale_fill_viridis_c(limits=c(0.9,1), name=corr_metric) +
-			theme_minimal() +
-			theme(
-				axis.text.x=element_text(angle=45, hjust=1),
-				panel.grid=element_blank(),
-				axis.title=element_blank()
-			)
+	## Plot correlation matrix.
+	p <- ggplot(corr.matrix, aes(x=sample_1, y=sample_2, fill=corr_metric, label=corr_metric)) +
+		geom_tile(color="white", lwd=0.5) +
+		geom_label(color="white", label.size=NA, fill=NA) +
+		scale_fill_viridis_c(limits=c(0.9,1), name=corr_metric) +
+		theme_minimal() +
+		theme(
+			axis.text.x=element_text(angle=45, hjust=1),
+			panel.grid=element_blank(),
+			axis.title=element_blank()
+		)
 
-		return(p)
-	}
-)
+	return(p)
+}
 
 #' Replicate Scatter Plot
 #'
@@ -73,24 +63,15 @@ setMethod(
 #' @return ggplot2 object
 #'
 #' @export
-#' @rdname plot_tss_scatter-methods
+#' @rdname plot_tss_scatter-function
 
-setGeneric(
-	"plot_tss_scatter",
-	function(experiment, ...) standardGeneric("plot_tss_scatter")
-)
+plot_tss_scatter <- function(experiment, sample_1, sample_2) {
+	p <- ggplot(experiment@TMM, aes_string(x=sample_1, y=sample_2)) +
+		geom_point(size=0.25, color="#431352") +
+		theme_bw() +
+		scale_fill_viridis_d() +
+		geom_abline(intercept=0, slope=1, lty=2)
 
-#' @rdname plot_tss_scatter-methods
+	return(p)
+}
 
-setMethod(
-	"plot_tss_scatter", signature="tsr_object",
-	function(experiment, sample_1, sample_2) {
-		p <- ggplot(experiment@TMM, aes_string(x=sample_1, y=sample_2)) +
-			geom_point(size=0.25, color="#431352") +
-			theme_bw() +
-			scale_fill_viridis_d() +
-			geom_abline(intercept=0, slope=1, lty=2)
-
-		return(p)
-	}
-)

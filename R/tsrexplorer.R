@@ -5,13 +5,15 @@ setClass(
 		experiment = "list",
 		samples = "vector",
 		cores = "numeric",
-		TMM = "tbl"
+		annotated = "list",
+		normalized_counts = "list"
 	),
 	prototype(
 		experiment = list(),
 		samples = c(),
 		cores = NA_real_,
-		TMM = tibble()
+		annotated = list(),
+		normalized_counts = list()
 	)
 )
 
