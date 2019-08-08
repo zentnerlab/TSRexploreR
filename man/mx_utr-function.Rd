@@ -24,5 +24,5 @@ max_utr(experiment, sample, threshold = 1, max_upstream = 1000,
 tibble with max UTR length for features
 }
 \description{
-Max UTR Length
+Get TSS with furthest distance
 }

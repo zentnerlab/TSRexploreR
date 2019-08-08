@@ -81,6 +81,8 @@ plot_dominant_tss <- function(dominant_tss, upstream = 2000, downstream = 500) {
 
 #' Max UTR Length
 #'
+#' Get TSS with furthest distance
+#'
 #' @include tsrexplorer.R
 #'
 #' @import tibble
@@ -114,4 +116,34 @@ max_utr <- function(
 		summarize(tss_max_distance = min(distanceToTSS))
 
 	return(max_utr)
+}
+
+#' Plot Max UTR Length
+#'
+#' Plot TSS with furthest distance
+#'
+#' @import tibble
+#' @import ggplot2
+#'
+#' @param max_utr tibble of max UTRs output by max_utr
+#' @param upstream Bases upstream to extend average to
+#' @param downstream Bases downstream to extend average to
+#'
+#' @return ggplot2 object of max UTR length average
+#'
+#' @export
+#' @rdname plot_max_utr-function
+
+plot_max_utr <- function(max_utr, upstream = 1000, downstream = 100) {
+	p <- ggplot(max_utr, aes(x = tss_max_distance)) +
+		geom_density(fill = "#431352", color = "#431352") +
+		xlim(-upstream, downstream) +
+		theme_bw() +
+		labs(
+			x = "Max UTR Length",
+			y = "Density"
+		) +
+		geom_vline(xintercept = 0, lty = 2)
+
+	return(p)
 }
