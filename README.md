@@ -43,17 +43,35 @@ exp <- tss_normalization(exp)
 **tss correlation matrix**
 
 ```
-corr_plot <- plot_tss_corr(exp, corr_metric="pearson")
+p <- plot_tss_corr(exp, corr_metric="pearson")
 
-ggsave("tss_corr.png", corr_plot, device="png", type="cairo", height=2.5, width=4)
+ggsave("tss_corr.png", plot = p, device = "png", type = "cairo", height = 2.5, width = 4)
 ```
 ![tss_corr_plot](./inst/images/tss_corr.png)
 
 **generate tss scatter plots**
 
 ```
-scatter_plot <- plot_tss_scatter(exp, sample_1 = "S288C_WT_100ng_1", sample_2 = "S288C_WT_100ng_2")
+p <- plot_tss_scatter(exp, sample_1 = "S288C_WT_100ng_1", sample_2 = "S288C_WT_100ng_2")
 
-ggsave("tss_scatter.png", scatter_plot, device="png", type="cairo", height=2, width=2)
+ggsave("tss_scatter.png", plot = p, device = "png", type = "cairo", height = 2, width = 2)
 ```
 ![tss_scatter_plot](./inst/images/tss_scatter.png)
+
+### TSS Annotation
+
+```
+exp <- tss_annotation(exp, gtf = annotation)
+```
+
+### TSS Average Plot and Heatmap
+
+**TSS average plot**
+
+```
+p <- plot_tss_average(exp, sample = "S288C_WT_100ng_1", threshold = 3)
+
+ggsave("tss_average_plot.png", plot = p, device = "png", type = "cairo", height = 2, width = 2)
+```
+
+![tss_average_plot](./inst/images/tss_average_plot.png)

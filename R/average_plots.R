@@ -10,7 +10,7 @@
 #' @import ggplot2
 #' @importFrom dplyr select filter
 #' @importFrom magrittr %>%
-#' @importFrom purrr map pmap
+#' @importFrom purrr pmap
 #'
 #' @param experiment tsr_explorer object with annotated TSSs
 #' @param upstream Bases upstream of plot center
@@ -24,25 +24,23 @@
 
 plot_tss_average <- function(experiment, sample, upstream = 1000, downstream = 1000, threshold = 1) {
 	## Grab info needed for plotting.
-	annotated <- map(
-		experiment@annotated$TSSs,
-		~select(., distanceToTSS, score) %>%
-			filter(score >= threshold)
-	)
+	annotated <- experiment@annotated$TSSs[[sample]] %>%
+		select(distanceToTSS, score) %>%
+		filter(
+			score >= threshold,
+			between(distanceToTSS, -upstream, downstream)
+		)
 
 	## Split out individual TSSs from summed TSSs.
-	annotated <- map(
-		annotated,
-		~pmap(., function(distanceToTSS, score) rep(distanceToTSS, score)) %>%
-			unlist %>%
-			enframe(value = "distanceToTSS") %>%
-			select(-name)
-	)
+	annotated <- annotated %>%
+		pmap(., function(distanceToTSS, score) rep(distanceToTSS, score)) %>%
+		unlist %>%
+		enframe(value = "distanceToTSS") %>%
+		select(-name)
 
 	## Plot TSS averages.
-	p <- ggplot(annotated[[sample]], aes(distanceToTSS))
+	p <- ggplot(annotated, aes(distanceToTSS)) +
 		geom_density(fill = "#431352", color = "#431352") +
-		xlim(-upstream, downstream) +
 		labs(
 			x = "Start Codon",
 			y = "Density",
