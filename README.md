@@ -88,7 +88,9 @@ ggsave("tss_heatmap.png", plot = p, device = "png", type = "cairo", height = 2, 
 
 ![tss_heatmap](./inst/images/tss_heatmap.png)
 
-**TSS Motif and Base Colormap**
+### TSS Motif and Base Composition
+
+**TSS sequence logo**
 
 ```
 seqs <- tss_sequences(exp, sample = "S288C_WT_100ng_1", genome_assembly = assembly, threshold = 3)
@@ -101,9 +103,23 @@ ggsave("tss_seq_logo.png", plot = p, device = "png", type = "cairo", height = 1,
 
 ![tss_sequence_logo](./inst/images/tss_seq_logo.png)
 
+**TSS base color map**
+
 ```
 p <- plot_sequence_colormap(seqs)
 
-ggsave("tss_seq_colormap.png", plot = p, type = "cairo", dpi = 300, height = 2, width = 2)
+ggsave("tss_seq_colormap.png", plot = p, device = "png", type = "cairo", height = 2, width = 2)
 ```
 ![tss_sequence_colormap](./inst/images/tss_seq_colormap.png)
+
+**TSS dinucleotide frequencies**
+
+```
+frequencies <- dinucleotide_frequencies(exp, sample = "S288C_WT_100ng_1", genome_assembly = assembly, threshold = 3)
+
+p <- plot_dinucleotide_frequencies(frequencies)
+
+ggsave("tss_dinucleotide_frequencies.png", plot = p, device = "png", type = "cairo", height = 2, width = 2.5)
+```
+
+![tss_dinucelotide_frequencies](./inst/images/tss_dinucleotide_frequencies.png) 

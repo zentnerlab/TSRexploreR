@@ -60,7 +60,7 @@ plot_dinucleotide_frequencies <- function(dinucleotide_frequencies) {
 	## Set factor order for dinucleotide.
 	dinucleotide_frequencies <- mutate(
 		dinucleotide_frequencies,
-		"dinucleotide"=factor(dinucleotide, levels=pull(., dinucleotide) %>% unique)
+		"dinucleotide"=factor(dinucleotide, levels=pull(dinucleotide_frequencies, dinucleotide) %>% unique)
 	)
 
 	## Plot dinucleotide frequencies.
