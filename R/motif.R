@@ -53,7 +53,7 @@ tss_sequences <- function(experiment, sample, genome_assembly, threshold = 1, di
 #' @import tibble
 #' @import ggplot2
 #' @import ggseqlogo
-#' @importFrom Biostrings DNAStringSet
+#' @importFrom Biostrings DNAStringSet consensusMatrix
 #'
 #' @param tss_sequences Sequences surrounding TSS generated with tss_sequences
 #'

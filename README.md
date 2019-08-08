@@ -87,3 +87,23 @@ ggsave("tss_heatmap.png", plot = p, device = "png", type = "cairo", height = 2, 
 ```
 
 ![tss_heatmap](./inst/images/tss_heatmap.png)
+
+**TSS Motif and Base Colormap**
+
+```
+seqs <- tss_sequences(exp, sample = "S288C_WT_100ng_1", genome_assembly = assembly, threshold = 3)
+
+p <- plot_sequence_logo(seqs)
+
+ggsave("tss_seq_logo.png", plot = p, device = "png", type = "cairo", height = 0.75, width = 2.5)
+
+```
+
+![tss_sequence_logo](./inst/images/tss_seq_logo.png)
+
+```
+p <- plot_sequence_colormap(seqs)
+
+ggsave("tss_seq_colormap.png", plot = p, device = "png", type = "cairo", height = 1.5, width = 2.5)
+```
+![tss_sequence_colormap](./inst/images/tss_seq_colormap.png)
