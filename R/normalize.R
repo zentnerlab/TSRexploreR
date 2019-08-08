@@ -50,3 +50,71 @@ tss_normalization <- function(experiment) {
 	experiment@normalized_counts$TSSs <- tmm_tbl
 	return(experiment)
 }
+
+#' TMM Normalize TSRs
+#'
+#' Using edgeR to TMM normalize TSRs
+#'
+#' @include tsrexplorer.R
+#'
+#' @import tibble
+#' @importFrom GenomicRanges GRangesList reduce findOverlaps makeGRangesFromDataFrame
+#' @importFrom dplyr bind_rows mutate select group_by summarize
+#' @importFrom edgeR DGEList calcNormFactors cpm
+#' @importFrom tidyr complete
+#' @importFrom purrr map
+#' @importFrom magrittr %>%
+#'
+#' @param experiment tsrexplorer object with TSR GRanges
+#'
+#' @return tibble of TMM normalized read counts
+#'
+#' @export
+#' @rdname tsr_normalization-function
+
+tsr_normalization <- function(experiment) {
+	## Merge overlapping TSRs to get consensus
+	tsr_consensus <- experiment@experiment$TSRs %>%
+		as("GRangesList") %>%
+		unlist %>%
+		reduce(ignore.strand=FALSE)
+	
+	names(tsr_consensus) <- sprintf("TSR_%s", 1:length(tsr_consensus))
+
+	## Get overlapping TSRs with consensus
+	overlapping <- map(
+		names(experiment@experiment$TSRs),
+		~findOverlaps(
+			query = tsr_consensus,
+			subject = makeGRangesFromDataFrame(experiment@experiment$TSRs[[.x]])
+		)  %>%
+			as_tibble(.name_repair = "unique") %>%
+			mutate(
+				nTAGs = experiment@experiment$TSRs[[.x]][subjectHits]$nTAGs,
+				TSR_name = names(tsr_consensus[queryHits])
+			) %>%
+			select(-queryHits, -subjectHits) %>%
+			group_by(TSR_name) %>%
+			summarize(nTAGs = sum(nTAGs)) %>%
+			complete(TSR_name = names(tsr_consensus), fill = list(nTAGs = 0))
+			
+	) %>% setNames(names(experiment@experiment$TSRs))
+
+	## Create count matrix
+	count_matrix <- overlapping %>%
+		bind_rows(.id = "sample") %>%
+		spread(key = sample, value = nTAGs) %>%
+		as.data.frame %>%
+		column_to_rownames("TSR_name") %>%
+		as.matrix
+
+	## TMM normalize TSR matrix
+	tmm_tbl <- count_matrix %>%
+		DGEList %>%
+		calcNormFactors %>%
+		cpm %>%
+		as_tibble(rownames="consensus_TSR", .name_repair="unique")
+
+	experiment@normalized_counts$TSRs <- tmm_tbl
+	return(experiment)
+}
