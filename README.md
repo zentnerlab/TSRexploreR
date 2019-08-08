@@ -119,7 +119,7 @@ frequencies <- dinucleotide_frequencies(exp, sample = "S288C_WT_100ng_1", genome
 
 p <- plot_dinucleotide_frequencies(frequencies)
 
-ggsave("tss_dinucleotide_frequencies.png", plot = p, device = "png", type = "cairo", height = 2, width = 2.5)
+ggsave("tss_dinucleotide_frequencies.png", plot = p, device = "png", type = "cairo", height = 2, width = 3)
 ```
 
 ![tss_dinucelotide_frequencies](./inst/images/tss_dinucleotide_frequencies.png) 

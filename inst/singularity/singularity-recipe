@@ -23,16 +23,12 @@ conda update -n base -y -c defaults conda
 conda create -n tsrexplorer -y -c conda-forge -c bioconda \
 r-tidyverse \
 r-devtools \
-r-eulerr \
 r-ggseqlogo \
-r-gtools \
 bioconductor-genomicranges \
 bioconductor-genomicfeatures \
 bioconductor-biostrings \
 bioconductor-rsamtools \
-bioconductor-rtracklayer \
 bioconductor-chipseeker \
-bioconductor-gviz \
 bioconductor-edger
 
 ## Update environment.
@@ -42,6 +38,14 @@ conda update -n tsrexplorer -y -c conda-forge -c bioconda --all
 ## Clean up extra files.
 
 conda clean -y --all
+
+## Add tsrexplorer software to path
+
+export PATH=/opt/conda/envs/tsrexplorer/bin:$PATH
+
+## Install latest build of tsrexplorer
+
+R --slave -e 'Sys.setenv(TAR="/bin/tar");devtools::install_github("rpolicastro/tsrexplorer",ref="master")'
 
 %environment
 
