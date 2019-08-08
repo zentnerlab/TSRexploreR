@@ -86,4 +86,4 @@ p <- plot_tss_heatmap(count_matrix)
 ggsave("tss_heatmap.png", plot = p, device = "png", type = "cairo", height = 2, width = 2)
 ```
 
-`![tss_heatmap](./inst/images/tss_heatmap.png)`
+![tss_heatmap](./inst/images/tss_heatmap.png)
