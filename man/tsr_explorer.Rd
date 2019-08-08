@@ -4,10 +4,12 @@
 \alias{tsr_explorer}
 \title{TSRexplorer constructor function.}
 \usage{
-tsr_explorer(experiment, cores = 1)
+tsr_explorer(TSSs, TSRs = NA, cores = 1)
 }
 \arguments{
-\item{experiment}{List of TSS GRanges returned by TSRchitect}
+\item{TSSs}{Named list of TSS GRanges returned by TSRchitect}
+
+\item{TSRs}{Named list of TSR GRanges returned by TSRchitect}
 
 \item{cores}{Number of CPU cores/threads available}
 }

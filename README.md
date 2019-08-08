@@ -34,8 +34,11 @@ library("tsrexplorer")
 **Load example data**
 
 ```
-TSSs <- system.file("extdata", "yeast_TSSs.RDS", package="tsrexplorer")
+TSSs <- system.file("extdata", "yeast_TSSs.RDS", package = "tsrexplorer")
 TSSs <- readRDS(TSSs)
+
+TSRs <- system.file("extdata", "yeast_TSRs.RDS", package = "tsrexplorer")
+TSRs <- readRDS(TSRs)
 
 annotation <- system.file("extdata", "yeast_annotation.gtf", package="tsrexplorer")
 assembly <- system.file("extdata", "yeast_assembly.fasta", package="tsrexplorer")
@@ -44,7 +47,7 @@ assembly <- system.file("extdata", "yeast_assembly.fasta", package="tsrexplorer"
 **create tsr object**
 
 ```
-exp <- tsr_explorer(TSSs)
+exp <- tsr_explorer(TSSs, TSRs)
 ```
 
 ### Count Normalization and Correlation

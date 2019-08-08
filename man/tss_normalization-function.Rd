@@ -2,7 +2,7 @@
 % Please edit documentation in R/normalize.R
 \name{tss_normalization}
 \alias{tss_normalization}
-\title{TMM Normalization}
+\title{TMM Normalize TSSs}
 \usage{
 tss_normalization(experiment)
 }

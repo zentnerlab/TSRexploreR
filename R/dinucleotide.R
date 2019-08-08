@@ -24,7 +24,7 @@ dinucleotide_frequencies <- function(experiment, sample, genome_assembly, thresh
 	assembly <- FaFile(genome_assembly)
 
 	## Filter TSSs and get sequences.
-	sequences <- experiment@experiment[[sample]] %>%
+	sequences <- experiment@experiment$TSSs[[sample]] %>%
 		.[score(.) >= threshold] %>%
 		resize(., width=2, fix="end") %>%
 		getSeq(assembly, .)

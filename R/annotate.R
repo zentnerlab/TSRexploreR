@@ -27,7 +27,7 @@ tss_annotation <- function(experiment, upstream = 1000, downstream = 100, gtf = 
 		
 	## Annotate TSSs.
 	tss.annotated <- map(
-		experiment@experiment,
+		experiment@experiment$TSSs,
 		~ annotatePeak(.,
 			tssRegion = c(-upstream, downstream),
 			TxDb = genome.annotation,

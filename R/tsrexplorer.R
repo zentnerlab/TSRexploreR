@@ -19,7 +19,8 @@ setClass(
 
 #' TSRexplorer constructor function.
 #'
-#' @param experiment List of TSS GRanges returned by TSRchitect
+#' @param TSSs Named list of TSS GRanges returned by TSRchitect
+#' @param TSRs Named list of TSR GRanges returned by TSRchitect 
 #' @param cores Number of CPU cores/threads available
 #'
 #' @return A tsrexplorer object
@@ -31,7 +32,16 @@ setClass(
 #'
 #' @export
 
-tsr_explorer <- function(experiment, cores=1) {
+tsr_explorer <- function(TSSs, TSRs=NA, cores=1) {
 		cores <- as.integer(cores)
-		new("tsr_object", experiment=experiment, samples=names(experiment), cores=cores)
+		tsr_obj <- new(
+			"tsr_object",
+			samples=names(TSSs),
+			cores=cores
+		)
+
+		tsr_obj@experiment$TSSs <- TSSs
+		tsr_obj@experiment$TSRs <- TSRs
+
+		return(tsr_obj)
 }

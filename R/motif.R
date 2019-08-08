@@ -25,7 +25,7 @@ tss_sequences <- function(experiment, sample, genome_assembly, threshold = 1, di
 	assembly <- FaFile(genome_assembly)
 
 	## Get TSS sequences.
-	tss_sequences <- experiment@experiment[[sample]] %>%
+	tss_sequences <- experiment@experiment$TSSs[[sample]] %>%
 		.[score(.) >= threshold]
 
 	tss_sequence_names <- paste(

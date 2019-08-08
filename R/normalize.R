@@ -1,4 +1,4 @@
-#' TMM Normalization
+#' TMM Normalize TSSs
 #'
 #' Using edgeR to TMM normalize TSSs
 #'
@@ -19,7 +19,7 @@
 #' @rdname tss_normalization-function
 
 tss_normalization <- function(experiment) {
-	counts <- experiment@experiment %>%
+	counts <- experiment@experiment$TSSs %>%
 		# Make the TSS name a concatenation of the chromosome, start, end, and strand.
 		map(
 			~as_tibble(., .name_repair = "unique") %>%
