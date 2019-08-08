@@ -78,3 +78,40 @@ plot_dominant_tss <- function(dominant_tss, upstream = 2000, downstream = 500) {
 
 	return(p)
 }
+
+#' Max UTR Length
+#'
+#' @include tsrexplorer.R
+#'
+#' @import tibble
+#' @importFrom dplyr filter between group_by_at select summarize
+#'
+#' @param experiment tsrexplorer object with annotated TSSs
+#' @param sample Name of sample to analyze
+#' @param threshold Number of reads required for each TSS
+#' @param max_upstream Max upstream distance of TSS to consider
+#' @param max_downstream Max downstream distance of TSS to consider
+#' @param feature_type Feature type used when finding distance to TSS ("geneId", "transcriptId")
+#'
+#' @return tibble with max UTR length for features
+#'
+#' @export
+#' @rdname mx_utr-function
+
+max_utr <- function(
+	experiment, sample, threshold = 1,
+	max_upstream = 1000, max_downstream = 100,
+	feature_type = c("geneId", "transcriptId")
+) {
+	## Get TSS with minimum distance to start codon.
+	max_utr <- experiment@annotated$TSSs[[sample]] %>%
+		select(feature_type, distanceToTSS, score) %>%
+		filter(
+			score >= threshold,
+			between(distanceToTSS, -max_upstream, max_downstream)
+		) %>%
+		group_by_at(feature_type) %>%
+		summarize(tss_max_distance = min(distanceToTSS))
+
+	return(max_utr)
+}
