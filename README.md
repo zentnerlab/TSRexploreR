@@ -79,7 +79,7 @@ ggsave("tss_scatter.png", plot = p, device = "png", type = "cairo", height = 2, 
 ### TSS Annotation
 
 ```
-exp <- tss_annotation(exp, gtf = annotation)
+exp <- tss_annotation(exp, annotation_file = annotation, feature_type = "transcript")
 ```
 
 ### TSS Average Plot and Heatmap

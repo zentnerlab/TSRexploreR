@@ -4,8 +4,8 @@
 \alias{tss_annotation}
 \title{Annotate TSSs}
 \usage{
-tss_annotation(experiment, upstream = 1000, downstream = 100,
-  gtf = NA_character_)
+tss_annotation(experiment, annotation_file, feature_type = c("gene",
+  "transcript"), upstream = 1000, downstream = 100)
 }
 \arguments{
 \item{experiment}{tsrexplorer object with TSS Granges}
