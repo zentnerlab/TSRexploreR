@@ -25,6 +25,7 @@ Collate:
     'average_plots.R'
     'correlation.R'
     'dinucleotide.R'
+    'heatmaps.R'
     'misc_tss_plots.R'
     'motif.R'
     'normalize.R'
