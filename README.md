@@ -122,4 +122,29 @@ p <- plot_dinucleotide_frequencies(frequencies)
 ggsave("tss_dinucleotide_frequencies.png", plot = p, device = "png", type = "cairo", height = 2, width = 3)
 ```
 
-![tss_dinucelotide_frequencies](./inst/images/tss_dinucleotide_frequencies.png) 
+![tss_dinucelotide_frequencies](./inst/images/tss_dinucleotide_frequencies.png)
+
+### Misc TSS Plots
+
+**Average distance of dominant TSS**
+
+```
+dominant <- dominant_tss(exp, sample = "S288C_WT_100ng_1", threshold = 3, feature_type = "geneId")
+
+p <- plot_dominant_tss(dominant, upstream = 500, downstream = 500)
+
+ggsave("dominant_tss.png", plot = p, device = "png", type = "cairo", height = 2, width = 2)
+```
+
+![dominant_tss](./inst/images/dominant_tss.png)
+
+**Max UTR Length**
+``` 
+max <- max_utr(exp, sample = "S288C_WT_100ng_1", threshold = 3, feature_type = "geneId")
+
+p <- plot_max_utr(max)
+
+ggsave("max_utr.png", plot = p, device = "png", type = "cairo", height = 2, width = 2)
+```
+
+![max_utr](./inst/images/max_utr.png)
