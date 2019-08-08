@@ -2,6 +2,21 @@
 
 ## Installing TSRexplorer
 
+**Create conda environment**
+```
+conda create -n tsrexplorer -y -c conda-forge -c bioconda \
+r-tidyverse \
+r-devtools \
+r-ggseqlogo \
+bioconductor-genomicranges \
+bioconductor-genomicfeatures \
+bioconductor-biostrings \
+bioconductor-rsamtools \
+bioconductor-chipseeker \
+bioconductor-edger
+```
+
+**Install latest version of tsrexplorer**
 ```
 devtools::install_github("rpolicastro/tsrexplorer")
 ```
