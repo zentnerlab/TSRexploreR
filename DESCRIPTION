@@ -17,7 +17,14 @@ Imports:
     tibble,
     purrr,
     magrittr,
-    tidyr
+    tidyr,
+    forcats,
+    ggseqlogo,
+    Rsamtools,
+    GenomicFeatures,
+    Biostrings,
+    ChIPseeker,
+    edgeR
 RoxygenNote: 6.1.1
 Collate: 
     'tsrexplorer.R'

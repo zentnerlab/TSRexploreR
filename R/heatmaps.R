@@ -59,9 +59,10 @@ tss_count_matrix <- function(
 #'
 #' @import tibble
 #' @import ggplot2
-#' @importFrom dplyr transmute arrange pull mutate case_when
+#' @importFrom dplyr transmute arrange pull mutate case_when desc
 #' @importFrom tidyr gather
 #' @importFrom forcats fct_rev
+#' @importFrom magrittr %>%
 #'
 #' @param tss_count_matrix TSS count matrix from tss_count_matrix
 #' @param max_value Max log2 value to truncate heatmap color
