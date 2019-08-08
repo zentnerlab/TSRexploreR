@@ -20,7 +20,7 @@
 
 plot_tss_corr <- function(experiment, corr_metric=c("pearson", "spearman")) {
 	## Prepare data for plotting.
-	corr.matrix <- experiment@TMM %>%
+	corr.matrix <- experiment@normalized_counts$TSSs %>%
 		select(-TSS_position) %>%
 		as.matrix %>%
 		cor(., method = corr_metric) %>%
@@ -62,7 +62,7 @@ plot_tss_corr <- function(experiment, corr_metric=c("pearson", "spearman")) {
 #' @rdname plot_tss_scatter-function
 
 plot_tss_scatter <- function(experiment, sample_1, sample_2) {
-	p <- ggplot(experiment@TMM, aes_string(x=sample_1, y=sample_2)) +
+	p <- ggplot(experiment@normalized_counts$TSSs, aes_string(x=sample_1, y=sample_2)) +
 		geom_point(size=0.25, color="#431352") +
 		theme_bw() +
 		scale_fill_viridis_d() +
