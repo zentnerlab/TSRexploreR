@@ -207,7 +207,7 @@ exp <- tsr_annotation(exp, annotation_file = annotation, feature_type = "transcr
 
 ### TSR Average Plot and Heatmap
 
-**TSR Average Plot
+**TSR Average Plot**
 
 ```
 p <- plot_tsr_average(exp, sample = "S288C_WT_100ng_1")
