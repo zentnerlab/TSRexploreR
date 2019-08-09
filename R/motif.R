@@ -119,9 +119,8 @@ plot_sequence_colormap <- function(tss_sequences) {
 
 	## Plot sequence colormap
 	p <- ggplot(tss_sequences, aes(x = Position, y = sequence)) +
-		geom_tile(aes(fill = base, color = base)) +
+		geom_tile(aes(fill = base)) +
 		scale_fill_viridis_d() +
-		scale_color_viridis_d() +
 		theme_minimal() +
 		theme(
 			axis.title.y=element_blank(),
