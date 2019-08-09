@@ -76,6 +76,7 @@ plot_tss_average <- function(experiment, sample, upstream = 1000, downstream = 1
 plot_tsr_average <- function(experiment, sample, upstream = 1000, downstream = 1000) {
 	## Grab info needed for plotting.
 	annotated <- experiment@annotated$TSRs[[sample]] %>%
+		rename(score = nTAGs) %>%
 		select(distanceToTSS, score) %>%
 		filter(between(distanceToTSS, -upstream, downstream))
 

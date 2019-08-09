@@ -168,3 +168,63 @@ ggsave("max_utr.png", plot = p, device = "png", type = "cairo", height = 4, widt
 ```
 
 ![max_utr](./inst/images/max_utr.png)
+
+## TSR Analysis
+
+### Count Normalization and Correlation
+
+**TMM normalize counts**
+
+```
+exp <- tsr_normalization(exp)
+```
+
+**TSR correlation matrix**
+
+```
+p <- plot_tsr_corr(experiment, corr_metric = "pearson")
+
+ggsave("tsr_corr.png", plot = p, device = "png", type = "cairo", height = 3.5, width = 5)
+```
+
+![tsr_correlation](./inst/images/tsr_corr.png)
+
+**TSR scatter plot**
+
+```
+p <- plot_tsr_scatter(exp, sample_1 = "S288C_WT_100ng_1", sample_2 = "S288C_WT_100ng_2")
+
+ggsave("tsr_scatter.png", plot = p, device = "png", type = "cairo", height = 4, width = 4)
+```
+
+![tsr_scatter](./inst/images/tsr_scatter.png)
+
+### TSR Annotation
+
+```
+exp <- tsr_annotation(exp, annotation_file = annotation, feature_type = "transcript")
+```
+
+### TSR Average Plot and Heatmap
+
+**TSR Average Plot
+
+```
+p <- plot_tsr_average(exp, sample = "S288C_WT_100ng_1")
+
+ggsave("tsr_average_plot.png", plot = p, device = "png", type = "cairo", height = 4, width = 4)
+```
+
+![tsr_average_plot](./inst/tsr_average_plot.png)
+
+**TSR Heatmap**
+
+```
+counts <- tsr_count_matrix(experiment, sample = "S288C_WT_100ng_1", feature_type = "transcriptId")
+
+p <- plot_tsr_heatmap(counts)
+
+ggsave("tsr_heatmap.png", plot = p, device = "png", type = "cairo", height = 4, width = 3)
+```
+
+![tsr_heatmap](./inst/images/tsr_heatmap.png)

@@ -93,7 +93,7 @@ plot_tss_scatter <- function(experiment, sample_1, sample_2) {
 
 plot_tsr_corr <- function(experiment, corr_metric=c("pearson", "spearman")) {
 	## Prepare data for plotting.
-	corr.matrix <- experiment@normalized_counts$TSRs %>%
+	corr_matrix <- experiment@normalized_counts$TSRs %>%
 		select(-consensus_TSR) %>%
 		as.matrix %>%
 		cor(., method = corr_metric) %>%
@@ -102,7 +102,7 @@ plot_tsr_corr <- function(experiment, corr_metric=c("pearson", "spearman")) {
 		mutate(corr_metric = round(corr_metric, 3))
 	
 	## Plot correlation matrix.
-	p <- ggplot(corr.matrix, aes(x=sample_1, y=sample_2, fill=corr_metric, label=corr_metric)) +
+	p <- ggplot(corr_matrix, aes(x=sample_1, y=sample_2, fill=corr_metric, label=corr_metric)) +
 		geom_tile(color="white", lwd=0.5) +
 		geom_label(color="white", label.size=NA, fill=NA) +
 		scale_fill_viridis_c(limits=c(0.9,1), name=corr_metric) +
