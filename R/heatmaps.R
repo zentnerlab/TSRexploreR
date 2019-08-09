@@ -93,7 +93,7 @@ plot_tss_heatmap <- function(tss_count_matrix, max_value=5) {
 		)
 
 	## Generate TSS heatmap
-	p <- ggplot(tss_count_matrix, aes(x = position, y = fct_rev(featureId), fill = log2_score)) +
+	p <- ggplot(tss_count_matrix, aes(x = position, y = fct_rev(featureId), fill = log2_score, color = log2_score)) +
 		geom_tile() +
 		theme_minimal() +
 		theme(
@@ -106,6 +106,12 @@ plot_tss_heatmap <- function(tss_count_matrix, max_value=5) {
 			labels = c(0:(max_value - 1), paste0(">", max_value)),
 			name = "Log2(Score + 1)"
 		) +
+		scale_color_viridis_c(
+			limits = c(0, max_value),
+			breaks = c(0:max_value),
+			labels = c(0:(max_value - 1), paste0(">", max_value)),
+			name = "Log2(Score + 1)"
+		)
 		geom_vline(xintercept=0, lty=2, color="white") +
 		labs(
 			fill = "log2(Score + 1)",
@@ -124,7 +130,7 @@ plot_tss_heatmap <- function(tss_count_matrix, max_value=5) {
 #' @include annotate.R
 #'
 #' @import tibble
-#' @importFrom dplyr select mutate case_when bind_rows filter between
+#' @importFrom dplyr select mutate case_when bind_rows filter between group_by ungroup summarize
 #' @importFrom magrittr %>%
 #' @importFrom tidyr spread complete
 #' @importFrom purrr pmap
@@ -190,6 +196,7 @@ tsr_count_matrix <- function(
 		complete(feature, position = -upstream:downstream, fill = list(score = 0)) %>%
 		group_by(feature, position) %>%
 		summarize(score = sum(score)) %>%
+		ungroup %>%
 		mutate(log2_score = log2(score + 1)) %>%
 		select(-score) %>%
 		spread(key = position, value = log2_score)
@@ -216,4 +223,52 @@ tsr_count_matrix <- function(
 #' @export
 #' @rdname plot_tsr_heatmap-function
 
+plot_tsr_heatmap <- function(tsr_count_matrix, max_value = 8) {
+	## order features by sum of TSR counts
+	feature_order <- tsr_count_matrix %>%
+		transmute(feature = feature, rowsums=rowSums(select(., 2:ncol(.)))) %>% 
+		arrange(desc(rowsums)) %>%
+		pull(feature)
 
+	tsr_count_matrix <- mutate(tsr_count_matrix, feature = factor(feature, levels = feature_order))
+
+	## Prepare data for plotting
+	tsr_count_matrix <- tsr_count_matrix %>%
+		gather(key="position", value="log2_score", -feature) %>%
+		mutate(
+			position = as.integer(position),
+			log2_score = case_when(
+				log2_score <= max_value ~ log2_score,
+				log2_score > max_value ~ max_value
+			)
+		)
+	
+	## Plot TSR heatmap
+	p <- ggplot(tsr_count_matrix, aes(x = position, y = fct_rev(feature), fill = log2_score, color = log2_score)) +
+		geom_tile() +
+		theme_minimal() +
+		theme(
+			axis.text.y = element_blank(),
+			panel.grid = element_blank()
+		) +
+		scale_fill_viridis_c(
+			limits = c(0, max_value),
+			breaks = c(0:max_value),
+			labels = c(0:(max_value - 1), paste0(">", max_value)),
+			name = "Log2(Score + 1)"
+		) +
+		scale_color_viridis_c(
+			limits = c(0, max_value),
+			breaks = c(0:max_value),
+			labels = c(0:(max_value - 1), paste0(">", max_value)),
+			name = "Log2(Score + 1)"
+		) +
+		geom_vline(xintercept=0, lty=2, color="white") +
+		labs(
+			fill = "log2(Score + 1)",
+			x = "Position",
+			y = "Feature"
+		)
+
+	return(p)
+}

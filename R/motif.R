@@ -118,15 +118,16 @@ plot_sequence_colormap <- function(tss_sequences) {
 		mutate(Position = factor(Position, levels=c(-sequence_length:-1, 1:sequence_length)))
 
 	## Plot sequence colormap
-	p <- ggplot(tss_sequences, aes(x=Position, y=sequence)) +
-		geom_tile(aes(fill=base)) +
+	p <- ggplot(tss_sequences, aes(x = Position, y = sequence)) +
+		geom_tile(aes(fill = base, color = base)) +
 		scale_fill_viridis_d() +
+		scale_color_viridis_d() +
 		theme_minimal() +
 		theme(
 			axis.title.y=element_blank(),
 			axis.text.y=element_blank(),
 			legend.title=element_blank(),
-			axis.title.x=element_text(size=16, margin=margin(t=15)),
+			axis.title.x=element_text(margin = margin(t = 15)),
 			panel.grid=element_blank()
 		)
 
