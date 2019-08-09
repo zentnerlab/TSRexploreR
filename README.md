@@ -50,6 +50,8 @@ assembly <- system.file("extdata", "yeast_assembly.fasta", package="tsrexplorer"
 exp <- tsr_explorer(TSSs, TSRs)
 ```
 
+## TSS Analysis
+
 ### Count Normalization and Correlation
 
 **tmm normalize counts**
@@ -63,7 +65,7 @@ exp <- tss_normalization(exp)
 ```
 p <- plot_tss_corr(exp, corr_metric="pearson")
 
-ggsave("tss_corr.png", plot = p, device = "png", type = "cairo", height = 2.5, width = 4)
+ggsave("tss_corr.png", plot = p, device = "png", type = "cairo", height = 3.5, width = 5)
 ```
 ![tss_corr_plot](./inst/images/tss_corr.png)
 
@@ -72,7 +74,7 @@ ggsave("tss_corr.png", plot = p, device = "png", type = "cairo", height = 2.5, w
 ```
 p <- plot_tss_scatter(exp, sample_1 = "S288C_WT_100ng_1", sample_2 = "S288C_WT_100ng_2")
 
-ggsave("tss_scatter.png", plot = p, device = "png", type = "cairo", height = 2, width = 2)
+ggsave("tss_scatter.png", plot = p, device = "png", type = "cairo", height = 4, width = 4)
 ```
 ![tss_scatter_plot](./inst/images/tss_scatter.png)
 
@@ -89,7 +91,7 @@ exp <- tss_annotation(exp, annotation_file = annotation, feature_type = "transcr
 ```
 p <- plot_tss_average(exp, sample = "S288C_WT_100ng_1", threshold = 3)
 
-ggsave("tss_average_plot.png", plot = p, device = "png", type = "cairo", height = 2, width = 2)
+ggsave("tss_average_plot.png", plot = p, device = "png", type = "cairo", height = 4, width = 4)
 ```
 
 ![tss_average_plot](./inst/images/tss_average_plot.png)
@@ -101,7 +103,7 @@ count_matrix <- tss_count_matrix(exp, sample = "S288C_WT_100ng_1", threshold = 3
 
 p <- plot_tss_heatmap(count_matrix)
 
-ggsave("tss_heatmap.png", plot = p, device = "png", type = "cairo", height = 2, width = 2)
+ggsave("tss_heatmap.png", plot = p, device = "png", type = "cairo", height = 4, width = 3)
 ```
 
 ![tss_heatmap](./inst/images/tss_heatmap.png)
@@ -115,7 +117,7 @@ seqs <- tss_sequences(exp, sample = "S288C_WT_100ng_1", genome_assembly = assemb
 
 p <- plot_sequence_logo(seqs)
 
-ggsave("tss_seq_logo.png", plot = p, device = "png", type = "cairo", height = 1, width = 3)
+ggsave("tss_seq_logo.png", plot = p, device = "png", type = "cairo", height = 1.5, width = 4)
 
 ```
 
@@ -126,7 +128,7 @@ ggsave("tss_seq_logo.png", plot = p, device = "png", type = "cairo", height = 1,
 ```
 p <- plot_sequence_colormap(seqs)
 
-ggsave("tss_seq_colormap.png", plot = p, device = "png", type = "cairo", height = 2, width = 2)
+ggsave("tss_seq_colormap.png", plot = p, device = "png", type = "cairo", height = 4, width = 4)
 ```
 ![tss_sequence_colormap](./inst/images/tss_seq_colormap.png)
 
@@ -137,7 +139,7 @@ frequencies <- dinucleotide_frequencies(exp, sample = "S288C_WT_100ng_1", genome
 
 p <- plot_dinucleotide_frequencies(frequencies)
 
-ggsave("tss_dinucleotide_frequencies.png", plot = p, device = "png", type = "cairo", height = 2, width = 3)
+ggsave("tss_dinucleotide_frequencies.png", plot = p, device = "png", type = "cairo", height = 3, width = 4)
 ```
 
 ![tss_dinucelotide_frequencies](./inst/images/tss_dinucleotide_frequencies.png)
@@ -151,7 +153,7 @@ dominant <- dominant_tss(exp, sample = "S288C_WT_100ng_1", threshold = 3, featur
 
 p <- plot_dominant_tss(dominant, upstream = 500, downstream = 500)
 
-ggsave("dominant_tss.png", plot = p, device = "png", type = "cairo", height = 2, width = 2)
+ggsave("dominant_tss.png", plot = p, device = "png", type = "cairo", height = 4, width = 4)
 ```
 
 ![dominant_tss](./inst/images/dominant_tss.png)
@@ -162,7 +164,7 @@ max <- max_utr(exp, sample = "S288C_WT_100ng_1", threshold = 3, feature_type = "
 
 p <- plot_max_utr(max)
 
-ggsave("max_utr.png", plot = p, device = "png", type = "cairo", height = 2, width = 2)
+ggsave("max_utr.png", plot = p, device = "png", type = "cairo", height = 4, width = 4)
 ```
 
 ![max_utr](./inst/images/max_utr.png)

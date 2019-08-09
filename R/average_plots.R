@@ -40,7 +40,7 @@ plot_tss_average <- function(experiment, sample, upstream = 1000, downstream = 1
 
 	## Plot TSS averages.
 	p <- ggplot(annotated, aes(distanceToTSS)) +
-		geom_density(fill = "#431352", color = "#43135i2") +
+		geom_density(fill = "#431352", color = "#431352") +
 		labs(
 			x = "Start Codon",
 			y = "Density",

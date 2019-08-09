@@ -111,7 +111,7 @@ plot_tss_heatmap <- function(tss_count_matrix, max_value=5) {
 			breaks = c(0:max_value),
 			labels = c(0:(max_value - 1), paste0(">", max_value)),
 			name = "Log2(Score + 1)"
-		)
+		) +
 		geom_vline(xintercept=0, lty=2, color="white") +
 		labs(
 			fill = "log2(Score + 1)",
