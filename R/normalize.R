@@ -19,7 +19,7 @@
 #' @rdname tss_normalization-function
 
 tss_normalization <- function(experiment) {
-	counts <- experiment@experiment$TSSs %>%
+	raw_counts <- experiment@experiment$TSSs %>%
 		# Make the TSS name a concatenation of the chromosome, start, end, and strand.
 		map(
 			~as_tibble(., .name_repair = "unique") %>%
@@ -30,8 +30,12 @@ tss_normalization <- function(experiment) {
 		# Turn the list of tibbles into one tibble with a column specify what tibble the row came from.
 		bind_rows(.id = "sample") %>%
 		# Turn samples into column and TSS names into rows.
-		spread(key = sample, value = score, fill = 0) %>%
-		# Convert tibble to data frame, and turn the TSS name into rownames.
+		spread(key = sample, value = score, fill = 0)
+
+	experiment@raw_counts$TSSs <- raw_counts
+
+	counts <- raw_counts %>%
+		# Convert to data frame and set position as row names.
 		as.data.frame %>%
 		column_to_rownames("position") %>%
 		# Convert data frame to count matrix.
@@ -79,7 +83,7 @@ tsr_normalization <- function(experiment) {
 		unlist %>%
 		reduce(ignore.strand=FALSE)
 	
-	names(tsr_consensus) <- sprintf("TSR_%s", 1:length(tsr_consensus))
+	names(tsr_consensus) <- sprintf("TSR_%.6d", 1:length(tsr_consensus))
 
 	## Get overlapping TSRs with consensus
 	overlapping <- map(
@@ -101,9 +105,13 @@ tsr_normalization <- function(experiment) {
 	) %>% setNames(names(experiment@experiment$TSRs))
 
 	## Create count matrix
-	count_matrix <- overlapping %>%
+	raw_counts <- overlapping %>%
 		bind_rows(.id = "sample") %>%
-		spread(key = sample, value = nTAGs) %>%
+		spread(key = sample, value = nTAGs)
+
+	experiment@raw_counts$TSRs <- raw_counts
+
+	count_matrix <- raw_counts %>%
 		as.data.frame %>%
 		column_to_rownames("TSR_name") %>%
 		as.matrix

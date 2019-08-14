@@ -199,11 +199,25 @@ ggsave("tsr_scatter.png", plot = p, device = "png", type = "cairo", height = 4, 
 
 ![tsr_scatter](./inst/images/tsr_scatter.png)
 
-### TSR Annotation
+### TSR Annotation and Genomic Distribution
+
+**TSR Annotation**
 
 ```
 exp <- tsr_annotation(exp, annotation_file = annotation, feature_type = "transcript")
 ```
+
+**TSR Genomic Distribution**
+
+```
+tsr_distribution <- tsr_genomic_distribution(exp, sample = "S288C_WT_100ng_1")
+
+p <- plot_tsr_genomic_distribution(tsr_distribution)
+
+ggsave("tsr_genomic_distribution.png", plot = p, device = "png", type = "cairo", height = 2, width = 5)
+```
+
+![tsr_genomic_distribution](./inst/images/tsr_genomic_distribution.png)
 
 ### TSR Average Plot and Heatmap
 
