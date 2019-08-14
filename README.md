@@ -220,7 +220,7 @@ ggsave("tsr_average_plot.png", plot = p, device = "png", type = "cairo", height 
 **TSR Heatmap**
 
 ```
-counts <- tsr_count_matrix(experiment, sample = "S288C_WT_100ng_1", feature_type = "transcriptId")
+counts <- tsr_count_matrix(exp, sample = "S288C_WT_100ng_1", feature_type = "transcriptId")
 
 p <- plot_tsr_heatmap(counts)
 
