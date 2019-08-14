@@ -99,7 +99,7 @@ ggsave("tss_average_plot.png", plot = p, device = "png", type = "cairo", height 
 **TSS heatmap**
 
 ```
-count_matrix <- tss_count_matrix(exp, sample = "S288C_WT_100ng_1", threshold = 3, anno_type = "geneId")
+count_matrix <- tss_heatmap_matrix(exp, sample = "S288C_WT_100ng_1", threshold = 3, anno_type = "geneId")
 
 p <- plot_tss_heatmap(count_matrix)
 
@@ -234,7 +234,7 @@ ggsave("tsr_average_plot.png", plot = p, device = "png", type = "cairo", height 
 **TSR Heatmap**
 
 ```
-counts <- tsr_count_matrix(exp, sample = "S288C_WT_100ng_1", feature_type = "transcriptId")
+counts <- tsr_heatmap_matrix(exp, sample = "S288C_WT_100ng_1", feature_type = "transcriptId")
 
 p <- plot_tsr_heatmap(counts)
 

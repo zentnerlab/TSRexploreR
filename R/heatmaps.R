@@ -21,9 +21,9 @@
 #' @return matrix of counts for each gene/transcript and position
 #'
 #' @export
-#' @rdname tss_count_matrix-function
+#' @rdname tss_heatmap_matrix-function
 
-tss_count_matrix <- function(
+tss_heatmap_matrix <- function(
 	experiment, sample, upstream = 1000,
 	downstream = 1000, threshold = 1,
 	anno_type = c("transcriptId", "geneId")
@@ -72,17 +72,17 @@ tss_count_matrix <- function(
 #' @export
 #' @rdname plot_tss_heatmap-function
 
-plot_tss_heatmap <- function(tss_count_matrix, max_value=5) {
+plot_tss_heatmap <- function(tss_heatmap_matrix, max_value=5) {
 	## Order genes by sum of TSS counts
-	feature_order <- tss_count_matrix %>%
+	feature_order <- tss_heatmap_matrix %>%
 		transmute(featureId = featureId, rowsums=rowSums(select(., 2:ncol(.)))) %>% 
 		arrange(desc(rowsums)) %>%
 		pull(featureId)
 
-	tss_count_matrix <- mutate(tss_count_matrix, featureId = factor(featureId, levels = feature_order))
+	tss_heatmap_matrix <- mutate(tss_heatmap_matrix, featureId = factor(featureId, levels = feature_order))
 
 	## Prepare data for plotting
-	tss_count_matrix <- tss_count_matrix %>%
+	tss_heatmap_matrix <- tss_heatmap_matrix %>%
 		gather(key="position", value="log2_score", -featureId) %>%
 		mutate(
 			position = as.integer(position),
@@ -144,7 +144,7 @@ plot_tss_heatmap <- function(tss_count_matrix, max_value=5) {
 #' @return matrix of counts for each gene/transcript and position
 #'
 #' @export
-#' @rdname tsr_count_matrix-function
+#' @rdname tsr_heatmap_matrix-function
 
 tsr_count_matrix <- function(
 	experiment, sample,

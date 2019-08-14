@@ -81,7 +81,10 @@ tsr_normalization <- function(experiment) {
 	tsr_consensus <- experiment@experiment$TSRs %>%
 		as("GRangesList") %>%
 		unlist %>%
-		reduce(ignore.strand=FALSE)
+		reduce(ignore.strand=FALSE) %>%
+		as_tibble(.name_repair = "unique") %>%
+		mutate(names = paste(seqnames, start, end, strand, sep="_")) %>%
+		makeGRangesFromDataFrame(keep.extra.columns = TRUE)
 	
 	names(tsr_consensus) <- sprintf("TSR_%.6d", 1:length(tsr_consensus))
 
@@ -95,7 +98,7 @@ tsr_normalization <- function(experiment) {
 			as_tibble(.name_repair = "unique") %>%
 			mutate(
 				nTAGs = experiment@experiment$TSRs[[.x]][subjectHits]$nTAGs,
-				TSR_name = names(tsr_consensus[queryHits])
+				TSR_name = tsr_consensus[queryHits]$names
 			) %>%
 			select(-queryHits, -subjectHits) %>%
 			group_by(TSR_name) %>%
