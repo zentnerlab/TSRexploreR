@@ -215,7 +215,7 @@ p <- plot_tsr_average(exp, sample = "S288C_WT_100ng_1")
 ggsave("tsr_average_plot.png", plot = p, device = "png", type = "cairo", height = 4, width = 4)
 ```
 
-![tsr_average_plot](./inst/tsr_average_plot.png)
+![tsr_average_plot](./inst/images/tsr_average_plot.png)
 
 **TSR Heatmap**
 
