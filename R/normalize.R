@@ -103,8 +103,7 @@ tsr_normalization <- function(experiment) {
 			select(-queryHits, -subjectHits) %>%
 			group_by(TSR_name) %>%
 			summarize(nTAGs = sum(nTAGs)) %>%
-			complete(TSR_name = names(tsr_consensus), fill = list(nTAGs = 0))
-			
+			complete(TSR_name = tsr_consensus$names, fill = list(nTAGs = 0))
 	) %>% setNames(names(experiment@experiment$TSRs))
 
 	## Create count matrix
