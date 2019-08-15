@@ -264,6 +264,7 @@ edger_model <- fit_edger_model(
 )
 
 diff_tsrs <- differential_tsrs(edger_model, comparisons = c(1, 2))
+```
 
 **Annotate Differential TSRs**
 
