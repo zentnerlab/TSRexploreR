@@ -4,7 +4,8 @@
 \alias{plot_scatter}
 \title{Replicate Scatter Plots}
 \usage{
-plot_scatter(experiment, sample_1, sample_2, data_type = c("tss", "tsr"))
+plot_scatter(experiment, sample_1, sample_2, data_type = c("tss", "tsr"),
+  log2_transform = FALSE)
 }
 \arguments{
 \item{experiment}{tsrexplorer object with TMM normalized counts}
@@ -14,6 +15,8 @@ plot_scatter(experiment, sample_1, sample_2, data_type = c("tss", "tsr"))
 \item{sample_2}{Second sample name to plot}
 
 \item{data_type}{Whether to make scatter plots from TSS or TSR data}
+
+\item{log2}{Should the TMM values be log2+1 transformed prior to plotting?}
 }
 \value{
 ggplot2 object

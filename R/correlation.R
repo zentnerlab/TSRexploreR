@@ -63,18 +63,20 @@ plot_correlation <- function(experiment, data_type = c("tss", "tsr", "rnaseq"), 
 #'
 #' @import tibble
 #' @import ggplot2
+#' @importFrom dplyr mutate_at
 #'
 #' @param experiment tsrexplorer object with TMM normalized counts
 #' @param sample_1 First sample name to plot
 #' @param sample_2 Second sample name to plot
 #' @param data_type Whether to make scatter plots from TSS or TSR data
+#' @param log2 Should the TMM values be log2+1 transformed prior to plotting?
 #'
 #' @return ggplot2 object
 #'
 #' @export
 #' @rdname plot_scatter-function
 
-plot_scatter <- function(experiment, sample_1, sample_2, data_type = c("tss", "tsr")) {
+plot_scatter <- function(experiment, sample_1, sample_2, data_type = c("tss", "tsr"), log2_transform = FALSE) {
 	
 	## Get data from proper slot.
 	if (data_type == "tss") {
@@ -85,6 +87,10 @@ plot_scatter <- function(experiment, sample_1, sample_2, data_type = c("tss", "t
 		type_color = "#34698c"
 	}
 
+	## Log2+1 transform data if indicated.
+	if (log2_transform) {normalized_counts <- mutate_at(normalized_counts, vars(-position), ~log2(. + 1))}
+
+	## Generate scatter plot.
 	p <- ggplot(normalized_counts, aes_string(x = sample_1, y = sample_2)) +
 		geom_point(size = 0.25, color = type_color) +
 		theme_bw() +
