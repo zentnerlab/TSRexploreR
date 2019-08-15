@@ -293,7 +293,17 @@ RNAseq <- readRDS(RNAseq)
 TSSs_total <- system.file("extdata", "yeast_TSSs_total.RDS",  package = "tsrexplorer")
 TSSs_total <- readRDS(TSSs_total)
 
-exp <- add_rna_seq(exp, RNAseq)
+exp <- add_rnaseq(exp, RNAseq)
 
 exp <- add_tss_total(exp, TSSs_total)
 ```
+
+**RNA-seq Versus TSS Correlation Heatmap**
+
+```
+p <- plot_rnaseq_corr(exp, corr_metric = "spearman")
+
+ggsave("rnaseq_correlation.png", plot = p, device = "png", type = "cairo", height = 3.5, width = 5)
+```
+
+![rnaseq_tss_corr](./inst/images/rnaseq_correlation.png)
