@@ -27,8 +27,8 @@ Imports:
     edgeR
 RoxygenNote: 6.1.1
 Collate: 
-    'tsrexplorer.R'
     'annotate.R'
+    'tsrexplorer.R'
     'average_plots.R'
     'correlation.R'
     'diff_expression.R'

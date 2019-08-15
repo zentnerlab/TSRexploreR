@@ -57,13 +57,13 @@ exp <- tsr_explorer(TSSs, TSRs)
 **tmm normalize counts**
 
 ```
-exp <- tss_normalization(exp)
+exp <- count_normalization(exp, data_type = "tss")
 ```
 
 **tss correlation matrix**
 
 ```
-p <- plot_tss_corr(exp, corr_metric="pearson")
+p <- plot_correlation(exp, data_type = "tss", corr_metric = "pearson")
 
 ggsave("tss_corr.png", plot = p, device = "png", type = "cairo", height = 3.5, width = 5)
 ```
@@ -81,7 +81,7 @@ ggsave("tss_scatter.png", plot = p, device = "png", type = "cairo", height = 4, 
 ### TSS Annotation
 
 ```
-exp <- tss_annotation(exp, annotation_file = annotation, feature_type = "transcript")
+exp <- annotate_features(exp, annotation_file = annotation, data_type = "tss", feature_type = "transcript")
 ```
 
 ### TSS Average Plot and Heatmap
@@ -176,13 +176,13 @@ ggsave("max_utr.png", plot = p, device = "png", type = "cairo", height = 4, widt
 **TMM normalize counts**
 
 ```
-exp <- tsr_normalization(exp)
+exp <- count_normalization(exp, data_type = "tsr")
 ```
 
 **TSR correlation matrix**
 
 ```
-p <- plot_tsr_corr(experiment, corr_metric = "pearson")
+p <- plot_correlation(experiment, data_type = "tsr", corr_metric = "pearson")
 
 ggsave("tsr_corr.png", plot = p, device = "png", type = "cairo", height = 3.5, width = 5)
 ```
@@ -204,7 +204,7 @@ ggsave("tsr_scatter.png", plot = p, device = "png", type = "cairo", height = 4, 
 **TSR Annotation**
 
 ```
-exp <- tsr_annotation(exp, annotation_file = annotation, feature_type = "transcript")
+exp <- annotate_features(exp, annotation_file = annotation, data_type = "tsr", feature_type = "transcript")
 ```
 
 **TSR Genomic Distribution**
