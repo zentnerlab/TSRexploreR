@@ -2,6 +2,7 @@
 
 export(annotate_differential_tsrs)
 export(differential_tsrs)
+export(differential_tsrs_volcano_plot)
 export(dominant_tss)
 export(fit_edger_model)
 export(max_utr)

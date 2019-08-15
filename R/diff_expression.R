@@ -125,3 +125,43 @@ annotate_differential_tsrs <- function(
 
 	return(annotated_diff_tsrs)
 }
+
+#' Differential TSR Volcano Plot
+#'
+#' Generate volcano plot for differential TSRs
+#'
+#' @import tibble
+#' @import ggplot2
+#' @importFrom dplyr case_when mutate
+#'
+#' @param differential_tsrs Tibble of differential TSRs from differential_tsrs
+#' @param log2fc_cutoff Log2 fold change cutoff for significance
+#' @param fdr_cutoff FDR value cutoff for significance
+#'
+#' @return ggplot2 object of differential TSRs volcano plot.
+#'
+#' @export
+#' @rdname differential_tsrs_volcano_plot-function
+
+differential_tsrs_volcano_plot <- function(differential_tsrs, log2fc_cutoff = 1, fdr_cutoff = 0.05) {
+
+	## Annotate TSRs based on significance cutoff.
+	diff_tsrs <- differential_tsrs %>%
+		mutate(Change = case_when(
+			logFC >= log2fc_cutoff & FDR <= fdr_cutoff ~ "Increased",
+			logFC <= -log2fc_cutoff & FDR <= fdr_cutoff ~ "Decreased",
+			TRUE ~ "Unchanged"
+		)) %>%
+		mutate(Change = factor(Change, levels = c("Decreased", "Unchanged", "Increased")))
+
+	## Volcano plot of differential TSRs
+	p <- ggplot(diff_tsrs, aes(x = logFC, y = -log10(FDR))) +
+		geom_point(aes(color = Change), size = 0.75) +
+		scale_color_viridis_d() +
+		theme_bw() +
+		geom_vline(xintercept = -log2fc_cutoff, lty = 2) +
+		geom_vline(xintercept = log2fc_cutoff, lty = 2) +
+		geom_hline(yintercept = -log10(fdr_cutoff), lty = 2)
+
+	return(p)
+}

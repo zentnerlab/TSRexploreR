@@ -271,3 +271,13 @@ diff_tsrs <- differential_tsrs(edger_model, comparisons = c(1, 2))
 ```
 annotated_diff_tsrs <- annotate_differential_tsrs(diff_tsrs, annotation_file = annotation, feature_type = "trasncript")
 ```
+
+**Differential TSRs Volcano Plot**
+
+```
+p <- differential_tsrs_volcano_plot(diff_tsrs)
+
+ggsave("diff_tsrs_volcano_plot.png", plot = p, device = "png", type = "cairo", height = 2, width = 4)
+```
+
+![diff_tsrs_volcano_plot](./inst/images/diff_tsrs_volcano_plot.png)
