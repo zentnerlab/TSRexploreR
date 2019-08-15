@@ -247,6 +247,8 @@ ggsave("tsr_heatmap.png", plot = p, device = "png", type = "cairo", height = 4, 
 
 (Work in Progress)
 
+**Find Differential TSRs**
+
 ```
 edger_model <- fit_edger_model(
 	exp, 
@@ -263,5 +265,8 @@ edger_model <- fit_edger_model(
 
 diff_tsrs <- differential_tsrs(edger_model, comparisons = c(1, 2))
 
+**Annotate Differential TSRs**
+
+```
 annotated_diff_tsrs <- annotate_differential_tsrs(diff_tsrs, annotation_file = annotation, feature_type = "trasncript")
 ```
