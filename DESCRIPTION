@@ -38,3 +38,4 @@ Collate:
     'misc_tss_plots.R'
     'motif.R'
     'normalize.R'
+    'rnaseq.R'

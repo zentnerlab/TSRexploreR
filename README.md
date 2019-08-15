@@ -40,6 +40,9 @@ TSSs <- readRDS(TSSs)
 TSRs <- system.file("extdata", "yeast_TSRs.RDS", package = "tsrexplorer")
 TSRs <- readRDS(TSRs)
 
+RNAseq <- system.file("extdata", "yeast_RNAseq.RDS",  package = "tsrexplorer")
+RNAseq <- readRDS(RNAseq)
+
 annotation <- system.file("extdata", "yeast_annotation.gtf", package="tsrexplorer")
 assembly <- system.file("extdata", "yeast_assembly.fasta", package="tsrexplorer")
 ```
@@ -281,3 +284,19 @@ ggsave("diff_tsrs_volcano_plot.png", plot = p, device = "png", type = "cairo", h
 ```
 
 ![diff_tsrs_volcano_plot](./inst/images/diff_tsrs_volcano_plot.png)
+
+## TSS Mapping vs RNA-seq
+
+**Add RNA-seq Data**
+
+```
+exp <- add_rna_seq(exp, RNAseq)
+```
+
+**TSS Mapping Count Matrix**
+
+```
+exp <- tss_feature_counts(exp)
+```
+
+
