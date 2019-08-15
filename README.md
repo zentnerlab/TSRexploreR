@@ -292,11 +292,3 @@ ggsave("diff_tsrs_volcano_plot.png", plot = p, device = "png", type = "cairo", h
 ```
 exp <- add_rna_seq(exp, RNAseq)
 ```
-
-**TSS Mapping Count Matrix**
-
-```
-exp <- tss_feature_counts(exp)
-```
-
-
