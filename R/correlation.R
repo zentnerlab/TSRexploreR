@@ -55,9 +55,9 @@ plot_correlation <- function(experiment, data_type = c("tss", "tsr", "rnaseq"), 
 	return(p)
 }
 
-#' Replicate TSS Scatter Plot
+#' Replicate Scatter Plots
 #'
-#' Scatter plots to explore replicate concordance.
+#' Scatter plots to explore replicate concordance of TSSs or TSRs.
 #'
 #' @include tsrexplorer.R
 #'
@@ -67,53 +67,29 @@ plot_correlation <- function(experiment, data_type = c("tss", "tsr", "rnaseq"), 
 #' @param experiment tsrexplorer object with TMM normalized counts
 #' @param sample_1 First sample name to plot
 #' @param sample_2 Second sample name to plot
+#' @param data_type Whether to make scatter plots from TSS or TSR data
 #'
 #' @return ggplot2 object
 #'
 #' @export
-#' @rdname plot_tss_scatter-function
+#' @rdname plot_scatter-function
 
-plot_tss_scatter <- function(experiment, sample_1, sample_2) {
-	p <- ggplot(experiment@normalized_counts$TSSs, aes_string(x=sample_1, y=sample_2)) +
-		geom_point(size=0.25, color="#431352") +
+plot_scatter <- function(experiment, sample_1, sample_2, data_type = c("tss", "tsr")) {
+	
+	## Get data from proper slot.
+	if (data_type == "tss") {
+		normalized_counts <- experiment@normalized_counts$TSSs
+		type_color = "#431352"
+	} else if (data_type == "tsr") {
+		normalized_counts <- experiment@normalized_counts$TSRs
+		type_color = "#34698c"
+	}
+
+	p <- ggplot(normalized_counts, aes_string(x = sample_1, y = sample_2)) +
+		geom_point(size = 0.25, color = type_color) +
 		theme_bw() +
 		scale_fill_viridis_d() +
-		geom_abline(intercept=0, slope=1, lty=2)
+		geom_abline(intercept = 0, slope = 1, lty = 2)
 
 	return(p)
 }
-
-#' Replicate TSR Scatter Plot
-#'
-#' Scatter plots to explore replicate concordance.
-#'
-#' @include tsrexplorer.R
-#'
-#' @import tibble
-#' @import ggplot2
-#'
-#' @param experiment tsrexplorer object with TMM normalized TSR counts
-#' @param sample_1 First sample name to plot
-#' @param sample_2 Second sample name to plot
-#'
-#' @return ggplot2 object
-#'
-#' @export
-#' @rdname plot_tsr_scatter-function
-
-plot_tsr_scatter <- function(experiment, sample_1, sample_2) {
-	## Log2 transform value
-	log2_counts <- experiment@normalized_counts$TSRs %>%
-		mutate_if(is.numeric, ~log2(. + 1))
-
-	## Plot TSR correlation scatter plot
-	p <- ggplot(log2_counts, aes_string(x=sample_1, y=sample_2)) +
-		geom_point(size=0.25, color = "#34698c", fill = "#34698c") +
-		theme_bw() +
-		scale_fill_viridis_d() +
-		geom_abline(intercept=0, slope=1, lty=2)
-
-	return(p)
-}
-
-

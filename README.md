@@ -72,7 +72,7 @@ ggsave("tss_corr.png", plot = p, device = "png", type = "cairo", height = 3.5, w
 **generate tss scatter plots**
 
 ```
-p <- plot_tss_scatter(exp, sample_1 = "S288C_WT_100ng_1", sample_2 = "S288C_WT_100ng_2")
+p <- plot_scatter(exp, sample_1 = "S288C_WT_100ng_1", sample_2 = "S288C_WT_100ng_2", data_type = "tss")
 
 ggsave("tss_scatter.png", plot = p, device = "png", type = "cairo", height = 4, width = 4)
 ```
@@ -192,7 +192,7 @@ ggsave("tsr_corr.png", plot = p, device = "png", type = "cairo", height = 3.5, w
 **TSR scatter plot**
 
 ```
-p <- plot_tsr_scatter(exp, sample_1 = "S288C_WT_100ng_1", sample_2 = "S288C_WT_100ng_2")
+p <- plot_scatter(exp, sample_1 = "S288C_WT_100ng_1", sample_2 = "S288C_WT_100ng_2", data_type = "tsr")
 
 ggsave("tsr_scatter.png", plot = p, device = "png", type = "cairo", height = 4, width = 4)
 ```
