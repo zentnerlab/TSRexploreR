@@ -243,7 +243,7 @@ ggsave("tsr_heatmap.png", plot = p, device = "png", type = "cairo", height = 4, 
 
 ![tsr_heatmap](./inst/images/tsr_heatmap.png)
 
-## Differential TSRs
+### Differential TSRs
 
 (Work in Progress)
 
