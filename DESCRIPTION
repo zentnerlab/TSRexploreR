@@ -31,6 +31,7 @@ Collate:
     'annotate.R'
     'average_plots.R'
     'correlation.R'
+    'diff_expression.R'
     'dinucleotide.R'
     'genomic_distribution.R'
     'heatmaps.R'
