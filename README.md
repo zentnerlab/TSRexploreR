@@ -242,3 +242,26 @@ ggsave("tsr_heatmap.png", plot = p, device = "png", type = "cairo", height = 4, 
 ```
 
 ![tsr_heatmap](./inst/images/tsr_heatmap.png)
+
+## Differential TSRs
+
+(Work in Progress)
+
+```
+edger_model <- fit_edger_model(
+	exp, 
+	samples = c(
+		"S288C_WT_100ng_1",
+		"S288C_WT_100ng_2",
+		"S288C_WT_100ng_3",
+		"S288C_Diamide_100ng_1",
+		"S288C_Diamide_100ng_2",
+		"S288C_Diamide_100ng_3"
+	),
+	groups = c(1, 1, 1, 2, 2, 2)
+)
+
+diff_tsrs <- differential_tsrs(edger_model, comparisons = c(1, 2))
+
+annotated_diff_tsrs <- annotate_differential_tsrs(diff_tsrs, annotation_file = annotation, feature_type = "trasncript")
+```
