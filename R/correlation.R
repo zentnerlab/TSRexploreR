@@ -99,7 +99,7 @@ plot_scatter <- function(experiment, sample_1, sample_2, data_type = c("tss", "t
 	}
 
 	## Log2+1 transform data if indicated.
-	if (log2_transform) {normalized_counts <- mutate_at(normalized_counts, vars(-position), ~log2(. + 1))}
+	if (log2_transform == TRUE) {normalized_counts <- mutate_at(normalized_counts, vars(-position), ~log2(. + 1))}
 
 	## Generate scatter plot.
 	p <- ggplot(normalized_counts, aes_string(x = sample_1, y = sample_2)) +
