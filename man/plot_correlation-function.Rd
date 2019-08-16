@@ -4,13 +4,13 @@
 \alias{plot_correlation}
 \title{Replicate TSS Correlation Matrix}
 \usage{
-plot_correlation(experiment, data_type = c("tss", "tsr", "rnaseq"),
+plot_correlation(experiment, data_type = c("tss", "tsr", "rnaseq_v_tss"),
   corr_metric = c("pearson", "spearman"))
 }
 \arguments{
 \item{experiment}{tsrexplorer object with TMM normalized counts}
 
-\item{data_type}{Whether to create a correlation matrix for TSSs, TSRs, or RNA-seq}
+\item{data_type}{Whether to create a correlation matrix for TSSs, TSRs, or RNA-seq vs TSS Mapping}
 
 \item{corr_metric}{Correlation metric ("pearson", "spearman")}
 }

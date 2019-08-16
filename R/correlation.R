@@ -6,12 +6,12 @@
 #'
 #' @import tibble
 #' @import ggplot2
-#' @importFrom dplyr select mutate rename
+#' @importFrom dplyr select mutate rename left_join
 #' @importFrom tidyr gather
 #' @importFrom magrittr %>%
 #'
 #' @param experiment tsrexplorer object with TMM normalized counts
-#' @param data_type Whether to create a correlation matrix for TSSs, TSRs, or RNA-seq
+#' @param data_type Whether to create a correlation matrix for TSSs, TSRs, or RNA-seq vs TSS Mapping
 #' @param corr_metric Correlation metric ("pearson", "spearman")
 #'
 #' @return ggplot2 object
@@ -19,15 +19,19 @@
 #' @export
 #' @rdname plot_correlation-function
 
-plot_correlation <- function(experiment, data_type = c("tss", "tsr", "rnaseq"), corr_metric=c("pearson", "spearman")) {
+plot_correlation <- function(experiment, data_type = c("tss", "tsr", "rnaseq_v_tss"), corr_metric=c("pearson", "spearman")) {
 
 	## Select data from tsrexplorer object.
 	if (data_type == "tss") {
 		corr_matrix <- experiment@normalized_counts$TSSs
 	} else if (data_type == "tsr") {
 		corr_matrix <- experiment@normalized_counts$TSRs
-	} else if (data_type == "rnaseq") {
-		corr_matrix <- experiment@normalized_counts$RNAseq
+	} else if (data_type == "rnaseq_v_tss") {
+		corr_matrix <- left_join(
+			experiment@normalized_counts$RNAseq_features,
+			experiment@normalized_counts$TSS_features,
+			by = "position"
+		)
 	}
 
 	## Prepare data for plotting.
@@ -76,15 +80,22 @@ plot_correlation <- function(experiment, data_type = c("tss", "tsr", "rnaseq"), 
 #' @export
 #' @rdname plot_scatter-function
 
-plot_scatter <- function(experiment, sample_1, sample_2, data_type = c("tss", "tsr"), log2_transform = FALSE) {
+plot_scatter <- function(experiment, sample_1, sample_2, data_type = c("tss", "tsr", "rnaseq_v_tss"), log2_transform = TRUE) {
 	
 	## Get data from proper slot.
 	if (data_type == "tss") {
 		normalized_counts <- experiment@normalized_counts$TSSs
-		type_color = "#431352"
+		type_color <- "#431352"
 	} else if (data_type == "tsr") {
 		normalized_counts <- experiment@normalized_counts$TSRs
-		type_color = "#34698c"
+		type_color <- "#34698c"
+	} else if (data_type == "rnaseq_v_tss") {
+		normalized_counts <- left_join(
+			experiment@normalized_counts$RNAseq_features,
+			experiment@normalized_counts$TSS_features,
+			by = "position"
+		)
+		type_color <- "#29AF7FFF"
 	}
 
 	## Log2+1 transform data if indicated.

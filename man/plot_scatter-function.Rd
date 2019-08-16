@@ -4,8 +4,8 @@
 \alias{plot_scatter}
 \title{Replicate Scatter Plots}
 \usage{
-plot_scatter(experiment, sample_1, sample_2, data_type = c("tss", "tsr"),
-  log2_transform = FALSE)
+plot_scatter(experiment, sample_1, sample_2, data_type = c("tss", "tsr",
+  "rnaseq_v_tss"), log2_transform = TRUE)
 }
 \arguments{
 \item{experiment}{tsrexplorer object with TMM normalized counts}
