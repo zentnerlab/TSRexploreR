@@ -29,7 +29,8 @@ plot_average <- function(experiment, sample, data_type = c("tss", "tsr"), consid
 		sample_data <- experiment@annotated$TSSs[[sample]]
 		color_type <- "#431352"
 	} else if (data_type == "tsr") {
-		sample_data <- experiment@annotated$TSRs[[sample]]
+		sample_data <- experiment@annotated$TSRs[[sample]] %>%
+			rename(score = nTAGs)
 		color_type <- "#34698c"
 	}
 
