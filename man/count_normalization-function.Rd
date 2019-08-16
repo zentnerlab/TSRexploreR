@@ -4,10 +4,13 @@
 \alias{count_normalization}
 \title{TMM Normalize TSSs or TSRs}
 \usage{
-count_normalization(experiment, data_type = c("tss", "tsr"))
+count_normalization(experiment, data_type = c("tss", "tsr",
+  "tss_features", "rnaseq_features"))
 }
 \arguments{
 \item{experiment}{tsrexplorer object}
+
+\item{data_type}{Whether TSSs, TSRs, TSS feature counts, or RNA-seq feature counts should be normalized}
 }
 \value{
 tibble of TMM normalized read counts
