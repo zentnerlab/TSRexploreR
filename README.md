@@ -78,11 +78,25 @@ ggsave("tss_scatter.png", plot = p, device = "png", type = "cairo", height = 4, 
 ```
 ![tss_scatter_plot](./inst/images/tss_scatter.png)
 
-### TSS Annotation
+### TSS Annotation and Genomic Distribution
+
+**Annotate TSSs**
 
 ```
 exp <- annotate_features(exp, annotation_file = annotation, data_type = "tss", feature_type = "transcript")
 ```
+
+**TSS Genomic Distribution**
+
+```
+tss_distribution <- genomic_distribution(exp, sample = "S288C_WT_100ng_1", data_type = "tss", threshold = 3)
+
+p <- plot_genomic_distribution(tss_distribution)
+
+ggsave("tss_genomic_distribution.png", plot = p, device = "png", type = "cairo", height = 2, width = 5)
+```
+
+![tss_genomic_distribution](./inst/images/tss_genomic_distribution.png)
 
 ### TSS Average Plot and Heatmap
 
