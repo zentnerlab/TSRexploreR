@@ -9,15 +9,15 @@
 #' @param rnaseq_count_matrix Raw counts in count matrix form from RNA-seq data
 #'
 #' @export
-#' @rdname add_rnaseq-function
+#' @rdname add_rnaseq_feature_counts-function
 
-add_rnaseq <- function(experiment, rnaseq_count_matrix) {
+add_rnaseq_feature_counts <- function(experiment, rnaseq_feature_counts) {
 	
 	## Formatting count matrix for integration into tsrexplorer object.
-	rnaseq_count_matrix <- as_tibble(rnaseq_count_matrix, .name_repair = "unique", rownames = "gene_id")
+	rnaseq_feature_counts <- as_tibble(rnaseq_feature_counts, .name_repair = "unique", rownames = "gene_id")
 
 	## Adding RNA-seq count matrix to tsrexplorer object.
-	experiment@raw_counts$RNAseq <- rnaseq_count_matrix
+	experiment@raw_counts$RNAseq_features <- rnaseq_feature_counts
 
 	return(experiment)
 }
@@ -30,15 +30,15 @@ add_rnaseq <- function(experiment, rnaseq_count_matrix) {
 #' @param tss_total_count_matrix Raw counts in count matrix form from TSS mapping data
 #'
 #' @export
-#' @rdname add_tss_total-function
+#' @rdname add_tss_feature_counts-function
 
-add_tss_total <- function(experiment, tss_total_count_matrix) {
+add_tss_feature_counts <- function(experiment, tss_feature_counts) {
 
 	## Formatting count matrix for integration into tsrexplorer object.
-	tss_total_count_matrix <- as_tibble(tss_total_count_matrix, .name_repair = "unique", rownames = "gene_id")
+	tss_feature_counts <- as_tibble(tss_feature_counts, .name_repair = "unique", rownames = "gene_id")
 
 	## Adding TSS total count matrix to tsrexplorer object.
-	experiment@raw_counts$TSSs_total <- tss_total_count_matrix
+	experiment@raw_counts$TSS_features <- tss_feature_counts
 
 	return(experiment)
 }
