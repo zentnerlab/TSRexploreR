@@ -2,20 +2,21 @@
 % Please edit documentation in R/diff_expression.R
 \name{fit_edger_model}
 \alias{fit_edger_model}
-\title{Build edgeR Model of Differential TSRs}
+\title{edgeR Model for DE}
 \usage{
-fit_edger_model(experiment, samples = c(), groups = c())
+fit_edger_model(experiment, data_type = c("tsr", "rnaseq"),
+  samples = c(), groups = c())
 }
 \arguments{
-\item{experiment}{tsrexplorer objet after TMM normalization.}
+\item{experiment}{tsrexplorer object after TMM normalization.}
 
 \item{samples}{Vector of sample names to analyze.}
 
 \item{groups}{Vector of groups in correct factor notation.}
 }
 \value{
-DGEList object of differentially epxressed genes.with fitted DE model.
+DGEList object with fitted model
 }
 \description{
-Find differential TSRs
+Find differential TSRs (TSS mapping) or Genes (RNAseq)
 }

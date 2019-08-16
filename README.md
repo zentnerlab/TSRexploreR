@@ -265,7 +265,8 @@ ggsave("tsr_heatmap.png", plot = p, device = "png", type = "cairo", height = 4, 
 
 ```
 edger_model <- fit_edger_model(
-	exp, 
+	exp,
+	data_type = "tsr", 
 	samples = c(
 		"S288C_WT_100ng_1",
 		"S288C_WT_100ng_2",
@@ -277,19 +278,19 @@ edger_model <- fit_edger_model(
 	groups = c(1, 1, 1, 2, 2, 2)
 )
 
-diff_tsrs <- differential_tsrs(edger_model, comparisons = c(1, 2))
+diff_tsrs <- differential_expression(edger_model, data_type = "tsr", comparisons = c(1, 2))
 ```
 
 **Annotate Differential TSRs**
 
 ```
-annotated_diff_tsrs <- annotate_differential_tsrs(diff_tsrs, annotation_file = annotation, feature_type = "trasncript")
+annotated_diff_tsrs <- annotate_differential_tsrs(diff_tsrs, annotation_file = annotation, feature_type = "transcript")
 ```
 
 **Differential TSRs Volcano Plot**
 
 ```
-p <- differential_tsrs_volcano_plot(diff_tsrs)
+p <- plot_volcano(diff_tsrs)
 
 ggsave("diff_tsrs_volcano_plot.png", plot = p, device = "png", type = "cairo", height = 2, width = 4)
 ```

@@ -1,28 +1,36 @@
 
-#' Build edgeR Model of Differential TSRs
+#' edgeR Model for DE
 #'
-#' Find differential TSRs
+#' Find differential TSRs (TSS mapping) or Genes (RNAseq)
 #'
 #' @import tibble
 #' @importFrom edgeR DGEList filterByExpr calcNormFactors cpm estimateDisp glmQLFit
-#' @importFrom dplyr select_at
+#' @importFrom dplyr select_at rename
 #' @importFrom magrittr %>%
 #'
-#' @param experiment tsrexplorer objet after TMM normalization.
+#' @param experiment tsrexplorer object after TMM normalization.
 #' @param samples Vector of sample names to analyze.
 #' @param groups Vector of groups in correct factor notation.
 #'
-#' @return DGEList object of differentially epxressed genes.with fitted DE model.
+#' @return DGEList object with fitted model
 #'
 #' @export
 #' @rdname fit_edger_model-function
 
-fit_edger_model <- function(experiment, samples = c(), groups = c()) {
+fit_edger_model <- function(experiment, data_type = c("tsr", "rnaseq"), samples = c(), groups = c()) {
+
+	## Grab data from appropraite slot.
+	if (data_type == "tsr") {
+		sample_data <- experiment@raw_counts$TSRs
+	} else if (data_type == "tss") {
+		sample_data <- experiment@raw_counts$RNAseq_features %>%
+			rename(position = gene_id)
+	}
 
 	## Select samples and turn to count matrix.
-	selected_samples <- experiment@raw_counts$TSRs %>%
-		select_at(c("TSR_name", samples)) %>%
-		column_to_rownames("TSR_name") %>%
+	selected_samples <- sample_data %>%
+		select_at(c("position", samples)) %>%
+		column_to_rownames("position") %>%
 		as.matrix
 
 	## Setting sample design.
@@ -46,19 +54,20 @@ fit_edger_model <- function(experiment, samples = c(), groups = c()) {
 #'
 #' @import tibble
 #' @importFrom edgeR glmQLFTest
-#' @importFrom dplyr pull
+#' @importFrom dplyr pull mutate
 #' @importFrom tidyr separate
 #' @importFrom magrittr %>%
 #'
 #' @param fit_edger_model edgeR differential expression model from fit_edger_model
-#' @param comparison Vector of length two of the two groups to find differential TSRs
+#' @param data_type Whether the input was made from TSRs or RNA-seq
+#' @param compare_groups Vector of length two of the two groups to find differential TSRs
 #'
 #' @return tibble of differential TSRs
 #'
 #' @export
-#' @rdname differential_tsrs-function
+#' @rdname differential_expression-function
 
-differential_tsrs <- function(fit_edger_model, comparisons = c()) {
+differential_expression <- function(fit_edger_model, data_type = c("tsr", "rnaseq"), compare_groups = c()) {
 	
 	## Set up contrasts.
 	comparison_contrast <- fit_edger_model$samples %>%
@@ -68,8 +77,8 @@ differential_tsrs <- function(fit_edger_model, comparisons = c()) {
 		length %>%
 		numeric(length = .)
 
-	comparison_contrast[comparisons[1]] <- 1
-	comparison_contrast[comparisons[2]] <- -1
+	comparison_contrast[compare_groups[1]] <- 1
+	comparison_contrast[compare_groups[2]] <- -1
 
 	## Differential expression
 	diff_expression <- glmQLFTest(fit_edger_model, contrast = comparison_contrast)
@@ -77,8 +86,19 @@ differential_tsrs <- function(fit_edger_model, comparisons = c()) {
 	## Prepare tibble for export
 	diff_expression <- diff_expression$table %>%
 		as_tibble(.name_repair = "universal", rownames = "position") %>%
-		separate(position, into = c("chr", "start", "end", "strand"), sep = "_") %>%
-		mutate(FDR = p.adjust(PValue, method = "fdr"))
+		mutate(FDR = p.adjust(PValue, method = "fdr")) %>%
+		rename(log2FC = logFC)
+
+	if (data_type == "tsr") {
+		diff_expression <- separate(
+			diff_expression,
+			position,
+			into = c("chr", "start", "end", "strand"),
+			sep = "_"
+		)
+	} else if (data_type == "rnaseq") {
+		diff_expression <- rename(diff_expression, "gene_id" = position)
+	}
 
 	return(diff_expression)
 }
@@ -126,36 +146,36 @@ annotate_differential_tsrs <- function(
 	return(annotated_diff_tsrs)
 }
 
-#' Differential TSR Volcano Plot
+#' DE Volcano Plot
 #'
-#' Generate volcano plot for differential TSRs
+#' Generate volcano plot for differential TSRs or Genes (RNA-seq)
 #'
 #' @import tibble
 #' @import ggplot2
 #' @importFrom dplyr case_when mutate
 #'
-#' @param differential_tsrs Tibble of differential TSRs from differential_tsrs
+#' @param differential_tsrs Tibble of differential TSRs  or genes (RNA-seq)from differential_expression
 #' @param log2fc_cutoff Log2 fold change cutoff for significance
 #' @param fdr_cutoff FDR value cutoff for significance
 #'
 #' @return ggplot2 object of differential TSRs volcano plot.
 #'
 #' @export
-#' @rdname differential_tsrs_volcano_plot-function
+#' @rdname plot_volcano-function
 
-differential_tsrs_volcano_plot <- function(differential_tsrs, log2fc_cutoff = 1, fdr_cutoff = 0.05) {
+plot_volcano <- function(differential_expression, log2fc_cutoff = 1, fdr_cutoff = 0.05) {
 
 	## Annotate TSRs based on significance cutoff.
-	diff_tsrs <- differential_tsrs %>%
+	diff_expression <- differential_expression %>%
 		mutate(Change = case_when(
-			logFC >= log2fc_cutoff & FDR <= fdr_cutoff ~ "Increased",
-			logFC <= -log2fc_cutoff & FDR <= fdr_cutoff ~ "Decreased",
+			log2FC >= log2fc_cutoff & FDR <= fdr_cutoff ~ "Increased",
+			log2FC <= -log2fc_cutoff & FDR <= fdr_cutoff ~ "Decreased",
 			TRUE ~ "Unchanged"
 		)) %>%
 		mutate(Change = factor(Change, levels = c("Decreased", "Unchanged", "Increased")))
 
 	## Volcano plot of differential TSRs
-	p <- ggplot(diff_tsrs, aes(x = logFC, y = -log10(FDR))) +
+	p <- ggplot(diff_expression, aes(x = log2FC, y = -log10(FDR))) +
 		geom_point(aes(color = Change), size = 0.75) +
 		scale_color_viridis_d() +
 		theme_bw() +
