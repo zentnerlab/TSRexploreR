@@ -1,101 +1,65 @@
 
-#' TSS Average Plots
+#' Average Plots
 #'
-#' Generate average plot of TSSs versus annotated TSSs
-#'
-#' @include tsrexplorer.R
-#' @include annotate.R
+#' Generate average plots of TSSs or TSRs
 #'
 #' @import tibble
 #' @import ggplot2
-#' @importFrom dplyr select filter
+#' @importFrom dplyr select filter between
 #' @importFrom magrittr %>%
 #' @importFrom purrr pmap
 #'
 #' @param experiment tsr_explorer object with annotated TSSs
+#' @param sample Name of sample to make the average plot for
+#' @param data_type Make average plot for TSS or TSR data
+#' @param consider_score Should the TSS or TSR score be considered, or just the unique location.
 #' @param upstream Bases upstream of plot center
-#' @param downstream BZZases downstream of plot center
+#' @param downstream Bases downstream of plot center
 #' @param threshold threshold value for TSSs
 #'
 #' @return ggplot2 object of average plot
 #'
 #' @export
-#' @rdname plot_tss_average-function
+#' @rdname plot_average-function
 
-plot_tss_average <- function(experiment, sample, upstream = 1000, downstream = 1000, threshold = 1) {
-	## Grab info needed for plotting.
-	annotated <- experiment@annotated$TSSs[[sample]] %>%
+plot_average <- function(experiment, sample, data_type = c("tss", "tsr"), consider_score = FALSE, upstream = 1000, downstream = 1000, threshold = 1) {
+
+	## Pull data out of appropriate slot.
+	if (data_type == "tss") {
+		sample_data <- experiment@annotated$TSSs[[sample]]
+		color_type <- "#431352"
+	} else if (data_type == "tsr") {
+		sample_data <- experiment@annotated$TSRs[[sample]]
+		color_type <- "#34698c"
+	}
+
+	## Preliminary preparation of data.
+	sample_data <- sample_data %>%
 		select(distanceToTSS, score) %>%
 		filter(
 			score >= threshold,
 			between(distanceToTSS, -upstream, downstream)
 		)
 
-	## Split out individual TSSs from summed TSSs.
-	annotated <- annotated %>%
-		pmap(., function(distanceToTSS, score) rep(distanceToTSS, score)) %>%
-		unlist %>%
-		enframe(value = "distanceToTSS") %>%
-		select(-name)
+	## Grab info needed for plotting.
+	if (consider_score) {
+		plot_data <- sample_data %>%
+			pmap(., function(distanceToTSS, score) rep(distanceToTSS, score)) %>%
+			unlist %>%
+			enframe(name = NULL, value = "distanceToTSS")
+	} else {
+		plot_data <- select(sample_data, distanceToTSS)
+	}
 
-	## Plot TSS averages.
+	## Plot averages.
 	p <- ggplot(annotated, aes(distanceToTSS)) +
-		geom_density(fill = "#431352", color = "#431352") +
+		geom_density(fill = color_type, color = color_type) +
 		labs(
-			x = "Start Codon",
+			x = "TSS",
 			y = "Density",
 			title = sample
 		) +
 		theme_bw()
-
-	return(p)
-}
-
-#' TSR Average Plots
-#'
-#' Generate average plot of TSRs versus annotated TSSs
-#'
-#' @include tsrexplorer.R
-#' @include annotate.R
-#'
-#' @import tibble
-#' @import ggplot2
-#' @importFrom dplyr select filter
-#' @importFrom magrittr %>%
-#' @importFrom purrr pmap
-#'
-#' @param experiment tsr_explorer object with annotated TSRs
-#' @param upstream Bases upstream of plot center
-#' @param downstream Bases downstream of plot center
-#'
-#' @return ggplot2 object of average plot
-#'
-#' @export
-#' @rdname plot_tsr_average-function
-
-plot_tsr_average <- function(experiment, sample, upstream = 1000, downstream = 1000) {
-	## Grab info needed for plotting.
-	annotated <- experiment@annotated$TSRs[[sample]] %>%
-		rename(score = nTAGs) %>%
-		select(distanceToTSS, score) %>%
-		filter(between(distanceToTSS, -upstream, downstream))
-
-	## Split out individual TSRs from summed TSSs.
-	annotated <- annotated %>%
-		pmap(., function(distanceToTSS, score) rep(distanceToTSS, score)) %>%
-		unlist %>%
-		enframe(value = "distanceToTSS") %>%
-		select(-name)
-
-	## Plot TSS averages.
-	p <- ggplot(annotated, aes(distanceToTSS)) +
-		geom_density(color = "#34698c", fill = "#34698c") +
-		labs(
-			x = "Start Codon",
-			y = "Density",
-			title = sample
-		) +
-	theme_bw()
 
 	return(p)
 }

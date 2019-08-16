@@ -28,8 +28,8 @@ Imports:
 RoxygenNote: 6.1.1
 Collate: 
     'annotate.R'
-    'tsrexplorer.R'
     'average_plots.R'
+    'tsrexplorer.R'
     'correlation.R'
     'diff_expression.R'
     'dinucleotide.R'

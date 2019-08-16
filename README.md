@@ -103,7 +103,7 @@ ggsave("tss_genomic_distribution.png", plot = p, device = "png", type = "cairo",
 **TSS average plot**
 
 ```
-p <- plot_tss_average(exp, sample = "S288C_WT_100ng_1", threshold = 3)
+p <- plot_average(exp, sample = "S288C_WT_100ng_1", data_type = "tss", threshold = 3)
 
 ggsave("tss_average_plot.png", plot = p, device = "png", type = "cairo", height = 4, width = 4)
 ```
@@ -238,7 +238,7 @@ ggsave("tsr_genomic_distribution.png", plot = p, device = "png", type = "cairo",
 **TSR Average Plot**
 
 ```
-p <- plot_tsr_average(exp, sample = "S288C_WT_100ng_1")
+p <- plot_average(exp, sample = "S288C_WT_100ng_1", data_type = "tsr")
 
 ggsave("tsr_average_plot.png", plot = p, device = "png", type = "cairo", height = 4, width = 4)
 ```
