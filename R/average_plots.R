@@ -52,7 +52,7 @@ plot_average <- function(experiment, sample, data_type = c("tss", "tsr"), consid
 	}
 
 	## Plot averages.
-	p <- ggplot(annotated, aes(distanceToTSS)) +
+	p <- ggplot(plot_data, aes(distanceToTSS)) +
 		geom_density(fill = color_type, color = color_type) +
 		labs(
 			x = "TSS",
