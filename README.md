@@ -210,9 +210,9 @@ exp <- annotate_features(exp, annotation_file = annotation, data_type = "tsr", f
 **TSR Genomic Distribution**
 
 ```
-tsr_distribution <- tsr_genomic_distribution(exp, sample = "S288C_WT_100ng_1")
+tsr_distribution <- genomic_distribution(exp, sample = "S288C_WT_100ng_1", data_type = "tsr")
 
-p <- plot_tsr_genomic_distribution(tsr_distribution)
+p <- plot_genomic_distribution(tsr_distribution)
 
 ggsave("tsr_genomic_distribution.png", plot = p, device = "png", type = "cairo", height = 2, width = 5)
 ```
