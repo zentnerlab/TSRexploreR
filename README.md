@@ -64,9 +64,10 @@ exp <- count_normalization(exp, data_type = "tss")
 
 ```
 p <- plot_correlation(exp, data_type = "tss") +
+	theme_bw() +
 	theme(text = element_text(size = 6))
 
-ggsave("tss_correlation.png", plot = p, device = "png", type = "cairo", height = 3, width = 3)
+ggsave("tss_correlation.png", plot = p, device = "png", type = "cairo", height = 2, width = 2)
 ```
 ![tss_corr_plot](./inst/images/tss_correlation.png)
 
@@ -191,9 +192,10 @@ exp <- count_normalization(exp, data_type = "tsr")
 
 ```
 p <- plot_correlation(exp, data_type = "tsr") +
+	theme_bw() +
 	theme(text = element_text(size = 6))
 
-ggsave("tsr_correlation.png", plot = p, device = "png", type = "cairo", height = 3, width = 3)
+ggsave("tsr_correlation.png", plot = p, device = "png", type = "cairo", height = 2, width = 2)
 ```
 
 ![tsr_correlation](./inst/images/tsr_correlation.png)
@@ -324,7 +326,7 @@ p <- plot_correlation(exp, data_type = "rnaseq_v_tss", correlation_metric = "spe
 	theme_bw() +
 	theme(text = element_text(size = 6))
 
-ggsave("rnaseq_correlation.png", plot = p, device = "png", type = "cairo", height = 4, width = 4)
+ggsave("rnaseq_correlation.png", plot = p, device = "png", type = "cairo", height = 4.5, width = 4.5)
 ```
 
 ![rnaseq_tss_corr](./inst/images/rnaseq_correlation.png)

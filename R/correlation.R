@@ -63,7 +63,7 @@ plot_correlation <- function(experiment, data_type = c("tss", "tsr", "rnaseq_v_t
 		sample_1 <- pre_transformed[ ,as.character(mapping$x)[2]]
 		sample_2 <- pre_transformed[ ,as.character(mapping$y)[2]]
 
-		correlation <- cor(sample_1, sample_2, method = "pearson") %>%
+		correlation <- cor(sample_1, sample_2, method = correlation_metric) %>%
 			round(3) %>%
 			as_tibble(name_repair = "unique", rownames = "sample_1") %>%
 			gather(key = "sample_2", value = "correlation", -sample_1)
