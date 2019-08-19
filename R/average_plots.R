@@ -68,7 +68,6 @@ plot_average <- function(experiment, data_type = c("tss", "tsr"), samples = "all
 			y = "Density"
 		) +
 		theme_bw() +
-		geom_vline(xintercept = 0, lty = 2) +
 		facet_wrap(~ samples)
 
 	return(p)
