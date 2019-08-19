@@ -4,15 +4,15 @@
 \alias{genomic_distribution}
 \title{Genomic Distribution}
 \usage{
-genomic_distribution(experiment, sample, data_type = c("tss", "tsr"),
-  threshold = 1)
+genomic_distribution(experiment, data_type = c("tss", "tsr"),
+  samples = "all", threshold = 1)
 }
 \arguments{
 \item{experiment}{tsrexplorer object with annotated TSRs}
 
-\item{sample}{Name of sample to analyze}
-
 \item{data_type}{Whether to get distribution of TSSs or TSRs}
+
+\item{samples}{Either "all" or vector of sample names}
 
 \item{threshold}{Filter out TSSs or TSRs under a certain read count number}
 }

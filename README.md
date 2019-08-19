@@ -89,11 +89,12 @@ exp <- annotate_features(exp, annotation_file = annotation, data_type = "tss", f
 **TSS Genomic Distribution**
 
 ```
-tss_distribution <- genomic_distribution(exp, sample = "S288C_WT_100ng_1", data_type = "tss", threshold = 3)
+tss_distribution <- genomic_distribution(exp, data_type = "tss", threshold = 3)
 
-p <- plot_genomic_distribution(tss_distribution)
+p <- plot_genomic_distribution(tss_distribution) +
+	theme(text = element_text(size = 6))
 
-ggsave("tss_genomic_distribution.png", plot = p, device = "png", type = "cairo", height = 2, width = 5)
+ggsave("tss_genomic_distribution.png", plot = p, device = "png", type = "cairo", height = 1.5, width = 4)
 ```
 
 ![tss_genomic_distribution](./inst/images/tss_genomic_distribution.png)
@@ -106,7 +107,7 @@ ggsave("tss_genomic_distribution.png", plot = p, device = "png", type = "cairo",
 p <- plot_average(exp, data_type = "tss", threshold = 3, ncol = 3) +
 	theme(text = element_text(size = 6))
 
-ggsave("tss_average_plot.png", plot = p, device = "png", type = "cairo", height = 1.5, width = 4)
+ggsave("tss_average_plot.png", plot = p, device = "png", type = "cairo", height = 0.5, width = 4)
 ```
 
 ![tss_average_plot](./inst/images/tss_average_plot.png)

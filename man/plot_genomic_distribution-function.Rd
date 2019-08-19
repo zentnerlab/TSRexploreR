@@ -4,10 +4,12 @@
 \alias{plot_genomic_distribution}
 \title{Plot Genomic Distribution}
 \usage{
-plot_genomic_distribution(genomic_distribution)
+plot_genomic_distribution(genomic_distribution, ncol = 1)
 }
 \arguments{
 \item{genomic_distribution}{tibble of TSS or TSR genomic distributions from tsr_genomic_distribution}
+
+\item{ncol}{Number of columns when plotting}
 }
 \value{
 ggplot2 object with TSS or TSR genomic distribution plot
