@@ -3,7 +3,7 @@
 #'
 #' @import tibble
 #' @import ggplot2
-#' @importFrom dplyr mutate_at
+#' @importFrom dplyr mutate_at left_join
 #' @importFrom purrr discard
 #' @importFrom tidyr gather
 #' @importFrom GGally ggpairs
@@ -100,8 +100,6 @@ plot_correlation <- function(experiment, data_type = c("tss", "tsr", "rnaseq_v_t
 			lower = list(continuous = custom_scatter)
 		)
 	}
-
-	p <- p + theme_bw()
 
 	return(p)
 }

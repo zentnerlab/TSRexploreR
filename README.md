@@ -317,22 +317,14 @@ exp <- add_tss_feature_counts(exp, TSSs_total)
 exp <- count_normalization(exp, data_type = "tss_features")
 ```
 
-**RNA-seq Versus TSS Correlation Heatmap**
+**RNA-seq Versus TSS Correlation Heatmap and Scatter Plot**
 
 ```
-p <- plot_correlation(exp, data_type = "rnaseq_v_tss", corr_metric = "spearman")
+p <- plot_correlation(exp, data_type = "rnaseq_v_tss", correlation_metric = "spearman") +
+	theme_bw() +
+	theme(text = element_text(size = 6))
 
-ggsave("rnaseq_correlation.png", plot = p, device = "png", type = "cairo", height = 3.5, width = 5)
+ggsave("rnaseq_correlation.png", plot = p, device = "png", type = "cairo", height = 4, width = 4)
 ```
 
 ![rnaseq_tss_corr](./inst/images/rnaseq_correlation.png)
-
-**RNA-seq Versus TSS Scatter Plot**
-
-```
-p <- plot_scatter(exp, sample_1 = "S288C_WT_RNAseq_1", sample_2 = "S288C_WT_100ng_1", data_type = "rnaseq_v_tss")
-
-ggsave("rnaseq_scatter.png", plot = p, device = "png", type = "cairo", height = 4, width = 4)
-```
-
-![rnaseq_v_tss_scatter](./inst/images/rnaseq_scatter.png)
