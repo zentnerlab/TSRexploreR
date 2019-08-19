@@ -187,25 +187,16 @@ ggsave("max_utr.png", plot = p, device = "png", type = "cairo", height = 4, widt
 exp <- count_normalization(exp, data_type = "tsr")
 ```
 
-**TSR correlation matrix**
+**TSR correlation heatmap and scatter plot**
 
 ```
-p <- plot_correlation(experiment, data_type = "tsr", corr_metric = "pearson")
+p <- plot_correlation(exp, data_type = "tsr") +
+	theme(text = element_text(size = 6))
 
-ggsave("tsr_corr.png", plot = p, device = "png", type = "cairo", height = 3.5, width = 5)
+ggsave("tsr_correlation.png", plot = p, device = "png", type = "cairo", height = 3, width = 3)
 ```
 
-![tsr_correlation](./inst/images/tsr_corr.png)
-
-**TSR scatter plot**
-
-```
-p <- plot_scatter(exp, sample_1 = "S288C_WT_100ng_1", sample_2 = "S288C_WT_100ng_2", data_type = "tsr")
-
-ggsave("tsr_scatter.png", plot = p, device = "png", type = "cairo", height = 4, width = 4)
-```
-
-![tsr_scatter](./inst/images/tsr_scatter.png)
+![tsr_correlation](./inst/images/tsr_correlation.png)
 
 ### TSR Metric Plots
 
