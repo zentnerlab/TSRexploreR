@@ -68,7 +68,7 @@ plot_average <- function(experiment, data_type = c("tss", "tsr"), samples = "all
 			y = "Density"
 		) +
 		theme_bw() +
-		facet_wrap(~ samples)
+		facet_wrap(~ samples, ncol = ncol)
 
 	return(p)
 }
