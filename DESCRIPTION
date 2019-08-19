@@ -24,14 +24,15 @@ Imports:
     GenomicFeatures,
     Biostrings,
     ChIPseeker,
-    edgeR
+    edgeR,
+    GGally
 RoxygenNote: 6.1.1
 Collate: 
     'annotate.R'
     'average_plots.R'
-    'tsrexplorer.R'
     'correlation.R'
     'diff_expression.R'
+    'tsrexplorer.R'
     'dinucleotide.R'
     'genomic_distribution.R'
     'heatmaps.R'

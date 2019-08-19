@@ -60,23 +60,15 @@ exp <- tsr_explorer(TSSs, TSRs)
 exp <- count_normalization(exp, data_type = "tss")
 ```
 
-**tss correlation matrix**
+**tss correlation heatmaps and scatter plots**
 
 ```
-p <- plot_correlation(exp, data_type = "tss", corr_metric = "pearson")
+p <- plot_correlation(exp, data_type = "tss") +
+	theme(text = element_text(size = 6))
 
-ggsave("tss_corr.png", plot = p, device = "png", type = "cairo", height = 3.5, width = 5)
+ggsave("tss_correlation.png", plot = p, device = "png", type = "cairo", height = 3, width = 3)
 ```
-![tss_corr_plot](./inst/images/tss_corr.png)
-
-**generate tss scatter plots**
-
-```
-p <- plot_scatter(exp, sample_1 = "S288C_WT_100ng_1", sample_2 = "S288C_WT_100ng_2", data_type = "tss")
-
-ggsave("tss_scatter.png", plot = p, device = "png", type = "cairo", height = 4, width = 4)
-```
-![tss_scatter_plot](./inst/images/tss_scatter.png)
+![tss_corr_plot](./inst/images/tss_correlation.png)
 
 ### TSS Annotation and Genomic Distribution
 

@@ -2,21 +2,28 @@
 % Please edit documentation in R/correlation.R
 \name{plot_correlation}
 \alias{plot_correlation}
-\title{Replicate TSS Correlation Matrix}
+\title{heatmaps and/or scatter plots to explore replicate concordance of TSSs or TSRs.}
 \usage{
 plot_correlation(experiment, data_type = c("tss", "tsr", "rnaseq_v_tss"),
-  corr_metric = c("pearson", "spearman"))
+  correlation_plot = "combined", correlation_metric = "pearson",
+  samples = "all", log2_transform = TRUE)
 }
 \arguments{
 \item{experiment}{tsrexplorer object with TMM normalized counts}
 
-\item{data_type}{Whether to create a correlation matrix for TSSs, TSRs, or RNA-seq vs TSS Mapping}
+\item{data_type}{Whether to make scatter plots from TSS or TSR data}
 
-\item{corr_metric}{Correlation metric ("pearson", "spearman")}
+\item{correlation_plot}{Whether to make a correlation 'heatmap', 'scatter', or 'combined'}
+
+\item{correlation_metric}{Use either spearman or pearson correlation}
+
+\item{samples}{Either "all" or vector of samples to plot}
+
+\item{log2}{Should the TMM values be log2+1 transformed prior to plotting?}
 }
 \value{
 ggplot2 object
 }
 \description{
-Correlation matrix to explore replicate concordance.
+heatmaps and/or scatter plots to explore replicate concordance of TSSs or TSRs.
 }
