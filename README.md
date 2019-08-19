@@ -67,7 +67,7 @@ p <- plot_correlation(exp, data_type = "tss") +
 	theme_bw() +
 	theme(text = element_text(size = 6))
 
-ggsave("tss_correlation.png", plot = p, device = "png", type = "cairo", height = 2, width = 2)
+ggsave("tss_correlation.png", plot = p, device = "png", type = "cairo", height = 3, width = 3)
 ```
 ![tss_corr_plot](./inst/images/tss_correlation.png)
 
@@ -195,7 +195,7 @@ p <- plot_correlation(exp, data_type = "tsr") +
 	theme_bw() +
 	theme(text = element_text(size = 6))
 
-ggsave("tsr_correlation.png", plot = p, device = "png", type = "cairo", height = 2, width = 2)
+ggsave("tsr_correlation.png", plot = p, device = "png", type = "cairo", height = 3, width = 3)
 ```
 
 ![tsr_correlation](./inst/images/tsr_correlation.png)
