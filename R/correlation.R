@@ -101,5 +101,7 @@ plot_correlation <- function(experiment, data_type = c("tss", "tsr", "rnaseq_v_t
 		)
 	}
 
+	p <- p + theme_bw()
+
 	return(p)
 }
