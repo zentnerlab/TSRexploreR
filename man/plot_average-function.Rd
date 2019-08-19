@@ -4,16 +4,16 @@
 \alias{plot_average}
 \title{Average Plots}
 \usage{
-plot_average(experiment, sample, data_type = c("tss", "tsr"),
+plot_average(experiment, data_type = c("tss", "tsr"), samples = "all",
   consider_score = FALSE, upstream = 1000, downstream = 1000,
-  threshold = 1)
+  threshold = 1, ncol = 1)
 }
 \arguments{
 \item{experiment}{tsr_explorer object with annotated TSSs}
 
-\item{sample}{Name of sample to make the average plot for}
-
 \item{data_type}{Make average plot for TSS or TSR data}
+
+\item{samples}{Either 'all' to plot all samples, or a vector of sample names}
 
 \item{consider_score}{Should the TSS or TSR score be considered, or just the unique location.}
 
@@ -22,6 +22,8 @@ plot_average(experiment, sample, data_type = c("tss", "tsr"),
 \item{downstream}{Bases downstream of plot center}
 
 \item{threshold}{threshold value for TSSs}
+
+\item{ncol}{Number of columns to use when plotting data}
 }
 \value{
 ggplot2 object of average plot

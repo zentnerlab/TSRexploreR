@@ -103,9 +103,10 @@ ggsave("tss_genomic_distribution.png", plot = p, device = "png", type = "cairo",
 **TSS average plot**
 
 ```
-p <- plot_average(exp, sample = "S288C_WT_100ng_1", data_type = "tss", threshold = 3)
+p <- plot_average(exp, data_type = "tss", threshold = 3, ncol = 3) +
+	theme(text = element_text(size = 6))
 
-ggsave("tss_average_plot.png", plot = p, device = "png", type = "cairo", height = 4, width = 4)
+ggsave("tss_average_plot.png", plot = p, device = "png", type = "cairo", height = 1.5, width = 4)
 ```
 
 ![tss_average_plot](./inst/images/tss_average_plot.png)
