@@ -255,9 +255,10 @@ ggsave("tsr_genomic_distribution.png", plot = p, device = "png", type = "cairo",
 **TSR Average Plot**
 
 ```
-p <- plot_average(exp, sample = "S288C_WT_100ng_1", data_type = "tsr")
+p <- plot_average(exp, data_type = "tsr", ncol = 3) +
+	theme(text = element_text(size = 6))
 
-ggsave("tsr_average_plot.png", plot = p, device = "png", type = "cairo", height = 4, width = 4)
+ggsave("tsr_average_plot.png", plot = p, device = "png", type = "cairo", height = 1.5, width = 4)
 ```
 
 ![tsr_average_plot](./inst/images/tsr_average_plot.png)
