@@ -213,6 +213,22 @@ ggsave("tsr_scatter.png", plot = p, device = "png", type = "cairo", height = 4, 
 
 ![tsr_scatter](./inst/images/tsr_scatter.png)
 
+### TSR Metric Plots
+
+**Plot Selected TSR Metric**
+
+The GRanges object with TSRs originally added to the TSR object is allowed to have additional columns.
+Information about the TSRs can be contained within these columns, such as TSR width, number of unique TSSs, etc.
+You can make a density plot of any of these additional columns by specifying the name of the column containing that metric.
+
+```
+# Example plots uses the 'nTAGs' column, which is just the total number of reads in the TSR.
+p <- plot_tsr_metric(exp, sample = "S288C_WT_100ng_1", metric = "nTAGs", log2_transform = TRUE, xlims = c(0,10))
+
+ggsave("tsr_strength.png", plot = p, device = "png", type = "cairo", width = 4, height = 4)
+```
+![tsr_strength](./inst/images/tsr_strength.png)
+
 ### TSR Annotation and Genomic Distribution
 
 **TSR Annotation**

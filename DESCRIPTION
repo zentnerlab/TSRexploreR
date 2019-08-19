@@ -39,3 +39,4 @@ Collate:
     'motif.R'
     'normalize.R'
     'rnaseq.R'
+    'tsr_plots.R'
