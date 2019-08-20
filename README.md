@@ -209,12 +209,12 @@ Information about the TSRs can be contained within these columns, such as TSR wi
 You can make a density plot of any of these additional columns by specifying the name of the column containing that metric.
 
 ```
-# Example plots uses the 'nTAGs' column, which is just the total number of reads in the TSR.
-p <- plot_tsr_metric(exp, sample = "S288C_WT_100ng_1", metric = "nTAGs", log2_transform = TRUE, xlims = c(0,10))
+p <- plot_tsr_metric(exp, tsr_metrics = c("nTAGs", "nTSSs"), log2_transform = TRUE, ncol = 2) +
+	theme(text = element_text(size = 6))
 
-ggsave("tsr_strength.png", plot = p, device = "png", type = "cairo", width = 4, height = 4)
+ggsave("tsr_metrics.png", plot = p, device = "png", type = "cairo", width = 4, height = 2)
 ```
-![tsr_strength](./inst/images/tsr_strength.png)
+![tsr_metrics](./inst/images/tsr_metrics.png)
 
 ### TSR Annotation and Genomic Distribution
 

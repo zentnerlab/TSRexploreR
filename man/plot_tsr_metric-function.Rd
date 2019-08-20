@@ -4,19 +4,21 @@
 \alias{plot_tsr_metric}
 \title{Plot TSR Stats}
 \usage{
-plot_tsr_metric(experiment, sample, metric, log2_transform = FALSE,
-  xlims = c())
+plot_tsr_metric(experiment, tsr_metrics, samples = "all",
+  log2_transform = FALSE, ncol = 1)
 }
 \arguments{
 \item{experiment}{tsrexplorer object with TSR granges}
 
+\item{samples}{Either 'all' or a vector of sample names to analyze}
+
+\item{log2_transform}{Whether the metric should be log2 transformed prior to plotting}
+
+\item{ncol}{Number of columns to plot data}
+
 \item{sample}{Name of sample to return plot for}
 
-\item{metric}{Name of metric in tsrexplorer TSR granges to plot}
-
-\item{log2_transform}{Whether the metric should be log2+1 transformed prior to plotting}
-
-\item{xlims}{Vector of values specifying the upper and lower limits of the x-axis}
+\item{tsr_metric}{Names of metrics in tsrexplorer TSR granges to plot}
 }
 \value{
 ggplot2 object with tsr metrix plotted
