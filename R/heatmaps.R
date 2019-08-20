@@ -146,7 +146,7 @@ plot_tss_heatmap <- function(tss_heatmap_matrix, max_value=5) {
 #' @export
 #' @rdname tsr_heatmap_matrix-function
 
-tsr_count_matrix <- function(
+tsr_heatmap_matrix <- function(
 	experiment, sample,
 	upstream = 1000, downstream = 1000,
 	feature_type = c("transcriptId", "geneId")

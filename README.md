@@ -256,9 +256,10 @@ ggsave("tsr_average_plot.png", plot = p, device = "png", type = "cairo", height 
 ```
 counts <- tsr_heatmap_matrix(exp, sample = "S288C_WT_100ng_1", feature_type = "transcriptId")
 
-p <- plot_tsr_heatmap(counts)
+p <- plot_tsr_heatmap(counts) +
+	theme(text = element_text(size = 6))
 
-ggsave("tsr_heatmap.png", plot = p, device = "png", type = "cairo", height = 4, width = 3)
+ggsave("tsr_heatmap.png", plot = p, device = "png", type = "cairo", height = 2, width = 2.5)
 ```
 
 ![tsr_heatmap](./inst/images/tsr_heatmap.png)
