@@ -145,11 +145,12 @@ ggsave("tss_seq_colormap.png", plot = p, device = "png", type = "cairo", height 
 **TSS dinucleotide frequencies**
 
 ```
-frequencies <- dinucleotide_frequencies(exp, sample = "S288C_WT_100ng_1", genome_assembly = assembly, threshold = 3)
+frequencies <- dinucleotide_frequencies(exp, genome_assembly = assembly, threshold = 3)
 
-p <- plot_dinucleotide_frequencies(frequencies)
+p <- plot_dinucleotide_frequencies(frequencies, ncol = 3) +
+	theme(text = element_text(size = 6))
 
-ggsave("tss_dinucleotide_frequencies.png", plot = p, device = "png", type = "cairo", height = 3, width = 4)
+ggsave("tss_dinucleotide_frequencies.png", plot = p, device = "png", type = "cairo", height = 2, width = 5)
 ```
 
 ![tss_dinucelotide_frequencies](./inst/images/tss_dinucleotide_frequencies.png)

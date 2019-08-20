@@ -4,15 +4,15 @@
 \alias{dinucleotide_frequencies}
 \title{Dinucleotide Analysis}
 \usage{
-dinucleotide_frequencies(experiment, sample, genome_assembly,
+dinucleotide_frequencies(experiment, genome_assembly, samples = "all",
   threshold = 1)
 }
 \arguments{
 \item{experiment}{tsrexplorer object with TSS GRanges}
 
-\item{sample}{Name of sample to analyze}
-
 \item{genome_assembly}{fasta file of genome assembly}
+
+\item{samples}{Either 'all' or vector of sample names to analyze}
 
 \item{threshold}{TSS read threshold}
 }
