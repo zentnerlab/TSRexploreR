@@ -93,6 +93,19 @@ ggsave("tss_genomic_distribution.png", plot = p, device = "png", type = "cairo",
 
 ![tss_genomic_distribution](./inst/images/tss_genomic_distribution.png)
 
+It is also possible to plot genomic distribution based on the quantile of the TSS score.
+
+```
+tss_distribution <- genomic_distribution(exp, data_type = "tss", threshold = 3, quantiles = 5)
+
+p <- plot_genomic_distribution(genomic_dist) +
+	theme(text = element_text(size = 6))
+
+ggsave("tss_genomic_distribution_quantiles.png", plot = p, device = "png", type = "cairo", height = 4, width = 4)
+```
+
+![tss_genomic_distribution_quantiles](./inst/images/tss_genomic_distribution_quantiles.png)
+
 ### TSS Average Plot and Heatmap
 
 **TSS average plot**
