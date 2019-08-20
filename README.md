@@ -119,6 +119,17 @@ ggsave("tss_average_plot.png", plot = p, device = "png", type = "cairo", height 
 
 ![tss_average_plot](./inst/images/tss_average_plot.png)
 
+You can also plot TSS average plots broken down by TSS quantile
+
+```
+p <- plot_average(exp, data_type = "tss", threshold = 3, quantiles = 5) +
+	theme(text = element_text(size = 5))
+
+ggsave("tss_average_plot_quantiles.png", plot = p, device = "png", type = "cairo", height = 2.5, width = 3.5)
+```
+
+![tss_average_plot_quantiles](./inst/images/tss_average_plot_quantiles.png)
+
 **TSS heatmap**
 
 ```

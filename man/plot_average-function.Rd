@@ -6,7 +6,7 @@
 \usage{
 plot_average(experiment, data_type = c("tss", "tsr"), samples = "all",
   consider_score = FALSE, upstream = 1000, downstream = 1000,
-  threshold = 1, ncol = 1)
+  threshold = 1, ncol = 1, quantiles = 1)
 }
 \arguments{
 \item{experiment}{tsr_explorer object with annotated TSSs}
@@ -23,7 +23,9 @@ plot_average(experiment, data_type = c("tss", "tsr"), samples = "all",
 
 \item{threshold}{threshold value for TSSs}
 
-\item{ncol}{Number of columns to use when plotting data}
+\item{ncol}{Number of columns to use when plotting data when quantiles not set}
+
+\item{quantiles}{Number of quantiles to split data into}
 }
 \value{
 ggplot2 object of average plot

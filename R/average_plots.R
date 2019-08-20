@@ -5,7 +5,7 @@
 #'
 #' @import tibble
 #' @import ggplot2
-#' @importFrom dplyr select filter between bind_rows
+#' @importFrom dplyr select filter between bind_rows ntile group_by ungroup
 #' @importFrom magrittr %>%
 #' @importFrom purrr pmap map
 #'
@@ -16,14 +16,25 @@
 #' @param upstream Bases upstream of plot center
 #' @param downstream Bases downstream of plot center
 #' @param threshold threshold value for TSSs
-#' @param ncol Number of columns to use when plotting data
+#' @param ncol Number of columns to use when plotting data when quantiles not set
+#' @param quantiles Number of quantiles to split data into
 #'
 #' @return ggplot2 object of average plot
 #'
 #' @export
 #' @rdname plot_average-function
 
-plot_average <- function(experiment, data_type = c("tss", "tsr"), samples = "all", consider_score = FALSE, upstream = 1000, downstream = 1000, threshold = 1, ncol = 1) {
+plot_average <- function(
+	experiment,
+	data_type = c("tss", "tsr"),
+	samples = "all",
+	consider_score = FALSE,
+	upstream = 1000,
+	downstream = 1000,
+	threshold = 1,
+	ncol = 1,
+	quantiles = 1
+) {
 
 	## Pull data out of appropriate slot.
 	if (data_type == "tss") {
@@ -47,28 +58,39 @@ plot_average <- function(experiment, data_type = c("tss", "tsr"), samples = "all
 			between(distanceToTSS, -upstream, downstream)
 		)
 
+	## Add quantile info if requested.
+	sample_data <- sample_data %>%
+		group_by(samples, distanceToTSS) %>%
+		mutate(ntile = ntile(score, quantiles)) %>%
+		ungroup
+
 	## Grab info needed for plotting.
 	if (consider_score) {
-		plot_data <- sample_data %>%
-			split(.$samples) %>%
-			map(., ~pmap(., function(distanceToTSS, score, samples) rep(distanceToTSS, score)) %>%
+		sample_data <- sample_data %>%
+			mutate(samples_ntile = paste0(samples, "_:_", ntile)) %>%
+			select(-samples, -ntile) %>%
+			split(.$samples_ntile) %>%
+			map(., ~pmap(., function(distanceToTSS, score, samples_ntile) rep(distanceToTSS, score)) %>%
 					unlist %>%
 					enframe(name = NULL, value = "distanceToTSS")
 			) %>%
-			bind_rows(.id = "samples")
-	} else {
-		plot_data <- select(sample_data, samples, distanceToTSS)
+			bind_rows(.id = "samples") %>%
+			separate(samples, into = c("samples", "ntile"), sep = "_:_")
 	}
 
 	## Plot averages.
-	p <- ggplot(plot_data, aes(distanceToTSS)) +
+	p <- ggplot(sample_data, aes(distanceToTSS)) +
 		geom_density(fill = color_type, color = color_type) +
 		labs(
 			x = "Position Relative to Annotated TSS",
 			y = "Density"
 		) +
-		theme_bw() +
-		facet_wrap(~ samples, ncol = ncol)
+		theme_bw()
 
+	if (quantiles > 1) {
+		p <- p + facet_grid(ntile ~ samples)
+	} else {
+		p <- p + facet_wrap(~ samples, ncol = ncol)
+	}
 	return(p)
 }
