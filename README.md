@@ -126,9 +126,10 @@ ggsave("tss_heatmap.png", plot = p, device = "png", type = "cairo", height = 2, 
 ```
 seqs <- tss_sequences(exp, sample = "S288C_WT_100ng_1", genome_assembly = assembly, threshold = 3)
 
-p <- plot_sequence_logo(seqs)
+p <- plot_sequence_logo(seqs) +
+	theme(text = element_text(size = 6))
 
-ggsave("tss_seq_logo.png", plot = p, device = "png", type = "cairo", height = 1.5, width = 4)
+ggsave("tss_seq_logo.png", plot = p, device = "png", type = "cairo", height = 1, width = 3)
 
 ```
 
