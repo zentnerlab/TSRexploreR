@@ -138,9 +138,10 @@ ggsave("tss_seq_logo.png", plot = p, device = "png", type = "cairo", height = 1,
 **TSS base color map**
 
 ```
-p <- plot_sequence_colormap(seqs)
+p <- plot_sequence_colormap(seqs) +
+	theme(text = element_text(size = 6))
 
-ggsave("tss_seq_colormap.png", plot = p, device = "png", type = "cairo", height = 4, width = 4)
+ggsave("tss_seq_colormap.png", plot = p, device = "png", type = "cairo", height = 2.5, width = 2.5)
 ```
 ![tss_sequence_colormap](./inst/images/tss_seq_colormap.png)
 
