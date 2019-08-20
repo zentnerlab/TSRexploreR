@@ -108,11 +108,12 @@ ggsave("tss_average_plot.png", plot = p, device = "png", type = "cairo", height 
 **TSS heatmap**
 
 ```
-count_matrix <- tss_heatmap_matrix(exp, sample = "S288C_WT_100ng_1", threshold = 3, anno_type = "geneId")
+count_matrix <- tss_heatmap_matrix(exp, sample = "S288C_WT_100ng_1", threshold = 3, anno_type = "geneId", upstream = 250, downstream = 250)
 
-p <- plot_tss_heatmap(count_matrix)
+p <- plot_tss_heatmap(count_matrix) +
+	theme(text = element_text(size = 6))
 
-ggsave("tss_heatmap.png", plot = p, device = "png", type = "cairo", height = 4, width = 3)
+ggsave("tss_heatmap.png", plot = p, device = "png", type = "cairo", height = 2, width = 2.5)
 ```
 
 ![tss_heatmap](./inst/images/tss_heatmap.png)

@@ -93,7 +93,7 @@ plot_tss_heatmap <- function(tss_heatmap_matrix, max_value=5) {
 		)
 
 	## Generate TSS heatmap
-	p <- ggplot(tss_count_matrix, aes(x = position, y = fct_rev(featureId), fill = log2_score, color = log2_score)) +
+	p <- ggplot(tss_heatmap_matrix, aes(x = position, y = fct_rev(featureId), fill = log2_score, color = log2_score)) +
 		geom_tile() +
 		theme_minimal() +
 		theme(
