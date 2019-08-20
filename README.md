@@ -8,6 +8,7 @@ conda create -n tsrexplorer -y -c conda-forge -c bioconda \
 r-tidyverse \
 r-devtools \
 r-ggseqlogo \
+r-ggally \
 bioconductor-genomicranges \
 bioconductor-genomicfeatures \
 bioconductor-biostrings \
