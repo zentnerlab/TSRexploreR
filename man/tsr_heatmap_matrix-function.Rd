@@ -4,19 +4,19 @@
 \alias{tsr_heatmap_matrix}
 \title{TSR Heatmap Count Matrix}
 \usage{
-tsr_heatmap_matrix(experiment, sample, upstream = 1000,
+tsr_heatmap_matrix(experiment, samples = "all", upstream = 1000,
   downstream = 1000, feature_type = c("transcriptId", "geneId"))
 }
 \arguments{
 \item{experiment}{tsrexplorer object with annotated TSRs}
-
-\item{sample}{Name of sample to analyze}
 
 \item{upstream}{Bases upstream to consider}
 
 \item{downstream}{bases downstream to consider}
 
 \item{feature_type}{Whether the heatmap is built on genes or transcripts ("geneId", "transcriptId")}
+
+\item{sample}{Name of sample to analyze}
 }
 \value{
 matrix of counts for each gene/transcript and position
