@@ -193,7 +193,7 @@ p <- plot_dinucleotide_frequencies(freqs) +
 ggsave("tss_dinucleotide_frequencies_quantiles.png", plot = p, device = "png", type = "cairo", height = 5, width = 4)
 ```
 
-![tss_dinucleotide_frequencies_quantiles](.inst/images/tss_dinucleotide_frequencies_quantiles.png)
+![tss_dinucleotide_frequencies_quantiles](./inst/images/tss_dinucleotide_frequencies_quantiles.png)
 
 ### Misc TSS Plots
 
