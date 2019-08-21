@@ -10,9 +10,10 @@
 #' @importFrom dplyr select filter group_by pull mutate_if rename
 #' @importFrom magrittr %>%
 #' @importFrom tidyr spread gather complete
+#' @importFrom forcats fct_reorder
 #' 
 #' @param experiment tsrexplorer object with annotated TSSs
-#' @param sample Name of sample to analyze
+#' @param samples Either 'all' or name of samples to analyze
 #' @param upstream Bases upstream to consider
 #' @param downstream bases downstream to consider
 #' @param threshold Reads required per TSS
@@ -24,33 +25,50 @@
 #' @rdname tss_heatmap_matrix-function
 
 tss_heatmap_matrix <- function(
-	experiment, sample, upstream = 1000,
-	downstream = 1000, threshold = 1,
+	experiment,
+	samples = "all",
+	upstream = 1000,
+	downstream = 1000,
+	threshold = 1,
 	anno_type = c("transcriptId", "geneId")
 ) {
-	## Prepare data to be made into count matrix
-	annotated_tss <- experiment@annotated$TSSs[[sample]] %>%
-		select(anno_type, distanceToTSS, score) %>%
-		filter(
-			distanceToTSS >= -upstream & distanceToTSS <= downstream,
-			score >= threshold
-		)
+	## Grab requested samples.
+	if (samples == "all") samples <- names(experiment@experiment$TSSs)
 	
-	if (anno_type == "geneId") {
-		annotated_tss <- annotated_tss %>%
-			complete(geneId, distanceToTSS = -upstream:downstream, fill = list(score = 0)) %>%
-			spread(key = distanceToTSS, value = score) %>%
-			mutate_if(is.numeric, ~log2(. + 1)) %>%
-			rename("featureId" = geneId)
-	} else {
-                annotated_tss <- annotated_tss %>%
-                        complete(transcriptId, distanceToTSS = -upstream:downstream, fill = list(score = 0)) %>%
-                        spread(key = distanceToTSS, value = score) %>%
-                        mutate_if(is.numeric, ~log2(. + 1)) %>%
-			rename("featureId" = transcriptId)
-	}
+	## Start preparing data for plotting.
+	annotated_tss <- experiment@annotated$TSSs[samples] %>%
+		bind_rows(.id = "sample") %>%
+		rename(feature = anno_type) %>%
+		filter(
+			score >= threshold,
+			between(distanceToTSS, -upstream, downstream)
+		) %>%
+		select(sample, feature, distanceToTSS, score) %>%
+		mutate(feature = factor(feature))
 
-	return(annotated_tss)
+	## Get order of genes for heatmap (mean accross samples).
+	feature_order <- annotated_tss %>%
+		mutate(feature = factor(feature)) %>%
+		group_by(feature) %>%
+		summarize(total_sum = sum(score)) %>%
+		mutate(feature = fct_reorder(feature, desc(total_sum))) %>%
+		pull(feature) %>%
+		levels
+
+	## Generate count matrix
+	tss_matrix <- annotated_tss %>%
+		complete(
+			sample,
+			feature = feature_order,
+			distanceToTSS = -upstream:downstream,
+			fill = list(score = 0)
+		) %>%
+		mutate(
+			log2_score = log2(score + 1),
+			feature = factor(feature, levels = feature_order)
+		)
+
+	return(tss_matrix)
 }
 
 #' Plot TSS Heatmap
@@ -66,34 +84,26 @@ tss_heatmap_matrix <- function(
 #'
 #' @param tss_count_matrix TSS count matrix from tss_count_matrix
 #' @param max_value Max log2 value to truncate heatmap color
+#' @param ncol Number of columns when plotting multiple samples
 #'
 #' @return ggplot2 object of TSS heatmap
 #'
 #' @export
 #' @rdname plot_tss_heatmap-function
 
-plot_tss_heatmap <- function(tss_heatmap_matrix, max_value=5) {
-	## Order genes by sum of TSS counts
-	feature_order <- tss_heatmap_matrix %>%
-		transmute(featureId = featureId, rowsums=rowSums(select(., 2:ncol(.)))) %>% 
-		arrange(desc(rowsums)) %>%
-		pull(featureId)
-
-	tss_heatmap_matrix <- mutate(tss_heatmap_matrix, featureId = factor(featureId, levels = feature_order))
-
-	## Prepare data for plotting
+plot_tss_heatmap <- function(tss_heatmap_matrix, max_value = 5, ncol = 1) {
+	
+	## Set values above max_value to max_value.
 	tss_heatmap_matrix <- tss_heatmap_matrix %>%
-		gather(key="position", value="log2_score", -featureId) %>%
 		mutate(
-			position = as.integer(position),
 			log2_score = case_when(
 				log2_score <= max_value ~ log2_score,
 				log2_score > max_value ~ max_value
 			)
 		)
 
-	## Generate TSS heatmap
-	p <- ggplot(tss_heatmap_matrix, aes(x = position, y = fct_rev(featureId), fill = log2_score, color = log2_score)) +
+	## Generate TSS heatmap.
+	p <- ggplot(tss_heatmap_matrix, aes(x = distanceToTSS, y = fct_rev(feature), fill = log2_score, color = log2_score)) +
 		geom_tile() +
 		theme_minimal() +
 		theme(
@@ -112,12 +122,12 @@ plot_tss_heatmap <- function(tss_heatmap_matrix, max_value=5) {
 			labels = c(0:(max_value - 1), paste0(">", max_value)),
 			name = "Log2(Score + 1)"
 		) +
-		geom_vline(xintercept=0, lty=2, color="white") +
 		labs(
 			fill = "log2(Score + 1)",
 			x = "Position",
 			y = "Feature"
-		)
+		) +
+		facet_wrap(~ sample, ncol = ncol)
 
 	return(p)
 }

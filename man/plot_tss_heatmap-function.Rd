@@ -4,10 +4,12 @@
 \alias{plot_tss_heatmap}
 \title{Plot TSS Heatmap}
 \usage{
-plot_tss_heatmap(tss_heatmap_matrix, max_value = 5)
+plot_tss_heatmap(tss_heatmap_matrix, max_value = 5, ncol = 1)
 }
 \arguments{
 \item{max_value}{Max log2 value to truncate heatmap color}
+
+\item{ncol}{Number of columns when plotting multiple samples}
 
 \item{tss_count_matrix}{TSS count matrix from tss_count_matrix}
 }

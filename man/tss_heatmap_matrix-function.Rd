@@ -4,14 +4,14 @@
 \alias{tss_heatmap_matrix}
 \title{TSS Heatmap Count Matrix}
 \usage{
-tss_heatmap_matrix(experiment, sample, upstream = 1000,
+tss_heatmap_matrix(experiment, samples = "all", upstream = 1000,
   downstream = 1000, threshold = 1, anno_type = c("transcriptId",
   "geneId"))
 }
 \arguments{
 \item{experiment}{tsrexplorer object with annotated TSSs}
 
-\item{sample}{Name of sample to analyze}
+\item{samples}{Either 'all' or name of samples to analyze}
 
 \item{upstream}{Bases upstream to consider}
 
