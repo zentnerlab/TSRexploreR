@@ -9,7 +9,7 @@ plot_dinucleotide_frequencies(dinucleotide_frequencies, ncol = 1)
 \arguments{
 \item{dinucleotide_frequencies}{tibble from dinucleotide_frequencies analysis}
 
-\item{ncol}{Number of columns to plot}
+\item{ncol}{Number of columns to plot if not quantile plot}
 }
 \value{
 ggplot2 object of dinucleotide frequencies plot

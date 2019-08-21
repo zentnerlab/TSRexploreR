@@ -182,6 +182,19 @@ ggsave("tss_dinucleotide_frequencies.png", plot = p, device = "png", type = "cai
 
 ![tss_dinucelotide_frequencies](./inst/images/tss_dinucleotide_frequencies.png)
 
+You can also plot dinucleotide frequencies by quantile
+
+```
+freqs <- dinucleotide_frequencies(exp, assembly, threshold = 3, quantiles = 5)
+
+p <- plot_dinucleotide_frequencies(freqs) +
+	theme(text = element_text(size = 5))
+
+ggsave("tss_dinucleotide_frequencies_quantiles.png", plot = p, device = "png", type = "cairo", height = 5, width = 4)
+```
+
+![tss_dinucleotide_frequencies_quantiles](.inst/images/tss_dinucleotide_frequencies_quantiles.png)
+
 ### Misc TSS Plots
 
 **Average distance of dominant TSS**

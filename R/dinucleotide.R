@@ -9,38 +9,70 @@
 #' @importFrom GenomicRanges GRanges resize score
 #' @importFrom dplyr filter count mutate bind_rows group_by ungroup
 #' @importFrom Rsamtools FaFile getSeq
-#' @importFrom purrr map
+#' @importFrom purrr map map2
 #' @importFrom magrittr %>%
 #'
 #' @param experiment tsrexplorer object with TSS GRanges
 #' @param samples Either 'all' or vector of sample names to analyze
 #' @param genome_assembly fasta file of genome assembly
 #' @param threshold TSS read threshold
+#' @param quantiles Number of quantiles to break data into
 #'
 #' @return tibble with dinucleotide frequencies
 #' @rdname dinucleotide_frequencies-function
 
-dinucleotide_frequencies <- function(experiment, genome_assembly, samples = "all", threshold = 1) {
+dinucleotide_frequencies <- function(experiment, genome_assembly, samples = "all", threshold = 1, quantiles = 1) {
 	## Loading genome assembly.
 	fasta_assembly <- FaFile(genome_assembly)
 
 	## Filter TSSs and get sequences.
 	if (samples == "all") samples <- names(experiment@experiment$TSSs)
 
+	sample_scores <- map(
+		experiment@experiment$TSSs[samples],
+		~ .[score(.) >= threshold] %>%	score(.)
+	)
+
 	sequences <- experiment@experiment$TSSs[samples] %>%
 		map(~ .[score(.) >= threshold] %>%
 			resize(., width=2, fix="end") %>%
 			getSeq(fasta_assembly, .)
 		)
+			
 
 	## Get dinucleotide frequencies.
 	freqs <- sequences %>%
-		map(~ as.character(.) %>% enframe(name = "chr", value = "dinucleotide")) %>%
-		bind_rows(.id = "sample") %>%
-		group_by(sample) %>%
-		count(dinucleotide, sort=TRUE, name="occurences") %>%
-		mutate("frequency"=occurences/sum(occurences)) %>%
-		ungroup
+		map(~ as.character(.) %>% enframe(name = NULL, value = "dinucleotide")) %>%
+		map2(., sample_scores, ~ mutate(.x, score = .y)) %>%
+		bind_rows(.id = "sample")
+
+	if (quantiles > 1) {
+		freqs <- freqs %>%
+			group_by(sample) %>%
+			mutate(ntile = ntile(score, quantiles)) %>%
+			ungroup %>%
+			select(-score) %>%
+			count(sample, dinucleotide, ntile, name = "occurences") %>%
+			group_by(sample, ntile) %>%
+			mutate("frequency" = occurences/sum(occurences)) %>%
+			ungroup
+
+		freqs <- list(
+			"quantile_plot" = TRUE,
+			"dinucleotide_frequencies" = freqs
+		)
+	} else {
+		freqs <- freqs %>%
+			count(sample, dinucleotide, name = "occurences") %>%
+			group_by(sample) %>%
+			mutate("frequency" = occurences/sum(occurences)) %>%
+			ungroup
+
+		freqs <- list(
+			"quantile_plot" = FALSE,
+			"dinucleotide_frequencies" = freqs
+		)
+	}
 
 	return(freqs)
 }
@@ -56,7 +88,7 @@ dinucleotide_frequencies <- function(experiment, genome_assembly, samples = "all
 #' @importFrom magrittr %>%
 #'
 #' @param dinucleotide_frequencies tibble from dinucleotide_frequencies analysis
-#' @param ncol Number of columns to plot
+#' @param ncol Number of columns to plot if not quantile plot
 #'
 #' @return ggplot2 object of dinucleotide frequencies plot
 #'
@@ -64,8 +96,9 @@ dinucleotide_frequencies <- function(experiment, genome_assembly, samples = "all
 #' @rdname plot_dinucleotide_frequencies-function
 
 plot_dinucleotide_frequencies <- function(dinucleotide_frequencies, ncol = 1) {
+	
 	## Set factor order for dinucleotide.
-	factor_order <- dinucleotide_frequencies %>%
+	factor_order <- dinucleotide_frequencies$dinucleotide_frequencies %>%
 		group_by(dinucleotide) %>%
 		summarize(avg_freq = mean(frequency)) %>%
 		arrange(desc(avg_freq)) %>%
@@ -74,22 +107,27 @@ plot_dinucleotide_frequencies <- function(dinucleotide_frequencies, ncol = 1) {
 		levels
 		
 
-	dinucleotide_frequencies <- mutate(
-		dinucleotide_frequencies,
+	frequencies <- mutate(
+		dinucleotide_frequencies$dinucleotide_frequencies,
 		"dinucleotide" = factor(dinucleotide, levels = factor_order)
 	)
 
 	## Plot dinucleotide frequencies.
-	p <- ggplot(dinucleotide_frequencies, aes(x = fct_rev(dinucleotide), y = frequency)) +
+	p <- ggplot(frequencies, aes(x = fct_rev(dinucleotide), y = frequency)) +
 		geom_col(width = 0.5, aes(fill = frequency)) +
 		theme_bw() +
 		scale_fill_viridis_c(name = "Frequency") +
 		coord_flip() +
-		facet_wrap(~ sample, ncol = ncol) +
 		labs(
 			x="Dinucleotide",
 			y="Frequency"
 		)
+
+	if (dinucleotide_frequencies$quantile_plot) {
+		p <- p + facet_grid(ntile ~ sample)
+	} else {
+		facet_wrap(~ sample, ncol = ncol)
+	}
 
 	return(p)
 }

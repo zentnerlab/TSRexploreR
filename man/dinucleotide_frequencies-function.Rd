@@ -5,7 +5,7 @@
 \title{Dinucleotide Analysis}
 \usage{
 dinucleotide_frequencies(experiment, genome_assembly, samples = "all",
-  threshold = 1)
+  threshold = 1, quantiles = 1)
 }
 \arguments{
 \item{experiment}{tsrexplorer object with TSS GRanges}
@@ -15,6 +15,8 @@ dinucleotide_frequencies(experiment, genome_assembly, samples = "all",
 \item{samples}{Either 'all' or vector of sample names to analyze}
 
 \item{threshold}{TSS read threshold}
+
+\item{quantiles}{Number of quantiles to break data into}
 }
 \value{
 tibble with dinucleotide frequencies
