@@ -279,6 +279,19 @@ ggsave("tsr_genomic_distribution.png", plot = p, device = "png", type = "cairo",
 
 ![tsr_genomic_distribution](./inst/images/tsr_genomic_distribution.png)
 
+TSR genomic distribution can also be split by quantile.
+
+```
+tsr_distribution <- genomic_distribution(exp, data_type = "tsr", quantiles = 5)
+
+p <- plot_genomic_distribution(tsr_distribution) +
+        theme(text = element_text(size = 6))
+
+ggsave("tsr_genomic_distribution_quantiles.png", plot = p, device = "png", type = "cairo", height = 4, width = 4)
+```
+
+![tsr_genomic_distribution_quantiles](./inst/images/tsr_genomic_distribution_quantiles.png)
+
 ### TSR Average Plot and Heatmap
 
 **TSR Average Plot**
