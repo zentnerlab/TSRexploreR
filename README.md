@@ -302,7 +302,7 @@ ggsave("tsr_average_plot_quantiles.png", plot = p, device = "png", type = "cairo
 
 ```
 
-![tsr_average_plot_quantiles](./inst/images/tsr_average_plot_quantiles)
+![tsr_average_plot_quantiles](./inst/images/tsr_average_plot_quantiles.png)
 
 **TSR Heatmap**
 
