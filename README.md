@@ -292,6 +292,18 @@ ggsave("tsr_average_plot.png", plot = p, device = "png", type = "cairo", height 
 
 ![tsr_average_plot](./inst/images/tsr_average_plot.png)
 
+Average plots can also be divided up by quantile.
+
+```
+p <- plot_average(exp, data_type = "tsr", quantiles = 5) +
+	theme(text = element_text(size = 6))
+
+ggsave("tsr_average_plot_quantiles.png", plot = p, device = "png", type = "cairo", height = 2.5, width = 3.5)
+
+```
+
+![tsr_average_plot_quantiles](./inst/images/tsr_average_plot_quantiles)
+
 **TSR Heatmap**
 
 ```
