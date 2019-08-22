@@ -4,17 +4,19 @@
 \alias{tss_sequences}
 \title{Retrieve Sequences Near TSSs}
 \usage{
-tss_sequences(experiment, sample, genome_assembly, threshold = 1,
-  distance = 10)
+tss_sequences(experiment, samples = "all", genome_assembly,
+  threshold = 1, distance = 10, quantiles = 1)
 }
 \arguments{
 \item{experiment}{tsrexplorer object with TSS GRanges}
 
-\item{sample}{Name of sample to analyze}
-
 \item{genome_assembly}{Genome assembly in fasta format}
 
 \item{distance}{Bases to add on each side of TSS}
+
+\item{quantiles}{Break data into quantiles}
+
+\item{sample}{Either "all" or names of samples to analyze}
 }
 \value{
 Sequences surrounding TSSs

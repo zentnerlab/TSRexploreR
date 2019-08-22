@@ -4,10 +4,12 @@
 \alias{plot_sequence_logo}
 \title{Generate Sequence Logo}
 \usage{
-plot_sequence_logo(tss_sequences)
+plot_sequence_logo(tss_sequences, ncol = 1)
 }
 \arguments{
 \item{tss_sequences}{Sequences surrounding TSS generated with tss_sequences}
+
+\item{ncol}{Number of columns to plot if quantiles is not set}
 }
 \value{
 ggplot2 object with sequence logo

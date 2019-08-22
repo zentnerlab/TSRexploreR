@@ -148,12 +148,12 @@ ggsave("tss_heatmap.png", plot = p, device = "png", type = "cairo", height = 2, 
 **TSS sequence logo**
 
 ```
-seqs <- tss_sequences(exp, sample = "S288C_WT_100ng_1", genome_assembly = assembly, threshold = 3)
+seqs <- tss_sequences(exp, genome_assembly = assembly, threshold = 3)
 
-p <- plot_sequence_logo(seqs) +
-	theme(text = element_text(size = 6))
+p <- plot_sequence_logo(seqs, ncol = 3) +
+	theme(text = element_text(size = 5))
 
-ggsave("tss_seq_logo.png", plot = p, device = "png", type = "cairo", height = 1, width = 3)
+ggsave("tss_seq_logo.png", plot = p, device = "png", type = "cairo", height = 1, width = 6)
 
 ```
 
