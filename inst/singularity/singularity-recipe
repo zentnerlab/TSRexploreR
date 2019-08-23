@@ -31,7 +31,8 @@ bioconductor-genomicfeatures \
 bioconductor-biostrings \
 bioconductor-rsamtools \
 bioconductor-chipseeker \
-bioconductor-edger
+bioconductor-edger \
+bioconductor-clusterprofiler
 
 ## Update environment.
 

@@ -26,6 +26,8 @@ Imports:
     ChIPseeker,
     edgeR,
     GGally
+Suggests:
+    clusterProfiler
 RoxygenNote: 6.1.1
 Collate: 
     'annotate.R'

@@ -14,7 +14,8 @@ bioconductor-genomicfeatures \
 bioconductor-biostrings \
 bioconductor-rsamtools \
 bioconductor-chipseeker \
-bioconductor-edger
+bioconductor-edger \
+bioconductor-clusterProfiler
 ```
 
 **Install latest version of tsrexplorer**
@@ -406,6 +407,16 @@ annotated_diff_tsrs <- annotate_differential_tsrs(diff_tsrs, annotation_file = a
 
 ```
 enrichment_data <- export_for_enrichment(annotated_diff_tsrs)
+
+library("org.Sc.sgd.db")
+
+go_enrichment <- clusterProfiler::compareCluster(
+	geneId ~ change,
+	data = enrichment_data,
+	fun = "enrichGO",
+	OrgDb = "org.Sc.sgd.db",
+	pAdjustMethod = "fdr"
+)
 ```
 
 **Differential TSRs Volcano Plot**
