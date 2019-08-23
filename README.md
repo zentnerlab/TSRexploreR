@@ -169,6 +169,18 @@ ggsave("tss_seq_colormap.png", plot = p, device = "png", type = "cairo", height 
 ```
 ![tss_sequence_colormap](./inst/images/tss_seq_colormap.png)
 
+The color maps can also be split by quantile.
+
+```
+seqs <- tss_sequences(exp, genome_assembly = assembly, threshold = 3, quantiles = 5)
+
+p <- plot_sequence_colormap(seqs) + theme(text = element_text(size = 5))
+
+ggsave("tss_seq_colormap_quantiles.png", plot = p, device = "png", type = "cairo", height = 6, width = 4)
+```
+
+![tss_seq_colormap_quantiles](./inst/images/tss_seq_colormap_quantiles.png)
+
 **TSS dinucleotide frequencies**
 
 ```

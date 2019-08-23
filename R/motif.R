@@ -141,38 +141,112 @@ plot_sequence_logo <- function(tss_sequences, ncol = 1) {
 #'
 #' @import tibble
 #' @import ggplot2
-#' @importFrom dplyr mutate
+#' @importFrom dplyr mutate bind_cols pull bind_rows rename
 #' @importFrom stringr str_split
-#' @importFrom tidyr gather
+#' @importFrom tidyr separate gather
+#' @importFrom forcats fct_reorder
 #' @importFrom Biostrings DNAStringSet
 #' @importFrom BiocGenerics width
 #'
 #' @param tss_sequences Sequences surrounding TSS generated with tss_sequences
+#' @param ncol Number of columns to plot data if quantiles not specified
 #'
 #' @return ggplot2 object of sequence colormap
 #'
 #' @export
 #' @rdname plot_sequence_colormap-function
 
-plot_sequence_colormap <- function(tss_sequences) {
-	## Get sequence length
-	sequence_length <- tss_sequences %>%
-		width(.) %>% unique / 2
+plot_sequence_colormap <- function(tss_sequences, ncol = 1) {
 
-	## Format data for plotting
-	tss_sequences <- tss_sequences %>%
-		as.character %>%
-		str_split(pattern = "", simplify = TRUE) %>%
-		as_tibble(.name_repair="unique") %>%
-		setNames(c(-sequence_length:-1, 1:sequence_length)) %>%
-		rowid_to_column(var = "sequence") %>%
-		gather(key = "Position", value = "base", -sequence) %>%
-		mutate(Position = factor(Position, levels=c(-sequence_length:-1, 1:sequence_length)))
+	## Start preparing data for plotting.
+	seq_data <- tss_sequences$tss_sequences %>%
+		map(~ as.data.frame(.) %>% as_tibble(.name_repair = "unique", rownames = "name")) %>%
+		bind_rows(.id = "sample") %>%
+		rename(sequence = x)
+
+	if (tss_sequences$quantile_plot) {
+		seq_data <- seq_data %>% 
+			separate(
+				name,
+				into = c(
+					"chr", "start", "end", "width",
+					"strand", "score", "ntile"
+				),
+				sep = "_",
+				remove = FALSE
+			)
+	} else {
+		seq_data <- seq_data %>%
+			separate(
+				name,
+				into = c(
+					"chr", "start", "end",
+					"width", "strand", "score"
+				),
+				sep = "_",
+				remove = FALSE
+			)
+	}
+
+	## Get sequence length.
+	sequence_length <- seq_data %>%
+		pull(sequence) %>%
+		nchar %>%
+		unique / 2
+
+	## Make columns for individual bases.
+	base_columns <- seq_data %>%
+		pull(sequence) %>%
+		str_split("", simplify = TRUE)
+
+	colnames(base_columns) <- as.character(c(-sequence_length:-1, 1:sequence_length))
+	base_columns <- as_tibble(base_columns, .name_repair = "unique")
+	seq_data <- bind_cols(seq_data, base_columns)
+
+	## Get order of TSSs for plotting.
+	tss_order <- seq_data %>%
+		mutate(name = factor(name)) %>%
+		group_by(chr, start, end, strand) %>%
+		mutate(avg_score = mean(as.numeric(score))) %>%
+		ungroup %>%
+		mutate(name = fct_reorder(name, desc(avg_score))) %>%
+		pull(name) %>%
+		levels
+
+	## Format data for plotting.
+	if (tss_sequences$quantile_plot) {
+		plot_data <- seq_data %>%
+			gather(
+				key = "position", value = "base",
+				-sample, -name, -chr, -start, -end, -width,
+				-strand, -score, -ntile, -sequence
+			)
+	} else {
+		plot_data <- seq_data %>%
+			gather(
+				key = "position", value = "base",
+				-sample, -name, -chr, -start, -end,
+				-width, -strand, -score, -sequence
+			)
+	}
+
+	plot_data <- mutate(
+		plot_data,
+		position = as.numeric(position),
+		name = factor(name, levels = tss_order),
+		base = factor(base, levels = c("A", "C", "G", "T"))
+	)
+
+	n_samples <- plot_data %>%
+		pull(sample) %>%
+		unique %>%
+		length
 
 	## Plot sequence colormap
-	p <- ggplot(tss_sequences, aes(x = Position, y = sequence)) +
-		geom_tile(aes(fill = base)) +
+	p <- ggplot(plot_data, aes(x = position, y = factor(name))) +
+		geom_tile(aes(fill = base, color = base)) +
 		scale_fill_viridis_d() +
+		scale_color_viridis_d() +
 		theme_minimal() +
 		theme(
 			axis.title.y=element_blank(),
@@ -181,6 +255,12 @@ plot_sequence_colormap <- function(tss_sequences) {
 			axis.title.x=element_text(margin = margin(t = 15)),
 			panel.grid=element_blank()
 		)
+
+	if (tss_sequences$quantile_plot) {
+		p <- p + facet_wrap(ntile ~ sample, scales = "free", ncol = n_samples)
+	} else {
+		p <- p + facet_wrap(~ sample, ncol = ncol)
+	}
 
 	return(p)
 }
