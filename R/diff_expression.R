@@ -126,7 +126,6 @@ differential_expression <- function(fit_edger_model, data_type = c("tsr", "rnase
 
 annotate_differential_tsrs <- function(
 	differential_tsrs, annotation_file,
-	feature_type = c("gene", "transcript"),
 	upstream = 1000, downstream = 100
 ) {
 	## Load genome annotation file as TxDb.
@@ -184,4 +183,33 @@ plot_volcano <- function(differential_expression, log2fc_cutoff = 1, fdr_cutoff 
 		geom_hline(yintercept = -log10(fdr_cutoff), lty = 2)
 
 	return(p)
+}
+
+#' Export to clusterProfiler
+#'
+#' Export DEGs for use in clusterProfiler term enrichment.
+#'
+#' @import tibble
+#' @importFrom dplyr select mutate case_when
+#' 
+#' @param annotated_differential_tsrs Annotated differential TSRs
+#' @param log2fc_cutoff Log2 fold change cutoff for significance
+#' @param fdr_cutoff FDR cutoff for significance
+#'
+#' @rdname export_for_enrichment-function
+#' @export
+
+export_for_enrichment <- function(annotated_differential_tsrs, log2fc_cutoff = 1, fdr_cutoff = 0.05) {
+	
+	## Prepare data for export.
+	export_data <- annotated_differential_tsrs %>%
+		select(geneId, log2FC, FDR) %>%
+		mutate(change = case_when(
+			log2FC >= log2fc_cutoff & FDR <= fdr_cutoff ~ "increase",
+			log2FC <= -log2fc_cutoff & FDR <= fdr_cutoff ~ "decrease",
+			TRUE ~ "unchanged"
+		)) %>%
+		filter(change != "unchanged")
+
+	return(export_data)
 }

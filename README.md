@@ -393,13 +393,19 @@ edger_model <- fit_edger_model(
 	groups = c(1, 1, 1, 2, 2, 2)
 )
 
-diff_tsrs <- differential_expression(edger_model, data_type = "tsr", comparisons = c(1, 2))
+diff_tsrs <- differential_expression(edger_model, data_type = "tsr", compare_groups = c(1, 2))
 ```
 
 **Annotate Differential TSRs**
 
 ```
 annotated_diff_tsrs <- annotate_differential_tsrs(diff_tsrs, annotation_file = annotation, feature_type = "transcript")
+```
+
+**Export data for term enrichment**
+
+```
+enrichment_data <- export_for_enrichment(annotated_diff_tsrs)
 ```
 
 **Differential TSRs Volcano Plot**

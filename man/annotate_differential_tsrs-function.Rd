@@ -5,19 +5,18 @@
 \title{Annotate Differential TSRs}
 \usage{
 annotate_differential_tsrs(differential_tsrs, annotation_file,
-  feature_type = c("gene", "transcript"), upstream = 1000,
-  downstream = 100)
+  upstream = 1000, downstream = 100)
 }
 \arguments{
 \item{differential_tsrs}{Tibble of differential TSRs from differential_tsrs}
 
 \item{annotation_file}{GTF genomic annotation file}
 
-\item{feature_type}{Whether to annotate TSRs relative to genes to transcripts}
-
 \item{upstream}{Bases upstream of TSS}
 
 \item{downstream}{Bases downstream of TSS}
+
+\item{feature_type}{Whether to annotate TSRs relative to genes to transcripts}
 }
 \value{
 Tibble of annotated differential TSRs
