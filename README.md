@@ -162,11 +162,14 @@ ggsave("tss_seq_logo.png", plot = p, device = "png", type = "cairo", height = 1,
 **TSS base color map**
 
 ```
-p <- plot_sequence_colormap(seqs) +
+seqs <- tss_sequences(exp, genome_assembly = assembly, threshold = 3)
+
+p <- plot_sequence_colormap(seqs, ncol = 3) +
 	theme(text = element_text(size = 6))
 
-ggsave("tss_seq_colormap.png", plot = p, device = "png", type = "cairo", height = 2.5, width = 2.5)
+ggsave("tss_seq_colormap.png", plot = p, device = "png", type = "cairo", height = 2.5, width = 3.5)
 ```
+
 ![tss_sequence_colormap](./inst/images/tss_seq_colormap.png)
 
 The color maps can also be split by quantile.
@@ -174,7 +177,8 @@ The color maps can also be split by quantile.
 ```
 seqs <- tss_sequences(exp, genome_assembly = assembly, threshold = 3, quantiles = 5)
 
-p <- plot_sequence_colormap(seqs) + theme(text = element_text(size = 5))
+p <- plot_sequence_colormap(seqs) +
+	theme(text = element_text(size = 5))
 
 ggsave("tss_seq_colormap_quantiles.png", plot = p, device = "png", type = "cairo", height = 6, width = 4)
 ```
