@@ -106,6 +106,19 @@ ggsave("tss_genomic_distribution_quantiles.png", plot = p, device = "png", type 
 
 ![tss_genomic_distribution_quantiles](./inst/images/tss_genomic_distribution_quantiles.png)
 
+### Feature Detection
+
+```
+features <- detect_features(exp, data_type = "tss", feature_type = "transcript", threshold = 3)
+
+p <- plot_detected_features(features, ncol = 3) +
+	theme(text = element_text(size = 5))
+
+ggsave("tss_feature_plot.png", plot = p, device = "png", type = "cairo", height = 2, width = 4)
+```
+
+![tss_feature_plot](./inst/images/tss_feature_plot.png)
+
 ### TSS Average Plot and Heatmap
 
 **TSS average plot**
