@@ -4,11 +4,13 @@
 \alias{plot_tsr_metric}
 \title{Plot TSR Stats}
 \usage{
-plot_tsr_metric(experiment, tsr_metrics, samples = "all",
-  log2_transform = FALSE, ncol = 1)
+plot_tsr_metric(experiment, tsr_metrics, plot_type = "violin",
+  samples = "all", log2_transform = FALSE, ncol = 1)
 }
 \arguments{
 \item{experiment}{tsrexplorer object with TSR granges}
+
+\item{plot_type}{Output either a 'violin', 'jitter', or 'box' plot (default violin)}
 
 \item{samples}{Either 'all' or a vector of sample names to analyze}
 

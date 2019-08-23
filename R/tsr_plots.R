@@ -11,6 +11,7 @@
 #' @param experiment tsrexplorer object with TSR granges
 #' @param sample Name of sample to return plot for
 #' @param tsr_metric Names of metrics in tsrexplorer TSR granges to plot
+#' @param plot_type Output either a 'violin', 'jitter', 'box', or "boxjitter" plot (default violin)
 #' @param samples Either 'all' or a vector of sample names to analyze
 #' @param log2_transform Whether the metric should be log2 transformed prior to plotting
 #' @param ncol Number of columns to plot data
@@ -20,7 +21,14 @@
 #' @export
 #' @rdname plot_tsr_metric-function
 
-plot_tsr_metric <- function(experiment, tsr_metrics, samples = "all", log2_transform = FALSE, ncol = 1) {
+plot_tsr_metric <- function(
+	experiment,
+	tsr_metrics,
+	plot_type = "violin",
+	samples = "all",
+	log2_transform = FALSE,
+	ncol = 1
+) {
 
 	## Grab data.
 	if (samples == "all") samples <- names(experiment@experiment$TSRs)
@@ -40,10 +48,24 @@ plot_tsr_metric <- function(experiment, tsr_metrics, samples = "all", log2_trans
 	}
 
 	## Make density plot of metric.
-	p <- ggplot(selected_data, aes(x = samples, y = stat_value)) +
-		geom_violin(aes(fill = samples)) +
+	p <- ggplot(selected_data, aes(x = samples, y = stat_value))
+
+	if (plot_type == "violin") {
+		p <- p + geom_violin(aes(fill = samples))
+	} else if (plot_type == "box") {
+		p <- p + geom_boxplot(fill = NA, aes(color = samples))
+	} else if (plot_type == "jitter") {
+		p <- p + geom_jitter(aes(color = samples))
+	} else if (plot_type == "boxjitter") {
+		p <- p +
+			geom_jitter(color = "lightgrey") +
+			geom_boxplot(fill = NA, aes(color = samples), outlier.shape = NA)
+	}
+		
+	p <- p +
 		theme_bw() +
 		scale_fill_viridis_d() +
+		scale_color_viridis_d() +
 		facet_wrap(~ tsr_stat, ncol = ncol, scales = "free") +
 		theme(axis.text.x = element_blank())
 
