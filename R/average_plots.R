@@ -8,6 +8,7 @@
 #' @importFrom dplyr select filter between bind_rows ntile group_by ungroup
 #' @importFrom magrittr %>%
 #' @importFrom purrr pmap map
+#' @importFrom forcats fct_rev
 #'
 #' @param experiment tsr_explorer object with annotated TSSs
 #' @param samples Either 'all' to plot all samples, or a vector of sample names
@@ -88,7 +89,7 @@ plot_average <- function(
 		theme_bw()
 
 	if (quantiles > 1) {
-		p <- p + facet_grid(ntile ~ samples)
+		p <- p + facet_grid(fct_rev(factor(ntile)) ~ samples)
 	} else {
 		p <- p + facet_wrap(~ samples, ncol = ncol)
 	}

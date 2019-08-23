@@ -117,7 +117,7 @@ plot_genomic_distribution <- function(genomic_distribution) {
 			panel.grid = element_blank()
 		)
 
-	if (genomic_distribution$quantile_plot) p <- p + facet_grid(ntile ~ .)
+	if (genomic_distribution$quantile_plot) p <- p + facet_grid(fct_rev(factor(ntile)) ~ .)
 
 	return(p)
 }

@@ -144,7 +144,7 @@ plot_sequence_logo <- function(tss_sequences, ncol = 1) {
 #' @importFrom dplyr mutate bind_cols pull bind_rows rename
 #' @importFrom stringr str_split
 #' @importFrom tidyr separate gather
-#' @importFrom forcats fct_reorder
+#' @importFrom forcats fct_reorder fct_rev
 #' @importFrom Biostrings DNAStringSet
 #' @importFrom BiocGenerics width
 #'
@@ -243,7 +243,7 @@ plot_sequence_colormap <- function(tss_sequences, ncol = 1) {
 		length
 
 	## Plot sequence colormap
-	p <- ggplot(plot_data, aes(x = position, y = factor(name))) +
+	p <- ggplot(plot_data, aes(x = position, y = fct_rev(factor(name)))) +
 		geom_tile(aes(fill = base, color = base)) +
 		scale_fill_viridis_d() +
 		scale_color_viridis_d() +
@@ -257,7 +257,7 @@ plot_sequence_colormap <- function(tss_sequences, ncol = 1) {
 		)
 
 	if (tss_sequences$quantile_plot) {
-		p <- p + facet_wrap(ntile ~ sample, scales = "free", ncol = n_samples)
+		p <- p + facet_wrap(fct_rev(factor(ntile)) ~ sample, scales = "free", ncol = n_samples)
 	} else {
 		p <- p + facet_wrap(~ sample, ncol = ncol)
 	}

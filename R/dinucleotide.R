@@ -124,7 +124,7 @@ plot_dinucleotide_frequencies <- function(dinucleotide_frequencies, ncol = 1) {
 		)
 
 	if (dinucleotide_frequencies$quantile_plot) {
-		p <- p + facet_grid(ntile ~ sample)
+		p <- p + facet_grid(fct_rev(factor(ntile)) ~ sample)
 	} else {
 		facet_wrap(~ sample, ncol = ncol)
 	}
