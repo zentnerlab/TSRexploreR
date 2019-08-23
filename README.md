@@ -65,8 +65,8 @@ exp <- count_normalization(exp, data_type = "tss")
 
 ```
 p <- plot_correlation(exp, data_type = "tss") +
-	theme_bw() +
-	theme(text = element_text(size = 6))
+	ggplot2::theme_bw() +
+	ggplot2::theme(text = element_text(size = 6))
 
 ggsave("tss_correlation.png", plot = p, device = "png", type = "cairo", height = 3, width = 3)
 ```
@@ -86,7 +86,7 @@ exp <- annotate_features(exp, annotation_file = annotation, data_type = "tss", f
 tss_distribution <- genomic_distribution(exp, data_type = "tss", threshold = 3)
 
 p <- plot_genomic_distribution(tss_distribution) +
-	theme(text = element_text(size = 6))
+	ggplot2::theme(text = element_text(size = 6))
 
 ggsave("tss_genomic_distribution.png", plot = p, device = "png", type = "cairo", height = 1.5, width = 4)
 ```
@@ -99,7 +99,7 @@ It is also possible to plot genomic distribution based on the quantile of the TS
 genomic_dist <- genomic_distribution(exp, data_type = "tss", threshold = 3, quantiles = 5)
 
 p <- plot_genomic_distribution(genomic_dist) +
-	theme(text = element_text(size = 6))
+	ggplot2::theme(text = element_text(size = 6))
 
 ggsave("tss_genomic_distribution_quantiles.png", plot = p, device = "png", type = "cairo", height = 4, width = 4)
 ```
@@ -112,7 +112,7 @@ ggsave("tss_genomic_distribution_quantiles.png", plot = p, device = "png", type 
 features <- detect_features(exp, data_type = "tss", feature_type = "transcript", threshold = 3)
 
 p <- plot_detected_features(features, ncol = 3) +
-	theme(text = element_text(size = 5))
+	ggplot2::theme(text = element_text(size = 5))
 
 ggsave("tss_feature_plot.png", plot = p, device = "png", type = "cairo", height = 2, width = 4)
 ```
@@ -125,7 +125,7 @@ ggsave("tss_feature_plot.png", plot = p, device = "png", type = "cairo", height 
 
 ```
 p <- plot_average(exp, data_type = "tss", threshold = 3, ncol = 3) +
-	theme(text = element_text(size = 6))
+	ggplot2::theme(text = element_text(size = 6))
 
 ggsave("tss_average_plot.png", plot = p, device = "png", type = "cairo", height = 1.5, width = 4)
 ```
@@ -136,7 +136,7 @@ You can also plot TSS average plots broken down by TSS quantile
 
 ```
 p <- plot_average(exp, data_type = "tss", threshold = 3, quantiles = 5) +
-	theme(text = element_text(size = 5))
+	ggplot2::theme(text = element_text(size = 5))
 
 ggsave("tss_average_plot_quantiles.png", plot = p, device = "png", type = "cairo", height = 2.5, width = 3.5)
 ```
@@ -149,7 +149,7 @@ ggsave("tss_average_plot_quantiles.png", plot = p, device = "png", type = "cairo
 count_matrix <- tss_heatmap_matrix(exp, threshold = 3, anno_type = "geneId", upstream = 250, downstream = 250)
 
 p <- plot_heatmap(count_matrix, ncol = 3) +
-	theme(text = element_text(size = 6))
+	ggplot2::theme(text = element_text(size = 6))
 
 ggsave("tss_heatmap.png", plot = p, device = "png", type = "cairo", height = 2, width = 4)
 ```
@@ -164,7 +164,7 @@ ggsave("tss_heatmap.png", plot = p, device = "png", type = "cairo", height = 2, 
 seqs <- tss_sequences(exp, genome_assembly = assembly, threshold = 3)
 
 p <- plot_sequence_logo(seqs, ncol = 3) +
-	theme(text = element_text(size = 5))
+	ggplot2::theme(text = element_text(size = 5))
 
 ggsave("tss_seq_logo.png", plot = p, device = "png", type = "cairo", height = 1, width = 6)
 
@@ -178,7 +178,7 @@ ggsave("tss_seq_logo.png", plot = p, device = "png", type = "cairo", height = 1,
 seqs <- tss_sequences(exp, genome_assembly = assembly, threshold = 3)
 
 p <- plot_sequence_colormap(seqs, ncol = 3) +
-	theme(text = element_text(size = 6))
+	ggplot2::theme(text = element_text(size = 6))
 
 ggsave("tss_seq_colormap.png", plot = p, device = "png", type = "cairo", height = 2.5, width = 3.5)
 ```
@@ -191,7 +191,7 @@ The color maps can also be split by quantile.
 seqs <- tss_sequences(exp, genome_assembly = assembly, threshold = 3, quantiles = 5)
 
 p <- plot_sequence_colormap(seqs) +
-	theme(text = element_text(size = 5))
+	ggplot2::theme(text = element_text(size = 5))
 
 ggsave("tss_seq_colormap_quantiles.png", plot = p, device = "png", type = "cairo", height = 6, width = 4)
 ```
@@ -204,7 +204,7 @@ ggsave("tss_seq_colormap_quantiles.png", plot = p, device = "png", type = "cairo
 frequencies <- dinucleotide_frequencies(exp, genome_assembly = assembly, threshold = 3)
 
 p <- plot_dinucleotide_frequencies(frequencies, ncol = 3) +
-	theme(text = element_text(size = 6))
+	ggplot2::theme(text = element_text(size = 6))
 
 ggsave("tss_dinucleotide_frequencies.png", plot = p, device = "png", type = "cairo", height = 2, width = 5)
 ```
@@ -217,7 +217,7 @@ You can also plot dinucleotide frequencies by quantile
 freqs <- dinucleotide_frequencies(exp, assembly, threshold = 3, quantiles = 5)
 
 p <- plot_dinucleotide_frequencies(freqs) +
-	theme(text = element_text(size = 5))
+	ggplot2::theme(text = element_text(size = 5))
 
 ggsave("tss_dinucleotide_frequencies_quantiles.png", plot = p, device = "png", type = "cairo", height = 5, width = 4)
 ```
@@ -263,8 +263,8 @@ exp <- count_normalization(exp, data_type = "tsr")
 
 ```
 p <- plot_correlation(exp, data_type = "tsr") +
-	theme_bw() +
-	theme(text = element_text(size = 6))
+	ggplot2::theme_bw() +
+	ggplot2::theme(text = element_text(size = 6))
 
 ggsave("tsr_correlation.png", plot = p, device = "png", type = "cairo", height = 3, width = 3)
 ```
@@ -281,7 +281,7 @@ You can make a density plot of any of these additional columns by specifying the
 
 ```
 p <- plot_tsr_metric(exp, tsr_metrics = c("nTAGs", "nTSSs"), log2_transform = TRUE, ncol = 2) +
-	theme(text = element_text(size = 6))
+	ggplot2::theme(text = element_text(size = 6))
 
 ggsave("tsr_metrics.png", plot = p, device = "png", type = "cairo", width = 4, height = 2)
 ```
@@ -301,7 +301,7 @@ exp <- annotate_features(exp, annotation_file = annotation, data_type = "tsr", f
 tsr_distribution <- genomic_distribution(exp, data_type = "tsr")
 
 p <- plot_genomic_distribution(tsr_distribution) +
-	theme(text = element_text(size = 6))
+	ggplot2::theme(text = element_text(size = 6))
 
 ggsave("tsr_genomic_distribution.png", plot = p, device = "png", type = "cairo", height = 1.5, width = 4)
 ```
@@ -314,7 +314,7 @@ TSR genomic distribution can also be split by quantile.
 tsr_distribution <- genomic_distribution(exp, data_type = "tsr", quantiles = 5)
 
 p <- plot_genomic_distribution(tsr_distribution) +
-        theme(text = element_text(size = 6))
+        ggplot2::theme(text = element_text(size = 6))
 
 ggsave("tsr_genomic_distribution_quantiles.png", plot = p, device = "png", type = "cairo", height = 4, width = 4)
 ```
@@ -327,7 +327,7 @@ ggsave("tsr_genomic_distribution_quantiles.png", plot = p, device = "png", type 
 features <- detect_features(exp, data_type = "tsr", feature_type = "transcript")
 
 p <- plot_detected_features(features, ncol = 3) +
-	theme(text = element_text(size = 5))
+	ggplot2::theme(text = element_text(size = 5))
 
 ggsave("tsr_feature_plot.png", plot = p, device = "png", type = "cairo", height = 2, width = 4)
 ```
@@ -340,7 +340,7 @@ ggsave("tsr_feature_plot.png", plot = p, device = "png", type = "cairo", height 
 
 ```
 p <- plot_average(exp, data_type = "tsr", ncol = 3) +
-	theme(text = element_text(size = 6))
+	ggplot2::theme(text = element_text(size = 6))
 
 ggsave("tsr_average_plot.png", plot = p, device = "png", type = "cairo", height = 1.5, width = 4)
 ```
@@ -351,7 +351,7 @@ Average plots can also be divided up by quantile.
 
 ```
 p <- plot_average(exp, data_type = "tsr", quantiles = 5) +
-	theme(text = element_text(size = 6))
+	ggplot2::theme(text = element_text(size = 6))
 
 ggsave("tsr_average_plot_quantiles.png", plot = p, device = "png", type = "cairo", height = 2.5, width = 3.5)
 
@@ -365,7 +365,7 @@ ggsave("tsr_average_plot_quantiles.png", plot = p, device = "png", type = "cairo
 counts <- tsr_heatmap_matrix(exp, feature_type = "transcriptId", upstream = 500, downstream = 500)
 
 p <- plot_heatmap(counts, max_value = 8, ncol = 3) +
-	theme(text = element_text(size = 6))
+	ggplot2::theme(text = element_text(size = 6))
 
 ggsave("tsr_heatmap.png", plot = p, device = "png", type = "cairo", height = 2, width = 4)
 ```
@@ -434,8 +434,8 @@ exp <- count_normalization(exp, data_type = "tss_features")
 
 ```
 p <- plot_correlation(exp, data_type = "rnaseq_v_tss", correlation_metric = "spearman") +
-	theme_bw() +
-	theme(text = element_text(size = 6))
+	ggplot2::theme_bw() +
+	ggplot2::theme(text = element_text(size = 6))
 
 ggsave("rnaseq_correlation.png", plot = p, device = "png", type = "cairo", height = 4.5, width = 4.5)
 ```
