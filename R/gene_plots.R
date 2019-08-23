@@ -5,6 +5,7 @@
 #'
 #' @import tibble
 #' @importFrom dplyr rename bind_rows select mutate case_when between distinct full_join count
+#' @importFrom purrr map
 #'
 #' @param experiment tsrexplorer object with annotated TSSs or TSRs
 #' @param samples Either 'all' or vector of sample names
@@ -36,7 +37,7 @@ detect_features <- function(
 	} else if (data_type == "tsr") {
 		if (samples == "all") samples <- names(experiment@annotated$TSRs)
 		sample_data <- experiment@annotated$TSRs[samples] %>%
-			rename(score = nTAGs)
+			map(~ rename(., score = nTAGs))
 	}
 
 	## Pull and combine chosen sample data.
