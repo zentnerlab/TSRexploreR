@@ -190,7 +190,7 @@ plot_volcano <- function(differential_expression, log2fc_cutoff = 1, fdr_cutoff 
 #' Export DEGs for use in clusterProfiler term enrichment.
 #'
 #' @import tibble
-#' @importFrom dplyr select mutate case_when
+#' @importFrom dplyr select mutate case_when filter
 #' 
 #' @param annotated_differential_tsrs Annotated differential TSRs
 #' @param log2fc_cutoff Log2 fold change cutoff for significance
