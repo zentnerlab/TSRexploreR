@@ -6,7 +6,7 @@
 \usage{
 tss_heatmap_matrix(experiment, samples = "all", upstream = 1000,
   downstream = 1000, threshold = 1, anno_type = c("transcriptId",
-  "geneId"))
+  "geneId"), quantiles = 1)
 }
 \arguments{
 \item{experiment}{tsrexplorer object with annotated TSSs}
@@ -20,6 +20,8 @@ tss_heatmap_matrix(experiment, samples = "all", upstream = 1000,
 \item{threshold}{Reads required per TSS}
 
 \item{anno_type}{Whether the heatmap is built on genes or transcripts ("geneId", "transcriptId")}
+
+\item{quantiles}{Number of quantiles to break data down into}
 }
 \value{
 matrix of counts for each gene/transcript and position

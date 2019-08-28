@@ -7,7 +7,7 @@
 #' @include annotate.R
 #'
 #' @import tibble
-#' @importFrom dplyr select filter group_by pull mutate_if rename
+#' @importFrom dplyr select filter group_by pull mutate_if rename ungroup
 #' @importFrom magrittr %>%
 #' @importFrom tidyr spread gather complete
 #' @importFrom forcats fct_reorder
@@ -18,6 +18,7 @@
 #' @param downstream bases downstream to consider
 #' @param threshold Reads required per TSS
 #' @param anno_type Whether the heatmap is built on genes or transcripts ("geneId", "transcriptId")
+#' @param quantiles Number of quantiles to break data down into
 #'
 #' @return matrix of counts for each gene/transcript and position
 #'
@@ -30,7 +31,8 @@ tss_heatmap_matrix <- function(
 	upstream = 1000,
 	downstream = 1000,
 	threshold = 1,
-	anno_type = c("transcriptId", "geneId")
+	anno_type = c("transcriptId", "geneId"),
+	quantiles = 1
 ) {
 	## Grab requested samples.
 	if (samples == "all") samples <- names(experiment@experiment$TSSs)
@@ -55,6 +57,22 @@ tss_heatmap_matrix <- function(
 		pull(feature) %>%
 		levels
 
+	## Get quantiles of genes.
+	feature_quantiles <- annotated_tss %>%
+		select(-distanceToTSS) %>%
+		group_by(sample, feature) %>%
+		summarize(total_sum = sum(score)) %>%
+		ungroup %>%
+		complete(
+			sample,
+			feature = feature_order,
+			fill = list(total_sum = 0)
+		) %>%
+		group_by(sample) %>%
+		mutate(ntile = ntile(total_sum, quantiles)) %>%
+		ungroup %>%
+		select(-total_sum)
+
 	## Generate count matrix
 	tss_matrix <- annotated_tss %>%
 		complete(
@@ -67,7 +85,8 @@ tss_heatmap_matrix <- function(
 			log2_score = log2(score + 1),
 			feature = factor(feature, levels = feature_order)
 		) %>%
-		rename(position = distanceToTSS)
+		rename(position = distanceToTSS) %>%
+		left_join(y = feature_quantiles, by = c("sample", "feature"))
 
 	return(tss_matrix)
 }
@@ -127,8 +146,18 @@ plot_heatmap <- function(heatmap_matrix, max_value = 5, ncol = 1) {
 			fill = "log2(Score + 1)",
 			x = "Position",
 			y = "Feature"
-		) +
-		facet_wrap(~ sample, ncol = ncol)
+		)
+
+	n_quantiles <- heatmap_matrix %>%
+		pull(quantiles) %>%
+		unique %>%
+		length
+
+	if (n_quantiles > 1) {
+		p <- p + facet_grid(fct_rev(factor(ntile)) ~ sample)
+	} else if (n_quantiles == 1) {
+		p <- p + facet_wrap(~ sample, ncol = ncol)
+	}
 
 	return(p)
 }

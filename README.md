@@ -157,6 +157,22 @@ ggsave("tss_heatmap.png", plot = p, device = "png", type = "cairo", height = 2, 
 
 ![tss_heatmap](./inst/images/tss_heatmap.png)
 
+Heatmaps can also be broken down by quantile.
+
+```
+count_matrix <- tss_heatmap_matrix(
+	exp, threshold = 3, anno_type = "geneId",
+	upstream = 250, downstream = 250, quantiles = 5
+)
+
+p <- plot_heatmap(count_matrix) +
+        ggplot2::theme(text = element_text(size = 6))
+
+ggsave("tss_heatmap_quantiles.png", plot = p, device = "png", type = "cairo", height = 4, width = 4)
+```
+
+![tss_heatmap_quantiles](./inst/images/tss_heatmap_quantiles.png)
+
 ### TSS Motif and Base Composition
 
 **TSS sequence logo**
