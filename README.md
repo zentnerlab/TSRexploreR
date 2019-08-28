@@ -168,7 +168,7 @@ count_matrix <- tss_heatmap_matrix(
 p <- plot_heatmap(count_matrix) +
         ggplot2::theme(text = element_text(size = 6))
 
-ggsave("tss_heatmap_quantiles.png", plot = p, device = "png", type = "cairo", height = 4, width = 4)
+ggsave("tss_heatmap_quantiles.png", plot = p, device = "png", type = "cairo", height = 3.5, width = 4)
 ```
 
 ![tss_heatmap_quantiles](./inst/images/tss_heatmap_quantiles.png)
@@ -397,7 +397,7 @@ counts <- tsr_heatmap_matrix(exp, feature_type = "transcriptId", upstream = 500,
 p <- plot_heatmap(counts, max_value = 8) +
         ggplot2::theme(text = element_text(size = 6))
 
-ggsave("tsr_heatmap_quantiles.png", plot = p, device = "png", type = "cairo", height = 4, width = 4)
+ggsave("tsr_heatmap_quantiles.png", plot = p, device = "png", type = "cairo", height = 3.5, width = 4)
 ```
 
 ![tsr_heatmap_quantiles](./inst/images/tsr_heatmap_quantiles.png)
