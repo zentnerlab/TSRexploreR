@@ -5,7 +5,8 @@
 \title{TSR Heatmap Count Matrix}
 \usage{
 tsr_heatmap_matrix(experiment, samples = "all", upstream = 1000,
-  downstream = 1000, feature_type = c("transcriptId", "geneId"))
+  downstream = 1000, feature_type = c("transcriptId", "geneId"),
+  quantiles = 1)
 }
 \arguments{
 \item{experiment}{tsrexplorer object with annotated TSRs}

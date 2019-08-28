@@ -389,6 +389,19 @@ ggsave("tsr_heatmap.png", plot = p, device = "png", type = "cairo", height = 2, 
 
 ![tsr_heatmap](./inst/images/tsr_heatmap.png)
 
+The TSR heatmaps can also be broken down into quantiles.
+
+```
+counts <- tsr_heatmap_matrix(exp, feature_type = "transcriptId", upstream = 500, downstream = 500, quantiles = 5)
+
+p <- plot_heatmap(counts, max_value = 8) +
+        ggplot2::theme(text = element_text(size = 6))
+
+ggsave("tsr_heatmap_quantiles.png", plot = p, device = "png", type = "cairo", height = 4, width = 4)
+```
+
+![tsr_heatmap_quantiles](./inst/images/tsr_heatmap_quantiles.png)
+
 ### Differential TSRs
 
 (Work in Progress)

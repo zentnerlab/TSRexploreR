@@ -7,7 +7,7 @@
 #' @include annotate.R
 #'
 #' @import tibble
-#' @importFrom dplyr select filter group_by pull mutate_if rename ungroup
+#' @importFrom dplyr select filter group_by pull mutate_if rename ungroup left_join
 #' @importFrom magrittr %>%
 #' @importFrom tidyr spread gather complete
 #' @importFrom forcats fct_reorder
@@ -170,7 +170,7 @@ plot_heatmap <- function(heatmap_matrix, max_value = 5, ncol = 1) {
 #' @include annotate.R
 #'
 #' @import tibble
-#' @importFrom dplyr select mutate case_when bind_rows filter between group_by ungroup summarize
+#' @importFrom dplyr select mutate case_when bind_rows filter between group_by ungroup summarize left_join
 #' @importFrom magrittr %>%
 #' @importFrom tidyr spread complete
 #' @importFrom purrr pmap
@@ -191,7 +191,8 @@ tsr_heatmap_matrix <- function(
 	samples = "all",
 	upstream = 1000,
 	downstream = 1000,
-	feature_type = c("transcriptId", "geneId")
+	feature_type = c("transcriptId", "geneId"),
+	quantiles = 1
 ) {
 	
 	## Pull samples out.
@@ -229,6 +230,22 @@ tsr_heatmap_matrix <- function(
 		pull(feature) %>%
 		levels
 
+	## Get ntiles by sample and feature.
+	feature_quantiles <- annotated_tsr %>%
+		select(-startDist, -endDist) %>%
+		group_by(sample, feature) %>%
+		summarize(total_sum = sum(score)) %>%
+		ungroup %>%
+		complete(
+			sample,
+			feature = feature_order,
+			fill = list(total_sum = 0)
+		) %>%
+		group_by(sample) %>%
+		mutate(ntile = ntile(total_sum, quantiles)) %>%
+		ungroup %>%
+		select(-total_sum)		
+
 	## Put TSR score for entire range of TSR.
 	annotated_tsr <- annotated_tsr %>%
 		pmap(function(sample, startDist, endDist, score, feature) {
@@ -248,7 +265,8 @@ tsr_heatmap_matrix <- function(
 			position = -upstream:downstream,
 			fill = list(score = 0, log2_score = 0)
 		) %>%
-		mutate(feature = factor(feature, levels = feature_order))
+		mutate(feature = factor(feature, levels = feature_order)) %>%
+		left_join(y = feature_quantiles, by = c("sample", "feature"))
 
 	return(annotated_tsr)
 }
