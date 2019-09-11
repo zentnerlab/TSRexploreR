@@ -32,7 +32,8 @@ bioconductor-biostrings \
 bioconductor-rsamtools \
 bioconductor-chipseeker \
 bioconductor-edger \
-bioconductor-clusterprofiler
+bioconductor-clusterprofiler \
+bioconductor-complexheatmap
 
 ## Update environment.
 

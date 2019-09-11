@@ -13,7 +13,7 @@ plot_correlation(experiment, data_type = c("tss", "tsr", "rnaseq_v_tss"),
 
 \item{data_type}{Whether to make scatter plots from TSS or TSR data}
 
-\item{correlation_plot}{Whether to make a correlation 'heatmap', 'scatter', or 'combined'}
+\item{correlation_plot}{Whether to make a correlation 'heatmap', 'scatter', 'combined' or 'hierarchical'}
 
 \item{correlation_metric}{Use either spearman or pearson correlation}
 

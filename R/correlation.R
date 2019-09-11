@@ -7,10 +7,12 @@
 #' @importFrom purrr discard
 #' @importFrom tidyr gather
 #' @importFrom GGally ggpairs
+#' @importFrom ComplexHeatmap Heatmap
+#' @importFrom circlize colorRamp2 
 #'
 #' @param experiment tsrexplorer object with TMM normalized counts
 #' @param data_type Whether to make scatter plots from TSS or TSR data
-#' @param correlation_plot Whether to make a correlation 'heatmap', 'scatter', or 'combined'
+#' @param correlation_plot Whether to make a correlation 'heatmap', 'scatter', 'combined' or 'hierarchical'
 #' @param correlation_metric Use either spearman or pearson correlation
 #' @param samples Either "all" or vector of samples to plot
 #' @param log2 Should the TMM values be log2+1 transformed prior to plotting?
@@ -98,6 +100,15 @@ plot_correlation <- function(experiment, data_type = c("tss", "tsr", "rnaseq_v_t
 			columns = samples,
 			upper = list(continuous = custom_heatmap),
 			lower = list(continuous = custom_scatter)
+		)
+	} else if (correlation_plot == "hierarchical") {
+		corr_matrix <- pre_transformed %>%
+			column_to_rownames("position") %>%
+			cor(method = correlation_metric)
+
+		p <- Heatmap(
+			corr_matrix,
+			name = correlation_metric
 		)
 	}
 

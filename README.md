@@ -73,6 +73,18 @@ ggsave("tss_correlation.png", plot = p, device = "png", type = "cairo", height =
 ```
 ![tss_corr_plot](./inst/images/tss_correlation.png)
 
+A hierarchically clustered heatmap can also be generated.
+
+```
+p <- plot_correlation(exp, data_type = "tss", correlation_plot = "hierarchical")
+
+png("tss_correlation_hierarchical.png", units = "in", res = 300, height = 3.5, width = 4, type = "cairo")
+p
+dev.off()
+```
+
+![tss_correlation_hierarchical](./inst/images/tss_correlation_hierarchical.png)
+
 ### TSS Annotation and Genomic Distribution
 
 **Annotate TSSs**
