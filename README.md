@@ -15,7 +15,8 @@ bioconductor-biostrings \
 bioconductor-rsamtools \
 bioconductor-chipseeker \
 bioconductor-edger \
-bioconductor-clusterProfiler
+bioconductor-clusterProfiler \
+bioconductor-complexheatmap
 ```
 
 **Install latest version of tsrexplorer**
