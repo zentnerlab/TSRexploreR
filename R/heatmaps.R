@@ -149,7 +149,7 @@ plot_heatmap <- function(heatmap_matrix, max_value = 5, ncol = 1) {
 		)
 
 	n_quantiles <- heatmap_matrix %>%
-		pull(quantiles) %>%
+		pull(ntile) %>%
 		unique %>%
 		length
 
