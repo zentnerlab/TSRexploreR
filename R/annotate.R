@@ -18,8 +18,9 @@
 #'
 #' @return Annotated TSS slot in tsrchitect object
 #'
-#' @export
 #' @rdname annotate_features-function
+#'
+#' @export
 
 annotate_features <- function(
 	experiment,

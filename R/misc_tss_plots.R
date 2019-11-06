@@ -16,8 +16,9 @@
 #'
 #' @return Tibble with dominant TSSs for each gene
 #'
-#' @export
 #' @rdname dominant_tss-function
+#'
+#' @export
 
 dominant_tss <- function(
 	experiment, sample, threshold = 1, 
@@ -53,8 +54,9 @@ dominant_tss <- function(
 #'
 #' @return ggplot2 object dominant TSS plot
 #'
-#' @export
 #' @rdname plot_dominant_tss-function
+#'
+#' @export
 
 plot_dominant_tss <- function(dominant_tss, upstream = 2000, downstream = 500) {
 	## Format data for plotting
@@ -97,8 +99,9 @@ plot_dominant_tss <- function(dominant_tss, upstream = 2000, downstream = 500) {
 #'
 #' @return tibble with max UTR length for features
 #'
+#' @rdname max_utr-function
+#'
 #' @export
-#' @rdname mx_utr-function
 
 max_utr <- function(
 	experiment, sample, threshold = 1,
@@ -131,8 +134,9 @@ max_utr <- function(
 #'
 #' @return ggplot2 object of max UTR length average
 #'
-#' @export
 #' @rdname plot_max_utr-function
+#'
+#' @export
 
 plot_max_utr <- function(max_utr, upstream = 1000, downstream = 100) {
 	p <- ggplot(max_utr, aes(x = tss_max_distance)) +

@@ -8,8 +8,9 @@
 #' @param experiment tsrexplorer object
 #' @param rnaseq_count_matrix Raw counts in count matrix form from RNA-seq data
 #'
-#' @export
 #' @rdname add_rnaseq_feature_counts-function
+#'
+#' @export
 
 add_rnaseq_feature_counts <- function(experiment, rnaseq_feature_counts) {
 	
@@ -29,8 +30,9 @@ add_rnaseq_feature_counts <- function(experiment, rnaseq_feature_counts) {
 #' @param experiment tsrexplorer object
 #' @param tss_total_count_matrix Raw counts in count matrix form from TSS mapping data
 #'
-#' @export
 #' @rdname add_tss_feature_counts-function
+#'
+#' @export
 
 add_tss_feature_counts <- function(experiment, tss_feature_counts) {
 

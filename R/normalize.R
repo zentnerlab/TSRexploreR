@@ -15,8 +15,9 @@
 #'
 #' @return tibble of TMM normalized read counts
 #'
-#' @export
 #' @rdname count_normalization-function
+#'
+#' @export
 
 count_normalization <- function(experiment, data_type = c("tss", "tsr", "tss_features", "rnaseq_features")) {
 

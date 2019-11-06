@@ -18,6 +18,7 @@
 #' @return tibble of detected feature numbers
 #'
 #' @rdname detect_features-function
+#'
 #' @export
 
 detect_features <- function(
@@ -89,6 +90,7 @@ detect_features <- function(
 #' @return ggplot2 object of detected feature counts
 #'
 #' @rdname plot_detected_features-function
+#'
 #' @export
 
 plot_detected_features <- function(detected_features, ncol = 1) {

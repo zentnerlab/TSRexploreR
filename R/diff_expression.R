@@ -14,8 +14,9 @@
 #'
 #' @return DGEList object with fitted model
 #'
-#' @export
 #' @rdname fit_edger_model-function
+#'
+#' @export
 
 fit_edger_model <- function(experiment, data_type = c("tsr", "rnaseq"), samples = c(), groups = c()) {
 
@@ -64,8 +65,9 @@ fit_edger_model <- function(experiment, data_type = c("tsr", "rnaseq"), samples 
 #'
 #' @return tibble of differential TSRs
 #'
-#' @export
 #' @rdname differential_expression-function
+#'
+#' @export
 
 differential_expression <- function(fit_edger_model, data_type = c("tsr", "rnaseq"), compare_groups = c()) {
 	
@@ -121,8 +123,9 @@ differential_expression <- function(fit_edger_model, data_type = c("tsr", "rnase
 #'
 #' @return Tibble of annotated differential TSRs
 #'
-#' @export
 #' @rdname annotate_differential_tsrs-function
+#'
+#' @export
 
 annotate_differential_tsrs <- function(
 	differential_tsrs, annotation_file,
@@ -159,8 +162,9 @@ annotate_differential_tsrs <- function(
 #'
 #' @return ggplot2 object of differential TSRs volcano plot.
 #'
-#' @export
 #' @rdname plot_volcano-function
+#'
+#' @export
 
 plot_volcano <- function(differential_expression, log2fc_cutoff = 1, fdr_cutoff = 0.05) {
 
@@ -197,6 +201,7 @@ plot_volcano <- function(differential_expression, log2fc_cutoff = 1, fdr_cutoff 
 #' @param fdr_cutoff FDR cutoff for significance
 #'
 #' @rdname export_for_enrichment-function
+#'
 #' @export
 
 export_for_enrichment <- function(annotated_differential_tsrs, log2fc_cutoff = 1, fdr_cutoff = 0.05) {

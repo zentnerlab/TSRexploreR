@@ -20,6 +20,8 @@
 #'
 #' @return tibble with dinucleotide frequencies
 #' @rdname dinucleotide_frequencies-function
+#'
+#' @export
 
 dinucleotide_frequencies <- function(experiment, genome_assembly, samples = "all", threshold = 1, quantiles = 1) {
 	## Loading genome assembly.
@@ -92,8 +94,9 @@ dinucleotide_frequencies <- function(experiment, genome_assembly, samples = "all
 #'
 #' @return ggplot2 object of dinucleotide frequencies plot
 #'
-#' @export
 #' @rdname plot_dinucleotide_frequencies-function
+#'
+#' @export
 
 plot_dinucleotide_frequencies <- function(dinucleotide_frequencies, ncol = 1) {
 	

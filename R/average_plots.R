@@ -22,8 +22,9 @@
 #'
 #' @return ggplot2 object of average plot
 #'
-#' @export
 #' @rdname plot_average-function
+#'
+#' @export
 
 plot_average <- function(
 	experiment,

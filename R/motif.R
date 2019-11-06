@@ -21,8 +21,9 @@
 #'
 #' @return Sequences surrounding TSSs
 #'
-#' @export
 #' @rdname tss_sequences-function
+#'
+#' @export
 
 tss_sequences <- function(experiment, samples = "all", genome_assembly, threshold = 1, distance = 10, quantiles = 1) {
 
@@ -104,8 +105,9 @@ tss_sequences <- function(experiment, samples = "all", genome_assembly, threshol
 #'
 #' @return ggplot2 object with sequence logo
 #'
-#' @export
 #' @rdname plot_sequence_logo-function
+#'
+#' @export
 
 plot_sequence_logo <- function(tss_sequences, ncol = 1) {
 
@@ -153,8 +155,9 @@ plot_sequence_logo <- function(tss_sequences, ncol = 1) {
 #'
 #' @return ggplot2 object of sequence colormap
 #'
-#' @export
 #' @rdname plot_sequence_colormap-function
+#'
+#' @export
 
 plot_sequence_colormap <- function(tss_sequences, ncol = 1) {
 

@@ -22,8 +22,9 @@
 #'
 #' @return matrix of counts for each gene/transcript and position
 #'
-#' @export
 #' @rdname tss_heatmap_matrix-function
+#'
+#' @export
 
 tss_heatmap_matrix <- function(
 	experiment,
@@ -108,8 +109,9 @@ tss_heatmap_matrix <- function(
 #'
 #' @return ggplot2 object of TSS heatmap
 #'
-#' @export
 #' @rdname plot_heatmap-function
+#'
+#' @export
 
 plot_heatmap <- function(heatmap_matrix, max_value = 5, ncol = 1) {
 	
@@ -183,8 +185,9 @@ plot_heatmap <- function(heatmap_matrix, max_value = 5, ncol = 1) {
 #'
 #' @return matrix of counts for each gene/transcript and position
 #'
-#' @export
 #' @rdname tsr_heatmap_matrix-function
+#'
+#' @export
 
 tsr_heatmap_matrix <- function(
 	experiment,

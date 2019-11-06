@@ -18,8 +18,9 @@
 #'
 #' @return ggplot2 object with tsr metrix plotted
 #'
-#' @export
 #' @rdname plot_tsr_metric-function
+#'
+#' @export
 
 plot_tsr_metric <- function(
 	experiment,

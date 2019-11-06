@@ -14,8 +14,9 @@
 #'
 #' @return tibble with TSS or TSR genomic distribution stats
 #'
-#' @export 
 #' @rdname genomic_distribution-function
+#'
+#' @export 
 
 genomic_distribution <- function(experiment, data_type = c("tss", "tsr"), samples = "all", threshold = 1, quantiles = 1) {
 
@@ -101,8 +102,9 @@ genomic_distribution <- function(experiment, data_type = c("tss", "tsr"), sample
 #'
 #' @return ggplot2 object with TSS or TSR genomic distribution plot
 #'
-#' @export 
 #' @rdname plot_genomic_distribution-function
+#'
+#' @export 
 
 plot_genomic_distribution <- function(genomic_distribution) {
 	

@@ -19,8 +19,9 @@
 #'
 #' @return ggplot2 object
 #'
-#' @export
 #' @rdname plot_correlation-function
+#'
+#' @export
 
 plot_correlation <- function(experiment, data_type = c("tss", "tsr", "rnaseq_v_tss"), correlation_plot = "combined", correlation_metric = "pearson", samples = "all", log2_transform = TRUE) {
 	
