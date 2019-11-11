@@ -19,6 +19,7 @@
 #' @param quantiles Number of quantiles to break data into
 #'
 #' @return tibble with dinucleotide frequencies
+#'
 #' @rdname dinucleotide_frequencies-function
 #'
 #' @export
