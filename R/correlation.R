@@ -9,6 +9,7 @@
 #' @importFrom GGally ggpairs
 #' @importFrom ComplexHeatmap Heatmap
 #' @importFrom circlize colorRamp2 
+#' @importFrom viridis viridis
 #'
 #' @param experiment tsrexplorer object with TMM normalized counts
 #' @param data_type Whether to make scatter plots from TSS or TSR data
@@ -109,6 +110,7 @@ plot_correlation <- function(experiment, data_type = c("tss", "tsr", "rnaseq_v_t
 
 		p <- Heatmap(
 			corr_matrix,
+			col = viridis(100),
 			name = correlation_metric
 		)
 	}
