@@ -3,7 +3,7 @@
 #' Using edgeR to TMM normalize TSSs or TSRs
 #'
 #' @import tibble
-#' @importFrom dplyr bind_rows mutate select group_by summarize
+#' @importFrom dplyr bind_rows mutate select group_by summarize mutate_if
 #' @importFrom edgeR DGEList calcNormFactors cpm
 #' @importFrom GenomicRanges GRangesList reduce findOverlaps makeGRangesFromDataFrame
 #' @importFrom tidyr spread complete
@@ -12,6 +12,8 @@
 #'
 #' @param experiment tsrexplorer object
 #' @param data_type Whether TSSs, TSRs, TSS feature counts, or RNA-seq feature counts should be normalized
+#' @param threshold Filter out positions missing at least 'n_samples' number of samples with reads greater than or equal to threshold
+#' @param n_samples Filter out positions missing at least n_samples number of samples with reads greater than or equal to 'threshold'
 #'
 #' @return tibble of TMM normalized read counts
 #'
@@ -19,7 +21,12 @@
 #'
 #' @export
 
-count_normalization <- function(experiment, data_type = c("tss", "tsr", "tss_features", "rnaseq_features")) {
+count_normalization <- function(
+	experiment,
+	data_type = c("tss", "tsr", "tss_features", "rnaseq_features"),
+	threshold = 1,
+	n_samples = 1
+) {
 
 	## Select proper slot of data.
 	if (data_type == "tss") {
@@ -67,6 +74,13 @@ count_normalization <- function(experiment, data_type = c("tss", "tsr", "tss_fea
 		raw_counts <- experiment@raw_counts$RNAseq_features %>%
 			rename(position = gene_id)
 	}
+
+	## Filter out positions that have less than n_samples numbe rof samples with reads above threshold.
+	raw_counts <- raw_counts %>%
+		mutate_if(is.numeric, ~ {.x >= threshold}) %>%
+		mutate(rowsums = rowSums(.[, 2:ncol(.)])) %>%
+		{which(.$rowsums >= n_samples)} %>%
+		raw_counts[., ]
 
 	## TMM normalize counts.
 	tmm_counts <- raw_counts %>%

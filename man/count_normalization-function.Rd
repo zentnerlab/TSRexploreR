@@ -5,12 +5,16 @@
 \title{TMM Normalize TSSs or TSRs}
 \usage{
 count_normalization(experiment, data_type = c("tss", "tsr",
-  "tss_features", "rnaseq_features"))
+  "tss_features", "rnaseq_features"), threshold = 1, n_samples = 1)
 }
 \arguments{
 \item{experiment}{tsrexplorer object}
 
 \item{data_type}{Whether TSSs, TSRs, TSS feature counts, or RNA-seq feature counts should be normalized}
+
+\item{threshold}{Filter out positions missing at least 'n_samples' number of samples with reads greater than or equal to threshold}
+
+\item{n_samples}{Filter out positions missing at least n_samples number of samples with reads greater than or equal to 'threshold'}
 }
 \value{
 tibble of TMM normalized read counts
