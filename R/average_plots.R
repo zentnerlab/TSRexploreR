@@ -35,25 +35,32 @@ plot_average <- function(
 	downstream = 1000,
 	threshold = 1,
 	ncol = 1,
-	quantiles = 1
+	quantiles = 1,
+	use_cpm = FALSE
 ) {
 
 	## Pull data out of appropriate slot.
-	if (data_type == "tss") {
-		if (samples == "all") samples <- names(experiment@annotated$TSSs)
-		sample_data <- experiment@annotated$TSSs[samples] %>%
-			bind_rows(.id = "samples")
+	if (data_type == "tss" & use_cpm) {
+		if (samples == "all") samples <- names(experiment@annotated$TSSs$cpm)
+		sample_data <- experiment@annotated$TSSs$cpm[samples]
 		color_type <- "#431352"
-	} else if (data_type == "tsr") {
-		if (samples == "all") samples <- names(experiment@annotated$TSRs)
-		sample_data <- experiment@annotated$TSRs[samples] %>%
-			bind_rows(.id = "samples") %>%
-			rename(score = nTAGs)
+	} else if (data_type == "tss" & !(use_cpm)) {
+		if (samples == "all") samples <- names(experiment@annotated$TSSs$raw)
+		sample_data <- experiment@annotated$TSSs$raw[samples]
+		color_type <- "#431352"
+	} else if (data_type == "tsr" & use_cpm) {
+		if (samples == "all") samples <- names(experiment@annotated$TSRs$cpm)
+		sample_data <- experiment@annotated$TSRs$cpm[samples]
+		color_type <- "#34698c"
+	} else if (data_type == "tsr" & !(use_cpm)){
+		if (samples == "all") samples <- names(experiment@annotated$TSRs$raw)
+		sample_data <- experiment@annotated$TSRs$raw[samples]
 		color_type <- "#34698c"
 	}
 
 	## Preliminary preparation of data.
 	sample_data <- sample_data %>%
+		bind_rows(.id = "samples") %>%
 		select(distanceToTSS, score, samples) %>%
 		filter(
 			score >= threshold,
