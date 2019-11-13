@@ -19,6 +19,7 @@
 #' @param threshold Reads required per TSS
 #' @param anno_type Whether the heatmap is built on genes or transcripts ("geneId", "transcriptId")
 #' @param quantiles Number of quantiles to break data down into
+#' @param use_cpm Whether to use the CPM normalized values or not
 #'
 #' @return matrix of counts for each gene/transcript and position
 #'
@@ -33,13 +34,20 @@ tss_heatmap_matrix <- function(
 	downstream = 1000,
 	threshold = 1,
 	anno_type = c("transcriptId", "geneId"),
-	quantiles = 1
+	quantiles = 1,
+	use_cpm = FALSE
 ) {
 	## Grab requested samples.
-	if (samples == "all") samples <- names(experiment@experiment$TSSs)
+        if (data_type == "tss" & use_cpm) {
+                if (samples == "all") samples <- names(experiment@annotated$TSSs$cpm)
+                sample_data <- experiment@annotated$TSSs$cpm[samples]
+        } else if (data_type == "tss" & !(use_cpm)) {
+                if (samples == "all") samples <- names(experiment@annotated$TSSs$raw)
+                sample_data <- experiment@annotated$TSSs$raw[samples]
+	}
 	
 	## Start preparing data for plotting.
-	annotated_tss <- experiment@annotated$TSSs[samples] %>%
+	annotated_tss <- sample_data %>%
 		bind_rows(.id = "sample") %>%
 		rename(feature = anno_type) %>%
 		filter(
@@ -82,12 +90,10 @@ tss_heatmap_matrix <- function(
 			distanceToTSS = -upstream:downstream,
 			fill = list(score = 0)
 		) %>%
-		mutate(
-			log2_score = log2(score + 1),
-			feature = factor(feature, levels = feature_order)
-		) %>%
+		mutate(log2_score = log2(score + 1)) %>%
 		rename(position = distanceToTSS) %>%
-		left_join(y = feature_quantiles, by = c("sample", "feature"))
+		left_join(y = feature_quantiles, by = c("sample", "feature")) %>%
+		mutate(feature = factor(feature, levels = feature_order))
 
 	return(tss_matrix)
 }
