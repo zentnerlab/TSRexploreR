@@ -6,7 +6,7 @@
 \usage{
 tsr_heatmap_matrix(experiment, samples = "all", upstream = 1000,
   downstream = 1000, feature_type = c("transcriptId", "geneId"),
-  quantiles = 1)
+  quantiles = 1, threshold = 1, use_cpm = FALSE)
 }
 \arguments{
 \item{experiment}{tsrexplorer object with annotated TSRs}
@@ -16,6 +16,10 @@ tsr_heatmap_matrix(experiment, samples = "all", upstream = 1000,
 \item{downstream}{bases downstream to consider}
 
 \item{feature_type}{Whether the heatmap is built on genes or transcripts ("geneId", "transcriptId")}
+
+\item{threshold}{Reads required per TSR}
+
+\item{use_cpm}{Whether to use CPM normalized or raw counts}
 
 \item{sample}{Name of sample to analyze}
 }

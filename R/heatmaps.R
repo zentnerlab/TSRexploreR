@@ -188,6 +188,8 @@ plot_heatmap <- function(heatmap_matrix, max_value = 5, ncol = 1) {
 #' @param upstream Bases upstream to consider
 #' @param downstream bases downstream to consider
 #' @param feature_type Whether the heatmap is built on genes or transcripts ("geneId", "transcriptId")
+#' @param threshold Reads required per TSR
+#' @param use_cpm Whether to use CPM normalized or raw counts
 #'
 #' @return matrix of counts for each gene/transcript and position
 #'
@@ -201,19 +203,24 @@ tsr_heatmap_matrix <- function(
 	upstream = 1000,
 	downstream = 1000,
 	feature_type = c("transcriptId", "geneId"),
-	quantiles = 1
+	quantiles = 1,
+	threshold = 1,
+	use_cpm = FALSE
 ) {
 	
 	## Pull samples out.
-	if (samples == "all") samples <- names(experiment@annotated$TSRs)
+        if (data_type == "tsr" & use_cpm) {
+                if (samples == "all") samples <- names(experiment@annotated$TSRs$cpm)
+                sample_data <- experiment@annotated$TSRs$cpm[samples]
+        } else if (data_type == "tss" & !(use_cpm)) {
+                if (samples == "all") samples <- names(experiment@annotated$TSRs$raw)
+                sample_data <- experiment@annotated$TSRs$raw[samples]
+        }
 
 	## Prepare data to be made into count matrix
-	annotated_tsr <- experiment@annotated$TSR[samples] %>%
+	annotated_tsr <- sample_data %>%
 		bind_rows(.id = "sample") %>%
-		rename(
-			feature = feature_type,
-			score = nTAGs
-		) %>%
+		rename("feature" = feature_type) %>%
 		select(
 			sample, strand, start, end, feature,
 			geneStart, geneEnd, score
@@ -274,8 +281,8 @@ tsr_heatmap_matrix <- function(
 			position = -upstream:downstream,
 			fill = list(score = 0, log2_score = 0)
 		) %>%
-		mutate(feature = factor(feature, levels = feature_order)) %>%
-		left_join(y = feature_quantiles, by = c("sample", "feature"))
+		left_join(y = feature_quantiles, by = c("sample", "feature")) %>%
+		mutate(feature = factor(feature, levels = feature_order))
 
 	return(annotated_tsr)
 }
