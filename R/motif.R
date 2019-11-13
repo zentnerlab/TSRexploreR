@@ -31,10 +31,11 @@ tss_sequences <- function(experiment, samples = "all", genome_assembly, threshol
 	genome_assembly <- FaFile(genome_assembly)
 
 	## Pull selected samples.
-	if (samples == "all") samples <- names(experiment@experiment$TSSs)
+	if (samples == "all") samples <- names(experiment@counts$TSSs$raw)
+	select_samples <- experiment@counts$TSSs$raw[samples]
 
 	## Start preparing data for retrieving sequences.
-	tss_sequences <- experiment@experiment$TSSs[samples] %>%
+	tss_sequences <- select_samples %>%
 		map(~ as_tibble(., .name_repair = "unique")) %>%
 		bind_rows(.id = "sample") %>%
 		filter(score >= threshold)
