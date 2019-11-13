@@ -5,19 +5,19 @@
 \title{heatmaps and/or scatter plots to explore replicate concordance of TSSs or TSRs.}
 \usage{
 plot_correlation(experiment, data_type = c("tss", "tsr", "rnaseq_v_tss"),
-  correlation_plot = "combined", correlation_metric = "pearson",
-  samples = "all", log2_transform = TRUE)
+  samples = "all", correlation_plot = "combined",
+  correlation_metric = "pearson", log2_transform = TRUE)
 }
 \arguments{
 \item{experiment}{tsrexplorer object with TMM normalized counts}
 
 \item{data_type}{Whether to make scatter plots from TSS or TSR data}
 
+\item{samples}{Either 'all' or the names of the samples to plot}
+
 \item{correlation_plot}{Whether to make a correlation 'heatmap', 'scatter', 'combined' or 'hierarchical'}
 
 \item{correlation_metric}{Use either spearman or pearson correlation}
-
-\item{samples}{Either "all" or vector of samples to plot}
 
 \item{log2}{Should the TMM values be log2+1 transformed prior to plotting?}
 }

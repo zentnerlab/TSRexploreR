@@ -13,9 +13,9 @@
 #'
 #' @param experiment tsrexplorer object with TMM normalized counts
 #' @param data_type Whether to make scatter plots from TSS or TSR data
+#' @param samples Either 'all' or the names of the samples to plot
 #' @param correlation_plot Whether to make a correlation 'heatmap', 'scatter', 'combined' or 'hierarchical'
 #' @param correlation_metric Use either spearman or pearson correlation
-#' @param samples Either "all" or vector of samples to plot
 #' @param log2 Should the TMM values be log2+1 transformed prior to plotting?
 #'
 #' @return ggplot2 object
@@ -24,14 +24,21 @@
 #'
 #' @export
 
-plot_correlation <- function(experiment, data_type = c("tss", "tsr", "rnaseq_v_tss"), correlation_plot = "combined", correlation_metric = "pearson", samples = "all", log2_transform = TRUE) {
+plot_correlation <- function(
+	experiment,
+	data_type = c("tss", "tsr", "rnaseq_v_tss"),
+	samples = "all",
+	correlation_plot = "combined",
+	correlation_metric = "pearson",
+	log2_transform = TRUE
+) {
 	
 	## Get data from proper slot.
 	if (data_type == "tss") {
-		normalized_counts <- experiment@normalized_counts$TSSs
+		normalized_counts <- experiment@counts$TSSs$tmm_matrix
 		type_color <- "#431352"
 	} else if (data_type == "tsr") {
-		normalized_counts <- experiment@normalized_counts$TSRs
+		normalized_counts <- experiment@counts$TSRs$tmm_matrix
 		type_color <- "#34698c"
 	} else if (data_type == "rnaseq_v_tss") {
 		normalized_counts <- left_join(
