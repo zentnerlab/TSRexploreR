@@ -33,12 +33,11 @@ detect_features <- function(
 	
 	## Ensure appropriate sample names if "all" selected.
 	if (data_type == "tss") {
-		if (samples == "all") samples <- names(experiment@annotated$TSSs)
-		sample_data <- experiment@annotated$TSSs[samples]
+		if (samples == "all") samples <- names(experiment@annotated$TSSs$raw)
+		sample_data <- experiment@annotated$TSSs$raw[samples]
 	} else if (data_type == "tsr") {
-		if (samples == "all") samples <- names(experiment@annotated$TSRs)
-		sample_data <- experiment@annotated$TSRs[samples] %>%
-			map(~ rename(., score = nTAGs))
+		if (samples == "all") samples <- names(experiment@annotated$TSRs$raw)
+		sample_data <- experiment@annotated$TSRs$raw[samples]
 	}
 
 	## Pull and combine chosen sample data.
