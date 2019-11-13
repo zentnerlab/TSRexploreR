@@ -22,27 +22,28 @@ genomic_distribution <- function(experiment, data_type = c("tss", "tsr"), sample
 
 	## Pull data from tsrexplorer object.
 	if (data_type == "tss") {
-		if (samples == "all") samples <- names(experiment@annotated$TSSs)
-		selected_samples <- experiment@annotated$TSSs[samples] %>%
-			bind_rows(.id = "samples")
+		if (samples == "all") samples <- names(experiment@annotated$TSSs$raw)
+		selected_samples <- experiment@annotated$TSSs$raw[samples]
 	} else if (data_type == "tsr") {
-		if (samples == "all") samples <- names(experiment@annotated$TSRs)
-		selected_samples <- experiment@annotated$TSRs[samples] %>%
-			bind_rows(.id = "samples") %>%
-			rename("score" = nTAGs)
+		if (samples == "all") samples <- names(experiment@annotated$TSRs$raw)
+		selected_samples <- experiment@annotated$TSRs$raw[samples]
 	}
 
-	## Break data into quantiles if quantiles set is greater than 1.
-	genomic_distribution <- filter(selected_samples, score >= threshold)
 
+	## Initial preparation of data.
+	selected_samples <- selected_samples %>%
+		bind_rows(.id = "samples") %>%
+		filter(score >= threshold)
+
+	## Break data into quantiles if quantiles set is greater than 1.
 	if (quantiles > 1) {
-		genomic_distribution <- genomic_distribution %>%
+		selected_samples <- selected_samples %>%
 			group_by(samples) %>%
 			mutate(ntile = ntile(score, quantiles))
 	}
 	
 	## Clean up genomic annotations.
-	genomic_distribution <- genomic_distribution %>%
+	genomic_distribution <- selected_samples %>%
 		mutate(annotation = case_when(
 			annotation == "Promoter" ~ "Promoter",
 			grepl(annotation, pattern="Exon") ~ "Exon",
