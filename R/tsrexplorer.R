@@ -6,16 +6,14 @@ setClass(
 		samples = "vector",
 		cores = "numeric",
 		annotated = "list",
-		raw_counts = "list",
-		normalized_counts = "list"
+		counts = "list"
 	),
 	prototype(
 		experiment = list(),
 		samples = c(),
 		cores = NA_real_,
 		annotated = list(),
-		raw_counts = list(),
-		normalized_counts = list()
+		counts = list()
 	)
 )
 

@@ -14,6 +14,7 @@
 #' @param data_type Whether TSSs, TSRs, TSS feature counts, or RNA-seq feature counts should be normalized
 #' @param threshold Filter out positions missing at least 'n_samples' number of samples with reads greater than or equal to threshold
 #' @param n_samples Filter out positions missing at least n_samples number of samples with reads greater than or equal to 'threshold'
+#' @param samples Vector with names of samples to include in he normalization
 #'
 #' @return tibble of TMM normalized read counts
 #'
@@ -24,21 +25,41 @@
 count_normalization <- function(
 	experiment,
 	data_type = c("tss", "tsr", "tss_features", "rnaseq_features"),
+	samples = "all",
 	threshold = 1,
 	n_samples = 1
 ) {
 
 	## Select proper slot of data.
 	if (data_type == "tss") {
-		raw_counts <- map(
-			experiment@experiment$TSSs,
-			~as_tibble(., .name_repair = "unique") %>%
-				mutate(position = paste(seqnames, start, end, strand, sep="_")) %>%
-				select(position, score)
-		) %>%
-			bind_rows(.id = "sample") %>%
-			spread(key = sample, value = score, fill = 0)
-	} else if (data_type == "tsr") {
+		if (samples == "all") samples <- names(experiment@experiment$TSSs)
+		select_samples <- experiment@experiment$TSSs[samples]
+
+		raw <- map(select_samples, ~ .[score(.) >= threshold])
+
+		raw_matrix <- select_samples %>%
+			map(
+				~as_tibble(., .name_repair = "unique") %>%
+					mutate(position = paste(seqnames, start, end, strand, sep="_")) %>%
+					select(position, score)
+			) %>%
+				bind_rows(.id = "sample") %>%
+				spread(key = sample, value = score, fill = 0)
+	}
+
+	if (data_type == "tsr") {
+		## Pull data from proper slot.
+		if (samples == "all") samples <- names(experiment@experiment$TSRs)
+		select_samples <- experiment@experiment$TSRs[samples]
+		select_samples <- select_samples %>%
+			map(
+				~ as_tibble(.x, .name_repair = "unique") %>%
+					rename("score" = nTAGs) %>%
+					makeGRangesFromDataFrame(keep.extra.columns = TRUE)
+			)
+
+		raw <- map(select_samples, ~ .[score(.) >= threshold])
+
 		## Merge overlapping TSRs to get consensus
 		tsr_consensus <- experiment@experiment$TSRs %>%
 			as("GRangesList") %>%
@@ -48,7 +69,7 @@ count_normalization <- function(
 			mutate(names = paste(seqnames, start, end, strand, sep="_")) %>%
 			makeGRangesFromDataFrame(keep.extra.columns = TRUE)
 
-		raw_counts <- map(
+		raw_matrix <- map(
 			names(experiment@experiment$TSRs),
 			~findOverlaps(
 				query = tsr_consensus,
@@ -75,15 +96,22 @@ count_normalization <- function(
 			rename(position = gene_id)
 	}
 
-	## Filter out positions that have less than n_samples numbe rof samples with reads above threshold.
-	raw_counts <- raw_counts %>%
+	## CPM normalize counts
+	cpm_counts <- raw %>%
+		map(function(x) {
+			x$score <- x$score %>% cpm
+			return(x)
+		})
+
+	## Filter out positions that have less than n_samples number of samples with reads above threshold.
+	filtered_matrix <- raw_matrix %>%
 		mutate_if(is.numeric, ~ {.x >= threshold}) %>%
 		mutate(rowsums = rowSums(.[, 2:ncol(.)])) %>%
 		{which(.$rowsums >= n_samples)} %>%
-		raw_counts[., ]
+		raw_matrix[., ]
 
 	## TMM normalize counts.
-	tmm_counts <- raw_counts %>%
+	tmm_matrix <- filtered_matrix %>%
 		column_to_rownames("position") %>%
 		as.matrix %>%
 		DGEList %>%
@@ -93,11 +121,19 @@ count_normalization <- function(
 
 	## Put counts into proper slots.
 	if (data_type == "tss") {
-		experiment@raw_counts$TSSs <- raw_counts
-		experiment@normalized_counts$TSSs <- tmm_counts
+		experiment@counts$TSSs <- list(
+			"raw" = raw,
+			"cpm" = cpm_counts,
+			"raw_matrix" = filtered_matrix,
+			"tmm_matrix" = tmm_matrix
+		)
 	} else if (data_type == "tsr") {
-		experiment@raw_counts$TSRs <- raw_counts
-		experiment@normalized_counts$TSRs <- tmm_counts
+		experiment@counts$TSRs <- list(
+			"raw" = raw,
+			"cpm" = cpm_counts,
+			"raw_matrix" = filtered_matrix,
+			"tmm_matrix" = tmm_matrix
+		)
 	} else if (data_type == "tss_features") {
 		experiment@normalized_counts$TSS_features <- tmm_counts
 	} else if (data_type == "rnaseq_features") {

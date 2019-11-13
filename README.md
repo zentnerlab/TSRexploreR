@@ -60,7 +60,7 @@ exp <- tsr_explorer(TSSs, TSRs)
 **tmm normalize counts**
 
 ```
-exp <- count_normalization(exp, data_type = "tss")
+exp <- count_normalization(exp, data_type = "tss", threshold = 3, n_samples = 1)
 ```
 
 **tss correlation heatmaps and scatter plots**
