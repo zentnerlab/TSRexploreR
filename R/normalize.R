@@ -3,7 +3,7 @@
 #' Using edgeR to TMM normalize TSSs or TSRs
 #'
 #' @import tibble
-#' @importFrom dplyr mutate select bind_rows group_by summarize mutate_if
+#' @importFrom dplyr mutate select bind_rows group_by summarize mutate_if left_join
 #' @importFrom edgeR DGEList calcNormFactors cpm
 #' @importFrom GenomicRanges GRangesList reduce findOverlaps makeGRangesFromDataFrame score
 #' @importFrom tidyr spread complete
@@ -11,7 +11,7 @@
 #' @importFrom magrittr %>%
 #'
 #' @param experiment tsrexplorer object
-#' @param data_type Whether TSSs, TSRs, TSS feature counts, or RNA-seq feature counts should be normalized
+#' @param data_type Whether TSSs, TSRs, RNA-seq & five-prime feature counts should be normalized
 #' @param threshold Filter out positions missing at least 'n_samples' number of samples with reads greater than or equal to threshold
 #' @param n_samples Filter out positions missing at least n_samples number of samples with reads greater than or equal to 'threshold'
 #' @param samples Vector with names of samples to include in he normalization
@@ -24,7 +24,7 @@
 
 count_normalization <- function(
 	experiment,
-	data_type = c("tss", "tsr", "tss_features", "rnaseq_features"),
+	data_type = c("tss", "tsr", "features"),
 	samples = "all",
 	threshold = 1,
 	n_samples = 1
@@ -88,20 +88,26 @@ count_normalization <- function(
 			setNames(names(experiment@experiment$TSRs)) %>%
 			bind_rows(.id = "sample") %>%
 			spread(key = sample, value = score, fill = 0)
-	} else if (data_type == "tss_features") {
-		raw_counts <- experiment@raw_counts$TSS_features %>%
+	}
+
+	if (data_type == "features") {
+		rnaseq_matrix <- experiment@experiment$features$rna_seq %>%
 			rename(position = gene_id)
-	} else if (data_type == "rnaseq_features") {
-		raw_counts <- experiment@raw_counts$RNAseq_features %>%
+
+		fiveprime_matrix <- experiment@experiment$features$five_prime %>%
 			rename(position = gene_id)
+
+		raw_matrix <- left_join(rnaseq_matrix, fiveprime_matrix, by = "position")
 	}
 
 	## CPM normalize counts
-	cpm_counts <- raw %>%
-		map(function(x) {
-			x$score <- x$score %>% cpm
-			return(x)
-		})
+	if (data_type %in% c("tss", "tsr")) {
+		cpm_counts <- raw %>%
+			map(function(x) {
+				x$score <- x$score %>% cpm
+				return(x)
+			})
+	}
 
 	## Filter out positions that have less than n_samples number of samples with reads above threshold.
 	filtered_matrix <- raw_matrix %>%
@@ -134,10 +140,11 @@ count_normalization <- function(
 			"raw_matrix" = filtered_matrix,
 			"tmm_matrix" = tmm_matrix
 		)
-	} else if (data_type == "tss_features") {
-		experiment@normalized_counts$TSS_features <- tmm_counts
-	} else if (data_type == "rnaseq_features") {
-		experiment@normalized_counts$RNAseq_features <- tmm_counts
+	} else if (data_type == "features") {
+		experiment@counts$features <- list(
+			"raw_matrix" = filtered_matrix,
+			"tmm_matrix" = tmm_matrix
+		)
 	}
 
 	return(experiment)

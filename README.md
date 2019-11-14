@@ -483,7 +483,7 @@ TSSs_total <- system.file("extdata", "yeast_TSSs_total.RDS",  package = "tsrexpl
 TSSs_total <- readRDS(TSSs_total)
 
 exp <- add_feature_counts(exp, RNAseq, TSSs_total)
-exp <- count_normalization(exp, data_type = "rnaseq_features")
+exp <- count_normalization(exp, data_type = "features")
 ```
 
 **RNA-seq Versus TSS Correlation Heatmap and Scatter Plot**

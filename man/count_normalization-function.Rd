@@ -4,14 +4,13 @@
 \alias{count_normalization}
 \title{TMM Normalize TSSs or TSRs}
 \usage{
-count_normalization(experiment, data_type = c("tss", "tsr",
-  "tss_features", "rnaseq_features"), samples = "all", threshold = 1,
-  n_samples = 1)
+count_normalization(experiment, data_type = c("tss", "tsr", "features"),
+  samples = "all", threshold = 1, n_samples = 1)
 }
 \arguments{
 \item{experiment}{tsrexplorer object}
 
-\item{data_type}{Whether TSSs, TSRs, TSS feature counts, or RNA-seq feature counts should be normalized}
+\item{data_type}{Whether TSSs, TSRs, RNA-seq & five-prime feature counts should be normalized}
 
 \item{samples}{Vector with names of samples to include in he normalization}
 
