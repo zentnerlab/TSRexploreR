@@ -29,17 +29,20 @@ dinucleotide_frequencies <- function(experiment, genome_assembly, samples = "all
 	fasta_assembly <- FaFile(genome_assembly)
 
 	## Filter TSSs and get sequences.
-	if (samples == "all") samples <- names(experiment@experiment$TSSs)
+	if (samples == "all") samples <- names(experiment@counts$TSSs$raw)
+	select_samples <- experiment@counts$TSSs$raw[samples]
+	
+	## Prepare samples for analysis.
+	select_samples
 
-	sample_scores <- map(
-		experiment@experiment$TSSs[samples],
-		~ .[score(.) >= threshold] %>%	score(.)
-	)
+	select_samples <- map(select_samples, ~ .[score(.) >= threshold])
 
-	sequences <- experiment@experiment$TSSs[samples] %>%
-		map(~ .[score(.) >= threshold] %>%
-			resize(., width=2, fix="end") %>%
-			getSeq(fasta_assembly, .)
+	sample_scores <- map(select_samples, ~ score(.))
+
+	sequences <- select_samples %>%
+		map(
+			~ resize(., width=2, fix="end") %>%
+				getSeq(fasta_assembly, .)
 		)
 			
 
