@@ -8,8 +8,9 @@
 #' @importFrom ChIPseeker annotatePeak
 #' @importFrom purrr map
 #' @importFrom GenomicFeatures makeTxDbFromGFF
+#' @importFrom GenomicRanges makeGRangesFromDataFrame
 #' @importFrom tidyr separate gather
-#' @importFrom dplyr filter
+#' @importFrom dplyr filter select
 #'
 #' @param experiment tsrexplorer object with TSS Granges
 #' @param annotation_file GTF file with genomic annotations
