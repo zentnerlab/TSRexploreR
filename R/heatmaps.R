@@ -7,9 +7,9 @@
 #' @include annotate.R
 #'
 #' @import tibble
-#' @importFrom dplyr select filter group_by pull mutate_if rename ungroup left_join
+#' @importFrom dplyr bind_rows rename ntile filter between select mutate group_by summarize pull ungroup left_join desc
 #' @importFrom magrittr %>%
-#' @importFrom tidyr spread gather complete
+#' @importFrom tidyr complete
 #' @importFrom forcats fct_reorder
 #' 
 #' @param experiment tsrexplorer object with annotated TSSs
@@ -104,8 +104,7 @@ tss_heatmap_matrix <- function(
 #'
 #' @import tibble
 #' @import ggplot2
-#' @importFrom dplyr mutate case_when desc
-#' @importFrom tidyr gather
+#' @importFrom dplyr mutate case_when pull
 #' @importFrom forcats fct_rev
 #' @importFrom magrittr %>%
 #'
@@ -178,9 +177,9 @@ plot_heatmap <- function(heatmap_matrix, max_value = 5, ncol = 1) {
 #' @include annotate.R
 #'
 #' @import tibble
-#' @importFrom dplyr select mutate case_when bind_rows filter between group_by ungroup summarize left_join
+#' @importFrom dplyr bind_rows rename select mutate case_when group_by summarize ungroup filter between left_join
 #' @importFrom magrittr %>%
-#' @importFrom tidyr spread complete
+#' @importFrom tidyr complete
 #' @importFrom purrr pmap
 #' 
 #' @param experiment tsrexplorer object with annotated TSRs
