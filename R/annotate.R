@@ -8,7 +8,6 @@
 #' @importFrom ChIPseeker annotatePeak
 #' @importFrom purrr map
 #' @importFrom GenomicFeatures makeTxDbFromGFF
-#' @importFrom GenomicRanges makeGRangesFromDataFrame
 #' @importFrom tidyr separate gather
 #' @importFrom dplyr filter select
 #'

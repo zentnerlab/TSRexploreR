@@ -5,10 +5,11 @@
 #'
 #' @import tibble
 #' @import ggplot2
-#' @importFrom dplyr select filter between bind_rows ntile group_by ungroup
+#' @importFrom dplyr bind_rows select filter between group_by mutate ntile ungroup
 #' @importFrom magrittr %>%
-#' @importFrom purrr pmap map
+#' @importFrom purrr map pmap
 #' @importFrom forcats fct_rev
+#' @importFrom tidyr separate
 #'
 #' @param experiment tsr_explorer object with annotated TSSs
 #' @param samples Either 'all' to plot all samples, or a vector of sample names
