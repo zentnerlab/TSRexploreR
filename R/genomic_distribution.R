@@ -4,7 +4,7 @@
 #' Get genomic distribution of TSSs and TSRs
 #'
 #' @import tibble
-#' @importFrom dplyr mutate count case_when arrange rename bind_rows group_by ungroup ntile
+#' @importFrom dplyr bind_rows filter group_by mutate ntile case_when count ungroup arrange
 #'
 #' @param experiment tsrexplorer object with annotated TSRs
 #' @param samples Either "all" or vector of sample names
@@ -96,7 +96,6 @@ genomic_distribution <- function(experiment, data_type = c("tss", "tsr"), sample
 #'
 #' @import tibble
 #' @import ggplot2
-#' @importFrom dplyr mutate
 #' @importFrom forcats fct_rev
 #'
 #' @param genomic_distribution tibble of TSS or TSR genomic distributions from tsr_genomic_distribution
