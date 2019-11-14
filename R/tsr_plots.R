@@ -5,8 +5,8 @@
 #'
 #' @import tibble
 #' @import ggplot2
-#' @importFrom purrr pluck map
-#' @importFrom dplyr mutate_at select select_at
+#' @importFrom dplyr mutate_at select select_at bind_rows vars mutate
+#' @importFrom tidyr gather
 #'
 #' @param experiment tsrexplorer object with TSR granges
 #' @param sample Name of sample to return plot for
