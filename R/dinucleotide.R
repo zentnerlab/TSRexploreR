@@ -7,7 +7,7 @@
 #'
 #' @import tibble
 #' @importFrom GenomicRanges GRanges resize score
-#' @importFrom dplyr filter count mutate bind_rows group_by ungroup
+#' @importFrom dplyr mutate bind_rows group_by ntile ungroup select count
 #' @importFrom Rsamtools FaFile getSeq
 #' @importFrom purrr map map2
 #' @importFrom magrittr %>%
