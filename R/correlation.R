@@ -3,7 +3,7 @@
 #'
 #' @import tibble
 #' @import ggplot2
-#' @importFrom dplyr mutate_at left_join
+#' @importFrom dplyr mutate_at left_join vars
 #' @importFrom purrr discard
 #' @importFrom tidyr gather
 #' @importFrom GGally ggpairs
