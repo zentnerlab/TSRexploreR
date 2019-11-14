@@ -8,9 +8,9 @@
 #' @import tibble
 #' @importFrom Rsamtools FaFile
 #' @importFrom purrr map map2
-#' @importFrom dplyr mutate filter ntile pull
+#' @importFrom dplyr mutate filter ntile pull bind_rows
 #' @importFrom Biostrings getSeq DNAStringSet
-#' @importFrom GenomicRanges GRanges resize score width seqnames start strand makeGRangesFromDataFrame
+#' @importFrom GenomicRanges GRanges resize width makeGRangesFromDataFrame
 #' @importFrom magrittr %>%
 #'
 #' @param experiment tsrexplorer object with TSS GRanges
@@ -144,7 +144,8 @@ plot_sequence_logo <- function(tss_sequences, ncol = 1) {
 #'
 #' @import tibble
 #' @import ggplot2
-#' @importFrom dplyr mutate bind_cols pull bind_rows rename
+#' @importFrom dplyr bind_rows rename pull bind_cols mutate group_by ungroup desc
+#' @importFrom purrr map
 #' @importFrom stringr str_split
 #' @importFrom tidyr separate gather
 #' @importFrom forcats fct_reorder fct_rev

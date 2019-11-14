@@ -3,9 +3,9 @@
 #' Using edgeR to TMM normalize TSSs or TSRs
 #'
 #' @import tibble
-#' @importFrom dplyr bind_rows mutate select group_by summarize mutate_if
+#' @importFrom dplyr mutate select bind_rows group_by summarize mutate_if
 #' @importFrom edgeR DGEList calcNormFactors cpm
-#' @importFrom GenomicRanges GRangesList reduce findOverlaps makeGRangesFromDataFrame
+#' @importFrom GenomicRanges GRangesList reduce findOverlaps makeGRangesFromDataFrame score
 #' @importFrom tidyr spread complete
 #' @importFrom purrr map
 #' @importFrom magrittr %>%
