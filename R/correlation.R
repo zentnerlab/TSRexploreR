@@ -12,7 +12,7 @@
 #' @importFrom viridis viridis
 #'
 #' @param experiment tsrexplorer object with TMM normalized counts
-#' @param data_type Whether to make scatter plots from TSS or TSR data
+#' @param data_type Whether to make scatter plots from TSS, TSR, or RNA-seq & five-prime data
 #' @param samples Either 'all' or the names of the samples to plot
 #' @param correlation_plot Whether to make a correlation 'heatmap', 'scatter', 'combined' or 'hierarchical'
 #' @param correlation_metric Use either spearman or pearson correlation
@@ -26,7 +26,7 @@
 
 plot_correlation <- function(
 	experiment,
-	data_type = c("tss", "tsr", "rnaseq_v_tss"),
+	data_type = c("tss", "tsr", "features"),
 	samples = "all",
 	correlation_plot = "combined",
 	correlation_metric = "pearson",
@@ -40,12 +40,8 @@ plot_correlation <- function(
 	} else if (data_type == "tsr") {
 		normalized_counts <- experiment@counts$TSRs$tmm_matrix
 		type_color <- "#34698c"
-	} else if (data_type == "rnaseq_v_tss") {
-		normalized_counts <- left_join(
-			experiment@normalized_counts$RNAseq_features,
-			experiment@normalized_counts$TSS_features,
-			by = "position"
-		)
+	} else if (data_type == "feaures") {
+		normalized_counts <- experiment@counts$features$tmm_matrix
 		type_color <- "#29AF7FFF"
 	}
 

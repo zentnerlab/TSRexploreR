@@ -489,7 +489,7 @@ exp <- count_normalization(exp, data_type = "features")
 **RNA-seq Versus TSS Correlation Heatmap and Scatter Plot**
 
 ```
-p <- plot_correlation(exp, data_type = "rnaseq_v_tss", correlation_metric = "spearman") +
+p <- plot_correlation(exp, data_type = "features", correlation_metric = "spearman") +
 	ggplot2::theme_bw() +
 	ggplot2::theme(text = element_text(size = 6))
 
