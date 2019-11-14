@@ -5,7 +5,8 @@
 \title{Plot TSR Stats}
 \usage{
 plot_tsr_metric(experiment, tsr_metrics, plot_type = "violin",
-  samples = "all", log2_transform = FALSE, ncol = 1)
+  samples = "all", log2_transform = FALSE, ncol = 1,
+  use_cpm = FALSE)
 }
 \arguments{
 \item{experiment}{tsrexplorer object with TSR granges}
@@ -17,6 +18,8 @@ plot_tsr_metric(experiment, tsr_metrics, plot_type = "violin",
 \item{log2_transform}{Whether the metric should be log2 transformed prior to plotting}
 
 \item{ncol}{Number of columns to plot data}
+
+\item{use_cpm}{Whether to use the CPM normalized or raw counts}
 
 \item{sample}{Name of sample to return plot for}
 

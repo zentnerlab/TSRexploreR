@@ -15,6 +15,7 @@
 #' @param samples Either 'all' or a vector of sample names to analyze
 #' @param log2_transform Whether the metric should be log2 transformed prior to plotting
 #' @param ncol Number of columns to plot data
+#' @param use_cpm Whether to use the CPM normalized or raw counts
 #'
 #' @return ggplot2 object with tsr metrix plotted
 #'
@@ -28,13 +29,20 @@ plot_tsr_metric <- function(
 	plot_type = "violin",
 	samples = "all",
 	log2_transform = FALSE,
-	ncol = 1
+	ncol = 1,
+	use_cpm = FALSE
 ) {
 
 	## Grab data.
-	if (samples == "all") samples <- names(experiment@experiment$TSRs)
-	selected_data <- experiment@experiment$TSRs[samples] %>%
-		map(~ as_tibble(., .name_repair = "unique")) %>%
+	if (use_cpm) {
+		if (samples == "all") samples <- names(experiment@annotated$TSRs$cpm)
+		select_samples <- experiment@annotated$TSRs$cpm[samples]
+	} else {
+		if (samples == "all") samples <- names(experiment@annotated$TSRs$raw)
+		select_samples <- experiment@annotated$TSRs$raw[samples]
+	}
+
+	selected_data <- select_samples %>%
 		bind_rows(.id = "samples") %>%
 		select_at(vars("samples", tsr_metrics)) %>%
 		gather(key = "tsr_stat", value = "stat_value", -samples)
