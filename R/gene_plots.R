@@ -4,7 +4,7 @@
 #' Get the number of genes or transcripts detected
 #'
 #' @import tibble
-#' @importFrom dplyr rename bind_rows select mutate case_when between distinct full_join count
+#' @importFrom dplyr bind_rows rename filter select mutate distinct case_when between count
 #' @importFrom purrr map
 #'
 #' @param experiment tsrexplorer object with annotated TSSs or TSRs
