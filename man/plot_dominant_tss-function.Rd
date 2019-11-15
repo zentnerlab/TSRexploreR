@@ -4,7 +4,8 @@
 \alias{plot_dominant_tss}
 \title{Plot Dominant TSS}
 \usage{
-plot_dominant_tss(dominant_tss, upstream = 2000, downstream = 500)
+plot_dominant_tss(dominant_tss, upstream = 2000, downstream = 500,
+  ncol = 1)
 }
 \arguments{
 \item{dominant_tss}{Tibble of dominant TSSs from dominant_tss}
@@ -12,6 +13,8 @@ plot_dominant_tss(dominant_tss, upstream = 2000, downstream = 500)
 \item{upstream}{Bases upstream to display on plot}
 
 \item{downstream}{Bases downstream to display on plot}
+
+\item{ncol}{Number of columns to plot the data to}
 }
 \value{
 ggplot2 object dominant TSS plot

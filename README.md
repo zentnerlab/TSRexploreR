@@ -259,11 +259,11 @@ ggsave("tss_dinucleotide_frequencies_quantiles.png", plot = p, device = "png", t
 **Average distance of dominant TSS**
 
 ```
-dominant <- dominant_tss(exp, sample = "S288C_WT_100ng_1", threshold = 3, feature_type = "geneId")
+dominant <- dominant_tss(exp, threshold = 3, feature_type = "geneId")
 
-p <- plot_dominant_tss(dominant, upstream = 500, downstream = 500)
+p <- plot_dominant_tss(dominant, upstream = 500, downstream = 500, ncol = 3)
 
-ggsave("dominant_tss.png", plot = p, device = "png", type = "cairo", height = 4, width = 4)
+ggsave("dominant_tss.png", plot = p, device = "png", type = "cairo", height = 2, width = 6)
 ```
 
 ![dominant_tss](./inst/images/dominant_tss.png)

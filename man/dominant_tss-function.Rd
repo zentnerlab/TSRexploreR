@@ -11,6 +11,8 @@ dominant_tss(experiment, samples = "all", threshold = 1,
 \arguments{
 \item{experiment}{tsrexplorer object with annotated TSSs}
 
+\item{samples}{Either 'all' or name of samples to analyze}
+
 \item{threshold}{Read threshold for TSS}
 
 \item{max_upstream}{Max upstream distance of TSS to consider}
@@ -18,8 +20,6 @@ dominant_tss(experiment, samples = "all", threshold = 1,
 \item{max_downstream}{Max downstream distance of TSS to consider}
 
 \item{feature_type}{Feature that was used to find TSS distance ("geneId", "transcriptId")}
-
-\item{sample}{Name of sample to analyze}
 }
 \value{
 Tibble with dominant TSSs for each gene

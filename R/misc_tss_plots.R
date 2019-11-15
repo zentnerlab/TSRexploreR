@@ -5,10 +5,10 @@
 #'
 #' @import tibble
 #' @importFrom magrittr %>%
-#' @importFrom dplyr select filter group_by_at ungroup
+#' @importFrom dplyr select filter group_by ungroup between bind_rows
 #'
 #' @param experiment tsrexplorer object with annotated TSSs
-#' @param sample Name of sample to analyze
+#' @param samples Either 'all' or name of samples to analyze
 #' @param threshold Read threshold for TSS
 #' @param max_upstream Max upstream distance of TSS to consider
 #' @param max_downstream Max downstream distance of TSS to consider
@@ -32,6 +32,7 @@ dominant_tss <- function(
 	if (samples == "all") samples <- names(experiment@annotated$TSSs$raw)
 	select_samples <- experiment@annotated$TSSs$raw[samples]	
 
+	## Get dominant TSSs.
 	dominant <- select_samples %>%
 		map(
 			~ rename(.x, "feature" = feature_type) %>%
@@ -62,6 +63,7 @@ dominant_tss <- function(
 #' @param dominant_tss Tibble of dominant TSSs from dominant_tss
 #' @param upstream Bases upstream to display on plot
 #' @param downstream Bases downstream to display on plot
+#' @param ncol Number of columns to plot the data to
 #'
 #' @return ggplot2 object dominant TSS plot
 #'
@@ -69,14 +71,14 @@ dominant_tss <- function(
 #'
 #' @export
 
-plot_dominant_tss <- function(dominant_tss, upstream = 2000, downstream = 500) {
+plot_dominant_tss <- function(dominant_tss, upstream = 2000, downstream = 500, ncol = 1) {
 	## Format data for plotting
-	dominant_tss <- dominant_tss %>%
-		count(distanceToTSS) %>%
-		pmap(function(distanceToTSS, n) rep(distanceToTSS, n)) %>%
-		unlist %>%
-		enframe(value="distanceToTSS") %>%
-		select(-name)
+	#dominant_tss <- dominant_tss %>%
+		#count(distanceToTSS) %>%
+		#pmap(function(distanceToTSS, n) rep(distanceToTSS, n)) %>%
+		#unlist %>%
+		#enframe(value="distanceToTSS") %>%
+		#select(-name)
 
 	## Plot data
 	p <- ggplot(dominant_tss, aes(distanceToTSS)) +
@@ -87,7 +89,8 @@ plot_dominant_tss <- function(dominant_tss, upstream = 2000, downstream = 500) {
 			x="Start Codon",
 			y="Density"
 		) +
-		geom_vline(xintercept=0, lty=2)
+		geom_vline(xintercept=0, lty=2) +
+		facet_wrap(~ sample, ncol = ncol)
 
 	return(p)
 }
