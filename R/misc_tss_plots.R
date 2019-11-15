@@ -6,6 +6,7 @@
 #' @import tibble
 #' @importFrom magrittr %>%
 #' @importFrom dplyr select filter group_by ungroup between bind_rows
+#' @importFrom purrr map
 #'
 #' @param experiment tsrexplorer object with annotated TSSs
 #' @param samples Either 'all' or name of samples to analyze
@@ -102,10 +103,11 @@ plot_dominant_tss <- function(dominant_tss, upstream = 2000, downstream = 500, n
 #' @include tsrexplorer.R
 #'
 #' @import tibble
-#' @importFrom dplyr filter between group_by_at select summarize
+#' @importFrom dplyr filter between group_by select summarize bind_rows
+#' @importFrom purrr map
 #'
 #' @param experiment tsrexplorer object with annotated TSSs
-#' @param sample Name of sample to analyze
+#' @param samples Either 'all' or names of sample to analyze
 #' @param threshold Number of reads required for each TSS
 #' @param max_upstream Max upstream distance of TSS to consider
 #' @param max_downstream Max downstream distance of TSS to consider
@@ -118,19 +120,30 @@ plot_dominant_tss <- function(dominant_tss, upstream = 2000, downstream = 500, n
 #' @export
 
 max_utr <- function(
-	experiment, sample, threshold = 1,
-	max_upstream = 1000, max_downstream = 100,
+	experiment,
+	samples = "all",
+	threshold = 1,
+	max_upstream = 1000,
+	max_downstream = 100,
 	feature_type = c("geneId", "transcriptId")
 ) {
+	## Grab selected samples.
+	if (samples == "all") samples <- names(experiment@annotated$TSSs$raw)
+	select_samples <- experiment@annotated$TSSs$raw[samples]
+
 	## Get TSS with minimum distance to start codon.
-	max_utr <- experiment@annotated$TSSs[[sample]] %>%
-		select(feature_type, distanceToTSS, score) %>%
-		filter(
-			score >= threshold,
-			between(distanceToTSS, -max_upstream, max_downstream)
+	max_utr <- select_samples %>%
+		map(
+			~ rename(.x, "feature" = feature_type) %>%
+				select(feature, distanceToTSS, score) %>%
+				filter(
+					score >= threshold,
+					between(distanceToTSS, -max_upstream, max_downstream)
+				) %>%
+				group_by(feature) %>%
+				summarize(tss_max_distance = min(distanceToTSS))
 		) %>%
-		group_by_at(feature_type) %>%
-		summarize(tss_max_distance = min(distanceToTSS))
+		bind_rows(.id = "samples")
 
 	return(max_utr)
 }
@@ -145,6 +158,7 @@ max_utr <- function(
 #' @param max_utr tibble of max UTRs output by max_utr
 #' @param upstream Bases upstream to extend average to
 #' @param downstream Bases downstream to extend average to
+#' @param ncol Number of columns to plot the data to
 #'
 #' @return ggplot2 object of max UTR length average
 #'
@@ -152,7 +166,7 @@ max_utr <- function(
 #'
 #' @export
 
-plot_max_utr <- function(max_utr, upstream = 1000, downstream = 100) {
+plot_max_utr <- function(max_utr, upstream = 1000, downstream = 100, ncol = 1) {
 	p <- ggplot(max_utr, aes(x = tss_max_distance)) +
 		geom_density(fill = "#431352", color = "#431352") +
 		xlim(-upstream, downstream) +
@@ -161,7 +175,8 @@ plot_max_utr <- function(max_utr, upstream = 1000, downstream = 100) {
 			x = "Max UTR Length",
 			y = "Density"
 		) +
-		geom_vline(xintercept = 0, lty = 2)
+		geom_vline(xintercept = 0, lty = 2) +
+		facet_wrap(~ samples, ncol = ncol)
 
 	return(p)
 }

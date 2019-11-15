@@ -270,11 +270,11 @@ ggsave("dominant_tss.png", plot = p, device = "png", type = "cairo", height = 2,
 
 **Max UTR Length**
 ``` 
-max <- max_utr(exp, sample = "S288C_WT_100ng_1", threshold = 3, feature_type = "geneId")
+max <- max_utr(exp, threshold = 3, feature_type = "geneId")
 
-p <- plot_max_utr(max)
+p <- plot_max_utr(max, ncol = 3)
 
-ggsave("max_utr.png", plot = p, device = "png", type = "cairo", height = 4, width = 4)
+ggsave("max_utr.png", plot = p, device = "png", type = "cairo", height = 2, width = 6)
 ```
 
 ![max_utr](./inst/images/max_utr.png)
