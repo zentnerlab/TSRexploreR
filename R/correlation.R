@@ -17,6 +17,7 @@
 #' @param correlation_plot Whether to make a correlation 'heatmap', 'scatter', 'combined' or 'hierarchical'
 #' @param correlation_metric Use either spearman or pearson correlation
 #' @param log2 Should the TMM values be log2+1 transformed prior to plotting?
+#' @param ... Additional arguments passed to ComplexHeatmap::Heatmap
 #'
 #' @return ggplot2 object
 #'
@@ -30,7 +31,8 @@ plot_correlation <- function(
 	samples = "all",
 	correlation_plot = "combined",
 	correlation_metric = "pearson",
-	log2_transform = TRUE
+	log2_transform = TRUE,
+	...
 ) {
 	
 	## Get data from proper slot.
@@ -113,8 +115,8 @@ plot_correlation <- function(
 
 		p <- Heatmap(
 			corr_matrix,
-			col = viridis(100),
-			name = correlation_metric
+			name = correlation_metric,
+			...
 		)
 	}
 

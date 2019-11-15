@@ -77,7 +77,7 @@ ggsave("tss_correlation.png", plot = p, device = "png", type = "cairo", height =
 A hierarchically clustered heatmap can also be generated.
 
 ```
-p <- plot_correlation(exp, data_type = "tss", correlation_plot = "hierarchical")
+p <- plot_correlation(exp, data_type = "tss", correlation_plot = "hierarchical", col = viridis::viridis(100))
 
 png("tss_correlation_hierarchical.png", units = "in", res = 300, height = 3.5, width = 4, type = "cairo")
 p
