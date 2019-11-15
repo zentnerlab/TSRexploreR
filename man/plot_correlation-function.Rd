@@ -4,14 +4,14 @@
 \alias{plot_correlation}
 \title{heatmaps and/or scatter plots to explore replicate concordance of TSSs or TSRs.}
 \usage{
-plot_correlation(experiment, data_type = c("tss", "tsr", "rnaseq_v_tss"),
+plot_correlation(experiment, data_type = c("tss", "tsr", "features"),
   samples = "all", correlation_plot = "combined",
   correlation_metric = "pearson", log2_transform = TRUE)
 }
 \arguments{
 \item{experiment}{tsrexplorer object with TMM normalized counts}
 
-\item{data_type}{Whether to make scatter plots from TSS or TSR data}
+\item{data_type}{Whether to make scatter plots from TSS, TSR, or RNA-seq & five-prime data}
 
 \item{samples}{Either 'all' or the names of the samples to plot}
 

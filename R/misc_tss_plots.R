@@ -21,19 +21,30 @@
 #' @export
 
 dominant_tss <- function(
-	experiment, sample, threshold = 1, 
-	max_upstream = 2000, max_downstream = 500, 
+	experiment,
+	samples = "all",
+	threshold = 1, 
+	max_upstream = 2000,
+	max_downstream = 500, 
 	feature_type = c("transcriptId", "geneId")
 ) {
-	dominant <- experiment@annotated$TSSs[[sample]] %>%
-		select(geneId, transcriptId, distanceToTSS, score) %>%
-		filter(
-			score >= threshold,
-			distanceToTSS >= -max_upstream & distanceToTSS <= max_downstream
+	## Select samples.
+	if (samples == "all") samples <- names(experiment@annotated$TSSs$raw)
+	select_samples <- experiment@annotated$TSSs$raw[samples]	
+
+	dominant <- select_samples %>%
+		map(
+			~ rename(.x, "feature" = feature_type) %>%
+				select(feature, distanceToTSS, score) %>%
+				filter(
+					score >= threshold,
+					between(distanceToTSS, -max_upstream, max_downstream)
+				) %>%
+				group_by(feature) %>%
+				filter(score == max(score)) %>%
+				ungroup
 		) %>%
-		group_by_at(feature_type) %>%
-		filter(score == max(score)) %>%
-		ungroup
+		bind_rows(.id = "sample")
 
 	return(dominant)
 }
