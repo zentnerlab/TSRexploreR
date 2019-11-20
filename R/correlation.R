@@ -42,7 +42,7 @@ plot_correlation <- function(
 	} else if (data_type == "tsr") {
 		normalized_counts <- experiment@counts$TSRs$tmm_matrix
 		type_color <- "#34698c"
-	} else if (data_type == "feaures") {
+	} else if (data_type == "features") {
 		normalized_counts <- experiment@counts$features$tmm_matrix
 		type_color <- "#29AF7FFF"
 	}

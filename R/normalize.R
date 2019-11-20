@@ -35,7 +35,13 @@ count_normalization <- function(
 		if (samples == "all") samples <- names(experiment@experiment$TSSs)
 		select_samples <- experiment@experiment$TSSs[samples]
 
-		raw <- map(select_samples, ~ .[score(.) >= threshold])
+		raw <- select_samples %>%
+			map(function(x) {
+				if ("nTAGs" %in% names(mcols(x))) x$score <- x$nTAGs
+				return(x)
+			})
+
+		raw <- map(raw, ~ .[score(.) >= threshold])
 
 		raw_matrix <- select_samples %>%
 			map(
@@ -51,10 +57,16 @@ count_normalization <- function(
 		## Pull data from proper slot.
 		if (samples == "all") samples <- names(experiment@experiment$TSRs)
 		select_samples <- experiment@experiment$TSRs[samples]
+
+		select_samples <- select_samples %>%
+			map(function(x) {
+				if ("nTAGs" %in% names(mcols(x))) x$score <- x$nTAGs
+				return(x)
+			})
+
 		select_samples <- select_samples %>%
 			map(
 				~ as_tibble(.x, .name_repair = "unique") %>%
-					rename("score" = nTAGs) %>%
 					makeGRangesFromDataFrame(keep.extra.columns = TRUE)
 			)
 

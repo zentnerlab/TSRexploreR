@@ -4,7 +4,7 @@
 \alias{differential_expression}
 \title{Find Differential TSRs}
 \usage{
-differential_expression(fit_edger_model, data_type = c("tsr", "rnaseq"),
+differential_expression(fit_edger_model, data_type = c("tsr", "feature"),
   compare_groups = c())
 }
 \arguments{

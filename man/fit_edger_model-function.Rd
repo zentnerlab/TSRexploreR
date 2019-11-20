@@ -4,7 +4,7 @@
 \alias{fit_edger_model}
 \title{edgeR Model for DE}
 \usage{
-fit_edger_model(experiment, data_type = c("tsr", "rnaseq"),
+fit_edger_model(experiment, data_type = c("tsr", "features"),
   samples = c(), groups = c())
 }
 \arguments{
