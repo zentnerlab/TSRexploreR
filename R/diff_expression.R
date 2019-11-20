@@ -18,14 +18,13 @@
 #'
 #' @export
 
-fit_edger_model <- function(experiment, data_type = c("tsr", "rnaseq"), samples = c(), groups = c()) {
+fit_edger_model <- function(experiment, data_type = c("tsr", "features"), samples = c(), groups = c()) {
 
 	## Grab data from appropraite slot.
 	if (data_type == "tsr") {
-		sample_data <- experiment@raw_counts$TSRs
-	} else if (data_type == "tss") {
-		sample_data <- experiment@raw_counts$RNAseq_features %>%
-			rename(position = gene_id)
+		sample_data <- experiment@counts$TSRs$raw_matrix
+	} else if (data_type == "features") {
+		sample_data <- experiment@counts$features$raw_matrix
 	}
 
 	## Select samples and turn to count matrix.
@@ -69,7 +68,7 @@ fit_edger_model <- function(experiment, data_type = c("tsr", "rnaseq"), samples 
 #'
 #' @export
 
-differential_expression <- function(fit_edger_model, data_type = c("tsr", "rnaseq"), compare_groups = c()) {
+differential_expression <- function(fit_edger_model, data_type = c("tsr", "feature"), compare_groups = c()) {
 	
 	## Set up contrasts.
 	comparison_contrast <- fit_edger_model$samples %>%
@@ -98,7 +97,7 @@ differential_expression <- function(fit_edger_model, data_type = c("tsr", "rnase
 			into = c("chr", "start", "end", "strand"),
 			sep = "_"
 		)
-	} else if (data_type == "rnaseq") {
+	} else if (data_type == "feature") {
 		diff_expression <- rename(diff_expression, "gene_id" = position)
 	}
 
