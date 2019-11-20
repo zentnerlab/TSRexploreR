@@ -5,7 +5,7 @@
 #' @import tibble
 #' @importFrom dplyr mutate select bind_rows group_by summarize mutate_if left_join
 #' @importFrom edgeR DGEList calcNormFactors cpm
-#' @importFrom GenomicRanges GRangesList reduce findOverlaps makeGRangesFromDataFrame score
+#' @importFrom GenomicRanges GRangesList reduce findOverlaps makeGRangesFromDataFrame score mcols
 #' @importFrom tidyr spread complete
 #' @importFrom purrr map
 #' @importFrom magrittr %>%
@@ -116,7 +116,7 @@ count_normalization <- function(
 	if (data_type %in% c("tss", "tsr")) {
 		cpm_counts <- raw %>%
 			map(function(x) {
-				x$score <- x$score %>% cpm
+				x$score <- x$score %>% cpm %>% as.numeric
 				return(x)
 			})
 	}
