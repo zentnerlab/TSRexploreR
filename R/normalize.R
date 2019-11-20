@@ -37,7 +37,7 @@ count_normalization <- function(
 
 		raw <- select_samples %>%
 			map(function(x) {
-				if ("nTAGs" %in% names(mcols(x))) x$score <- x$nTAGs
+				if ("nTAGs" %in% names(mcols(x))) score(x) <- x$nTAGs
 				return(x)
 			})
 
@@ -60,7 +60,7 @@ count_normalization <- function(
 
 		select_samples <- select_samples %>%
 			map(function(x) {
-				if ("nTAGs" %in% names(mcols(x))) x$score <- x$nTAGs
+				if ("nTAGs" %in% names(mcols(x))) score(x) <- x$nTAGs
 				return(x)
 			})
 
