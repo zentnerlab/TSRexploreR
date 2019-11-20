@@ -35,13 +35,13 @@ count_normalization <- function(
 		if (samples == "all") samples <- names(experiment@experiment$TSSs)
 		select_samples <- experiment@experiment$TSSs[samples]
 
-		raw <- select_samples %>%
+		select_samples <- select_samples %>%
 			map(function(x) {
-				if ("nTAGs" %in% names(mcols(x))) score(x) <- x$nTAGs
+				if ("nTAGs" %in% names(mcols(x))) x$score <- x$nTAGs
 				return(x)
 			})
 
-		raw <- map(raw, ~ .[score(.) >= threshold])
+		raw <- map(select_samples, ~ .[score(.) >= threshold])
 
 		raw_matrix <- select_samples %>%
 			map(
@@ -60,20 +60,14 @@ count_normalization <- function(
 
 		select_samples <- select_samples %>%
 			map(function(x) {
-				if ("nTAGs" %in% names(mcols(x))) score(x) <- x$nTAGs
+				if ("nTAGs" %in% names(mcols(x))) x$score <- x$nTAGs
 				return(x)
 			})
-
-		select_samples <- select_samples %>%
-			map(
-				~ as_tibble(.x, .name_repair = "unique") %>%
-					makeGRangesFromDataFrame(keep.extra.columns = TRUE)
-			)
 
 		raw <- map(select_samples, ~ .[score(.) >= threshold])
 
 		## Merge overlapping TSRs to get consensus
-		tsr_consensus <- experiment@experiment$TSRs %>%
+		tsr_consensus <- select_samples %>%
 			as("GRangesList") %>%
 			unlist %>%
 			reduce(ignore.strand=FALSE) %>%
@@ -82,14 +76,14 @@ count_normalization <- function(
 			makeGRangesFromDataFrame(keep.extra.columns = TRUE)
 
 		raw_matrix <- map(
-			names(experiment@experiment$TSRs),
+			names(select_samples),
 			~findOverlaps(
 				query = tsr_consensus,
-				subject = makeGRangesFromDataFrame(experiment@experiment$TSRs[[.x]])
+				subject = makeGRangesFromDataFrame(select_samples[[.x]])
 			)  %>%
 				as_tibble(.name_repair = "unique") %>%
 				mutate(
-					score = experiment@experiment$TSRs[[.x]][subjectHits]$nTAGs,
+					score = select_samples[[.x]][subjectHits]$nTAGs,
 					position = tsr_consensus[queryHits]$names
 				) %>%
 				select(-queryHits, -subjectHits) %>%
@@ -97,7 +91,7 @@ count_normalization <- function(
 				summarize(score = sum(score)) %>%
 				complete(position = tsr_consensus$names, fill = list(score = 0))
 		) %>%
-			setNames(names(experiment@experiment$TSRs)) %>%
+			setNames(names(select_samples)) %>%
 			bind_rows(.id = "sample") %>%
 			spread(key = sample, value = score, fill = 0)
 	}
@@ -116,7 +110,7 @@ count_normalization <- function(
 	if (data_type %in% c("tss", "tsr")) {
 		cpm_counts <- raw %>%
 			map(function(x) {
-				x$score <- x$score %>% cpm %>% as.numeric
+				x$score <- score(x) %>% cpm %>% as.numeric
 				return(x)
 			})
 	}
