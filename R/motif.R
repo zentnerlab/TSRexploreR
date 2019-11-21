@@ -40,19 +40,12 @@ tss_sequences <- function(experiment, samples = "all", genome_assembly, threshol
 		bind_rows(.id = "sample") %>%
 		filter(score >= threshold)
 
-	if (quantiles > 1) tss_sequences <- mutate(tss_sequences, ntile = ntile(score, quantiles))
+	tss_sequences <- mutate(tss_sequences, ntile = ntile(score, quantiles))
 
 	## Store sequence names.
 	tss_sequence_names <- tss_sequences %>%
 		split(.$sample) %>%
-		map(~ mutate(., tss_name = paste(seqnames, start, end, width, strand, score, sep = "_")))
-
-	if (quantiles > 1) {
-		tss_sequence_names <- map(
-			tss_sequence_names,
-			~ mutate(., tss_name = paste(tss_name, ntile, sep = "_"))
-		)
-	}
+		map(~ mutate(., tss_name = paste(seqnames, start, end, strand, score, ntile, sep = "_")))
 
 	tss_sequence_names <- map(tss_sequence_names, ~ pull(., tss_name))
 
@@ -74,19 +67,6 @@ tss_sequences <- function(experiment, samples = "all", genome_assembly, threshol
 
 	tss_sequences <- map2(tss_sequences, tss_sequence_names, ~ rename_sequences(.x, .y))
 
-	## Return result.
-	if (quantiles > 1) {
-		tss_sequences <- list(
-			quantile_plot = TRUE,
-			tss_sequences = tss_sequences
-		)
-	} else {
-		tss_sequences <- list(
-			quantile_plot = FALSE,
-			tss_sequences = tss_sequences
-		)
-	}
-
 	return(tss_sequences)
 }
 
@@ -98,8 +78,11 @@ tss_sequences <- function(experiment, samples = "all", genome_assembly, threshol
 #' @import ggplot2
 #' @import ggseqlogo
 #' @importFrom Biostrings DNAStringSet consensusMatrix
-#' @importFrom purrr map
+#' @importFrom purrr map pmap
+#' @importFrom dplyr mutate
+#' @importFrom tidyr unite separate
 #' @importFrom magrittr %>%
+#' @importFrom cowplot plot_grid
 #'
 #' @param tss_sequences Sequences surrounding TSS generated with tss_sequences
 #' @param ncol Number of columns to plot if quantiles is not set
@@ -113,14 +96,30 @@ tss_sequences <- function(experiment, samples = "all", genome_assembly, threshol
 plot_sequence_logo <- function(tss_sequences, ncol = 1) {
 
 	## Grab sequences from input.
-	tss_seqs <- tss_sequences$tss_sequences
+	tss_seqs <- tss_sequences %>%
+		map(~ as.data.frame(.x) %>% as_tibble(.name_repair = "unique", rownames = "position"))
+
+	tss_seqs <- tss_seqs %>%
+		map(
+			~ separate(.x, position, into = c("seqnames", "start", "end", "strand", "score", "ntile"), sep = "_") %>%
+				unite("position", seqnames, start, end, strand, score, sep = "_") %>%
+				split(.$ntile) %>%
+				map(~ pull(.x) %>% DNAStringSet)
+		) %>%
+		enframe
 
 	## Calculate consensus matrix.
 	consensus_matrix <- tss_seqs %>%
-		map(
-			~ consensusMatrix(., as.prob = TRUE) %>%
-			.[rownames(.) %in% c("A", "C", "G", "T"), ]
-		)
+		pmap(function(name, value) {
+			map(
+				value,
+				~ consensusMatrix(., as.prob = TRUE) %>%
+					.[rownames(.) %in% c("A", "C", "G", "T"), ]
+			) %>%
+			rev
+		}) %>%
+		enframe %>%
+		mutate("name" = pull(tss_seqs, name))
 
 	## Create viridis color scheme for bases.
 	viridis_bases <- make_col_scheme(
@@ -130,10 +129,18 @@ plot_sequence_logo <- function(tss_sequences, ncol = 1) {
 	)
 
 	## Make sequence logo.
-	p <- ggplot() +
-		geom_logo(consensus_matrix) +
-		theme_logo() +
-		facet_wrap(~ seq_group, ncol = ncol, scales = "free_x")
+	p <- consensus_matrix %>%
+		pmap(function(name, value) {
+			ggseqlogo(value, ncol = 1) +
+				theme(text = element_text(size = 5))
+		})
+
+	p <- plot_grid(
+		plotlist = p,
+		labels = pull(consensus_matrix, name),
+		ncol = nrow(consensus_matrix),
+		label_size = 5
+	)
 
 	return(p)
 }
@@ -164,34 +171,18 @@ plot_sequence_logo <- function(tss_sequences, ncol = 1) {
 plot_sequence_colormap <- function(tss_sequences, ncol = 1) {
 
 	## Start preparing data for plotting.
-	seq_data <- tss_sequences$tss_sequences %>%
+	seq_data <- tss_sequences %>%
 		map(~ as.data.frame(.) %>% as_tibble(.name_repair = "unique", rownames = "name")) %>%
 		bind_rows(.id = "sample") %>%
 		rename(sequence = x)
 
-	if (tss_sequences$quantile_plot) {
-		seq_data <- seq_data %>% 
-			separate(
-				name,
-				into = c(
-					"chr", "start", "end", "width",
-					"strand", "score", "ntile"
-				),
-				sep = "_",
-				remove = FALSE
-			)
-	} else {
-		seq_data <- seq_data %>%
-			separate(
-				name,
-				into = c(
-					"chr", "start", "end",
-					"width", "strand", "score"
-				),
-				sep = "_",
-				remove = FALSE
-			)
-	}
+	seq_data <- seq_data %>% 
+		separate(
+			name,
+			into = c("chr", "start", "end", "strand", "score", "ntile"),
+			sep = "_",
+			remove = FALSE
+		)
 
 	## Get sequence length.
 	sequence_length <- seq_data %>%
@@ -214,26 +205,17 @@ plot_sequence_colormap <- function(tss_sequences, ncol = 1) {
 		group_by(chr, start, end, strand) %>%
 		mutate(avg_score = mean(as.numeric(score))) %>%
 		ungroup %>%
-		mutate(name = fct_reorder(name, desc(avg_score))) %>%
+		mutate(name = fct_reorder(name, avg_score)) %>%
 		pull(name) %>%
 		levels
 
 	## Format data for plotting.
-	if (tss_sequences$quantile_plot) {
-		plot_data <- seq_data %>%
-			gather(
-				key = "position", value = "base",
-				-sample, -name, -chr, -start, -end, -width,
-				-strand, -score, -ntile, -sequence
-			)
-	} else {
-		plot_data <- seq_data %>%
-			gather(
-				key = "position", value = "base",
-				-sample, -name, -chr, -start, -end,
-				-width, -strand, -score, -sequence
-			)
-	}
+	plot_data <- seq_data %>%
+		gather(
+			key = "position", value = "base",
+			-sample, -name, -chr, -start, -end,
+			-strand, -score, -ntile, -sequence
+		)
 
 	plot_data <- mutate(
 		plot_data,
@@ -248,7 +230,7 @@ plot_sequence_colormap <- function(tss_sequences, ncol = 1) {
 		length
 
 	## Plot sequence colormap
-	p <- ggplot(plot_data, aes(x = position, y = fct_rev(factor(name)))) +
+	p <- ggplot(plot_data, aes(x = position, y = name)) +
 		geom_tile(aes(fill = base, color = base)) +
 		scale_fill_viridis_d() +
 		scale_color_viridis_d() +
@@ -261,11 +243,7 @@ plot_sequence_colormap <- function(tss_sequences, ncol = 1) {
 			panel.grid=element_blank()
 		)
 
-	if (tss_sequences$quantile_plot) {
-		p <- p + facet_wrap(fct_rev(factor(ntile)) ~ sample, scales = "free", ncol = n_samples)
-	} else {
-		p <- p + facet_wrap(~ sample, ncol = ncol)
-	}
+	p <- p + facet_wrap(fct_rev(factor(ntile)) ~ sample, scales = "free", ncol = n_samples)
 
 	return(p)
 }
