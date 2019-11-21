@@ -138,7 +138,7 @@ plot_sequence_logo <- function(tss_sequences, ncol = 1) {
 	p <- plot_grid(
 		plotlist = p,
 		labels = pull(consensus_matrix, name),
-		ncol = nrow(consensus_matrix),
+		ncol = ncol,
 		label_size = 5
 	)
 
@@ -243,7 +243,7 @@ plot_sequence_colormap <- function(tss_sequences, ncol = 1) {
 			panel.grid=element_blank()
 		)
 
-	p <- p + facet_wrap(fct_rev(factor(ntile)) ~ sample, scales = "free", ncol = n_samples)
+	p <- p + facet_wrap(fct_rev(factor(ntile)) ~ sample, scales = "free", ncol = ncol)
 
 	return(p)
 }

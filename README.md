@@ -207,10 +207,11 @@ ggsave("tss_seq_logo.png", plot = p, device = "png", type = "cairo", height = 1,
 ```
 seqs <- tss_sequences(exp, genome_assembly = assembly, threshold = 3)
 
-p <- plot_sequence_colormap(seqs, ncol = 3) +
-	ggplot2::theme(text = element_text(size = 6))
+p <- plot_sequence_colormap(seqs, ncol = 3)
 
-ggsave("tss_seq_colormap.png", plot = p, device = "png", type = "cairo", height = 2.5, width = 3.5)
+png("tss_correlation_hierarchical.png", units = "in", res = 300, height = 2.5, width = 3.5, type = "cairo")
+p
+dev.off()
 ```
 
 ![tss_sequence_colormap](./inst/images/tss_seq_colormap.png)
