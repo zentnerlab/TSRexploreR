@@ -194,13 +194,28 @@ ggsave("tss_heatmap_quantiles.png", plot = p, device = "png", type = "cairo", he
 seqs <- tss_sequences(exp, genome_assembly = assembly, threshold = 3)
 
 p <- plot_sequence_logo(seqs, ncol = 3) +
-	ggplot2::theme(text = element_text(size = 5))
 
-ggsave("tss_seq_logo.png", plot = p, device = "png", type = "cairo", height = 1, width = 6)
+png("tss_seq_logo_quantiles.png", units = "in", res = 300, height = 1, width = 6, type = "cairo")
+p
+dev.off()
 
 ```
 
 ![tss_sequence_logo](./inst/images/tss_seq_logo.png)
+
+The seq logos can also be split by quantile.
+
+```
+seqs <- tss_sequences(exp, genome_assembly = assembly, threshold = 3, quantiles = 5)
+
+p <- plot_sequence_logo(seqs, ncol = 3)
+
+png("tss_seq_logo_quantiles.png", units = "in", res = 300, height = 4, width = 6, type = "cairo")
+p
+dev.off()
+```
+
+![tss_sequence_logo_quantiles](./inst/images/tss_seq_logo_quantiles.png)
 
 **TSS base color map**
 
