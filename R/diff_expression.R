@@ -78,8 +78,8 @@ differential_expression <- function(fit_edger_model, data_type = c("tsr", "featu
 		length %>%
 		numeric(length = .)
 
-	comparison_contrast[compare_groups[1]] <- 1
-	comparison_contrast[compare_groups[2]] <- -1
+	comparison_contrast[compare_groups[1]] <- -1
+	comparison_contrast[compare_groups[2]] <- 1
 
 	## Differential expression
 	diff_expression <- glmQLFTest(fit_edger_model, contrast = comparison_contrast)
