@@ -53,8 +53,7 @@ annotate_features <- function(
 				tssRegion = c(-upstream, downstream),
 				TxDb = genome_annotation,
 				sameStrand = TRUE,
-				level = feature_type,
-				...
+				level = feature_type
 			) %>% as_tibble(.name_repair="unique")
 	)
 
@@ -64,8 +63,7 @@ annotate_features <- function(
                                 tssRegion = c(-upstream, downstream),
                                 TxDb = genome_annotation,
                                 sameStrand = TRUE,
-                                level = feature_type,
-				...
+                                level = feature_type
                         ) %>% as_tibble(.name_repair="unique")
 		)
 
