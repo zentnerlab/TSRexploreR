@@ -161,6 +161,7 @@ annotate_differential_tsrs <- function(
 #' @param differential_tsrs Tibble of differential TSRs  or genes (RNA-seq)from differential_expression
 #' @param log2fc_cutoff Log2 fold change cutoff for significance
 #' @param fdr_cutoff FDR value cutoff for significance
+#' @param ... Arguments passed to geom_point
 #'
 #' @return ggplot2 object of differential TSRs volcano plot.
 #'
@@ -168,7 +169,12 @@ annotate_differential_tsrs <- function(
 #'
 #' @export
 
-plot_volcano <- function(differential_expression, log2fc_cutoff = 1, fdr_cutoff = 0.05) {
+plot_volcano <- function(
+	differential_expression,
+	log2fc_cutoff = 1,
+	fdr_cutoff = 0.05,
+	...
+){
 
 	## Annotate TSRs based on significance cutoff.
 	diff_expression <- differential_expression %>%
@@ -181,7 +187,7 @@ plot_volcano <- function(differential_expression, log2fc_cutoff = 1, fdr_cutoff 
 
 	## Volcano plot of differential TSRs
 	p <- ggplot(diff_expression, aes(x = log2FC, y = -log10(FDR))) +
-		geom_point(aes(color = Change), size = 0.75) +
+		geom_point(aes(color = Change), ...) +
 		scale_color_viridis_d() +
 		theme_bw() +
 		geom_vline(xintercept = -log2fc_cutoff, lty = 2) +
