@@ -17,6 +17,7 @@
 #' @param feature_type Annotate on gene or transcript level
 #' @param upstream Bases upstream of TSS
 #' @param downstream Bases downstream of TSS
+#' @param ... Additional arguments passed to ChIPseeker::annotatePeak
 #'
 #' @return Annotated TSS slot in tsrchitect object
 #'
@@ -30,7 +31,8 @@ annotate_features <- function(
 	data_type = c("tss", "tsr"),
 	feature_type = c("gene", "transcript"),
 	upstream = 1000,
-	downstream = 100
+	downstream = 100,
+	...
 ) {
 	## Load GTF.
 	genome_annotation <- makeTxDbFromGFF(annotation_file, format = "gtf")
@@ -52,6 +54,7 @@ annotate_features <- function(
 				TxDb = genome_annotation,
 				sameStrand = TRUE,
 				level = feature_type,
+				...
 			) %>% as_tibble(.name_repair="unique")
 	)
 
@@ -62,6 +65,7 @@ annotate_features <- function(
                                 TxDb = genome_annotation,
                                 sameStrand = TRUE,
                                 level = feature_type,
+				...
                         ) %>% as_tibble(.name_repair="unique")
 		)
 
