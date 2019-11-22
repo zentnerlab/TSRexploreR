@@ -16,6 +16,7 @@
 #' @param log2_transform Whether the metric should be log2 transformed prior to plotting
 #' @param ncol Number of columns to plot data
 #' @param use_cpm Whether to use the CPM normalized or raw counts
+#' @param ... Arguments passed to ggplot2 plotting functions
 #'
 #' @return ggplot2 object with tsr metrix plotted
 #'
@@ -30,7 +31,8 @@ plot_tsr_metric <- function(
 	samples = "all",
 	log2_transform = FALSE,
 	ncol = 1,
-	use_cpm = FALSE
+	use_cpm = FALSE,
+	...
 ) {
 
 	## Grab data.
@@ -60,14 +62,14 @@ plot_tsr_metric <- function(
 	p <- ggplot(selected_data, aes(x = samples, y = stat_value))
 
 	if (plot_type == "violin") {
-		p <- p + geom_violin(aes(fill = samples))
+		p <- p + geom_violin(aes(fill = samples), ...)
 	} else if (plot_type == "box") {
-		p <- p + geom_boxplot(fill = NA, aes(color = samples))
+		p <- p + geom_boxplot(fill = NA, aes(color = samples), ...)
 	} else if (plot_type == "jitter") {
-		p <- p + geom_jitter(aes(color = samples))
+		p <- p + geom_jitter(aes(color = samples), ...)
 	} else if (plot_type == "boxjitter") {
 		p <- p +
-			geom_jitter(color = "lightgrey") +
+			geom_jitter(color = "lightgrey", ...) +
 			geom_boxplot(fill = NA, aes(color = samples), outlier.shape = NA)
 	}
 		

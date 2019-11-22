@@ -6,7 +6,7 @@
 \usage{
 plot_tsr_metric(experiment, tsr_metrics, plot_type = "violin",
   samples = "all", log2_transform = FALSE, ncol = 1,
-  use_cpm = FALSE)
+  use_cpm = FALSE, ...)
 }
 \arguments{
 \item{experiment}{tsrexplorer object with TSR granges}
@@ -20,6 +20,8 @@ plot_tsr_metric(experiment, tsr_metrics, plot_type = "violin",
 \item{ncol}{Number of columns to plot data}
 
 \item{use_cpm}{Whether to use the CPM normalized or raw counts}
+
+\item{...}{Arguments passed to ggplot2 plotting functions}
 
 \item{sample}{Name of sample to return plot for}
 
