@@ -127,11 +127,21 @@ differential_expression <- function(fit_edger_model, data_type = c("tsr", "featu
 #' @export
 
 annotate_differential_tsrs <- function(
-	differential_tsrs, annotation_file,
-	upstream = 1000, downstream = 100
+	differential_tsrs,
+	annotation_file,
+	feature_type = c("gene", "transcript"),
+	upstream = 1000,
+	downstream = 100
 ) {
 	## Load genome annotation file as TxDb.
 	genome_annotation <- makeTxDbFromGFF(annotation_file, "gtf")
+
+	## Prepare proper annotation type
+	if (feature_type == "gene") {
+		feature_type <- "geneId"
+	} else if (feature_type == "transcript") {
+		feature_type <- "transcriptId"
+	}
 
 	## Annotate differential TSRs.
 	annotated_diff_tsrs <- differential_tsrs %>%
