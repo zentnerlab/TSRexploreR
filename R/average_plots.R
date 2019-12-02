@@ -20,6 +20,7 @@
 #' @param threshold threshold value for TSSs
 #' @param ncol Number of columns to use when plotting data when quantiles not set
 #' @param quantiles Number of quantiles to split data into
+#' @param ... Arguments passed to geom_density
 #'
 #' @return ggplot2 object of average plot
 #'
@@ -37,7 +38,8 @@ plot_average <- function(
 	threshold = 1,
 	ncol = 1,
 	quantiles = 1,
-	use_cpm = FALSE
+	use_cpm = FALSE,
+	...
 ) {
 
 	## Pull data out of appropriate slot.
@@ -90,7 +92,7 @@ plot_average <- function(
 
 	## Plot averages.
 	p <- ggplot(sample_data, aes(distanceToTSS)) +
-		geom_density(fill = color_type, color = color_type) +
+		geom_density(fill = color_type, color = color_type, ...) +
 		labs(
 			x = "Position Relative to Annotated TSS",
 			y = "Density"

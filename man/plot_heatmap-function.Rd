@@ -4,7 +4,7 @@
 \alias{plot_heatmap}
 \title{Plot Heatmap}
 \usage{
-plot_heatmap(heatmap_matrix, max_value = 5, ncol = 1)
+plot_heatmap(heatmap_matrix, max_value = 5, ncol = 1, ...)
 }
 \arguments{
 \item{heatmap_matrix}{TSS or TSR heatmap matrix from tss_heatmap_matrix ot tsr_heatmap_matrix}
@@ -12,6 +12,8 @@ plot_heatmap(heatmap_matrix, max_value = 5, ncol = 1)
 \item{max_value}{Max log2 value to truncate heatmap color}
 
 \item{ncol}{Number of columns when plotting multiple samples}
+
+\item{...}{Arguments passed to geom_tile}
 }
 \value{
 ggplot2 object of TSS heatmap

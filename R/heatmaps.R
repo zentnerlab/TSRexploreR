@@ -38,10 +38,10 @@ tss_heatmap_matrix <- function(
 	use_cpm = FALSE
 ) {
 	## Grab requested samples.
-        if (data_type == "tss" & use_cpm) {
+        if (use_cpm) {
                 if (samples == "all") samples <- names(experiment@annotated$TSSs$cpm)
                 sample_data <- experiment@annotated$TSSs$cpm[samples]
-        } else if (data_type == "tss" & !(use_cpm)) {
+        } else if (!(use_cpm)) {
                 if (samples == "all") samples <- names(experiment@annotated$TSSs$raw)
                 sample_data <- experiment@annotated$TSSs$raw[samples]
 	}
@@ -111,6 +111,7 @@ tss_heatmap_matrix <- function(
 #' @param heatmap_matrix TSS or TSR heatmap matrix from tss_heatmap_matrix ot tsr_heatmap_matrix
 #' @param max_value Max log2 value to truncate heatmap color
 #' @param ncol Number of columns when plotting multiple samples
+#' @param ... Arguments passed to geom_tile
 #'
 #' @return ggplot2 object of TSS heatmap
 #'
@@ -118,7 +119,7 @@ tss_heatmap_matrix <- function(
 #'
 #' @export
 
-plot_heatmap <- function(heatmap_matrix, max_value = 5, ncol = 1) {
+plot_heatmap <- function(heatmap_matrix, max_value = 5, ncol = 1, ...) {
 	
 	## Set values above max_value to max_value.
 	heatmap_matrix <- heatmap_matrix %>%
@@ -131,7 +132,7 @@ plot_heatmap <- function(heatmap_matrix, max_value = 5, ncol = 1) {
 
 	## Generate heatmap.
 	p <- ggplot(heatmap_matrix, aes(x = position, y = fct_rev(feature), fill = log2_score, color = log2_score)) +
-		geom_tile() +
+		geom_tile(...) +
 		theme_minimal() +
 		theme(
 			axis.text.y = element_blank(),
@@ -208,10 +209,10 @@ tsr_heatmap_matrix <- function(
 ) {
 	
 	## Pull samples out.
-        if (data_type == "tsr" & use_cpm) {
+        if (use_cpm) {
                 if (samples == "all") samples <- names(experiment@annotated$TSRs$cpm)
                 sample_data <- experiment@annotated$TSRs$cpm[samples]
-        } else if (data_type == "tss" & !(use_cpm)) {
+        } else if (!(use_cpm)) {
                 if (samples == "all") samples <- names(experiment@annotated$TSRs$raw)
                 sample_data <- experiment@annotated$TSRs$raw[samples]
         }
