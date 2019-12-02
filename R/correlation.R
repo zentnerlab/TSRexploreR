@@ -17,7 +17,7 @@
 #' @param correlation_plot Whether to make a correlation 'heatmap', 'scatter', 'combined' or 'hierarchical'
 #' @param correlation_metric Use either spearman or pearson correlation
 #' @param log2 Should the TMM values be log2+1 transformed prior to plotting?
-#' @param ... Additional arguments passed to ComplexHeatmap::Heatmap
+#' @param ... Additional arguments passed to ComplexHeatmap::Heatmap or GGally::ggpairs
 #'
 #' @return ggplot2 object
 #'
@@ -91,7 +91,8 @@ plot_correlation <- function(
 			columns = samples,
 			upper = list(continuous = custom_scatter),
 			lower = NULL,
-			diag = NULL
+			diag = NULL,
+			...
 		)
 	} else if (correlation_plot == "heatmap") {
 		p <- ggpairs(
@@ -99,14 +100,16 @@ plot_correlation <- function(
 			columns = samples,
 			upper = list(continuous = custom_heatmap),
 			lower = NULL,
-			diag = NULL
+			diag = NULL,
+			...
 		)
 	} else if (correlation_plot == "combined") {
 		p <- ggpairs(
 			normalized_counts,
 			columns = samples,
 			upper = list(continuous = custom_heatmap),
-			lower = list(continuous = custom_scatter)
+			lower = list(continuous = custom_scatter),
+			...
 		)
 	} else if (correlation_plot == "hierarchical") {
 		corr_matrix <- pre_transformed %>%
