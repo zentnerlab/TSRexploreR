@@ -6,7 +6,7 @@
 \usage{
 annotate_features(experiment, annotation_file, data_type = c("tss",
   "tsr"), feature_type = c("gene", "transcript"), upstream = 1000,
-  downstream = 100, ...)
+  downstream = 100)
 }
 \arguments{
 \item{experiment}{tsrexplorer object with TSS Granges}
@@ -20,8 +20,6 @@ annotate_features(experiment, annotation_file, data_type = c("tss",
 \item{upstream}{Bases upstream of TSS}
 
 \item{downstream}{Bases downstream of TSS}
-
-\item{...}{Additional arguments passed to ChIPseeker::annotatePeak}
 }
 \value{
 Annotated TSS slot in tsrchitect object
