@@ -161,6 +161,7 @@ plot_sequence_logo <- function(tss_sequences, ncol = 1) {
 #'
 #' @param tss_sequences Sequences surrounding TSS generated with tss_sequences
 #' @param ncol Number of columns to plot data if quantiles not specified
+#' @param ... Arguments passed to geom_tile
 #'
 #' @return ggplot2 object of sequence colormap
 #'
@@ -168,7 +169,7 @@ plot_sequence_logo <- function(tss_sequences, ncol = 1) {
 #'
 #' @export
 
-plot_sequence_colormap <- function(tss_sequences, ncol = 1) {
+plot_sequence_colormap <- function(tss_sequences, ncol = 1, ...) {
 
 	## Start preparing data for plotting.
 	seq_data <- tss_sequences %>%
@@ -231,7 +232,7 @@ plot_sequence_colormap <- function(tss_sequences, ncol = 1) {
 
 	## Plot sequence colormap
 	p <- ggplot(plot_data, aes(x = position, y = name)) +
-		geom_tile(aes(fill = base, color = base)) +
+		geom_tile(aes(fill = base, color = base), ...) +
 		scale_fill_viridis_d() +
 		scale_color_viridis_d() +
 		theme_minimal() +

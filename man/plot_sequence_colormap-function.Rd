@@ -4,12 +4,14 @@
 \alias{plot_sequence_colormap}
 \title{Plot Sequence Colormap}
 \usage{
-plot_sequence_colormap(tss_sequences, ncol = 1)
+plot_sequence_colormap(tss_sequences, ncol = 1, ...)
 }
 \arguments{
 \item{tss_sequences}{Sequences surrounding TSS generated with tss_sequences}
 
 \item{ncol}{Number of columns to plot data if quantiles not specified}
+
+\item{...}{Arguments passed to geom_tile}
 }
 \value{
 ggplot2 object of sequence colormap

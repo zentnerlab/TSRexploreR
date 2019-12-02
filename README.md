@@ -224,7 +224,7 @@ seqs <- tss_sequences(exp, genome_assembly = assembly, threshold = 3)
 
 p <- plot_sequence_colormap(seqs, ncol = 3)
 
-png("tss_correlation_hierarchical.png", units = "in", res = 300, height = 2.5, width = 3.5, type = "cairo")
+png("tss_seq_colormap.png", units = "in", res = 300, height = 2.5, width = 3.5, type = "cairo")
 p
 dev.off()
 ```
