@@ -4,12 +4,18 @@
 \alias{plot_sequence_colormap}
 \title{Plot Sequence Colormap}
 \usage{
-plot_sequence_colormap(tss_sequences, ncol = 1, ...)
+plot_sequence_colormap(tss_sequences, ncol = 1, base_colors = c(A =
+  "#109649", C = "#255C99", G = "#F7B32C", T = "#D62839"), text_size = 6,
+  ...)
 }
 \arguments{
 \item{tss_sequences}{Sequences surrounding TSS generated with tss_sequences}
 
 \item{ncol}{Number of columns to plot data if quantiles not specified}
+
+\item{base_colors}{Named vector specifying colors for each base}
+
+\item{text_size}{Size of text for plots}
 
 \item{...}{Arguments passed to geom_tile}
 }

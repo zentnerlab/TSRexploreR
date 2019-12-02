@@ -161,6 +161,8 @@ plot_sequence_logo <- function(tss_sequences, ncol = 1) {
 #'
 #' @param tss_sequences Sequences surrounding TSS generated with tss_sequences
 #' @param ncol Number of columns to plot data if quantiles not specified
+#' @param base_colors Named vector specifying colors for each base
+#' @param text_size Size of text for plots
 #' @param ... Arguments passed to geom_tile
 #'
 #' @return ggplot2 object of sequence colormap
@@ -169,7 +171,18 @@ plot_sequence_logo <- function(tss_sequences, ncol = 1) {
 #'
 #' @export
 
-plot_sequence_colormap <- function(tss_sequences, ncol = 1, ...) {
+plot_sequence_colormap <- function(
+	tss_sequences,
+	ncol = 1,
+	base_colors = c(
+		"A" = "#109649",
+		"C" = "#255C99",
+		"G" = "#F7B32C",
+		"T" = "#D62839"
+	),
+	text_size = 6,
+	...
+) {
 
 	## Start preparing data for plotting.
 	seq_data <- tss_sequences %>%
@@ -233,15 +246,16 @@ plot_sequence_colormap <- function(tss_sequences, ncol = 1, ...) {
 	## Plot sequence colormap
 	p <- ggplot(plot_data, aes(x = position, y = name)) +
 		geom_tile(aes(fill = base, color = base), ...) +
-		scale_fill_viridis_d() +
-		scale_color_viridis_d() +
+		scale_fill_manual(values = base_colors) +
+		scale_color_manual(values = base_colors) +
 		theme_minimal() +
 		theme(
-			axis.title.y=element_blank(),
-			axis.text.y=element_blank(),
-			legend.title=element_blank(),
-			axis.title.x=element_text(margin = margin(t = 15)),
-			panel.grid=element_blank()
+			axis.title.y = element_blank(),
+			axis.text.y = element_blank(),
+			legend.title = element_blank(),
+			axis.title.x = element_text(margin = margin(t = 15)),
+			panel.grid = element_blank(),
+			text = element_text(size = text_size)
 		)
 
 	p <- p + facet_wrap(fct_rev(factor(ntile)) ~ sample, scales = "free", ncol = ncol)
