@@ -97,8 +97,10 @@ genomic_distribution <- function(experiment, data_type = c("tss", "tsr"), sample
 #' @import tibble
 #' @import ggplot2
 #' @importFrom forcats fct_rev
+#' @importFrom dplyr mutate
 #'
 #' @param genomic_distribution tibble of TSS or TSR genomic distributions from tsr_genomic_distribution
+#' @param sample_order Optional vector specifying order of samples to plot by sample name
 #'
 #' @return ggplot2 object with TSS or TSR genomic distribution plot
 #'
@@ -106,9 +108,16 @@ genomic_distribution <- function(experiment, data_type = c("tss", "tsr"), sample
 #'
 #' @export 
 
-plot_genomic_distribution <- function(genomic_distribution) {
+plot_genomic_distribution <- function(genomic_distribution, sample_order = NULL) {
 	
-	p <- ggplot(genomic_distribution$genomic_distribution, aes(x = samples, y = count, fill = fct_rev(annotation))) +
+	if (!is.null(sample_order)) {
+		genomic_dist <- genomic_distribution$genomic_distribution %>%
+			mutate(samples = fct_rev(factor(samples, levels = sample_order)))
+	} else {
+		genomic_dist <- genomic_distribution$genomic_distribution
+	}
+
+	p <- ggplot(genomic_dist, aes(x = samples, y = count, fill = fct_rev(annotation))) +
 		geom_col(position = "fill") +
 		scale_fill_viridis_d(direction = -1, name="Annotation") +
 		coord_flip() +
