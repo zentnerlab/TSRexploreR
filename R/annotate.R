@@ -12,7 +12,7 @@
 #' @importFrom dplyr filter select
 #'
 #' @param experiment tsrexplorer object with TSS Granges
-#' @param annotation_file GTF file with genomic annotations
+#' @param annotation_file Either path and file name of annotation file, or TxDb object of annotation
 #' @param data_type Whether to annotate TSSs or TSRs
 #' @param feature_type Annotate on gene or transcript level
 #' @param upstream Bases upstream of TSS
@@ -33,7 +33,11 @@ annotate_features <- function(
 	downstream = 100
 ) {
 	## Load GTF.
-	genome_annotation <- makeTxDbFromGFF(annotation_file, format = "gtf")
+	if (class(annotation_file) == "character") {
+		genome_annotation <- makeTxDbFromGFF(annotation_file)
+	} else if (class(annotation_file) == "TxDb") {
+		genome_annotation <- annotation_file
+	}
 
 	## Grab data from proper slot.
 	if (data_type == "tss") {

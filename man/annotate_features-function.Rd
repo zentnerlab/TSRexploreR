@@ -11,7 +11,7 @@ annotate_features(experiment, annotation_file, data_type = c("tss",
 \arguments{
 \item{experiment}{tsrexplorer object with TSS Granges}
 
-\item{annotation_file}{GTF file with genomic annotations}
+\item{annotation_file}{Either path and file name of annotation file, or TxDb object of annotation}
 
 \item{data_type}{Whether to annotate TSSs or TSRs}
 
