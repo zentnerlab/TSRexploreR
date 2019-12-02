@@ -95,6 +95,7 @@ dinucleotide_frequencies <- function(experiment, genome_assembly, samples = "all
 #'
 #' @param dinucleotide_frequencies tibble from dinucleotide_frequencies analysis
 #' @param ncol Number of columns to plot if not quantile plot
+#' @param ... Arguments passed to geom_col
 #'
 #' @return ggplot2 object of dinucleotide frequencies plot
 #'
@@ -102,7 +103,7 @@ dinucleotide_frequencies <- function(experiment, genome_assembly, samples = "all
 #'
 #' @export
 
-plot_dinucleotide_frequencies <- function(dinucleotide_frequencies, ncol = 1) {
+plot_dinucleotide_frequencies <- function(dinucleotide_frequencies, ncol = 1, ...) {
 	
 	## Set factor order for dinucleotide.
 	factor_order <- dinucleotide_frequencies$dinucleotide_frequencies %>%
@@ -121,7 +122,7 @@ plot_dinucleotide_frequencies <- function(dinucleotide_frequencies, ncol = 1) {
 
 	## Plot dinucleotide frequencies.
 	p <- ggplot(frequencies, aes(x = fct_rev(dinucleotide), y = frequency)) +
-		geom_col(width = 0.5, aes(fill = frequency)) +
+		geom_col(width = 0.5, aes(fill = frequency), ...) +
 		theme_bw() +
 		scale_fill_viridis_c(name = "Frequency") +
 		coord_flip() +
