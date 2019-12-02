@@ -4,7 +4,8 @@
 \alias{plot_max_utr}
 \title{Plot Max UTR Length}
 \usage{
-plot_max_utr(max_utr, upstream = 1000, downstream = 100, ncol = 1)
+plot_max_utr(max_utr, upstream = 1000, downstream = 100, ncol = 1,
+  ...)
 }
 \arguments{
 \item{max_utr}{tibble of max UTRs output by max_utr}
@@ -14,6 +15,8 @@ plot_max_utr(max_utr, upstream = 1000, downstream = 100, ncol = 1)
 \item{downstream}{Bases downstream to extend average to}
 
 \item{ncol}{Number of columns to plot the data to}
+
+\item{...}{Arguments passed to geom_density}
 }
 \value{
 ggplot2 object of max UTR length average

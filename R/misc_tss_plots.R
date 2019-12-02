@@ -65,6 +65,7 @@ dominant_tss <- function(
 #' @param upstream Bases upstream to display on plot
 #' @param downstream Bases downstream to display on plot
 #' @param ncol Number of columns to plot the data to
+#' @param ... Arguments passed to geom_density
 #'
 #' @return ggplot2 object dominant TSS plot
 #'
@@ -72,7 +73,7 @@ dominant_tss <- function(
 #'
 #' @export
 
-plot_dominant_tss <- function(dominant_tss, upstream = 2000, downstream = 500, ncol = 1) {
+plot_dominant_tss <- function(dominant_tss, upstream = 2000, downstream = 500, ncol = 1, ...) {
 	## Format data for plotting
 	#dominant_tss <- dominant_tss %>%
 		#count(distanceToTSS) %>%
@@ -83,7 +84,7 @@ plot_dominant_tss <- function(dominant_tss, upstream = 2000, downstream = 500, n
 
 	## Plot data
 	p <- ggplot(dominant_tss, aes(distanceToTSS)) +
-		geom_density(fill="#431352", color="#431352") +
+		geom_density(fill="#431352", color="#431352", ...) +
 		xlim(-upstream, downstream) +
 		theme_bw() +
 		labs(
@@ -159,6 +160,7 @@ max_utr <- function(
 #' @param upstream Bases upstream to extend average to
 #' @param downstream Bases downstream to extend average to
 #' @param ncol Number of columns to plot the data to
+#' @param ... Arguments passed to geom_density
 #'
 #' @return ggplot2 object of max UTR length average
 #'
@@ -166,9 +168,9 @@ max_utr <- function(
 #'
 #' @export
 
-plot_max_utr <- function(max_utr, upstream = 1000, downstream = 100, ncol = 1) {
+plot_max_utr <- function(max_utr, upstream = 1000, downstream = 100, ncol = 1, ...) {
 	p <- ggplot(max_utr, aes(x = tss_max_distance)) +
-		geom_density(fill = "#431352", color = "#431352") +
+		geom_density(fill = "#431352", color = "#431352", ...) +
 		xlim(-upstream, downstream) +
 		theme_bw() +
 		labs(
