@@ -4,10 +4,13 @@
 \alias{plot_dinucleotide_frequencies}
 \title{Plot Dinucleotide Frequencies}
 \usage{
-plot_dinucleotide_frequencies(dinucleotide_frequencies, ncol = 1, ...)
+plot_dinucleotide_frequencies(dinucleotide_frequencies,
+  sample_order = NULL, ncol = 1, ...)
 }
 \arguments{
 \item{dinucleotide_frequencies}{tibble from dinucleotide_frequencies analysis}
+
+\item{sample_order}{Optional vector of sample names to order plots}
 
 \item{ncol}{Number of columns to plot if not quantile plot}
 
