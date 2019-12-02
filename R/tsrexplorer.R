@@ -6,14 +6,16 @@ setClass(
 		samples = "vector",
 		cores = "numeric",
 		annotated = "list",
-		counts = "list"
+		counts = "list",
+		correlation = "list"
 	),
 	prototype(
 		experiment = list(),
 		samples = c(),
 		cores = NA_real_,
 		annotated = list(),
-		counts = list()
+		counts = list(),
+		correlation = list()
 	)
 )
 
