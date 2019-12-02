@@ -85,6 +85,7 @@ detect_features <- function(
 #'
 #' @param detected_features Tibble of detected feature counts from detect_features
 #' @param ncol Number of columens to plot data to
+#' @param ... Arguments passed to geom_col
 #'
 #' @return ggplot2 object of detected feature counts
 #'
@@ -92,7 +93,7 @@ detect_features <- function(
 #'
 #' @export
 
-plot_detected_features <- function(detected_features, ncol = 1) {
+plot_detected_features <- function(detected_features, ncol = 1, ...) {
 	
 	## Prepare data for plotting.
 	plot_data <- detected_features %>%
@@ -101,7 +102,7 @@ plot_detected_features <- function(detected_features, ncol = 1) {
 
 	## Plot data.
 	p <- ggplot(plot_data, aes(x = feature_type, y = feature_number, fill = feature_type)) +
-		geom_col() +
+		geom_col(...) +
 		theme_bw() +
 		scale_fill_viridis_d(name = "Feature Type") +
 		facet_wrap(~ sample, ncol = ncol) +
