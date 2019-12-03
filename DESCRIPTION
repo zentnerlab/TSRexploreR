@@ -43,4 +43,5 @@ Collate:
     'motif.R'
     'normalize.R'
     'rnaseq.R'
+    'thresholding.R'
     'tsr_plots.R'
