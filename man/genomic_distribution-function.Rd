@@ -16,7 +16,7 @@ genomic_distribution(experiment, data_type = c("tss", "tsr"),
 
 \item{threshold}{Filter out TSSs or TSRs under a certain read count number}
 
-\item{number}{of quantiles to break the data down into}
+\item{quantiles}{number of quantiles to break the data down into}
 }
 \value{
 tibble with TSS or TSR genomic distribution stats

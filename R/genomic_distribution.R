@@ -10,7 +10,7 @@
 #' @param samples Either "all" or vector of sample names
 #' @param data_type Whether to get distribution of TSSs or TSRs
 #' @param threshold Filter out TSSs or TSRs under a certain read count number
-#' @param number of quantiles to break the data down into
+#' @param quantiles number of quantiles to break the data down into
 #'
 #' @return tibble with TSS or TSR genomic distribution stats
 #'
