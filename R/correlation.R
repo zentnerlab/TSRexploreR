@@ -48,7 +48,8 @@ find_correlation <- function(
 		column_to_rownames("position") %>%
 		as.matrix %>%
 		cor(method = correlation_metric)
-		
+
+	return(correlation)		
 }
 
 #' Plot Sample Correlation
