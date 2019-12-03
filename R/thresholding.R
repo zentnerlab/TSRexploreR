@@ -51,7 +51,7 @@ explore_thresholds <- function(
 		map(function(x) {
 			metacol_names <- x %>% mcols %>% names
 
-			if (any(metacol_names) == "nTAGs") {
+			if (any(metacol_names == "nTAGs")) {
 				x$score <- x$nTAGs
 			}
 
