@@ -46,7 +46,7 @@ genomic_distribution <- function(experiment, data_type = c("tss", "tsr"), sample
 	genomic_distribution <- selected_samples %>%
 		mutate(annotation = case_when(
 			annotation == "Promoter" ~ "Promoter",
-			grepl(annotation, pattern="Exon") ~ "Exon",
+			grepl(annotation, pattern="(Exon|UTR)") ~ "Exon",
 			grepl(annotation, pattern="Intron") ~ "Intron",
 			grepl(annotation, pattern="Downstream") ~ "Downstream",
 			annotation == "Distal Intergenic" ~ "Intergenic"
