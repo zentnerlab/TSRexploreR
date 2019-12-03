@@ -100,3 +100,34 @@ explore_thresholds <- function(
 		
 	return(threshold_data)
 }
+
+#' Plot Threshold Exploration
+#'
+#' Make a plot to explore threshold values
+#'
+#' @import tibble
+#' @import ggplot2
+#'
+#' @param threshold_data Tibble of threshold exploration data from explore_thresholds
+#' @param ncol Number of columns to plot data
+#' @param point_size The size of the points on the plot
+#' @param ... Arguments passed to geom_point
+#'
+#' @return ggplot2 object containing the threshold exploration plot
+#'
+#' @rdname plot_threshold_exploration-function
+#'
+#' @export
+
+plot_threshold_exploration <- function(threshold_data, ncol = 1, point_size = 1, ...) {
+	
+	## Plot data
+	p <- ggplot(threshold_data, aes(x = threshold, y = frac_promoter_proximal_TSSs)) +
+		geom_line(color = "lightgrey") +
+		geom_point(aes(color = genes_with_promoter_proximal_tss), size = point_size, ...) +
+		scale_color_viridis_c() +
+		theme_bw() +
+		facet_wrap(. ~ sample, ncol = ncol)
+
+	return(p)
+}
