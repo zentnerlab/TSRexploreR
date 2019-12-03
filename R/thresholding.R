@@ -46,6 +46,18 @@ explore_thresholds <- function(
 		annotation <- annotation_file
 	}
 
+	## Change 'nTAGs' to 'score' if present.
+	select_samples <- select_samples %>%
+		map(function(x) {
+			metacol_names <- x %>% mcols %>% names
+
+			if (any(metacol_names) == "nTAGs") {
+				x$score <- x$nTAGs
+			}
+
+			return(x)
+		})
+
 	## Annotate TSSs.
 	raw_annotated <- select_samples %>%
 		map(
