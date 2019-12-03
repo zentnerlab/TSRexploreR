@@ -1,3 +1,57 @@
+
+#' Generate Correlation Matrix
+#'
+#' Calculate a correlation matrix for sample concordance of TSSs or TSRs
+#'
+#' @import tibble
+#' @importFrom purrr discard
+#' @importFrom dplyr select_at vars
+#'
+#' @param experiment tsrexplorer object with TMM normalized counts
+#' @param data_type Whether to make scatter plots from TSS, TSR, or RNA-seq & five-prime data
+#' @param samples Either 'all' or the names of the samples to plot
+#' @param correlation_metric Use either spearman or pearson correlation
+#'
+#' @return correlation matrix
+#'
+#' @rdname find_correlation-function
+#'
+#' @export
+
+find_correlation <- function(
+	experiment,
+	data_type = c("tss", "tsr", "features"),
+	samples = "all",
+	correlation_metric = "pearson"
+) {
+	if (data_type == "tss") {
+		normalized_counts <- experiment@counts$TSSs$tmm_matrix
+		type_color <- "#431352"
+	} else if (data_type == "tsr") {
+		normalized_counts <- experiment@counts$TSRs$tmm_matrix
+		type_color <- "#34698c"
+	} else if (data_type == "features") {
+		normalized_counts <- experiment@counts$features$tmm_matrix
+		type_color <- "#29AF7FFF"
+	}
+
+	## Select all samples if "all" specified.
+	if (samples == "all") {
+		samples <- normalized_counts %>%
+			colnames %>%
+			discard(. == "position")
+	}
+
+	## make correlation matrix.
+	correlation <- normalized_counts %>%
+		select_at(vars("position", samples)) %>%
+		column_to_rownames("position") %>%
+		as.matrix %>%
+		cor(method = correlation_metric)
+		
+}
+
+#' Plot Sample Correlation
 #'
 #' heatmaps and/or scatter plots to explore replicate concordance of TSSs or TSRs.
 #'

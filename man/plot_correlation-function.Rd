@@ -2,7 +2,7 @@
 % Please edit documentation in R/correlation.R
 \name{plot_correlation}
 \alias{plot_correlation}
-\title{heatmaps and/or scatter plots to explore replicate concordance of TSSs or TSRs.}
+\title{Plot Sample Correlation}
 \usage{
 plot_correlation(experiment, data_type = c("tss", "tsr", "features"),
   samples = "all", correlation_plot = "combined",
