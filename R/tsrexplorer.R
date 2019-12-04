@@ -27,6 +27,7 @@ setClass(
 #'
 #' @return A tsrexplorer object
 #'
+#' @import methods
 #' @importFrom GenomicRanges GRanges
 #' @importFrom tibble tibble
 #'

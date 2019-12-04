@@ -16,6 +16,7 @@ Imports:
     BiocGenerics,
     circlize,
     viridis,
+    methods,
     ComplexHeatmap,
     cowplot,
     ggplot2,
