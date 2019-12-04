@@ -136,7 +136,7 @@ plot_threshold_exploration <- function(threshold_data, ncol = 1, point_size = 1,
 
 	## Change sample order if specified.
 	if (!(is.null(sample_order))) {
-		threshold_data <- mutate(sample = factor(sample, sample_order))
+		threshold_data <- mutate(threshold_data, sample = factor(sample, sample_order))
 	}
 
 	## Plot data.
