@@ -123,6 +123,7 @@ explore_thresholds <- function(
 #' @param threshold_data Tibble of threshold exploration data from explore_thresholds
 #' @param ncol Number of columns to plot data
 #' @param point_size The size of the points on the plot
+#' @param sample_order Optional vector specifying sample order in plot
 #' @param ... Arguments passed to geom_point
 #'
 #' @return ggplot2 object containing the threshold exploration plot
@@ -131,9 +132,14 @@ explore_thresholds <- function(
 #'
 #' @export
 
-plot_threshold_exploration <- function(threshold_data, ncol = 1, point_size = 1, ...) {
-	
-	## Plot data
+plot_threshold_exploration <- function(threshold_data, ncol = 1, point_size = 1, sample_order = NULL, ...) {
+
+	## Change sample order if specified.
+	if (!(is.null(sample_order))) {
+		threshold_data <- mutate(sample = factor(sample, sample_order))
+	}
+
+	## Plot data.
 	p <- ggplot(threshold_data, aes(x = threshold, y = frac_promoter_proximal_TSSs)) +
 		geom_line(color = "lightgrey") +
 		geom_point(aes(color = genes_with_promoter_proximal_tss), size = point_size, ...) +

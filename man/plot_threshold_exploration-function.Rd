@@ -5,7 +5,7 @@
 \title{Plot Threshold Exploration}
 \usage{
 plot_threshold_exploration(threshold_data, ncol = 1, point_size = 1,
-  ...)
+  sample_order = NULL, ...)
 }
 \arguments{
 \item{threshold_data}{Tibble of threshold exploration data from explore_thresholds}
@@ -13,6 +13,8 @@ plot_threshold_exploration(threshold_data, ncol = 1, point_size = 1,
 \item{ncol}{Number of columns to plot data}
 
 \item{point_size}{The size of the points on the plot}
+
+\item{sample_order}{Optional vector specifying sample order in plot}
 
 \item{...}{Arguments passed to geom_point}
 }
