@@ -13,6 +13,13 @@ Encoding: UTF-8
 LazyData: true
 Imports:
     GenomicRanges,
+    BiocGenerics,
+    circlize,
+    viridis,
+    ComplexHeatmap,
+    cowplot,
+    ggplot2,
+    stringr,
     dplyr,
     tibble,
     purrr,

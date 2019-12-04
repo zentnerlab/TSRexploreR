@@ -10,13 +10,15 @@ tss_sequences(experiment, samples = "all", genome_assembly,
 \arguments{
 \item{experiment}{tsrexplorer object with TSS GRanges}
 
+\item{samples}{Either "all" or names of samples to analyze}
+
 \item{genome_assembly}{Genome assembly in fasta format}
+
+\item{threshold}{Keep only TSSs with threshold number of reads or more}
 
 \item{distance}{Bases to add on each side of TSS}
 
 \item{quantiles}{Break data into quantiles}
-
-\item{sample}{Either "all" or names of samples to analyze}
 }
 \value{
 Sequences surrounding TSSs

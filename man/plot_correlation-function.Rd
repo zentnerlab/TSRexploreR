@@ -19,9 +19,9 @@ plot_correlation(experiment, data_type = c("tss", "tsr", "features"),
 
 \item{correlation_metric}{Use either spearman or pearson correlation}
 
-\item{...}{Additional arguments passed to ComplexHeatmap::Heatmap or GGally::ggpairs}
+\item{log2_transform}{Should the TMM values be log2+1 transformed prior to plotting?}
 
-\item{log2}{Should the TMM values be log2+1 transformed prior to plotting?}
+\item{...}{Additional arguments passed to ComplexHeatmap::Heatmap or GGally::ggpairs}
 }
 \value{
 ggplot2 object

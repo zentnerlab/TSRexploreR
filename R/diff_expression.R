@@ -9,6 +9,7 @@
 #' @importFrom magrittr %>%
 #'
 #' @param experiment tsrexplorer object after TMM normalization.
+#' @param data_type Whether TSRs or feature counts should be analyzed.
 #' @param samples Vector of sample names to analyze.
 #' @param groups Vector of groups in correct factor notation.
 #'
@@ -158,7 +159,7 @@ annotate_differential_tsrs <- function(
 #' @import ggplot2
 #' @importFrom dplyr case_when mutate
 #'
-#' @param differential_tsrs Tibble of differential TSRs  or genes (RNA-seq)from differential_expression
+#' @param differential_expression Tibble of differential TSRs or genes (RNA-seq) from differential_expression
 #' @param log2fc_cutoff Log2 fold change cutoff for significance
 #' @param fdr_cutoff FDR value cutoff for significance
 #' @param ... Arguments passed to geom_point

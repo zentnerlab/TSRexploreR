@@ -8,13 +8,13 @@ plot_volcano(differential_expression, log2fc_cutoff = 1,
   fdr_cutoff = 0.05, ...)
 }
 \arguments{
+\item{differential_expression}{Tibble of differential TSRs or genes (RNA-seq) from differential_expression}
+
 \item{log2fc_cutoff}{Log2 fold change cutoff for significance}
 
 \item{fdr_cutoff}{FDR value cutoff for significance}
 
 \item{...}{Arguments passed to geom_point}
-
-\item{differential_tsrs}{Tibble of differential TSRs  or genes (RNA-seq)from differential_expression}
 }
 \value{
 ggplot2 object of differential TSRs volcano plot.

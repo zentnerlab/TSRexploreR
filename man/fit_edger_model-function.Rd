@@ -10,6 +10,8 @@ fit_edger_model(experiment, data_type = c("tsr", "features"),
 \arguments{
 \item{experiment}{tsrexplorer object after TMM normalization.}
 
+\item{data_type}{Whether TSRs or feature counts should be analyzed.}
+
 \item{samples}{Vector of sample names to analyze.}
 
 \item{groups}{Vector of groups in correct factor notation.}

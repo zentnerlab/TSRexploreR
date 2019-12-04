@@ -10,7 +10,7 @@
 #'
 #' @param experiment tsrexplorer object with TSR granges
 #' @param sample Name of sample to return plot for
-#' @param tsr_metric Names of metrics in tsrexplorer TSR granges to plot
+#' @param tsr_metrics Names of metrics in tsrexplorer TSR granges to plot
 #' @param plot_type Output either a 'violin', 'jitter', 'box', or "boxjitter" plot (default violin)
 #' @param samples Either 'all' or a vector of sample names to analyze
 #' @param log2_transform Whether the metric should be log2 transformed prior to plotting

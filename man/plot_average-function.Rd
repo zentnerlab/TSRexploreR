@@ -27,6 +27,8 @@ plot_average(experiment, data_type = c("tss", "tsr"), samples = "all",
 
 \item{quantiles}{Number of quantiles to split data into}
 
+\item{use_cpm}{Whether to use the CPM normalized or raw counts}
+
 \item{...}{Arguments passed to geom_density}
 }
 \value{

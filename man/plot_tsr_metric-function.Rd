@@ -11,6 +11,8 @@ plot_tsr_metric(experiment, tsr_metrics, plot_type = "violin",
 \arguments{
 \item{experiment}{tsrexplorer object with TSR granges}
 
+\item{tsr_metrics}{Names of metrics in tsrexplorer TSR granges to plot}
+
 \item{plot_type}{Output either a 'violin', 'jitter', 'box', or "boxjitter" plot (default violin)}
 
 \item{samples}{Either 'all' or a vector of sample names to analyze}
@@ -24,8 +26,6 @@ plot_tsr_metric(experiment, tsr_metrics, plot_type = "violin",
 \item{...}{Arguments passed to ggplot2 plotting functions}
 
 \item{sample}{Name of sample to return plot for}
-
-\item{tsr_metric}{Names of metrics in tsrexplorer TSR granges to plot}
 }
 \value{
 ggplot2 object with tsr metrix plotted

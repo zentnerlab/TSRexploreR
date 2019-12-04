@@ -11,6 +11,8 @@ tsr_heatmap_matrix(experiment, samples = "all", upstream = 1000,
 \arguments{
 \item{experiment}{tsrexplorer object with annotated TSRs}
 
+\item{samples}{Either 'all' or names of samples to analyze}
+
 \item{upstream}{Bases upstream to consider}
 
 \item{downstream}{bases downstream to consider}
@@ -20,8 +22,6 @@ tsr_heatmap_matrix(experiment, samples = "all", upstream = 1000,
 \item{threshold}{Reads required per TSR}
 
 \item{use_cpm}{Whether to use CPM normalized or raw counts}
-
-\item{sample}{Name of sample to analyze}
 }
 \value{
 matrix of counts for each gene/transcript and position

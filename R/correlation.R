@@ -71,7 +71,7 @@ find_correlation <- function(
 #' @param samples Either 'all' or the names of the samples to plot
 #' @param correlation_plot Whether to make a correlation 'heatmap', 'scatter', 'combined' or 'hierarchical'
 #' @param correlation_metric Use either spearman or pearson correlation
-#' @param log2 Should the TMM values be log2+1 transformed prior to plotting?
+#' @param log2_transform Should the TMM values be log2+1 transformed prior to plotting?
 #' @param ... Additional arguments passed to ComplexHeatmap::Heatmap or GGally::ggpairs
 #'
 #' @return ggplot2 object

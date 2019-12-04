@@ -20,6 +20,7 @@
 #' @param threshold threshold value for TSSs
 #' @param ncol Number of columns to use when plotting data when quantiles not set
 #' @param quantiles Number of quantiles to split data into
+#' @param use_cpm Whether to use the CPM normalized or raw counts
 #' @param ... Arguments passed to geom_density
 #'
 #' @return ggplot2 object of average plot

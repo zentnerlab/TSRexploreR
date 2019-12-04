@@ -184,7 +184,7 @@ plot_heatmap <- function(heatmap_matrix, max_value = 5, ncol = 1, ...) {
 #' @importFrom purrr pmap
 #' 
 #' @param experiment tsrexplorer object with annotated TSRs
-#' @param sample Name of sample to analyze
+#' @param samples Either 'all' or names of samples to analyze
 #' @param upstream Bases upstream to consider
 #' @param downstream bases downstream to consider
 #' @param feature_type Whether the heatmap is built on genes or transcripts ("geneId", "transcriptId")

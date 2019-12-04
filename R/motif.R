@@ -14,8 +14,9 @@
 #' @importFrom magrittr %>%
 #'
 #' @param experiment tsrexplorer object with TSS GRanges
-#' @param sample Either "all" or names of samples to analyze
+#' @param samples Either "all" or names of samples to analyze
 #' @param genome_assembly Genome assembly in fasta format
+#' @param threshold Keep only TSSs with threshold number of reads or more
 #' @param distance Bases to add on each side of TSS
 #' @param quantiles Break data into quantiles
 #'
