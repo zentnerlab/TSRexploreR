@@ -19,6 +19,8 @@ tsr_heatmap_matrix(experiment, samples = "all", upstream = 1000,
 
 \item{feature_type}{Whether the heatmap is built on genes or transcripts ("geneId", "transcriptId")}
 
+\item{quantiles}{Number of quantiles to split data into}
+
 \item{threshold}{Reads required per TSR}
 
 \item{use_cpm}{Whether to use CPM normalized or raw counts}

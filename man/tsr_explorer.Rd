@@ -19,7 +19,3 @@ A tsrexplorer object
 \description{
 TSRexplorer constructor function.
 }
-\examples{
-tsrexplorer(TSSs, 4)
-
-}

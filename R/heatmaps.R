@@ -188,6 +188,7 @@ plot_heatmap <- function(heatmap_matrix, max_value = 5, ncol = 1, ...) {
 #' @param upstream Bases upstream to consider
 #' @param downstream bases downstream to consider
 #' @param feature_type Whether the heatmap is built on genes or transcripts ("geneId", "transcriptId")
+#' @param quantiles Number of quantiles to split data into
 #' @param threshold Reads required per TSR
 #' @param use_cpm Whether to use CPM normalized or raw counts
 #'
