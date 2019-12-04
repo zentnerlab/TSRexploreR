@@ -40,9 +40,9 @@ explore_thresholds <- function(
 	select_samples <- experiment@experiment$TSSs[samples]
 
 	## Prepare annotation file.
-	if (class(annotation_file) == "character") {
+	if (is(annotation_file, "character")) {
 		annotation <- makeTxDbFromGFF(annotation_file)
-	} else if (class(annotation_file) == "TxDb") {
+	} else if (is(annotation_file, "TxDb")) {
 		annotation <- annotation_file
 	}
 
