@@ -119,6 +119,7 @@ explore_thresholds <- function(
 #'
 #' @import tibble
 #' @import ggplot2
+#' @importFrom dplyr mutate
 #'
 #' @param threshold_data Tibble of threshold exploration data from explore_thresholds
 #' @param ncol Number of columns to plot data
