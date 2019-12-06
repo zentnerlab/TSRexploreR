@@ -100,9 +100,9 @@ exp <- annotate_features(exp, annotation_file = annotation, data_type = "tss", f
 tss_distribution <- genomic_distribution(exp, data_type = "tss", threshold = 3)
 
 p <- plot_genomic_distribution(tss_distribution) +
-	ggplot2::theme(text = element_text(size = 6))
+	ggplot2::theme(text = element_text(size = 4), legend.key.size = unit(0.3, "cm"))
 
-ggsave("tss_genomic_distribution.png", plot = p, device = "png", type = "cairo", height = 1.5, width = 4)
+ggsave("tss_genomic_distribution.png", plot = p, device = "png", type = "cairo", height = 1, width = 2.5)
 ```
 
 ![tss_genomic_distribution](./inst/images/tss_genomic_distribution.png)
