@@ -113,9 +113,9 @@ It is also possible to plot genomic distribution based on the quantile of the TS
 genomic_dist <- genomic_distribution(exp, data_type = "tss", threshold = 3, quantiles = 5)
 
 p <- plot_genomic_distribution(genomic_dist) +
-	ggplot2::theme(text = element_text(size = 6))
+	ggplot2::theme(text = element_text(size = 4), legend.key.size = unit(0.3, "cm"))
 
-ggsave("tss_genomic_distribution_quantiles.png", plot = p, device = "png", type = "cairo", height = 4, width = 4)
+ggsave("tss_genomic_distribution_quantiles.png", plot = p, device = "png", type = "cairo", height = 2.5, width = 2.5)
 ```
 
 ![tss_genomic_distribution_quantiles](./inst/images/tss_genomic_distribution_quantiles.png)
