@@ -458,7 +458,7 @@ diff_tsrs <- differential_expression(edger_model, data_type = "tsr", compare_gro
 **Annotate Differential TSRs**
 
 ```
-annotated_diff_tsrs <- annotate_differential_tsrs(diff_tsrs, annotation_file = annotation, feature_type = "transcript")
+annotated_diff_tsrs <- annotate_differential(diff_tsrs, annotation_file = annotation, feature_type = "transcript")
 ```
 
 **Export data for term enrichment**
