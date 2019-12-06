@@ -4,13 +4,13 @@
 \alias{fit_edger_model}
 \title{edgeR Model for DE}
 \usage{
-fit_edger_model(experiment, data_type = c("tsr", "features"),
+fit_edger_model(experiment, data_type = c("tss", "tsr", "features"),
   samples = c(), groups = c())
 }
 \arguments{
 \item{experiment}{tsrexplorer object after TMM normalization.}
 
-\item{data_type}{Whether TSRs or feature counts should be analyzed.}
+\item{data_type}{Whether TSSs, TSRs, or feature counts should be analyzed.}
 
 \item{samples}{Vector of sample names to analyze.}
 
@@ -20,5 +20,5 @@ fit_edger_model(experiment, data_type = c("tsr", "features"),
 DGEList object with fitted model
 }
 \description{
-Find differential TSRs (TSS mapping) or Genes (RNAseq)
+Find differential TSSs, TSRs, or features
 }

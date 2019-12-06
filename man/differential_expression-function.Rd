@@ -2,15 +2,15 @@
 % Please edit documentation in R/diff_expression.R
 \name{differential_expression}
 \alias{differential_expression}
-\title{Find Differential TSRs}
+\title{Find Differential Expression}
 \usage{
-differential_expression(fit_edger_model, data_type = c("tsr", "feature"),
-  compare_groups = c())
+differential_expression(fit_edger_model, data_type = c("tss", "tsr",
+  "feature"), compare_groups = c())
 }
 \arguments{
 \item{fit_edger_model}{edgeR differential expression model from fit_edger_model}
 
-\item{data_type}{Whether the input was made from TSRs or RNA-seq}
+\item{data_type}{Whether the input was made from TSSs, TSRs, or features}
 
 \item{compare_groups}{Vector of length two of the two groups to find differential TSRs}
 }
@@ -18,5 +18,5 @@ differential_expression(fit_edger_model, data_type = c("tsr", "feature"),
 tibble of differential TSRs
 }
 \description{
-Find differential TSRs from edgeR model.
+Find differential TSSs, TSRs, or features from edgeR model.
 }

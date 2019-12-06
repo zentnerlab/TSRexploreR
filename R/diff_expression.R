@@ -1,7 +1,7 @@
 
 #' edgeR Model for DE
 #'
-#' Find differential TSRs (TSS mapping) or Genes (RNAseq)
+#' Find differential TSSs, TSRs, or features
 #'
 #' @import tibble
 #' @importFrom edgeR DGEList filterByExpr calcNormFactors cpm estimateDisp glmQLFit
@@ -9,7 +9,7 @@
 #' @importFrom magrittr %>%
 #'
 #' @param experiment tsrexplorer object after TMM normalization.
-#' @param data_type Whether TSRs or feature counts should be analyzed.
+#' @param data_type Whether TSSs, TSRs, or feature counts should be analyzed.
 #' @param samples Vector of sample names to analyze.
 #' @param groups Vector of groups in correct factor notation.
 #'
@@ -19,13 +19,15 @@
 #'
 #' @export
 
-fit_edger_model <- function(experiment, data_type = c("tsr", "features"), samples = c(), groups = c()) {
+fit_edger_model <- function(experiment, data_type = c("tss", "tsr", "features"), samples = c(), groups = c()) {
 
 	## Grab data from appropraite slot.
 	if (data_type == "tsr") {
 		sample_data <- experiment@counts$TSRs$raw_matrix
 	} else if (data_type == "features") {
 		sample_data <- experiment@counts$features$raw_matrix
+	} else if (data_type == "tss") {
+		sample_data <- experiment@counts$TSSs$raw_matrix
 	}
 
 	## Select samples and turn to count matrix.
@@ -49,9 +51,9 @@ fit_edger_model <- function(experiment, data_type = c("tsr", "features"), sample
 	return(fitted_model)
 }
 
-#' Find Differential TSRs
+#' Find Differential Expression
 #'
-#' Find differential TSRs from edgeR model.
+#' Find differential TSSs, TSRs, or features from edgeR model.
 #'
 #' @import tibble
 #' @importFrom edgeR glmQLFTest
@@ -60,7 +62,7 @@ fit_edger_model <- function(experiment, data_type = c("tsr", "features"), sample
 #' @importFrom magrittr %>%
 #'
 #' @param fit_edger_model edgeR differential expression model from fit_edger_model
-#' @param data_type Whether the input was made from TSRs or RNA-seq
+#' @param data_type Whether the input was made from TSSs, TSRs, or features
 #' @param compare_groups Vector of length two of the two groups to find differential TSRs
 #'
 #' @return tibble of differential TSRs
@@ -69,7 +71,7 @@ fit_edger_model <- function(experiment, data_type = c("tsr", "features"), sample
 #'
 #' @export
 
-differential_expression <- function(fit_edger_model, data_type = c("tsr", "feature"), compare_groups = c()) {
+differential_expression <- function(fit_edger_model, data_type = c("tss", "tsr", "feature"), compare_groups = c()) {
 	
 	## Set up contrasts.
 	comparison_contrast <- fit_edger_model$samples %>%
@@ -91,7 +93,7 @@ differential_expression <- function(fit_edger_model, data_type = c("tsr", "featu
 		mutate(FDR = p.adjust(PValue, method = "fdr")) %>%
 		rename(log2FC = logFC)
 
-	if (data_type == "tsr") {
+	if (data_type %in% c("tss", "tsr")) {
 		diff_expression <- separate(
 			diff_expression,
 			position,
@@ -105,9 +107,9 @@ differential_expression <- function(fit_edger_model, data_type = c("tsr", "featu
 	return(diff_expression)
 }
 
-#' Annotate Differential TSRs
+#' Annotate Differential TSSs or TSRs
 #'
-#' Annotate Differential TSRs to nearest gene or transcript.
+#' Annotate Differential TSSs or TSRs to nearest gene or transcript.
 #'
 #' @import tibble
 #' @importFrom ChIPseeker annotatePeak
@@ -115,20 +117,20 @@ differential_expression <- function(fit_edger_model, data_type = c("tsr", "featu
 #' @importFrom GenomicRanges makeGRangesFromDataFrame
 #' @importFrom magrittr %>%
 #'
-#' @param differential_tsrs Tibble of differential TSRs from differential_tsrs
+#' @param differential_exp Tibble of differential TSSs or TSRs from differential_expression
 #' @param annotation_file GTF genomic annotation file
-#' @param feature_type Whether to annotate TSRs relative to genes to transcripts
+#' @param feature_type Whether to annotate TSSs or TSRs relative to genes or transcripts
 #' @param upstream Bases upstream of TSS
 #' @param downstream Bases downstream of TSS
 #'
-#' @return Tibble of annotated differential TSRs
+#' @return Tibble of annotated differential TSSs or TSRs
 #'
-#' @rdname annotate_differential_tsrs-function
+#' @rdname annotate_differential-function
 #'
 #' @export
 
-annotate_differential_tsrs <- function(
-	differential_tsrs,
+annotate_differential <- function(
+	differential_exp,
 	annotation_file,
 	feature_type = c("gene", "transcript"),
 	upstream = 1000,
@@ -138,7 +140,7 @@ annotate_differential_tsrs <- function(
 	genome_annotation <- makeTxDbFromGFF(annotation_file, "gtf")
 
 	## Annotate differential TSRs.
-	annotated_diff_tsrs <- differential_tsrs %>%
+	annotated_diff <- differential_exp %>%
 		makeGRangesFromDataFrame(keep.extra.columns = TRUE) %>%
 		annotatePeak(
 			tssRegion = c(-upstream, downstream),
@@ -148,7 +150,7 @@ annotate_differential_tsrs <- function(
 		) %>%
 		as_tibble(.name_repair = "universal")
 
-	return(annotated_diff_tsrs)
+	return(annotated_diff)
 }
 
 #' DE Volcano Plot
@@ -186,7 +188,7 @@ plot_volcano <- function(
 		)) %>%
 		mutate(Change = factor(Change, levels = c("Decreased", "Unchanged", "Increased")))
 
-	## Volcano plot of differential TSRs
+	## Volcano plot of differential expression
 	p <- ggplot(diff_expression, aes(x = log2FC, y = -log10(FDR))) +
 		geom_point(aes(color = Change), ...) +
 		scale_color_viridis_d() +
@@ -205,7 +207,7 @@ plot_volcano <- function(
 #' @import tibble
 #' @importFrom dplyr select mutate case_when filter
 #' 
-#' @param annotated_differential_tsrs Annotated differential TSRs
+#' @param annotated_de Annotated differential TSRs
 #' @param log2fc_cutoff Log2 fold change cutoff for significance
 #' @param fdr_cutoff FDR cutoff for significance
 #'
@@ -213,10 +215,10 @@ plot_volcano <- function(
 #'
 #' @export
 
-export_for_enrichment <- function(annotated_differential_tsrs, log2fc_cutoff = 1, fdr_cutoff = 0.05) {
+export_for_enrichment <- function(annotated_de, log2fc_cutoff = 1, fdr_cutoff = 0.05) {
 	
 	## Prepare data for export.
-	export_data <- annotated_differential_tsrs %>%
+	export_data <- annotated_de %>%
 		select(geneId, log2FC, FDR) %>%
 		mutate(change = case_when(
 			log2FC >= log2fc_cutoff & FDR <= fdr_cutoff ~ "increase",

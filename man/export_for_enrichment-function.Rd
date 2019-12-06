@@ -4,11 +4,11 @@
 \alias{export_for_enrichment}
 \title{Export to clusterProfiler}
 \usage{
-export_for_enrichment(annotated_differential_tsrs, log2fc_cutoff = 1,
+export_for_enrichment(annotated_de, log2fc_cutoff = 1,
   fdr_cutoff = 0.05)
 }
 \arguments{
-\item{annotated_differential_tsrs}{Annotated differential TSRs}
+\item{annotated_de}{Annotated differential TSRs}
 
 \item{log2fc_cutoff}{Log2 fold change cutoff for significance}
 
