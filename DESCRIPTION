@@ -17,6 +17,7 @@ Imports:
     circlize,
     viridis,
     methods,
+    grid,
     ComplexHeatmap,
     cowplot,
     ggplot2,

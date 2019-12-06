@@ -79,7 +79,7 @@ A hierarchically clustered heatmap can also be generated.
 ```
 p <- plot_correlation(exp, data_type = "tss", correlation_plot = "hierarchical", col = viridis::viridis(100))
 
-png("tss_correlation_hierarchical.png", units = "in", res = 300, height = 3.5, width = 4, type = "cairo")
+png("tss_correlation_hierarchical.png", units = "in", res = 300, height = 1.5, width = 2, type = "cairo")
 p
 dev.off()
 ```

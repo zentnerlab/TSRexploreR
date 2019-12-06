@@ -65,6 +65,7 @@ find_correlation <- function(
 #' @importFrom ComplexHeatmap Heatmap
 #' @importFrom circlize colorRamp2 
 #' @importFrom viridis viridis
+#' @importFrom grid gpar
 #'
 #' @param experiment tsrexplorer object with TMM normalized counts
 #' @param data_type Whether to make scatter plots from TSS, TSR, or RNA-seq & five-prime data
@@ -178,6 +179,14 @@ plot_correlation <- function(
 		p <- Heatmap(
 			corr_matrix,
 			name = correlation_metric,
+			row_names_gp = gpar(fontsize = font_size),
+			column_names_gp = gpar(fontsize = font_size),
+			heatmap_legend_param = list(
+				title_gp = gpar(fontsize = font_size),
+				labels_gp = gpar(fontsize = font_size),
+				grid_height = unit(2, "mm"),
+				grid_width = unit(3, "mm")
+			),
 			...
 		)
 	}
