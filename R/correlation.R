@@ -72,6 +72,8 @@ find_correlation <- function(
 #' @param correlation_plot Whether to make a correlation 'heatmap', 'scatter', 'combined' or 'hierarchical'
 #' @param correlation_metric Use either spearman or pearson correlation
 #' @param log2_transform Should the TMM values be log2+1 transformed prior to plotting?
+#' @param font_size The font size for the heatmap tiles
+#' @param pt_size Point size for the scatter plots
 #' @param ... Additional arguments passed to ComplexHeatmap::Heatmap or GGally::ggpairs
 #'
 #' @return ggplot2 object
@@ -87,6 +89,8 @@ plot_correlation <- function(
 	correlation_plot = "combined",
 	correlation_metric = "pearson",
 	log2_transform = TRUE,
+	font_size = 4,
+	pt_size = 0.5,
 	...
 ) {
 	
@@ -118,7 +122,7 @@ plot_correlation <- function(
 	# Create custom scatter plot format.
 	custom_scatter <- function(data, mapping) {
 		ggplot(data = data, mapping = mapping) +
-			geom_point(size = 0.25, color = type_color) +
+			geom_point(size = pt_size, color = type_color, stroke = 0) +
 			geom_abline(intercept = 0, slope = 1, lty = 2)
 	}
 
@@ -134,8 +138,8 @@ plot_correlation <- function(
 
 		ggplot(correlation, aes(x = sample_1, y = sample_2)) +
 			geom_tile(color = "white", aes(fill = correlation)) +
-			geom_label(aes(label = correlation), label.size=NA, fill=NA, color = "white") +
-			scale_fill_viridis_c(limits = c(0, 1), direction = -1)
+			geom_label(aes(label = correlation), label.size=NA, fill=NA, color = "black", size = font_size) +
+			scale_fill_viridis_c(limits = c(0, 1))
 	}
 
 	## Plot the correlation plot. 	

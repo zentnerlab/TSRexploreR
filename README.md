@@ -66,11 +66,11 @@ exp <- count_normalization(exp, data_type = "tss", threshold = 3, n_samples = 1)
 **tss correlation heatmaps and scatter plots**
 
 ```
-p <- plot_correlation(exp, data_type = "tss") +
+p <- plot_correlation(exp, data_type = "tss", font_size = 2, pt_size = 0.4) +
 	ggplot2::theme_bw() +
-	ggplot2::theme(text = element_text(size = 6))
+	ggplot2::theme(text = element_text(size = 3))
 
-ggsave("tss_correlation.png", plot = p, device = "png", type = "cairo", height = 3, width = 3)
+ggsave("tss_correlation.png", plot = p, device = "png", type = "cairo", height = 2, width = 2)
 ```
 ![tss_corr_plot](./inst/images/tss_correlation.png)
 

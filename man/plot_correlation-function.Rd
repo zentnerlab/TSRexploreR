@@ -6,7 +6,8 @@
 \usage{
 plot_correlation(experiment, data_type = c("tss", "tsr", "features"),
   samples = "all", correlation_plot = "combined",
-  correlation_metric = "pearson", log2_transform = TRUE, ...)
+  correlation_metric = "pearson", log2_transform = TRUE,
+  font_size = 4, pt_size = 0.5, ...)
 }
 \arguments{
 \item{experiment}{tsrexplorer object with TMM normalized counts}
@@ -20,6 +21,10 @@ plot_correlation(experiment, data_type = c("tss", "tsr", "features"),
 \item{correlation_metric}{Use either spearman or pearson correlation}
 
 \item{log2_transform}{Should the TMM values be log2+1 transformed prior to plotting?}
+
+\item{font_size}{The font size for the heatmap tiles}
+
+\item{pt_size}{Point size for the scatter plots}
 
 \item{...}{Additional arguments passed to ComplexHeatmap::Heatmap or GGally::ggpairs}
 }
