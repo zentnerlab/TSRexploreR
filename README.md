@@ -139,9 +139,9 @@ ggsave("tss_feature_plot.png", plot = p, device = "png", type = "cairo", height 
 
 ```
 p <- plot_average(exp, data_type = "tss", threshold = 3, ncol = 3) +
-	ggplot2::theme(text = element_text(size = 6))
+	ggplot2::theme(text = element_text(size = 4))
 
-ggsave("tss_average_plot.png", plot = p, device = "png", type = "cairo", height = 1.5, width = 4)
+ggsave("tss_average_plot.png", plot = p, device = "png", type = "cairo", height = 1, width = 2)
 ```
 
 ![tss_average_plot](./inst/images/tss_average_plot.png)
