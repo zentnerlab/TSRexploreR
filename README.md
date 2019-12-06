@@ -163,9 +163,9 @@ ggsave("tss_average_plot_quantiles.png", plot = p, device = "png", type = "cairo
 count_matrix <- tss_heatmap_matrix(exp, threshold = 3, anno_type = "geneId", upstream = 250, downstream = 250)
 
 p <- plot_heatmap(count_matrix, ncol = 3) +
-	ggplot2::theme(text = element_text(size = 6))
+	ggplot2::theme(text = element_text(size = 4), legend.key.size = unit(0.3, "cm"))
 
-ggsave("tss_heatmap.png", plot = p, device = "png", type = "cairo", height = 2, width = 4)
+ggsave("tss_heatmap.png", plot = p, device = "png", type = "cairo", height = 2, width = 3)
 ```
 
 ![tss_heatmap](./inst/images/tss_heatmap.png)
