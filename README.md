@@ -68,7 +68,7 @@ exp <- count_normalization(exp, data_type = "tss", threshold = 3, n_samples = 1)
 ```
 p <- plot_correlation(exp, data_type = "tss", font_size = 2, pt_size = 0.4) +
 	ggplot2::theme_bw() +
-	ggplot2::theme(text = element_text(size = 3))
+	ggplot2::theme(text = element_text(size = 3), panel.grid = element_blank())
 
 ggsave("tss_correlation.png", plot = p, device = "png", type = "cairo", height = 2, width = 2)
 ```
