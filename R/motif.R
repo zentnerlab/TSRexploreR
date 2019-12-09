@@ -87,6 +87,7 @@ tss_sequences <- function(experiment, samples = "all", genome_assembly, threshol
 #'
 #' @param tss_sequences Sequences surrounding TSS generated with tss_sequences
 #' @param ncol Number of columns to plot if quantiles is not set
+#' @param font_size Font size plots
 #'
 #' @return ggplot2 object with sequence logo
 #'
@@ -94,7 +95,7 @@ tss_sequences <- function(experiment, samples = "all", genome_assembly, threshol
 #'
 #' @export
 
-plot_sequence_logo <- function(tss_sequences, ncol = 1) {
+plot_sequence_logo <- function(tss_sequences, ncol = 1, font_size = 6) {
 
 	## Grab sequences from input.
 	tss_seqs <- tss_sequences %>%
@@ -133,7 +134,7 @@ plot_sequence_logo <- function(tss_sequences, ncol = 1) {
 	p <- consensus_matrix %>%
 		pmap(function(name, value) {
 			ggseqlogo(value, ncol = 1) +
-				theme(text = element_text(size = 5))
+				theme(text = element_text(size = font_size))
 		})
 
 	p <- plot_grid(

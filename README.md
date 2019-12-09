@@ -179,9 +179,9 @@ count_matrix <- tss_heatmap_matrix(
 )
 
 p <- plot_heatmap(count_matrix) +
-        ggplot2::theme(text = element_text(size = 6))
+        ggplot2::theme(text = element_text(size = 4), legend.key.size = unit(0.3, "cm"))
 
-ggsave("tss_heatmap_quantiles.png", plot = p, device = "png", type = "cairo", height = 3.5, width = 4)
+ggsave("tss_heatmap_quantiles.png", plot = p, device = "png", type = "cairo", height = 3, width = 4)
 ```
 
 ![tss_heatmap_quantiles](./inst/images/tss_heatmap_quantiles.png)
