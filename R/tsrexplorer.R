@@ -1,9 +1,20 @@
+#' TSRexplorer Class
+#'
+#' @slot experiment Named lists containing GRanges of TSSs and/or TSRs
+#' @slot cores Integer value for number of cores available
+#' @slot annotated Named lists of annotated TSSs and/or TSRs
+#' @slot counts Named lists of TMM and CPM normalized TSSs and/or TSRs
+#' @slot correlation Named lists of correlation values between TSS and/or TSR sets
+#'
+#' @rdname tsr_explorer-class
+#'
+#' @export
+#' @exportClass tsr_object
 
 setClass(
 	"tsr_object",
 	representation(
 		experiment = "list",
-		samples = "vector",
 		cores = "numeric",
 		annotated = "list",
 		counts = "list",
@@ -11,7 +22,6 @@ setClass(
 	),
 	prototype(
 		experiment = list(),
-		samples = c(),
 		cores = NA_real_,
 		annotated = list(),
 		counts = list(),
@@ -31,18 +41,16 @@ setClass(
 #' @importFrom GenomicRanges GRanges
 #' @importFrom tibble tibble
 #'
+#' @rdname tsr_explorer-function
+#'
 #' @export
 
-tsr_explorer <- function(TSSs, TSRs=NA, cores=1) {
-		cores <- as.integer(cores)
-		tsr_obj <- new(
-			"tsr_object",
-			samples=names(TSSs),
-			cores=cores
-		)
+tsr_explorer <- function(TSSs = NA, TSRs = NA, cores = 1) {
 
-		tsr_obj@experiment$TSSs <- TSSs
-		tsr_obj@experiment$TSRs <- TSRs
+		tsr_obj <- new(
+			experiment = list("TSSs" = TSSs, "TSRs" = TSRs),
+			cores = cores
+		)
 
 		return(tsr_obj)
 }

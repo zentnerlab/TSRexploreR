@@ -4,7 +4,7 @@
 \alias{tsr_explorer}
 \title{TSRexplorer constructor function.}
 \usage{
-tsr_explorer(TSSs, TSRs = NA, cores = 1)
+tsr_explorer(TSSs = NA, TSRs = NA, cores = 1)
 }
 \arguments{
 \item{TSSs}{Named list of TSS GRanges returned by TSRchitect}

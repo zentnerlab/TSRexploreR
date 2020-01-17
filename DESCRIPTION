@@ -43,6 +43,7 @@ RoxygenNote: 6.1.1
 Collate: 
     'annotate.R'
     'average_plots.R'
+    'convenience_methods.R'
     'correlation.R'
     'data_import.R'
     'diff_expression.R'
