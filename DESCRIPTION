@@ -34,7 +34,8 @@ Imports:
     Biostrings,
     ChIPseeker,
     edgeR,
-    GGally
+    GGally,
+    TSRchitect
 Suggests:
     clusterProfiler
 RoxygenNote: 6.1.1
@@ -42,6 +43,7 @@ Collate:
     'annotate.R'
     'average_plots.R'
     'correlation.R'
+    'data_import.R'
     'diff_expression.R'
     'tsrexplorer.R'
     'dinucleotide.R'
