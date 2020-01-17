@@ -8,6 +8,7 @@
 #' @importFrom GenomicRanges GRanges makeGRangesFromDataFrame
 #' @importFrom dplyr rename mutate
 #' @importFrom TSRchitect tssObject
+#' @importClassesFrom CAGEr CAGEexp
 #'
 #' @param object Object to import into tsrexplorer
 #' @param data_type Whether the data being imported is 'TSSs' or 'TSRs'
@@ -66,13 +67,24 @@ setMethod("tsrexplorer_import", signature(object = "data.frame"),
 setMethod("tsrexplorer_import", signature(object = "tssObject"),
 	function(object, data_type) {
 		if (data_type == "TSSs") {
-			message("importing TSSs from TSRchitect object")
+			message("...Importing TSSs from TSRchitect object")
 			imported_data <- object@tssCountData %>%
 				rename(seqnames = seq, start = TSS, score = nTAGs) %>%
 				mutate("end" = start) %>%
 				makeGRangesFromDataFrame(keep.extra.columns = TRUE) %>%
 				set_names(object@sampleNames)
 		} else {
-			message("importing TSRs from TSRchitect object")
+			message("...Importing TSRs from TSRchitect object")
 		}
-})
+	}
+)
+
+#' CAGEr object
+#'
+#' @rdname tsrexplorer_import-generic
+
+setMethod("tsrexplorer_import", signature(object = "CAGEexp"),
+	function(object, data_type) {
+		message("Importing TSSs from CAGEexp object")
+	}
+)

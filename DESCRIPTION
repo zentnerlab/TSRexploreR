@@ -35,7 +35,8 @@ Imports:
     ChIPseeker,
     edgeR,
     GGally,
-    TSRchitect
+    TSRchitect,
+    CAGEr
 Suggests:
     clusterProfiler
 RoxygenNote: 6.1.1

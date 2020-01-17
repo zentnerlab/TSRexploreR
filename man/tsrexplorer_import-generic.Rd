@@ -6,6 +6,7 @@
 \alias{tsrexplorer_import,character-method}
 \alias{tsrexplorer_import,data.frame-method}
 \alias{tsrexplorer_import,tssObject-method}
+\alias{tsrexplorer_import,CAGEexp-method}
 \title{Import TSSs and TSRs}
 \usage{
 tsrexplorer_import(object, data_type)
@@ -15,6 +16,8 @@ tsrexplorer_import(object, data_type)
 \S4method{tsrexplorer_import}{data.frame}(object, data_type)
 
 \S4method{tsrexplorer_import}{tssObject}(object, data_type)
+
+\S4method{tsrexplorer_import}{CAGEexp}(object, data_type)
 }
 \arguments{
 \item{object}{Object to import into tsrexplorer}
