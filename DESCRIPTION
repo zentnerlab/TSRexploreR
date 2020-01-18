@@ -36,7 +36,9 @@ Imports:
     edgeR,
     GGally,
     TSRchitect,
-    CAGEr
+    CAGEr,
+    S4Vectors,
+    SummarizedExperiment
 Suggests:
     clusterProfiler
 RoxygenNote: 6.1.1

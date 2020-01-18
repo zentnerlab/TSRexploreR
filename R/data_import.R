@@ -7,7 +7,7 @@
 #' @importFrom rtracklayer import
 #' @importFrom GenomicRanges GRanges makeGRangesFromDataFrame
 #' @importFrom dplyr rename mutate
-#' @importFrom purrr map set_names discard
+#' @importFrom purrr pmap set_names
 #' @importFrom magrittr %>%
 #'
 #' @param object Object with TSSs to import into tsrexplorer
@@ -22,9 +22,7 @@ setGeneric("tss_import", function(object, ...) {
 	standardGeneric("tss_import")
 })
 
-#' Bedgraph/bigwig files sample sheet file
-#'
-#' @importFrom stringr str_detect regex
+#' Bedgraph/bigwig files (sample sheet saved as file)
 #'
 #' @rdname tss_import-generic
 
@@ -47,12 +45,13 @@ setMethod("tss_import", signature(object = "character"),
 			}) %>%
 			set_names(pull(sample_sheet, sample_name))
 
+		## Add TSSs to tsrexplorer object.
 		tss_experiment(tsrexplorer_obj) <- imported_data
 		return(tsrexplorer_obj)
 	}
 )
 
-#' Bedgraph/bigwig files data.frame
+#' Bedgraph/bigwig files (data.frame)
 #'
 #' @rdname tss_import-generic
 
@@ -67,12 +66,13 @@ setMethod("tss_import", signature(object = "data.frame"),
 			}) %>%
 			set_names(pull(sample_sheet, sample_name))
 
+		## Add TSSs to tsrexplorer object.
 		tss_experiment(tsrexplorer_obj) <- imported_data
 		return(tsrexplorer_obj)
 	}
 )
 
-#' TSRchitect object
+#' TSRchitect object (tssObject)
 #'
 #' @importFrom TSRchitect tssObject
 #'
@@ -87,6 +87,7 @@ setMethod("tss_import", signature(object = "tssObject"),
 			makeGRangesFromDataFrame(keep.extra.columns = TRUE) %>%
 			set_names(object@sampleNames)
 
+		## Add TSSs to tsrexplorer object.
 		tss_experiment(tsrexplorer_obj) <- imported_data
 		return(tsrexplorer_obj)
 	}
@@ -104,4 +105,77 @@ setMethod("tss_import", signature(object = "CAGEexp"),
 	}
 )
 
+#' Import TSRs
+#'
+#' Convenience function to import TSRs.
+#'
+#' @import tibble
+#' @importFrom rtracklayer import
+#' @importFrom purrr set_names pmap
+#' @importFrom magrittr %>%
+#'
+#' @param object Object with TSRs to import into tsrexplorer
+#' @param tsrexplorer_obj tsrexplorer object to add the TSRs to
+#' @param ... Additional arguments for classes
+#'
+#' @rdname tsr_import-generic
+#'
+#' @export
 
+setGeneric("tsr_import", function(object, ...) {
+        standardGeneric("tsr_import")
+})
+
+#' Bed files (sample sheet saved as file) 
+#'
+#' @rdname tsr_import-generic
+
+setMethod("tsr_import", signature(object = "character"),
+	function(tsrexplorer_obj, object) {
+ 		## Prepare sample sheet.
+		if (!file.exists(object)) {
+			message(paste(object, "does not exist"))
+			stop()
+		} else {
+			sample_sheet <- read.delim(object, sep = "\t", header = TRUE, stringsAsFactors = FALSE)
+		}
+
+		## Import data.
+		imported_data <- sample_sheet %>%
+			pmap(function(sample_name, bed) {imported_data <- import(bed)}) %>%
+			set_names(pull(sample_sheet, sample_name))
+
+		## Add TSRs to tsrexplorer object.
+		tsrexplorer_obj <- tsr_experiment(imported_data)
+		return(tsrexplorer_obj)
+	}
+)
+
+#' Bed files (data.frame)
+#'
+#' @rdname tsr_import-generic
+
+setMethod("tsr_import", signature(object = "data.frame"),
+	function(tsrexplorer_obj, object) {
+		## Import data.
+		imported_data <- object %>%
+			pmap(function(sample_name, bed) {imported_data <- import(bed)}) %>%
+			set_names(pull(object, sample_name))
+
+		## Add TSRs to tsrexplorer object.
+		tsrexplorer_obj <- tsr_experiment(imported_data)
+		return(tsrexplorer_obj)
+	}
+)
+
+#' TSRchitect object (tssObject)
+#'
+#' @importFrom TSRchitect tssObject
+#'
+#' @rdname tsr_import
+
+setMethod("tsr_import", signature(object = "tssObject"),
+	function(tsrexplorer_object, object) {
+		stop()
+	}
+)

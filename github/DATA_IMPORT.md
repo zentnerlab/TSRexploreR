@@ -39,7 +39,7 @@ or
 exp <- tss_import(exp, sample_sheet = df)
 ```
 
-### TSRchitect derived TSSs
+### TSRchitect Derived TSSs
 
 TSSs can be extracted from TSRchitect objects (tssObject).
 In order to import the TSSs, they must first be derived from 'inputToTSS',
@@ -48,4 +48,20 @@ followed by merging and summing overlapping TSSs with 'processTSS'.
 
 ```
 exp <- tss_import(exp, tssObject)
-``` 
+```
+
+### CAGEr Derived TSSs
+
+TSSs can be extracted from CAGEr object (CAGEexp).
+
+```
+TSSs <- system.file("extdata", "yeast_TSSs.RDS", package = "tsrexplorer") %>%
+	readRDS %>%
+	purrr::pluck(1) %>%
+	as.data.frame %>%
+	dplyr::select(-end, -width) %>%
+	dplyr::rename("chr" = seqnames, "pos" = start) %>%
+	dplyr::mutate_if(is.factor, as.character) %>%
+	dplyr::mutate_if(is.double, as.integer)
+
+cage_obj <- as(TSSs, "CAGEexp")
