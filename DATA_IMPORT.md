@@ -34,7 +34,7 @@ exp <- tss_import(exp, sample_sheet = "example_path/sample_sheet.tsv")
 
 or
 
-exp <- tss_import(exp, df)
+exp <- tss_import(exp, sample_sheet = df)
 ```
 
 ### TSRchitect derived TSSs
