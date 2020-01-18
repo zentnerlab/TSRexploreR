@@ -9,10 +9,9 @@
 #' @rdname tsr_explorer-class
 #'
 #' @export
-#' @exportClass tsr_object
 
 setClass(
-	"tsr_object",
+	"tsr_explorer",
 	representation(
 		experiment = "list",
 		cores = "numeric",
@@ -41,13 +40,14 @@ setClass(
 #' @importFrom GenomicRanges GRanges
 #' @importFrom tibble tibble
 #'
-#' @rdname tsr_explorer-function
+#' @rdname tsr_explorer-class
 #'
 #' @export
 
 tsr_explorer <- function(TSSs = NA, TSRs = NA, cores = 1) {
 
 		tsr_obj <- new(
+			"tsr_object",
 			experiment = list("TSSs" = TSSs, "TSRs" = TSRs),
 			cores = cores
 		)
