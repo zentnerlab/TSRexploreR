@@ -6,14 +6,13 @@
 #' @include tsrexplorer.R
 #'
 #' @param tsrexplorer_object tsr_explorer object
-#' @param fiveprime_data Named list of GRanges with TSSs
 #'
 #' @rdname tss_experiment-generic
 #'
 #' @export
 
-setGeneric("tss_experiment", function(tsrexplorer_object, data_type) standardGeneric("tss_experiment"))
-setGeneric("tss_experiment<-", function(tsrexplorer_object, data_type, fiveprime_data) standardGeneric("tss_experiment<-"))
+setGeneric("tss_experiment", function(tsrexplorer_object) standardGeneric("tss_experiment"))
+setGeneric("tss_experiment<-", function(tsrexplorer_object, fiveprime_data) standardGeneric("tss_experiment<-"))
 
 #' @rdname tss_experiment-generic
 
@@ -27,4 +26,33 @@ setMethod("tss_experiment<-", signature(tsrexplorer_object = "tsr_explorer"),
 	function(tsrexplorer_object, fiveprime_data) {
 		tsrexplorer_object@experiment$TSSs <- fiveprime_data
 	}
+)
+
+#' Add TSRs
+#'
+#' Convenience function to add TSRs to tsrexplorer object
+#'
+#' @include tsrexplorer.R
+#'
+#' @param tsrexplorer_object tsr_explorer object
+#'
+#' @rdname tsr_experiment-generic
+#'
+#' @export
+
+setGeneric("tsr_experiment", function(tsrexplorer_object) standardGeneric("tsr_experiment"))
+setGeneric("tsr_experiment<-", function(tsrexplorer_object, fiveprime_data) standardGeneric("tsr_experiment<-"))
+
+#' @rdname tsr_experiment-generic
+
+setMethod("tsr_experiment", signature(tsrexplorer_object = "tsr_explorer"),
+	function(tsrexplorer_object) {
+		tsrexplorer_object@experiment$TSRs
+	}
+)
+
+setMethod("tsr_experiment<-", signature(tsrexplorer_object = "tsr_explorer"),
+        function(tsrexplorer_object, fiveprime_data) {
+                tsrexplorer_object@experiment$TSRs <- fiveprime_data
+        }
 )
