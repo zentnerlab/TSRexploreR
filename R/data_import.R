@@ -25,17 +25,30 @@ setGeneric("tss_import", function(object, ...) {
 
 #' Directory of bedgraph/bigwig files
 #'
+#' @importFrom stringr str_detect regex
+#'
 #' @rdname tss_import-generic
 
 setMethod("tss_import", signature(object = "character"),
 	function(object) {
+		## Check if string is a directory.
 		if (!is.vector(object) & dir.exists(object)) {
 			data_files <- list.files(object, full.names = TRUE)
 
 			imported_data <- data_files %>%
 				map(~ import(.)) %>%
 				set_names(basename(data_files))
+		## If string isn't a directory it's probably a file or vector of files.
 		} else {
+			if (!str_detect(object, regex("\\.(bedgraph|bigwig|bw)$", ignore_case = TRUE)) %>% all) {
+				error_files = object %>%
+					discard(~ str_detect(., regex("\\.(bedgraph|bigwig|bw)$", ignore_case = TRUE))) %>%
+					paste0(collapse = " ")
+
+				message(paste("Files not acceptable format:", error_files))
+				stop()
+			}
+
 			imported_data <- object %>%
 				map(~ import(.)) %>%
 				set_names(basename(object))
@@ -96,7 +109,7 @@ setMethod("tss_import", signature(object = "tssObject"),
 #' @rdname tss_import-generic
 
 setMethod("tss_import", signature(object = "CAGEexp"),
-	function(object, data_type) {
+	function(object) {
 		message("Importing TSSs from CAGEexp object")
 	}
 )

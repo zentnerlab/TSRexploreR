@@ -17,7 +17,7 @@ tss_import(object, ...)
 
 \S4method{tss_import}{tssObject}(object)
 
-\S4method{tss_import}{CAGEexp}(object, data_type)
+\S4method{tss_import}{CAGEexp}(object)
 }
 \arguments{
 \item{object}{Object with TSSs to import into tsrexplorer}
