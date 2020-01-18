@@ -30,10 +30,12 @@ Finally, the third column 'neg' is the path to the negatively stranded file.
 The sample sheet can be a tab delimited file, or a data.frame.
 
 ```
+# Sample sheet as tab delimited file
 exp <- tss_import(exp, sample_sheet = "example_path/sample_sheet.tsv")
 
 or
 
+# Sample sheet as data.frame 'df'
 exp <- tss_import(exp, sample_sheet = df)
 ```
 
