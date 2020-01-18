@@ -47,7 +47,7 @@ setClass(
 tsr_explorer <- function(TSSs = NA, TSRs = NA, cores = 1) {
 
 		tsr_obj <- new(
-			"tsr_object",
+			"tsr_explorer",
 			experiment = list("TSSs" = TSSs, "TSRs" = TSRs),
 			cores = cores
 		)
