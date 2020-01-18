@@ -11,6 +11,7 @@
 #' @importFrom magrittr %>%
 #'
 #' @param object Object with TSSs to import into tsrexplorer
+#' @param tsrexplorer_obj tsrexplorer object to add the TSSs to
 #' @param ... Additional arguments for classes
 #'
 #' @rdname tss_import-generic
@@ -21,70 +22,53 @@ setGeneric("tss_import", function(object, ...) {
 	standardGeneric("tss_import")
 })
 
-#' Directory of bedgraph/bigwig files
+#' Bedgraph/bigwig files sample sheet file
 #'
 #' @importFrom stringr str_detect regex
 #'
 #' @rdname tss_import-generic
 
 setMethod("tss_import", signature(object = "character"),
-	function(object) {
-		## Check if string is a directory.
-		if (!is.vector(object) & dir.exists(object)) {
-			data_files <- list.files(object, full.names = TRUE)
-
-			imported_data <- data_files %>%
-				map(~ import(.)) %>%
-				set_names(basename(data_files))
-		## If string isn't a directory it's probably a file or vector of files.
-		} else {
-			data_files <- object
-		}
-
-		## Check if files have valid formats.
-		if (!str_detect(data_files, regex("\\.(bedgraph|bigwig|bw|wig)$", ignore_case = TRUE)) %>% all) {
-			error_files = data_files %>%
-				discard(~ str_detect(., regex("\\.(bedgraph|bigwig|bw|wig)$", ignore_case = TRUE))) %>%
-				paste0(collapse = " ")
-
-			message(paste("Files not acceptable format:", error_files))
+	function(tsrexplorer_obj, object) {
+		## Prepare sample sheet.
+		if (!file.exists(object)) {
+			message(paste(object, "does not exist"))
 			stop()
+		} else {
+			sample_sheet <- read.delim(object, sep = "\t", header = TRUE, stringsAsFactors = FALSE)
 		}
 
 		## Import data.
-		imported_data <- data_files %>%
-			map(~ import(.)) %>%
-			set_names(basename(data_files))
+		imported_data <- sample_sheet %>%
+			pmap(function(sample_name, pos, neg) {
+				pos <- import(pos)
+				neg <- import(neg)
+				imported_data <- c(pos, neg)
+			}) %>%
+			set_names(pull(sample_sheet, sample_name))
 
-		tss_experiment(object) <- imported_data
-		return(object)
+		tss_experiment(tsrexplorer_obj) <- imported_data
+		return(tsrexplorer_obj)
 	}
 )
 
-#' Data frame with single sample
-#'
-#' @param sample_name The name of the sample
+#' Bedgraph/bigwig files data.frame
 #'
 #' @rdname tss_import-generic
 
 setMethod("tss_import", signature(object = "data.frame"),
-	function(object, sample_name = "sample") {
-		## Check for required columns.
-		required_columns <- c("seqnames", "start", "end", "strand", "score")
+	function(tsrexplorer_obj, object) {
+		## Import data.
+		imported_data <- sample_sheet %>%
+			pmap(function(sample_name, pos, neg) {
+				pos <- import(pos)
+				neg <- import(neg)
+				imported_data <- c(pos, neg)
+			}) %>%
+			set_names(pull(sample_sheet, sample_name))
 
-		if (!colnames(object) %>% {all(required_columns %in% .)}) {
-			missing_columns <- discard(required_columns, ~ {.x %in% colnames(object)})
-			message(paste("Data.frame missing columns:", paste0(missing_columns, collapse = " ")))
-			stop()
-		}
-
-		converted_data <- object %>%
-			makeGRangesFromDataFrame(keep.extra.columns = TRUE) %>%
-			list %>%
-			set_names(sample_name)
-
-		tss_experiment(object) <- converted_data
-		return(object)
+		tss_experiment(tsrexplorer_obj) <- imported_data
+		return(tsrexplorer_obj)
 	}
 )
 
@@ -95,7 +79,7 @@ setMethod("tss_import", signature(object = "data.frame"),
 #' @rdname tss_import-generic
 
 setMethod("tss_import", signature(object = "tssObject"),
-	function(object) {
+	function(tsrexplorer_obj, object) {
 		message("...Importing TSSs from TSRchitect object")
 		imported_data <- object@tssCountData %>%
 			rename(seqnames = seq, start = TSS, score = nTAGs) %>%
@@ -103,8 +87,8 @@ setMethod("tss_import", signature(object = "tssObject"),
 			makeGRangesFromDataFrame(keep.extra.columns = TRUE) %>%
 			set_names(object@sampleNames)
 
-		tss_experiment(object) <- imported_data
-		return(object)
+		tss_experiment(tsrexplorer_obj) <- imported_data
+		return(tsrexplorer_obj)
 	}
 )
 
@@ -115,7 +99,7 @@ setMethod("tss_import", signature(object = "tssObject"),
 #' @rdname tss_import-generic
 
 setMethod("tss_import", signature(object = "CAGEexp"),
-	function(object) {
+	function(tsrexplorer_obj, object) {
 		message("Importing TSSs from CAGEexp object")
 	}
 )

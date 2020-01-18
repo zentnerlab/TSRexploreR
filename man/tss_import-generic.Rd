@@ -11,20 +11,20 @@
 \usage{
 tss_import(object, ...)
 
-\S4method{tss_import}{character}(object)
+\S4method{tss_import}{character}(tsrexplorer_obj, object)
 
-\S4method{tss_import}{data.frame}(object, sample_name = "sample")
+\S4method{tss_import}{data.frame}(tsrexplorer_obj, object)
 
-\S4method{tss_import}{tssObject}(object)
+\S4method{tss_import}{tssObject}(tsrexplorer_obj, object)
 
-\S4method{tss_import}{CAGEexp}(object)
+\S4method{tss_import}{CAGEexp}(tsrexplorer_obj, object)
 }
 \arguments{
 \item{object}{Object with TSSs to import into tsrexplorer}
 
 \item{...}{Additional arguments for classes}
 
-\item{sample_name}{The name of the sample}
+\item{tsrexplorer_obj}{tsrexplorer object to add the TSSs to}
 }
 \description{
 Convenience function to import TSSs.
