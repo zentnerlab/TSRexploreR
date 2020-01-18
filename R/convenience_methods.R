@@ -1,39 +1,30 @@
 
-#' Add TSSs or TSRs
+#' Add TSSs
 #'
-#' Convenience function to add TSSs or TSRs to tsrexplorer object
+#' Convenience function to add TSSs to tsrexplorer object
 #'
 #' @include tsrexplorer.R
 #'
-#' @param tsrexplorer_object tsr-explorer object
-#' @param fiveprime_data Named list of GRanges with TSS or TSR data
-#' @param data_type Store either 'TSSs' or 'TSRs' into the tsrexplorer object
+#' @param tsrexplorer_object tsr_explorer object
+#' @param fiveprime_data Named list of GRanges with TSSs
 #'
-#' @rdname fiveprime_data-generic
+#' @rdname tss_experiment-generic
 #'
 #' @export
 
-setGeneric("fiveprime_data", function(tsrexplorer_object, data_type) standardGeneric("fiveprime_data"))
-setGeneric("fiveprime_data<-", function(tsrexplorer_object, data_type, fiveprime_data) standardGeneric("fiveprime_data<-"))
+setGeneric("tss_experiment", function(tsrexplorer_object, data_type) standardGeneric("tss_experiment"))
+setGeneric("tss_experiment<-", function(tsrexplorer_object, data_type, fiveprime_data) standardGeneric("tss_experiment<-"))
 
-#' @rdname fiveprime_data-generic
+#' @rdname tss_experiment-generic
 
-setMethod("fiveprime_data", signature(tsrexplorer_object = "tsr_explorer"),
-	function(tsrexplorer_object, data_type = c("TSSs", "TSRs")) {
-		if (data_type == "TSSs") {
-			tsrexplorer_object@experiment$TSSs
-		} else if (data_type == "TSRs") {
-			tsrexplorer_object@experiment$TSRs
-		}
+setMethod("tss_experiment", signature(tsrexplorer_object = "tsr_explorer"),
+	function(tsrexplorer_object) {
+		tsrexplorer_object@experiment$TSSs
 	}
 )
 
-setMethod("fiveprime_data<-", signature(tsrexplorer_object = "tsr_explorer"),
-	function(tsrexplorer_object, data_type = c("TSSs", "TSRs"), fiveprime_data) {
-		if (data_type == "TSSs") {
-			tsrexplorer_object@experiment$TSSs <- fiveprime_data
-		} else if (data_type == "TSRs") {
-			tsrexplorer_object@experiment$TSRs <- fiveprime_data
-		}
+setMethod("tss_experiment<-", signature(tsrexplorer_object = "tsr_explorer"),
+	function(tsrexplorer_object, fiveprime_data) {
+		tsrexplorer_object@experiment$TSSs <- fiveprime_data
 	}
 )
