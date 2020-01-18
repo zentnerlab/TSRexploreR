@@ -7,10 +7,8 @@
 #' @importFrom rtracklayer import
 #' @importFrom GenomicRanges GRanges makeGRangesFromDataFrame
 #' @importFrom dplyr rename mutate
-#' @importFrom TSRchitect tssObject
-#' @importFrom purrr map set_names
+#' @importFrom purrr map set_names discard
 #' @importFrom magrittr %>%
-#' @importFrom CAGEr CAGEexp
 #'
 #' @param object Object with TSSs to import into tsrexplorer
 #' @param ... Additional arguments for classes
@@ -40,19 +38,23 @@ setMethod("tss_import", signature(object = "character"),
 				set_names(basename(data_files))
 		## If string isn't a directory it's probably a file or vector of files.
 		} else {
-			if (!str_detect(object, regex("\\.(bedgraph|bigwig|bw)$", ignore_case = TRUE)) %>% all) {
-				error_files = object %>%
-					discard(~ str_detect(., regex("\\.(bedgraph|bigwig|bw)$", ignore_case = TRUE))) %>%
-					paste0(collapse = " ")
-
-				message(paste("Files not acceptable format:", error_files))
-				stop()
-			}
-
-			imported_data <- object %>%
-				map(~ import(.)) %>%
-				set_names(basename(object))
+			data_files <- object
 		}
+
+		## Check if files have valid formats.
+		if (!str_detect(data_files, regex("\\.(bedgraph|bigwig|bw|wig)$", ignore_case = TRUE)) %>% all) {
+			error_files = data_files %>%
+				discard(~ str_detect(., regex("\\.(bedgraph|bigwig|bw|wig)$", ignore_case = TRUE))) %>%
+				paste0(collapse = " ")
+
+			message(paste("Files not acceptable format:", error_files))
+			stop()
+		}
+
+		## Import data.
+		imported_data <- data_files %>%
+			map(~ import(.)) %>%
+			set_names(basename(data_files))
 
 		tss_experiment(object) <- imported_data
 		return(object)
@@ -88,6 +90,8 @@ setMethod("tss_import", signature(object = "data.frame"),
 
 #' TSRchitect object
 #'
+#' @importFrom TSRchitect tssObject
+#'
 #' @rdname tss_import-generic
 
 setMethod("tss_import", signature(object = "tssObject"),
@@ -106,6 +110,8 @@ setMethod("tss_import", signature(object = "tssObject"),
 
 #' CAGEr object
 #'
+#' @importFrom CAGEr CAGEexp
+#'
 #' @rdname tss_import-generic
 
 setMethod("tss_import", signature(object = "CAGEexp"),
@@ -113,3 +119,5 @@ setMethod("tss_import", signature(object = "CAGEexp"),
 		message("Importing TSSs from CAGEexp object")
 	}
 )
+
+
