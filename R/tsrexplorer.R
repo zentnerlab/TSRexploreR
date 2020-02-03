@@ -7,7 +7,6 @@
 #' @slot correlation Named lists of correlation values between TSS and/or TSR sets
 #'
 #' @rdname tsr_explorer-class
-#'
 #' @export
 
 setClass(
@@ -30,18 +29,28 @@ setClass(
 
 #' TSRexplorer constructor function.
 #'
-#' @param TSSs Named list of TSS GRanges returned by TSRchitect
-#' @param TSRs Named list of TSR GRanges returned by TSRchitect 
-#' @param cores Number of CPU cores/threads available
-#'
-#' @return A tsrexplorer object
+#' @description
+#' This function generates a new tsr_explorer object for
+#' detailed analysis of transcription start sites (TSSs)
+#' and TSS clusters, referred to as transcription
+#' start regions (TSRs) or clustered transcription start sites (cTSSs).
 #'
 #' @import methods
 #' @importFrom GenomicRanges GRanges
 #' @importFrom tibble tibble
 #'
-#' @rdname tsr_explorer-class
+#' @param TSSs Named list of TSS GRanges returned by TSRchitect
+#' @param TSRs Named list of TSR GRanges returned by TSRchitect 
+#' @param cores Number of CPU cores/threads available
 #'
+#' @return A tsrexplorer object containing TSSs and/or TSRs
+#'
+#' @examples
+#' TSSs <- system.file("extdata", "yeast_TSSs.RDS", package = "tsrexplorer")
+#' TSSs <- readRDS(TSSs)
+#' exp <- tsr_explorer(TSSs)
+#'
+#' @rdname tsr_explorer-class
 #' @export
 
 tsr_explorer <- function(TSSs = NA, TSRs = NA, cores = 1) {

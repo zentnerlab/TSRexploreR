@@ -16,12 +16,13 @@ tsr_explorer(TSSs = NA, TSRs = NA, cores = 1)
 \item{cores}{Number of CPU cores/threads available}
 }
 \value{
-A tsrexplorer object
+A tsrexplorer object containing TSSs and/or TSRs
 }
 \description{
-TSRexplorer Class
-
-TSRexplorer constructor function.
+This function generates a new tsr_explorer object for
+detailed analysis of transcription start sites (TSSs)
+and TSS clusters, referred to as transcription
+start regions (TSRs) or clustered transcription start sites (cTSSs).
 }
 \section{Slots}{
 
@@ -37,3 +38,9 @@ TSRexplorer constructor function.
 \item{\code{correlation}}{Named lists of correlation values between TSS and/or TSR sets}
 }}
 
+\examples{
+TSSs <- system.file("extdata", "yeast_TSSs.RDS", package = "tsrexplorer")
+TSSs <- readRDS(TSSs)
+exp <- tsr_explorer(TSSs)
+
+}
