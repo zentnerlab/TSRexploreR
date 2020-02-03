@@ -5,7 +5,9 @@
 #'
 #' @import tibble
 #' @importFrom purrr discard
+#' @importFrom SummarizedExperiment SummarizedExperiment assay
 #' @importFrom dplyr select_at vars
+#' @importFrom tidyr gather
 #'
 #' @param experiment tsrexplorer object with TMM normalized counts
 #' @param data_type Whether to make scatter plots from TSS, TSR, or RNA-seq & five-prime data
@@ -24,32 +26,38 @@ find_correlation <- function(
 	samples = "all",
 	correlation_metric = "pearson"
 ) {
+	## Select appropriate data.
 	if (data_type == "tss") {
-		normalized_counts <- experiment@counts$TSSs$tmm_matrix
+		normalized_counts <- experiment@counts$TSSs$normalized %>% assay("tmm")
 		type_color <- "#431352"
 	} else if (data_type == "tsr") {
-		normalized_counts <- experiment@counts$TSRs$tmm_matrix
+		normalized_counts <- experiment@counts$TSRs$normalized %>% assay("tmm")
 		type_color <- "#34698c"
 	} else if (data_type == "features") {
-		normalized_counts <- experiment@counts$features$tmm_matrix
+		normalized_counts <- experiment@counts$features$normalized %>% assay("tmm")
 		type_color <- "#29AF7FFF"
 	}
 
 	## Select all samples if "all" specified.
-	if (samples == "all") {
-		samples <- normalized_counts %>%
-			colnames %>%
-			discard(. == "position")
-	}
+	if (length(samples) == 1 & samples == "all") samples <- colnames(normalized_counts)
 
 	## make correlation matrix.
 	correlation <- normalized_counts %>%
-		select_at(vars("position", samples)) %>%
-		column_to_rownames("position") %>%
-		as.matrix %>%
-		cor(method = correlation_metric)
+		.[, samples] %>%
+		cor(method = correlation_metric) %>%
+		as_tibble(.name_repair = "unique", rownames = "sample_1") %>%
+		gather(-sample_1, key = "sample_2", value = "cor")
 
-	return(correlation)		
+	## Place correlation values into proper slot.
+	if (data_type == "tss") {
+		experiment@correlation$TSSs <- correlation
+	} else if (data_type == "tsr") {
+		experiment@correlation$TSRs <- correlation
+	} else {
+		experiment@correlation$features <- correlation
+	}
+
+	return(experiment)		
 }
 
 #' Plot Sample Correlation
