@@ -3,12 +3,15 @@
 #' Using edgeR to TMM normalize TSSs or TSRs
 #'
 #' @import tibble
-#' @importFrom dplyr mutate select bind_rows group_by summarize mutate_if left_join
+#' @importFrom dplyr mutate mutate_at mutate_all vars select bind_rows group_by summarize mutate_if left_join rename
 #' @importFrom edgeR DGEList calcNormFactors cpm
-#' @importFrom GenomicRanges GRangesList reduce findOverlaps makeGRangesFromDataFrame score mcols
+#' @importFrom GenomicRanges makeGRangesFromDataFrame score mcols "mcols<-"
+#' @importFrom SummarizedExperiment SummarizedExperiment assay "assay<-"
+#' @importFrom S4Vectors DataFrame
+#' @importFrom IRanges findOverlapPairs
 #' @importFrom tidyr spread complete
-#' @importFrom purrr map
-#' @importFrom magrittr %>%
+#' @importFrom purrr map imap
+#' @importFrom magrittr %>% extract set_colnames
 #'
 #' @param experiment tsrexplorer object
 #' @param data_type Whether TSSs, TSRs, RNA-seq & five-prime feature counts should be normalized
@@ -31,125 +34,157 @@ count_normalization <- function(
 ) {
 
 	## Select proper slot of data.
+
+	# TSS data.
 	if (data_type == "tss") {
-		if (samples == "all") samples <- names(experiment@experiment$TSSs)
-		select_samples <- experiment@experiment$TSSs[samples]
-
-		select_samples <- select_samples %>%
-			map(function(x) {
-				if ("nTAGs" %in% names(mcols(x))) x$score <- x$nTAGs
-				return(x)
-			})
-
-		raw <- map(select_samples, ~ .[score(.) >= threshold])
+		if (length(samples) == 1 & samples == "all") samples <- tss_experiment(experiment) %>% names
+		select_samples <- tss_experiment(experiment) %>% extract(samples)
 
 		raw_matrix <- select_samples %>%
-			map(
-				~as_tibble(., .name_repair = "unique") %>%
-					mutate(position = paste(seqnames, start, end, strand, sep="_")) %>%
-					select(position, score)
-			) %>%
-				bind_rows(.id = "sample") %>%
-				spread(key = sample, value = score, fill = 0)
-	}
-
-	if (data_type == "tsr") {
-		## Pull data from proper slot.
-		if (samples == "all") samples <- names(experiment@experiment$TSRs)
-		select_samples <- experiment@experiment$TSRs[samples]
-
-		select_samples <- select_samples %>%
-			map(function(x) {
-				if ("nTAGs" %in% names(mcols(x))) x$score <- x$nTAGs
-				return(x)
-			})
-
-		raw <- map(select_samples, ~ .[score(.) >= threshold])
-
-		## Merge overlapping TSRs to get consensus
-		tsr_consensus <- select_samples %>%
-			as("GRangesList") %>%
-			unlist %>%
-			reduce(ignore.strand=FALSE) %>%
-			as_tibble(.name_repair = "unique") %>%
-			mutate(names = paste(seqnames, start, end, strand, sep="_")) %>%
-			makeGRangesFromDataFrame(keep.extra.columns = TRUE)
-
-		raw_matrix <- map(
-			names(select_samples),
-			~findOverlaps(
-				query = tsr_consensus,
-				subject = makeGRangesFromDataFrame(select_samples[[.x]])
-			)  %>%
-				as_tibble(.name_repair = "unique") %>%
-				mutate(
-					score = select_samples[[.x]][subjectHits]$nTAGs,
-					position = tsr_consensus[queryHits]$names
-				) %>%
-				select(-queryHits, -subjectHits) %>%
-				group_by(position) %>%
-				summarize(score = sum(score)) %>%
-				complete(position = tsr_consensus$names, fill = list(score = 0))
-		) %>%
-			setNames(names(select_samples)) %>%
+			map(~ as_tibble(., .name_repair = "unique")) %>%
 			bind_rows(.id = "sample") %>%
 			spread(key = sample, value = score, fill = 0)
 	}
 
-	if (data_type == "features") {
-		rnaseq_matrix <- experiment@experiment$features$rna_seq %>%
-			rename(position = gene_id)
+	# TSR data.
+	if (data_type == "tsr") {
+		## Pull data from proper slot.
+		if (length(samples) == 1 & samples == "all") samples <- tsr_experiment(experiment) %>% names
+		select_samples <- tsr_experiment(experiment) %>% extract(samples)
 
-		fiveprime_matrix <- experiment@experiment$features$five_prime %>%
-			rename(position = gene_id)
+		## Merge overlapping TSRs to get consensus
+		tsr_consensus <- select_samples %>%
+			purrr::reduce(c) %>%
+			GenomicRanges::reduce(ignore.strand = FALSE)
 
-		raw_matrix <- left_join(rnaseq_matrix, fiveprime_matrix, by = "position")
+		raw_matrix <- select_samples %>%
+			map(
+				~ findOverlapPairs(query = tsr_consensus, subject = .) %>%
+					as_tibble(.name_repair = "unique") %>%
+					select(first.seqnames, first.start, first.end, first.strand, second.X.score) %>%
+					rename(
+						seqnames = first.seqnames, start = first.start, end = first.end,
+						strand = first.strand, score = second.X.score
+					) %>%
+					group_by(seqnames, start, end, strand) %>%
+					summarize(score = sum(score)) %>%
+					ungroup
+			)  %>%
+			bind_rows(.id = "sample") %>%
+			spread(key = sample, value = score, fill = 0)
 	}
 
-	## CPM normalize counts
+	# Feature counts.
+	if (data_type == "features") {
+		rnaseq_matrix <- experiment@experiment$features$rna_seq
+		fiveprime_matrix <- experiment@experiment$features$five_prime
+
+		raw_matrix <- left_join(rnaseq_matrix, fiveprime_matrix, by = "gene_id")
+	}
+
+	## Store raw counts.
 	if (data_type %in% c("tss", "tsr")) {
-		cpm_counts <- raw %>%
-			map(function(x) {
-				x$score <- score(x) %>% cpm %>% as.numeric
-				return(x)
+		raw_counts <- select_samples %>%
+			imap(function(gr, sample_name) {
+				count_data <- gr %>%
+					score(.) %>%
+					as.matrix %>%
+					set_colnames(sample_name)
+
+				row_data <- gr
+				col_data <- DataFrame(sample = sample_name)
+
+				raw_exp <- SummarizedExperiment(
+					assays = list(raw = count_data),
+					rowRanges = row_data,
+					colData = col_data
+				)
+				return(raw_exp)
 			})
 	}
 
-	## Filter out positions that have less than n_samples number of samples with reads above threshold.
-	filtered_matrix <- raw_matrix %>%
-		mutate_if(is.numeric, ~ {.x >= threshold}) %>%
-		mutate(rowsums = rowSums(.[, 2:ncol(.)])) %>%
-		{which(.$rowsums >= n_samples)} %>%
-		raw_matrix[., ]
+	## Store filtered and filtered-CPM normalized per-sample counts.
+	if (data_type %in% c("tss", "tsr")) {
+		filtered_counts <- select_samples %>%
+			imap(function(gr, sample_name) {
+				filtered <- gr[score(gr) >= threshold]
+				count_data <- filtered %>%
+					score(.) %>%
+					as.matrix %>%
+					set_colnames(sample_name)
+				cpm_data <- cpm(count_data)
 
-	## TMM normalize counts.
-	tmm_matrix <- filtered_matrix %>%
-		column_to_rownames("position") %>%
-		as.matrix %>%
+				row_data <- filtered
+				col_data <- DataFrame(sample = sample_name)
+
+				cpm_exp <- SummarizedExperiment(
+					assays = list(filtered = count_data, cpm = cpm_data),
+					rowRanges = row_data,
+					colData = col_data
+				)
+				return(cpm_exp)
+			})
+	}
+
+	## Store filtered, CPM, and TMM normalized count matrices.
+	# Construct summarized experiment.
+	if (data_type == "features") {
+		count_matrix <- raw_matrix[,-1] %>% as.matrix
+	} else {
+		count_matrix <- raw_matrix[,-1:-5] %>% as.matrix
+	}
+
+	if (data_type == "features") {
+		row_data <- DataFrame(raw_matrix[,1])
+	} else {
+		row_data <- makeGRangesFromDataFrame(raw_matrix)
+	}
+
+	col_data <- DataFrame("sample" = colnames(count_matrix), row.names = colnames(count_matrix))
+
+	raw_exp <- SummarizedExperiment(
+		assays = list(counts = count_matrix),
+		rowRanges = row_data,
+		colData = col_data
+	)
+
+	# Filter based on threshold and min samples.
+	filtered_exp <- raw_exp %>%
+		assay("counts") %>%
+		as_tibble(.name_repair = "unique") %>%
+		mutate_all(~ {.x >= threshold}) %>%
+		mutate(rowsums = rowSums(.)) %>%
+		{which(.$rowsums >= n_samples)} %>%
+		raw_exp[., ]
+
+	# CPM normalize counts.
+	assay(filtered_exp, "cpm") <- filtered_exp %>%
+		assay("counts") %>%
+		cpm
+
+	# TMM normalize counts.
+	assay(filtered_exp, "tmm") <- filtered_exp %>%
+		assay("counts") %>%
 		DGEList %>%
 		calcNormFactors %>%
-		cpm %>%
-		as_tibble(.name_repair = "unique", rownames = "position")
+		cpm
 
 	## Put counts into proper slots.
 	if (data_type == "tss") {
 		experiment@counts$TSSs <- list(
-			"raw" = raw,
-			"cpm" = cpm_counts,
-			"raw_matrix" = filtered_matrix,
-			"tmm_matrix" = tmm_matrix
+			"raw" = raw_counts,
+			"filtered" = filtered_counts,
+			"normalized" = filtered_exp
 		)
 	} else if (data_type == "tsr") {
 		experiment@counts$TSRs <- list(
-			"raw" = raw,
-			"cpm" = cpm_counts,
-			"raw_matrix" = filtered_matrix,
-			"tmm_matrix" = tmm_matrix
+			"raw" = raw_counts,
+			"filtered" = filtered_counts,
+			"normalized" = filtered_exp
 		)
 	} else if (data_type == "features") {
 		experiment@counts$features <- list(
-			"raw_matrix" = filtered_matrix,
-			"tmm_matrix" = tmm_matrix
+			"normalized" = filtered_exp
 		)
 	}
 
