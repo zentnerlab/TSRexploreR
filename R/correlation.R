@@ -74,6 +74,8 @@ find_correlation <- function(
 #' @importFrom circlize colorRamp2 
 #' @importFrom viridis viridis
 #' @importFrom grid gpar
+#' @importFrom SummarizedExperiment SummarizedExperiment assay
+#' @importFrom stringr str_replace
 #'
 #' @param experiment tsrexplorer object with TMM normalized counts
 #' @param data_type Whether to make scatter plots from TSS, TSR, or RNA-seq & five-prime data
@@ -105,26 +107,23 @@ plot_correlation <- function(
 	
 	## Get data from proper slot.
 	if (data_type == "tss") {
-		normalized_counts <- experiment@counts$TSSs$tmm_matrix
+		normalized_counts <- experiment@counts$TSSs$normalized %>% assay("tmm")
 		type_color <- "#431352"
 	} else if (data_type == "tsr") {
-		normalized_counts <- experiment@counts$TSRs$tmm_matrix
+		normalized_counts <- experiment@counts$TSRs$normalized %>% assay("tmm")
 		type_color <- "#34698c"
 	} else if (data_type == "features") {
-		normalized_counts <- experiment@counts$features$tmm_matrix
+		normalized_counts <- experiment@counts$features$normalized %>% assay("tmm")
 		type_color <- "#29AF7FFF"
 	}
 
 	## Log2+1 transform data if indicated.
-	pre_transformed <- normalized_counts
-	if (log2_transform) normalized_counts <- mutate_at(normalized_counts, vars(-position), ~log2(. + 1))
+	pre_transformed <- as_tibble(normalized_counts, .name_repair = "unique")
+	if (log2_transform) normalized_counts <- log2(normalized_counts + 1) %>% as_tibble(.name_repair = "unique")
 
 	## Select all samples if "all" specified.
-	if (samples == "all") {
-		samples <- normalized_counts %>%
-			colnames %>%
-			discard(. == "position")
-	}
+	if (length(samples) == 1 & samples == "all") samples <- colnames(normalized_counts)
+	normalized_counts <- normalized_counts[, samples]
 
 	## Make functions for scatter plot.
 
@@ -137,8 +136,8 @@ plot_correlation <- function(
 
 	# Create custom correlation heatmap format.
 	custom_heatmap <- function(data, mapping) {
-		sample_1 <- pre_transformed[ ,as.character(mapping$x)[2]]
-		sample_2 <- pre_transformed[ ,as.character(mapping$y)[2]]
+		sample_1 <- pre_transformed[ ,str_replace(mapping$x, "~", "")]
+		sample_2 <- pre_transformed[ ,str_replace(mapping$y, "~", "")]
 
 		correlation <- cor(sample_1, sample_2, method = correlation_metric) %>%
 			round(3) %>%
