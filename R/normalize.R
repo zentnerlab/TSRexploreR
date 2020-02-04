@@ -82,7 +82,7 @@ count_normalization <- function(
 		raw_matrix <- left_join(rnaseq_matrix, fiveprime_matrix, by = "gene_id")
 	}
 
-	## Store raw counts.
+	## Store unfiltered and unfiltered-CPM normalized counts.
 	if (data_type %in% c("tss", "tsr")) {
 		raw_counts <- select_samples %>%
 			imap(function(gr, sample_name) {
@@ -90,39 +90,17 @@ count_normalization <- function(
 					score(.) %>%
 					as.matrix %>%
 					set_colnames(sample_name)
+				cpm_data <- cpm(count_data)
 
 				row_data <- gr
 				col_data <- DataFrame(sample = sample_name)
 
 				raw_exp <- SummarizedExperiment(
-					assays = list(raw = count_data),
+					assays = list(raw = count_data, cpm = cpm_data),
 					rowRanges = row_data,
 					colData = col_data
 				)
 				return(raw_exp)
-			})
-	}
-
-	## Store filtered and filtered-CPM normalized per-sample counts.
-	if (data_type %in% c("tss", "tsr")) {
-		filtered_counts <- select_samples %>%
-			imap(function(gr, sample_name) {
-				filtered <- gr[score(gr) >= threshold]
-				count_data <- filtered %>%
-					score(.) %>%
-					as.matrix %>%
-					set_colnames(sample_name)
-				cpm_data <- cpm(count_data)
-
-				row_data <- filtered
-				col_data <- DataFrame(sample = sample_name)
-
-				cpm_exp <- SummarizedExperiment(
-					assays = list(filtered = count_data, cpm = cpm_data),
-					rowRanges = row_data,
-					colData = col_data
-				)
-				return(cpm_exp)
 			})
 	}
 
@@ -173,13 +151,11 @@ count_normalization <- function(
 	if (data_type == "tss") {
 		experiment@counts$TSSs <- list(
 			"raw" = raw_counts,
-			"filtered" = filtered_counts,
 			"normalized" = filtered_exp
 		)
 	} else if (data_type == "tsr") {
 		experiment@counts$TSRs <- list(
 			"raw" = raw_counts,
-			"filtered" = filtered_counts,
 			"normalized" = filtered_exp
 		)
 	} else if (data_type == "features") {

@@ -8,8 +8,10 @@
 #' @importFrom ChIPseeker annotatePeak
 #' @importFrom purrr map
 #' @importFrom GenomicFeatures makeTxDbFromGFF
+#' @importFrom GenomicRanges GRanges makeGRangesFromDataFrame
 #' @importFrom tidyr separate gather
 #' @importFrom dplyr filter select
+#' @importFrom SummarizedExperiment SummarizedExperiment rowRanges "rowRanges<-"
 #'
 #' @param experiment tsrexplorer object with TSS Granges
 #' @param annotation_file Either path and file name of annotation file, or TxDb object of annotation
@@ -41,40 +43,34 @@ annotate_features <- function(
 
 	## Grab data from proper slot.
 	if (data_type == "tss") {
-		raw <- experiment@counts$TSSs$raw
-		cpm_counts <- experiment@counts$TSSs$cpm
+		counts <- experiment@counts$TSSs$raw
 	} else if (data_type == "tsr") {
-		raw <- experiment@counts$TSRs$raw
-		cpm_counts <- experiment@counts$TSRs$cpm
+		counts <- experiment@counts$TSRs$raw
 	}
 
 	## Annotate features.
-	raw_annotated <- raw %>%
-		map(
-			~ annotatePeak(.,
-				tssRegion = c(-upstream, downstream),
-				TxDb = genome_annotation,
-				sameStrand = TRUE,
-				level = feature_type
-			) %>% as_tibble(.name_repair="unique")
-	)
+	counts_annotated <- counts %>%
+		map(function(x) {
+			annotated <- rowRanges(x) %>%
+				annotatePeak(
+					tssRegion = c(-upstream, downstream),
+					TxDb = genome_annotation,
+					sameStrand = TRUE,
+					level = feature_type
+				) %>%
+				as_tibble(.name_repair="unique") %>%
+				makeGRangesFromDataFrame(keep.extra.columns = TRUE)
 
-	cpm_annotated <- cpm_counts %>%
-                map(
-                        ~ annotatePeak(.,
-                                tssRegion = c(-upstream, downstream),
-                                TxDb = genome_annotation,
-                                sameStrand = TRUE,
-                                level = feature_type
-                        ) %>% as_tibble(.name_repair="unique")
-		)
+			rowRanges(x) <- annotated
+			return(x)
+		})
 
 
 	## Place annotated features back into tsrexplorer object.
 	if (data_type == "tss") {
-		experiment@annotated$TSSs <- list("raw" = raw_annotated, "cpm" = cpm_annotated)
+		experiment@counts$TSSs <- counts_annotated
 	} else if (data_type == "tsr") {
-		experiment@annotated$TSRs <- list("raw" = raw_annotated, "cpm" = cpm_annotated)
+		experiment@counts$TSRs <- counts_annotated
 	}
 
 	return(experiment)
