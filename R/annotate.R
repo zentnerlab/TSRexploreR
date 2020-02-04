@@ -68,9 +68,9 @@ annotate_features <- function(
 
 	## Place annotated features back into tsrexplorer object.
 	if (data_type == "tss") {
-		experiment@counts$TSSs <- counts_annotated
+		experiment@counts$TSSs$raw <- counts_annotated
 	} else if (data_type == "tsr") {
-		experiment@counts$TSRs <- counts_annotated
+		experiment@counts$TSRs$raw <- counts_annotated
 	}
 
 	return(experiment)

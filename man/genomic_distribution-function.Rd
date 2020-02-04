@@ -5,7 +5,7 @@
 \title{Genomic Distribution}
 \usage{
 genomic_distribution(experiment, data_type = c("tss", "tsr"),
-  samples = "all", threshold = 1, quantiles = 1)
+  samples = "all", threshold = 1, quantiles = NA)
 }
 \arguments{
 \item{experiment}{tsrexplorer object with annotated TSRs}

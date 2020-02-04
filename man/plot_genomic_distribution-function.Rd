@@ -4,7 +4,7 @@
 \alias{plot_genomic_distribution}
 \title{Plot Genomic Distribution}
 \usage{
-plot_genomic_distribution(genomic_distribution, sample_order = NULL)
+plot_genomic_distribution(genomic_distribution, sample_order = NA)
 }
 \arguments{
 \item{genomic_distribution}{tibble of TSS or TSR genomic distributions from tsr_genomic_distribution}
