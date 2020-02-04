@@ -87,46 +87,8 @@ genomic_distribution <- function(experiment, data_type = c("tss", "tsr"), sample
 			arrange(samples, annotation)
 	}
 
-	## Prepare summarized experiment to return.
-	genome_fracs <- genomic_distribution %>%
-		select(-count) %>%
-		spread(samples, fraction)
-	if (!is.na(quantiles)) {
-		genome_fracs <- genome_fracs %>%
-			select(-annotation, -ntile) %>%
-			as.matrix
-	} else {
-		genome_fracs <- genome_fracs %>%
-			select(-annotation) %>%
-			as.matrix
-	}
-
-	genome_counts <- genomic_distribution %>%
-		select(-fraction) %>%
-		spread(samples, count)
-	if (!is.na(quantiles)) {
-		genome_counts <- genome_counts %>%
-			select(-annotation, -ntile) %>%
-			as.matrix
-	} else {
-		genome_counts <- genome_counts %>%
-			select(-annotation, -ntile) %>%
-			as.matrix
-	}
-
-	if (!is.na(quantiles)) {
-		row_data <- distinct(genomic_distribution, annotation, ntile)
-	} else {
-		row_data <- distinct(genomic_distribution, annotation)
-	}
-
-	col_data <- DataFrame(sample = colnames(genome_fracs))
-
-	dist_exp <- SummarizedExperiment(
-		assay = list(counts = genome_counts, fractions = genome_fracs),
-		rowData = row_data,
-		colData = col_data
-	)
+	## Prepare DataFrame to return.
+	dist_exp <- DataFrame(genomic_distribution)
 
 	## Add quantile information to summarized experiment.
 	if (!is.na(quantiles)) {
@@ -160,14 +122,8 @@ genomic_distribution <- function(experiment, data_type = c("tss", "tsr"), sample
 
 plot_genomic_distribution <- function(genomic_distribution, sample_order = NA) {
 	
-	## Format summarized experiment for plotting.
-	counts <- assay(genomic_distribution, "counts") %>%
-		as_tibble(.name_repair = "unique")
-	annotations <- rowData(genomic_distribution) %>%
-		as_tibble(.name_repair = "unique")
-
-	genomic_dist <- bind_cols(annotations, counts) %>%
-		gather(-annotation, key = "samples", value = "counts")
+	## Pull out information from DataFrame.
+	genomic_dist <- as_tibble(genomic_distribution, .name_repair = "unique")
 
 	## Order the samples if required.
 	if (!is.na(sample_order)) {
@@ -176,7 +132,7 @@ plot_genomic_distribution <- function(genomic_distribution, sample_order = NA) {
 	}
 
 	## Plot the genomic distribution.
-	p <- ggplot(genomic_dist, aes(x = samples, y = counts, fill = fct_rev(annotation))) +
+	p <- ggplot(genomic_dist, aes(x = samples, y = count, fill = fct_rev(annotation))) +
 		geom_col(position = "fill") +
 		scale_fill_viridis_d(direction = -1, name="Annotation") +
 		coord_flip() +
