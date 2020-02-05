@@ -79,7 +79,7 @@ tss_heatmap_matrix <- function(
 	## Add quantiles if specified.
 	if (!is.na(quantiles)) {
 		annotated_tss <- annotated_tss[,
-			.(sample, distanceToTSS, feature, score, rank, ntile = ntile(rank))
+			.(sample, distanceToTSS, feature, score, rank, ntile = ntile(rank, quantiles))
 		]
 	}
 
@@ -103,6 +103,7 @@ tss_heatmap_matrix <- function(
 	metadata(tss_df)$threshold <- threshold
 	metadata(tss_df)$quantiles <- quantiles
 	metadata(tss_df)$use_cpm <- use_cpm
+	metadata(tss_df)$promoter <- c(upstream, downstream)
 
 	return(tss_df)
 }
@@ -131,6 +132,10 @@ tss_heatmap_matrix <- function(
 #' @export
 
 plot_heatmap <- function(heatmap_matrix, max_value = 5, ncol = 1, ...) {
+
+	## Extract some info from the heatmap matrix.
+	upstream <- metadata(heatmap_matrix)$promoter[1]
+	downstream <- metadata(heatmap_matrix)$promoter[2]
 
 	## Convert to data.table ,log2 transform scores, and then truncate values above 'max_value'.
 	heatmap_mat <- as.data.table(heatmap_matrix)
@@ -266,15 +271,31 @@ tsr_heatmap_matrix <- function(
 	## Add quantiles if specified.
 	if (!is.na(quantiles)) {
 		annotated_tsr <- annotated_tsr[,
-			.(sample, feature, score, distanceToTSS, rank, ntile = ntile(rank))
+			.(sample, feature, score, distanceToTSS, rank, ntile = ntile(rank, quantile))
 		]
 	}
+
+        ## Format for plotting.
+        if(!is.na(quantiles)) {
+                annotated_tsr <- annotated_tsr[,
+                        .(sample, score, rank, ntile,
+                        distanceToTSS = factor(distanceToTSS, levels = seq(-upstream, downstream, 1)),
+                        feature = fct_reorder(factor(feature), rank))
+                ]
+        } else {
+                annotated_tsr <- annotated_tsr[,
+                        .(sample, score, rank,
+                        distanceToTSS = factor(distanceToTSS, levels = seq(-upstream, downstream, 1)),
+                        feature = fct_reorder(factor(feature), rank))
+                ]
+        }
 
 	## Return DataFrame
 	tsr_df <- DataFrame(annotated_tsr)
 	metadata(tsr_df)$threshold <- threshold
 	metadata(tsr_df)$quantiles <- quantiles
 	metadata(tsr_df)$use_cpm <- use_cpm
+	metadata(tsr_df)$promoter <- c(upstream, downstream)
 
 	return(tsr_df)
 }
