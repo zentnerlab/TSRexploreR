@@ -6,7 +6,7 @@
 \usage{
 tss_heatmap_matrix(experiment, samples = "all", upstream = 1000,
   downstream = 1000, threshold = 1, anno_type = c("transcriptId",
-  "geneId"), quantiles = 1, use_cpm = FALSE)
+  "geneId"), quantiles = NA, use_cpm = FALSE)
 }
 \arguments{
 \item{experiment}{tsrexplorer object with annotated TSSs}

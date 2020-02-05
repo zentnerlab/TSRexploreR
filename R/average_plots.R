@@ -4,12 +4,14 @@
 #' Generate average plots of TSSs or TSRs
 #'
 #' @import tibble
+#' @import data.table
 #' @import ggplot2
-#' @importFrom dplyr bind_rows select filter between group_by mutate ntile ungroup
-#' @importFrom magrittr %>%
+#' @importFrom dplyr bind_rows bind_cols select filter between group_by mutate ntile ungroup
+#' @importFrom magrittr %>% extract
 #' @importFrom purrr map pmap
 #' @importFrom forcats fct_rev
 #' @importFrom tidyr separate
+#' @importFrom SummarizedExperiment SummarizedExperiment assay rowRanges
 #'
 #' @param experiment tsr_explorer object with annotated TSSs
 #' @param samples Either 'all' to plot all samples, or a vector of sample names
@@ -38,58 +40,54 @@ plot_average <- function(
 	downstream = 1000,
 	threshold = 1,
 	ncol = 1,
-	quantiles = 1,
+	quantiles = NA,
 	use_cpm = FALSE,
 	...
 ) {
 
 	## Pull data out of appropriate slot.
-	if (data_type == "tss" & use_cpm) {
-		if (samples == "all") samples <- names(experiment@annotated$TSSs$cpm)
-		sample_data <- experiment@annotated$TSSs$cpm[samples]
+	if (data_type == "tss") {
+		if (samples == "all") samples <- names(experiment@counts$TSSs$raw)
+		sample_data <- extract(experiment@counts$TSSs$raw, samples)
 		color_type <- "#431352"
-	} else if (data_type == "tss" & !(use_cpm)) {
-		if (samples == "all") samples <- names(experiment@annotated$TSSs$raw)
-		sample_data <- experiment@annotated$TSSs$raw[samples]
-		color_type <- "#431352"
-	} else if (data_type == "tsr" & use_cpm) {
-		if (samples == "all") samples <- names(experiment@annotated$TSRs$cpm)
-		sample_data <- experiment@annotated$TSRs$cpm[samples]
-		color_type <- "#34698c"
-	} else if (data_type == "tsr" & !(use_cpm)){
-		if (samples == "all") samples <- names(experiment@annotated$TSRs$raw)
-		sample_data <- experiment@annotated$TSRs$raw[samples]
+	} else if (data_type == "tsr") {
+		if (samples == "all") samples <- names(experiment@counts$TSRs$raw)
+		sample_data <- extract(experiment@counts$TSRs$raw, samples)
 		color_type <- "#34698c"
 	}
 
 	## Preliminary preparation of data.
 	sample_data <- sample_data %>%
+		map(function(x) {
+			ranges <- rowRanges(x) %>% as_tibble(.name_repair = "unique")
+			if (use_cpm) {
+				scores <- assay(x, "cpm")
+			} else {
+				scores <- assay(x, "raw")
+			}
+			scores <- as_tibble(scores, .name_repair = "unique")
+			ranges <- bind_cols(ranges, scores)
+			return(ranges)
+		}) %>%
 		bind_rows(.id = "samples") %>%
-		select(distanceToTSS, score, samples) %>%
-		filter(
-			score >= threshold,
-			between(distanceToTSS, -upstream, downstream)
-		)
+		as.data.table
+
+	sample_data <- sample_data[
+		score >= threshold &
+		dplyr::between(distanceToTSS, -upstream, downstream),
+		.(distanceToTSS, score, samples), 
+	]
 
 	## Add quantile info if requested.
-	sample_data <- sample_data %>%
-		group_by(samples, distanceToTSS) %>%
-		mutate(ntile = ntile(score, quantiles)) %>%
-		ungroup
-
-	## Grab info needed for plotting.
-	if (consider_score) {
-		sample_data <- sample_data %>%
-			mutate(samples_ntile = paste0(samples, "_:_", ntile)) %>%
-			select(-samples, -ntile) %>%
-			split(.$samples_ntile) %>%
-			map(., ~pmap(., function(distanceToTSS, score, samples_ntile) rep(distanceToTSS, score)) %>%
-					unlist %>%
-					enframe(name = NULL, value = "distanceToTSS")
-			) %>%
-			bind_rows(.id = "samples") %>%
-			separate(samples, into = c("samples", "ntile"), sep = "_:_")
+	if (!is.na(quantiles)) {
+		sample_data[,
+			ntile := ntile(score, quantiles),
+			by = .(samples, distanceToTSS)
+		]
 	}
+
+	## Update data if score is also considered instead of just unique position.
+	if (consider_score) sample_data <- sample_data[rep(seq_len(.N), score)]
 
 	## Plot averages.
 	p <- ggplot(sample_data, aes(distanceToTSS)) +
@@ -100,7 +98,7 @@ plot_average <- function(
 		) +
 		theme_bw()
 
-	if (quantiles > 1) {
+	if (!is.na(quantiles)) {
 		p <- p + facet_grid(fct_rev(factor(ntile)) ~ samples)
 	} else {
 		p <- p + facet_wrap(~ samples, ncol = ncol)
