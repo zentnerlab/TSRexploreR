@@ -182,8 +182,11 @@ plot_heatmap <- function(heatmap_matrix, max_value = 5, ncol = 1, ...) {
 #' @include annotate.R
 #'
 #' @import tibble
+#' @import data.table
+#' @importFrom SummarizedExperiment SummarizedExperiment rowRanges assay
+#' @importFrom S4Vectors DataFrame "metadata<-"
 #' @importFrom dplyr bind_rows rename select mutate case_when group_by summarize ungroup filter between left_join
-#' @importFrom magrittr %>%
+#' @importFrom magrittr %>% extract
 #' @importFrom tidyr complete
 #' @importFrom purrr pmap
 #' 
@@ -208,86 +211,70 @@ tsr_heatmap_matrix <- function(
 	upstream = 1000,
 	downstream = 1000,
 	feature_type = c("transcriptId", "geneId"),
-	quantiles = 1,
+	quantiles = NA,
 	threshold = 1,
 	use_cpm = FALSE
 ) {
 	
 	## Pull samples out.
-        if (use_cpm) {
-                if (samples == "all") samples <- names(experiment@annotated$TSRs$cpm)
-                sample_data <- experiment@annotated$TSRs$cpm[samples]
-        } else if (!(use_cpm)) {
-                if (samples == "all") samples <- names(experiment@annotated$TSRs$raw)
-                sample_data <- experiment@annotated$TSRs$raw[samples]
-        }
+	if (samples == "all") samples <- names(experiment@counts$TSRs$raw)
+	sample_data <- extract(experiment@counts$TSRs$raw, samples)
 
 	## Prepare data to be made into count matrix
 	annotated_tsr <- sample_data %>%
-		bind_rows(.id = "sample") %>%
-		rename("feature" = feature_type) %>%
-		select(
-			sample, strand, start, end, feature,
-			geneStart, geneEnd, score
-		) %>%
-		mutate(
-			startDist = case_when(
-				strand == "+" ~ start - geneStart,
-				strand == "-" ~ -(end - geneEnd)
-			),
-			endDist = case_when(
-				strand == "+" ~ end - geneStart,
-				strand == "-" ~ -(start - geneEnd)
-			)
-		) %>%
-		select(sample, startDist, endDist, score, feature)
-
-	## Get order of features based on sum of TSR scores.
-	feature_order <- annotated_tsr %>%
-		mutate(feature = factor(feature)) %>%
-		group_by(feature) %>%
-		summarize(total_sum = sum(score)) %>%
-		mutate(feature = fct_reorder(feature, desc(total_sum))) %>%
-		pull(feature) %>%
-		levels
-
-	## Get ntiles by sample and feature.
-	feature_quantiles <- annotated_tsr %>%
-		select(-startDist, -endDist) %>%
-		group_by(sample, feature) %>%
-		summarize(total_sum = sum(score)) %>%
-		ungroup %>%
-		complete(
-			sample,
-			feature = feature_order,
-			fill = list(total_sum = 0)
-		) %>%
-		group_by(sample) %>%
-		mutate(ntile = ntile(total_sum, quantiles)) %>%
-		ungroup %>%
-		select(-total_sum)		
-
-	## Put TSR score for entire range of TSR.
-	annotated_tsr <- annotated_tsr %>%
-		pmap(function(sample, startDist, endDist, score, feature) {
-			tibble(
-				sample = sample,
-				position = seq(startDist, endDist, 1),
-				score = score,
-				feature = feature
-			)
+		map(function(x) {
+			ranges <- rowRanges(x) %>% as_tibble(.name_repair = "unique")
+			if (use_cpm) {
+				scores <- assay(x, "cpm")
+			} else {
+				scores <- assay(x, "raw")
+			}
+			scores <- as_tibble(scores, .name_repair = "unique")
+			ranges <- bind_cols(ranges, scores)
+			return(ranges)
 		}) %>%
-		bind_rows %>%
-		filter(between(position, -upstream, downstream)) %>%
-		mutate(log2_score = log2(score + 1)) %>%
-		complete(
-			sample,
-			feature = feature_order,
-			position = -upstream:downstream,
-			fill = list(score = 0, log2_score = 0)
-		) %>%
-		left_join(y = feature_quantiles, by = c("sample", "feature")) %>%
-		mutate(feature = factor(feature, levels = feature_order))
+		bind_rows(.id = "sample") %>%
+		as.data.table
 
-	return(annotated_tsr)
+	setnames(annotated_tsr, old = feature_type, new = "feature")
+	annotated_tsr <- annotated_tsr[
+		score >= threshold,
+		.(sample, strand, start, end, feature, geneStart, geneEnd, score,
+		startDist = ifelse(strand == "+", start - geneStart, -(end - geneEnd)),
+		endDist = ifelse(strand == "+", end - geneStart, -(start - geneEnd)))
+	][,
+		.(sample, strand, startDist, endDist, score, feature, tsr_id = seq_len(.N))
+	]
+
+        ## Get order of genes for heatmap (mean across samples).
+	annotated_tsr <- annotated_tsr[,
+		.(sample, strand, startDist, endDist, feature, score, tsr_id, feature_mean = mean(score)),
+		by = feature
+	][,
+		.(sample, strand, startDist, endDist, feature, score, tsr_id, rank = dense_rank(feature_mean))
+	]
+
+        ## Put TSR score for entire range of TSR.
+        annotated_tsr <- annotated_tsr[,
+                .(sample, feature, score, rank, distanceToTSS = seq(as.numeric(startDist), as.numeric(endDist), 1)),
+                by = tsr_id
+        ][
+		dplyr::between(distanceToTSS, -upstream, downstream),
+		.(sample, feature, score, rank, distanceToTSS)
+	]
+
+	## Add quantiles if specified.
+	if (!is.na(quantiles)) {
+		annotated_tsr <- annotated_tsr[,
+			.(sample, feature, score, distanceToTSS, rank, ntile = ntile(rank))
+		]
+	}
+
+	## Return DataFrame
+	tsr_df <- DataFrame(annotated_tsr)
+	metadata(tsr_df)$threshold <- threshold
+	metadata(tsr_df)$quantiles <- quantiles
+	metadata(tsr_df)$use_cpm <- use_cpm
+
+	return(tsr_df)
 }
