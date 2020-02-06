@@ -28,50 +28,53 @@
 genomic_distribution <- function(experiment, data_type = c("tss", "tsr"), samples = "all", threshold = 1, quantiles = NA) {
 
 	## Extract samples.
-	selected_samples <- extract_samples(experiment, data_type, samples)
-
-	## Initial preparation of data.
-	selected_samples <- selected_samples %>%
+	selected_samples <- experiment %>%
+		extract_counts(data_type, samples) %>%
 		bind_rows(.id = "samples") %>%
-		filter(score >= threshold)
+		as.data.table
+
+	selected_samples <- selected_samples[
+		score >= threshold,
+		.(samples, score,
+		annotation = case_when(
+                        annotation == "Promoter" ~ "Promoter",
+                        grepl(annotation, pattern="(Exon|UTR)") ~ "Exon",
+                        grepl(annotation, pattern="Intron") ~ "Intron",
+                        grepl(annotation, pattern="Downstream") ~ "Downstream",
+                        annotation == "Distal Intergenic" ~ "Intergenic"
+                ))
+	][,
+		.(samples, score,
+		annotation = factor(annotation,
+			levels = c("Promoter", "Exon", "Intron", "Downstream", "Intergenic")
+		))
+	]
 
 	## Break data into quantiles if quantiles set is greater than 1.
 	if (!is.na(quantiles)) {
-		selected_samples <- selected_samples %>%
-			group_by(samples) %>%
-			mutate(ntile = ntile(score, quantiles))
+		selected_samples <- selected_samples[,
+			.(score, annotation, ntile = ntile(score, quantiles)),
+			by = samples
+		]
 	}
 	
-	## Clean up genomic annotations.
-	genomic_distribution <- selected_samples %>%
-		mutate(annotation = case_when(
-			annotation == "Promoter" ~ "Promoter",
-			grepl(annotation, pattern="(Exon|UTR)") ~ "Exon",
-			grepl(annotation, pattern="Intron") ~ "Intron",
-			grepl(annotation, pattern="Downstream") ~ "Downstream",
-			annotation == "Distal Intergenic" ~ "Intergenic"
-		)) %>%
-		mutate(
-			annotation = factor(annotation, levels = c(
-				"Promoter", "Exon", "Intron", "Downstream", "Intergenic"
-			))
-		)
-
 	## Prepade data to be plotted later.
 	if (!is.na(quantiles)) {
-		genomic_distribution <- genomic_distribution %>%
-			count(samples, annotation, ntile, name = "count") %>%
-			group_by(samples, ntile) %>%
-			mutate(fraction = count / sum(count)) %>%
-			ungroup %>%
-			arrange(samples, ntile, annotation)
+		genomic_distribution <- selected_samples[,
+			.(count = .N),
+			by = .(samples, annotation, ntile)
+		][,
+			.(annotation, count, fraction = count / sum(count)),
+			by = .(samples, ntile)
+		]
 	} else {
-		genomic_distribution <- genomic_distribution %>%
-			count(samples, annotation, name = "count") %>%
-			group_by(samples) %>%
-			mutate(fraction = count / sum(count)) %>%
-			ungroup %>%
-			arrange(samples, annotation)
+		genomic_distribution <- selected_samples[,
+			.(count = .N),
+			by = .(samples, annotation)
+		][,
+			.(annotation, count, fraction = count / sum(cont)),
+			by = samples
+		]
 	}
 
 	## Prepare DataFrame to return.

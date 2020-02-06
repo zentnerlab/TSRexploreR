@@ -5,7 +5,7 @@
 #' @import tibble
 #' @importFrom dplyr mutate mutate_at mutate_all vars select bind_rows group_by summarize mutate_if left_join rename
 #' @importFrom edgeR DGEList calcNormFactors cpm
-#' @importFrom GenomicRanges makeGRangesFromDataFrame score mcols "mcols<-"
+#' @importFrom GenomicRanges makeGRangesFromDataFrame score "score<-" mcols "mcols<-"
 #' @importFrom SummarizedExperiment SummarizedExperiment assay "assay<-"
 #' @importFrom S4Vectors DataFrame
 #' @importFrom IRanges findOverlapPairs
@@ -93,6 +93,7 @@ count_normalization <- function(
 				cpm_data <- cpm(count_data)
 
 				row_data <- gr
+				score(row_data) <- NULL
 				col_data <- DataFrame(sample = sample_name)
 
 				raw_exp <- SummarizedExperiment(

@@ -66,7 +66,7 @@ setMethod("tsr_experiment<-", signature(tsrexplorer_object = "tsr_explorer"),
 #' @importFrom magrittr extract %>%
 #' @importFrom SummarizedExperiment assay rowRanges
 #' @importFrom purrr map
-#' @importFrom dplyr bind_cols
+#' @importFrom dplyr bind_cols rename
 #'
 #' @param experiment tsrexplorer object
 #' @param data_type whether to extract from the 'tss' or 'tsr' sets
@@ -92,10 +92,13 @@ extract_counts <- function(experiment, data_type, samples, cpm_norm = FALSE) {
 			
 			# Pull out the raw or cpm normalized counts.
 			if (cpm_norm) {
-				counts <- assay(x, "cpm") %>% as_tibble(.name_repair = "unique")
+				counts <- assay(x, "cpm")
 			} else {
-				counts <- assay(x, "raw") %>% as_tibble(.name_repair = "unique")
+				counts <- assay(x, "raw")
 			}
+			counts <- counts %>%
+				as_tibble(.name_repair = "unique") %>%
+				rename(score = 1)
 
 			# Add counts back to ranges.
 			ranges <- rowRanges(x) %>%
