@@ -46,29 +46,8 @@ plot_average <- function(
 ) {
 
 	## Pull data out of appropriate slot.
-	if (data_type == "tss") {
-		if (samples == "all") samples <- names(experiment@counts$TSSs$raw)
-		sample_data <- extract(experiment@counts$TSSs$raw, samples)
-		color_type <- "#431352"
-	} else if (data_type == "tsr") {
-		if (samples == "all") samples <- names(experiment@counts$TSRs$raw)
-		sample_data <- extract(experiment@counts$TSRs$raw, samples)
-		color_type <- "#34698c"
-	}
-
-	## Preliminary preparation of data.
-	sample_data <- sample_data %>%
-		map(function(x) {
-			ranges <- rowRanges(x) %>% as_tibble(.name_repair = "unique")
-			if (use_cpm) {
-				scores <- assay(x, "cpm")
-			} else {
-				scores <- assay(x, "raw")
-			}
-			scores <- as_tibble(scores, .name_repair = "unique")
-			ranges <- bind_cols(ranges, scores)
-			return(ranges)
-		}) %>%
+	sample_data <- experiment %>%
+		extract_counts(data_type, samples, use_cpm) %>%
 		bind_rows(.id = "samples") %>%
 		as.data.table
 

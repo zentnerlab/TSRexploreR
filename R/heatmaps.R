@@ -42,22 +42,8 @@ tss_heatmap_matrix <- function(
 	use_cpm = FALSE
 ) {
 	## Grab requested samples.
-	if (samples == "all") samples <- names(experiment@counts$TSSs$raw)
-	sample_data <- extract(experiment@counts$TSSs$raw, samples)
-	
-	## Start preparing data for plotting.
-	annotated_tss <- sample_data %>%
-		map(function(x) {
-			ranges <- rowRanges(x) %>% as_tibble(.name_repair = "unique")
-			if (use_cpm) {
-				scores <- assay(x, "cpm")
-			} else {
-				scores <- assay(x, "raw")
-			}
-			scores <- as_tibble(scores, .name_repair = "unique")
-			ranges <- bind_cols(ranges, scores)
-			return(ranges)
-		}) %>%
+	annotated_tss <- experiment %>%
+		extract_counts("tss", samples, use_cpm) %>%	
 		bind_rows(.id = "sample") %>%
 		as.data.table
 
@@ -222,25 +208,12 @@ tsr_heatmap_matrix <- function(
 ) {
 	
 	## Pull samples out.
-	if (samples == "all") samples <- names(experiment@counts$TSRs$raw)
-	sample_data <- extract(experiment@counts$TSRs$raw, samples)
-
-	## Prepare data to be made into count matrix
-	annotated_tsr <- sample_data %>%
-		map(function(x) {
-			ranges <- rowRanges(x) %>% as_tibble(.name_repair = "unique")
-			if (use_cpm) {
-				scores <- assay(x, "cpm")
-			} else {
-				scores <- assay(x, "raw")
-			}
-			scores <- as_tibble(scores, .name_repair = "unique")
-			ranges <- bind_cols(ranges, scores)
-			return(ranges)
-		}) %>%
+	annotated_tsr <- experiment %>%
+		extract_counts("tsr", samples, use_cpm) %>%
 		bind_rows(.id = "sample") %>%
 		as.data.table
 
+	## Start preparing data for plotting.
 	setnames(annotated_tsr, old = feature_type, new = "feature")
 	annotated_tsr <- annotated_tsr[
 		score >= threshold,

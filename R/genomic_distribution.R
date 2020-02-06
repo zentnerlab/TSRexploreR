@@ -4,6 +4,7 @@
 #' Get genomic distribution of TSSs and TSRs
 #'
 #' @import tibble
+#' @import data.table
 #' @importFrom GenomicRanges GRanges score "score<-"
 #' @importFrom SummarizedExperiment SummarizedExperiment
 #' @importFrom S4Vectors DataFrame "metadata<-"
@@ -26,25 +27,11 @@
 
 genomic_distribution <- function(experiment, data_type = c("tss", "tsr"), samples = "all", threshold = 1, quantiles = NA) {
 
-	## Pull data from tsrexplorer object.
-	if (data_type == "tss") {
-		if (samples == "all") samples <- names(experiment@counts$TSSs$raw)
-		selected_samples <- extract(experiment@counts$TSSs$raw, samples)
-	} else if (data_type == "tsr") {
-		if (samples == "all") samples <- names(experiment@counts$TSRs$raw)
-		selected_samples <- extract(experiment@counts$TSRs$raw, samples)
-	}
-
+	## Extract samples.
+	selected_samples <- extract_samples(experiment, data_type, samples)
 
 	## Initial preparation of data.
 	selected_samples <- selected_samples %>%
-		map(function(x) {
-			ranges <- rowRanges(x) %>% as_tibble(.name_repair = "unique")
-			scores <- assay(x, "raw") %>% as.numeric
-			
-			ranges <- mutate(ranges, score = scores)
-			return(ranges)
-		}) %>%
 		bind_rows(.id = "samples") %>%
 		filter(score >= threshold)
 

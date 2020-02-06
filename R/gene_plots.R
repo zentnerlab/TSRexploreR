@@ -34,23 +34,9 @@ detect_features <- function(
 	threshold = 1
 ) {
 	
-	## Ensure appropriate sample names if "all" selected.
-	if (data_type == "tss") {
-		if (samples == "all") samples <- names(experiment@counts$TSSs$raw)
-		sample_data <- extract(experiment@counts$TSSs$raw, samples)
-	} else if (data_type == "tsr") {
-		if (samples == "all") samples <- names(experiment@counts$TSRs$raw)
-		sample_data <- extract(experiment@counts$TSRs$raw, samples)
-	}
-
-	## Pull and combine chosen sample data.
-	sample_data <- sample_data %>%
-		map(function(x) {
-			annotations <- rowRanges(x) %>% as_tibble(.name_repair = "unique")
-			counts <- assay(x, "raw") %>% as_tibble(.name_repair = "unique")
-			annotations <- bind_cols(annotations, counts)
-			return(annotations)
-		}) %>%
+	## Get sample data.
+	sample_data <- experiment %>%
+		extract_counts(data_type, samples) %>%
 		bind_rows(.id = "sample") %>%
 		filter(score >= threshold)
 

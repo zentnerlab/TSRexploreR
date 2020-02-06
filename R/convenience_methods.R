@@ -56,3 +56,56 @@ setMethod("tsr_experiment<-", signature(tsrexplorer_object = "tsr_explorer"),
                 tsrexplorer_object@experiment$TSRs <- fiveprime_data
         }
 )
+
+#' Extract Counts
+#'
+#' @description
+#' Extract counts from a tsrexplorer object.
+#'
+#' @import tibble
+#' @importFrom magrittr extract %>%
+#' @importFrom SummarizedExperiment assay rowRanges
+#' @importFrom purrr map
+#' @importFrom dplyr bind_cols
+#'
+#' @param experiment tsrexplorer object
+#' @param data_type whether to extract from the 'tss' or 'tsr' sets
+#' @param samples names of samples to extract
+#'
+#' @rdname extract_counts-function
+#' @export
+
+extract_counts <- function(experiment, data_type, samples, cpm_norm = FALSE) {
+
+	## Extract appropraite samples from TSSs or TSRs.
+	if (data_type == "tss") {
+		if (samples == "all") sample_names <- names(experiment@counts$TSSs$raw)
+		selected_samples <- experiment@counts$TSSs$raw %>% extract(sample_names)
+	} else if (data_type == "tsr") {
+		if (samples == "all") sample_names <- names(experiment@counts$TSRs$raw)
+		selected_samples <- experiment@counts$TSRs$raw %>% extract(sample_names)
+	}
+
+	## For each sample get the ranges and counts.
+	counts <- selected_samples %>%
+		map(function(x) {
+			
+			# Pull out the raw or cpm normalized counts.
+			if (cpm_norm) {
+				counts <- assay(x, "cpm") %>% as_tibble(.name_repair = "unique")
+			} else {
+				counts <- assay(x, "raw") %>% as_tibble(.name_repair = "unique")
+			}
+
+			# Add counts back to ranges.
+			ranges <- rowRanges(x) %>%
+				as_tibble(.name_repair = "unique") %>%
+				bind_cols(counts)
+
+			return(ranges)
+		})
+
+	## Return the ranges and counts as ouput of function.
+	return(counts)
+	
+}
