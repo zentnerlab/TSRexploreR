@@ -6,6 +6,8 @@
 #' @include tsrexplorer.R
 #'
 #' @import tibble
+#' @import data.table
+#' @importFrom S4Vectors DataFrame "metadata<-"
 #' @importFrom Rsamtools FaFile
 #' @importFrom purrr map map2
 #' @importFrom dplyr mutate filter ntile pull bind_rows
@@ -26,49 +28,46 @@
 #'
 #' @export
 
-tss_sequences <- function(experiment, samples = "all", genome_assembly, threshold = 1, distance = 10, quantiles = 1) {
+tss_sequences <- function(experiment, samples = "all", genome_assembly, threshold = 1, distance = 10, quantiles = NA) {
 
 	## Open genome assembly.
 	genome_assembly <- FaFile(genome_assembly)
 
 	## Pull selected samples.
-	if (samples == "all") samples <- names(experiment@counts$TSSs$raw)
-	select_samples <- experiment@counts$TSSs$raw[samples]
-
-	## Start preparing data for retrieving sequences.
-	tss_sequences <- select_samples %>%
-		map(~ as_tibble(., .name_repair = "unique")) %>%
+	select_samples <- experiment %>%
+		extract_counts("tss", samples) %>%
 		bind_rows(.id = "sample") %>%
-		filter(score >= threshold)
+		as.data.table
 
-	tss_sequences <- mutate(tss_sequences, ntile = ntile(score, quantiles))
+	select_samples <- select_samples[
+		score >= threshold,
+		.(sample, seqnames, start, end, strand, score)
+	]
 
-	## Store sequence names.
-	tss_sequence_names <- tss_sequences %>%
-		split(.$sample) %>%
-		map(~ mutate(., tss_name = paste(seqnames, start, end, strand, score, ntile, sep = "_")))
-
-	tss_sequence_names <- map(tss_sequence_names, ~ pull(., tss_name))
-
-	## Get sequences for TSSs.
-	tss_sequences <- tss_sequences %>%
-		split(.$sample) %>%
-		map(
-			~ makeGRangesFromDataFrame(.) %>%
-				resize(width = distance, fix = "start") %>%
-				resize(width = width(.) + distance, fix = "end") %>%
-				getSeq(genome_assembly, .)
-		)
-
-	## Set the names of the sequences.
-	rename_sequences <- function(x, y) {
-		names(x) <- y
-		return(x)
+	## Add quantiles if necessary.
+	if (!is.na(quantiles)) {
+		select_samples[, ntile := ntile(score, quantiles), by = samples]
 	}
 
-	tss_sequences <- map2(tss_sequences, tss_sequence_names, ~ rename_sequences(.x, .y))
+	## Expand ranges.
+	select_samples[, c("start", "end") := list(start - distance, end + distance)]
 
-	return(tss_sequences)
+	## Get sequences.
+	seqs <- select_samples %>%
+		makeGRangesFromDataFrame(keep.extra.columns = TRUE) %>%
+		getSeq(genome_assembly, .) %>%
+		as.data.table %>%
+		bind_cols(select_samples, .)
+			
+	setnames(seqs, old = "x", new = "sequence")
+	
+	## Generate return DataFrame
+	seqs <- DataFrame(seqs)
+	metadata(seqs)$quantiles <- quantiles
+	metadata(seqs)$threshold <- threshold
+	metadata(seqs)$distance <- distance
+
+	return(seqs)
 }
 
 #' Generate Sequence Logo
