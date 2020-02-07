@@ -5,7 +5,7 @@
 \title{Dinucleotide Analysis}
 \usage{
 dinucleotide_frequencies(experiment, genome_assembly, samples = "all",
-  threshold = 1, quantiles = 1)
+  threshold = 1, quantiles = NA)
 }
 \arguments{
 \item{experiment}{tsrexplorer object with TSS GRanges}

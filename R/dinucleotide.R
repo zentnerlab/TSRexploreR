@@ -24,63 +24,65 @@
 #'
 #' @export
 
-dinucleotide_frequencies <- function(experiment, genome_assembly, samples = "all", threshold = 1, quantiles = 1) {
+dinucleotide_frequencies <- function(experiment, genome_assembly, samples = "all", threshold = 1, quantiles = NA) {
+
 	## Loading genome assembly.
 	fasta_assembly <- FaFile(genome_assembly)
 
-	## Filter TSSs and get sequences.
-	if (samples == "all") samples <- names(experiment@counts$TSSs$raw)
-	select_samples <- experiment@counts$TSSs$raw[samples]
-	
+	## Getting appropriate samples.
+	select_samples <- experiment %>%
+		extract_counts("tss", samples) %>%
+		bind_rows(.id = "sample") %>%
+		as.data.table
+
 	## Prepare samples for analysis.
-	select_samples
-
-	select_samples <- map(select_samples, ~ .[score(.) >= threshold])
-
-	sample_scores <- map(select_samples, ~ score(.))
-
-	sequences <- select_samples %>%
-		map(
-			~ resize(., width=2, fix="end") %>%
-				getSeq(fasta_assembly, .)
+	select_samples <- select_samples[
+		score >= threshold,
+		.(sample, seqnames, start, end, strand, score, tss = start)
+	]
+	select_samples[,
+		c("start", "end") := list(
+			ifelse(strand == "+", start - 1, start),
+			ifelse(strand == "+", end, end + 1)
 		)
-			
+	]
 
-	## Get dinucleotide frequencies.
-	freqs <- sequences %>%
-		map(~ as.character(.) %>% enframe(name = NULL, value = "dinucleotide")) %>%
-		map2(., sample_scores, ~ mutate(.x, score = .y)) %>%
-		bind_rows(.id = "sample")
+	## Get dinucleotides.
+	seqs <- select_samples %>%
+		makeGRangesFromDataFrame %>%
+		getSeq(fasta_assembly, .) %>%
+		as.data.table %>%
+		bind_cols(select_samples, .)
+	setnames(seqs, old = "x", new = "dinucleotide")
 
-	if (quantiles > 1) {
-		freqs <- freqs %>%
-			group_by(sample) %>%
-			mutate(ntile = ntile(score, quantiles)) %>%
-			ungroup %>%
-			select(-score) %>%
-			count(sample, dinucleotide, ntile, name = "occurences") %>%
-			group_by(sample, ntile) %>%
-			mutate("frequency" = occurences/sum(occurences)) %>%
-			ungroup
-
-		freqs <- list(
-			"quantile_plot" = TRUE,
-			"dinucleotide_frequencies" = freqs
-		)
-	} else {
-		freqs <- freqs %>%
-			count(sample, dinucleotide, name = "occurences") %>%
-			group_by(sample) %>%
-			mutate("frequency" = occurences/sum(occurences)) %>%
-			ungroup
-
-		freqs <- list(
-			"quantile_plot" = FALSE,
-			"dinucleotide_frequencies" = freqs
-		)
+	## Add ntile information if required.
+	if (!is.na(quantiles)) {
+		seqs[, ntile := ntile(score, quantiles), by = sample]
 	}
 
-	return(freqs)
+	## Find dinucleotide frequencies.
+	if (is.na(quantiles)) {
+		freqs <- seqs[,
+			.(count = .N), by = .(sample, dinucleotide)
+		][,
+			.(dinucleotide, count, freqs = count / sum(count)),
+			by = sample
+		]
+	} else {
+		freqs <- seqs[,
+			.(count = .N), by = .(sample, dinucleotide, ntile)
+		][,
+			.(dinucleotide, count, freqs = count / sum(count)),
+			by = .(sample, ntile)
+		]
+	}
+
+	## Prepare DataFrame to return.
+	freqs_df <- DataFrame(freqs)
+	metadata(freqs_df)$quantiles <- quantiles
+	metadata(freqs_df)$threshold <- threshold
+	
+	return(freqs_df)
 }
 
 #' Plot Dinucleotide Frequencies
