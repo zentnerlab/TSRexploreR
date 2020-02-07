@@ -46,11 +46,11 @@ tss_sequences <- function(experiment, samples = "all", genome_assembly, threshol
 
 	## Add quantiles if necessary.
 	if (!is.na(quantiles)) {
-		select_samples[, ntile := ntile(score, quantiles), by = samples]
+		select_samples[, ntile := ntile(score, quantiles), by = sample]
 	}
 
 	## Expand ranges.
-	select_samples[, c("start", "end") := list(start - distance, end + distance)]
+	select_samples[, c("start", "end", "tss") := list(start - distance, end + distance, start)]
 
 	## Get sequences.
 	seqs <- select_samples %>%
@@ -79,7 +79,7 @@ tss_sequences <- function(experiment, samples = "all", genome_assembly, threshol
 #' @import ggseqlogo
 #' @importFrom Biostrings DNAStringSet consensusMatrix
 #' @importFrom purrr map pmap
-#' @importFrom dplyr mutate
+#' @importFrom dplyr pull
 #' @importFrom tidyr unite separate
 #' @importFrom magrittr %>%
 #' @importFrom cowplot plot_grid
@@ -96,31 +96,25 @@ tss_sequences <- function(experiment, samples = "all", genome_assembly, threshol
 
 plot_sequence_logo <- function(tss_sequences, ncol = 1, font_size = 6) {
 
+	## Get some info used to pull sequencs.
+	distance <- metadata(tss_sequences)$distance
+	quantiles <- metadata(tss_sequences)$quantiles
+
 	## Grab sequences from input.
-	tss_seqs <- tss_sequences %>%
-		map(~ as.data.frame(.x) %>% as_tibble(.name_repair = "unique", rownames = "position"))
-
-	tss_seqs <- tss_seqs %>%
-		map(
-			~ separate(.x, position, into = c("seqnames", "start", "end", "strand", "score", "ntile"), sep = "_") %>%
-				unite("position", seqnames, start, end, strand, score, sep = "_") %>%
-				split(.$ntile) %>%
-				map(~ pull(.x) %>% DNAStringSet)
-		) %>%
-		enframe
-
-	## Calculate consensus matrix.
-	consensus_matrix <- tss_seqs %>%
-		pmap(function(name, value) {
-			map(
-				value,
-				~ consensusMatrix(., as.prob = TRUE) %>%
-					.[rownames(.) %in% c("A", "C", "G", "T"), ]
-			) %>%
-			rev
-		}) %>%
-		enframe %>%
-		mutate("name" = pull(tss_seqs, name))
+	if (is.na(quantiles)) {
+		sequences <- tss_sequences %>%
+			as.data.table %>%
+			split(.$sample) %>%
+			map(function(x) {x[["sequence"]]})
+	} else {
+		sequences <- tss_sequences %>%
+			as.data.table %>%
+			split(.$ntile) %>%
+			map(function(x) {
+				split(x, x$sample) %>%
+				map(function(y) {y[["sequence"]]})
+			})
+	}
 
 	## Create viridis color scheme for bases.
 	viridis_bases <- make_col_scheme(
@@ -130,18 +124,26 @@ plot_sequence_logo <- function(tss_sequences, ncol = 1, font_size = 6) {
 	)
 
 	## Make sequence logo.
-	p <- consensus_matrix %>%
-		pmap(function(name, value) {
-			ggseqlogo(value, ncol = 1) +
-				theme(text = element_text(size = font_size))
-		})
+	if (is.na(quantiles)) {
+		p <- ggseqlogo(sequences, ncol = ncol) +
+			theme(text = element_text(size = font_size)) #+
+			#scale_x_continuous(
+			#	breaks = c(1, distance, distance + 1, (distance * 2) + 1),
+			#	labels = c(-distance, -1, +1, distance + 1)
+			#)
+	} else {
+		p <- rev(sequences) %>%
+			map(function(x) {
+				ggseqlogo(x, ncol = ncol) +
+					theme(text = element_text(size = font_size)) #+
+					#scale_x_continuous(
+					#	breaks = c(1, distance, distance + 1, (distance * 2) + 1),
+					#	labels = c(-distance, -1, +1, distance + 1)
+					#)
+			})
 
-	p <- plot_grid(
-		plotlist = p,
-		labels = pull(consensus_matrix, name),
-		ncol = ncol,
-		label_size = 5
-	)
+		p <- plot_grid(plotlist = p, labels = seq_len(distance), ncol = 1)
+	}
 
 	return(p)
 }

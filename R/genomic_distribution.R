@@ -52,10 +52,7 @@ genomic_distribution <- function(experiment, data_type = c("tss", "tsr"), sample
 
 	## Break data into quantiles if quantiles set is greater than 1.
 	if (!is.na(quantiles)) {
-		selected_samples <- selected_samples[,
-			.(score, annotation, ntile = ntile(score, quantiles)),
-			by = samples
-		]
+		selected_samples[, ntile := ntile(score, quantiles), by = samples]
 	}
 	
 	## Prepade data to be plotted later.
