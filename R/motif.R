@@ -186,69 +186,50 @@ plot_sequence_colormap <- function(
 	text_size = 6,
 	...
 ) {
+	## Grab some information out of DataFrame.
+	distance <- metadata(tss_sequences)$distance
+	quantiles <- metadata(tss_sequences)$quantiles
 
 	## Start preparing data for plotting.
-	seq_data <- tss_sequences %>%
-		map(~ as.data.frame(.) %>% as_tibble(.name_repair = "unique", rownames = "name")) %>%
-		bind_rows(.id = "sample") %>%
-		rename(sequence = x)
+	seq_data <- as.data.table(tss_sequences)
+	seq_data[, width := nchar(sequence)]
 
-	seq_data <- seq_data %>% 
-		separate(
-			name,
-			into = c("chr", "start", "end", "strand", "score", "ntile"),
-			sep = "_",
-			remove = FALSE
-		)
-
-	## Get sequence length.
-	sequence_length <- seq_data %>%
-		pull(sequence) %>%
-		nchar %>%
-		unique / 2
-
-	## Make columns for individual bases.
-	base_columns <- seq_data %>%
-		pull(sequence) %>%
-		str_split("", simplify = TRUE)
-
-	colnames(base_columns) <- as.character(c(-sequence_length:-1, 1:sequence_length))
-	base_columns <- as_tibble(base_columns, .name_repair = "unique")
-	seq_data <- bind_cols(seq_data, base_columns)
+	## Split sequences into columns
+	split_seqs <- seq_data[, as.data.table(str_split(sequence, "", simplify = TRUE))]
+	setnames(
+		split_seqs,
+		old = seq(1, (distance * 2) + 1),
+		new = as.character(c(seq(-distance, -1), seq(1, distance + 1)))
+	)
+	seq_data <- bind_cols(seq_data, split_seqs)
 
 	## Get order of TSSs for plotting.
-	tss_order <- seq_data %>%
-		mutate(name = factor(name)) %>%
-		group_by(chr, start, end, strand) %>%
-		mutate(avg_score = mean(as.numeric(score))) %>%
-		ungroup %>%
-		mutate(name = fct_reorder(name, avg_score)) %>%
-		pull(name) %>%
-		levels
+	if (!is.na(quantiles)) {
+		seq_data[, rank := dense_rank(score), by = .(sample, ntile)]
+		seq_data[, name := sprintf("TSS%010d", seq_len(.N)), by = .(sample, ntile)]
+	} else {
+		seq_data[, rank := dense_rank(score), by = sample]
+		seq_data[, name := sprintf("TSS%010d", seq_len(.N)), by = sample]
+	}
 
 	## Format data for plotting.
-	plot_data <- seq_data %>%
-		gather(
-			key = "position", value = "base",
-			-sample, -name, -chr, -start, -end,
-			-strand, -score, -ntile, -sequence
+	long_data <- seq_data %>%
+		melt(
+			measure.vars = as.character(c(seq(-distance, -1), seq(1, distance + 1))),
+			variable.name = "position", value.name = "base"
 		)
 
-	plot_data <- mutate(
-		plot_data,
-		position = as.numeric(position),
-		name = factor(name, levels = tss_order),
-		base = factor(base, levels = c("A", "C", "G", "T"))
-	)
-
-	n_samples <- plot_data %>%
-		pull(sample) %>%
-		unique %>%
-		length
-
+	long_data[,
+		c("name", "position", "base") := list(
+			name = fct_reorder(name, rank),
+			position = as.numeric(position),
+			base = factor(base, levels = c("A", "C", "G", "T"))
+		)
+	]
+		
 	## Plot sequence colormap
-	p <- ggplot(plot_data, aes(x = position, y = name)) +
-		geom_tile(aes(fill = base, color = base), ...) +
+	p <- ggplot(long_data, aes(x = position, y = name)) +
+		geom_tile(aes(fill = base, color = base)) +
 		scale_fill_manual(values = base_colors) +
 		scale_color_manual(values = base_colors) +
 		theme_minimal() +
@@ -259,9 +240,17 @@ plot_sequence_colormap <- function(
 			axis.title.x = element_text(margin = margin(t = 15)),
 			panel.grid = element_blank(),
 			text = element_text(size = text_size)
+		) +
+		scale_x_continuous(
+			breaks = c(1, distance, distance + 1, (distance * 2) + 1),
+			labels = c(-distance, -1, 1, distance + 1)
 		)
 
-	p <- p + facet_wrap(fct_rev(factor(ntile)) ~ sample, scales = "free", ncol = ncol)
+	if (is.na(quantiles)) {
+		p <- p + facet_wrap(. ~ sample, scales = "free", ncol = ncol)
+	} else {
+		p <- p + facet_wrap(ntile ~ sample, scales = "free", ncol = ncol)
+	}
 
 	return(p)
 }
