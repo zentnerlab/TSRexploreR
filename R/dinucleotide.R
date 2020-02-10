@@ -106,31 +106,43 @@ dinucleotide_frequencies <- function(experiment, genome_assembly, samples = "all
 #'
 #' @export
 
-plot_dinucleotide_frequencies <- function(dinucleotide_frequencies, sample_order = NULL, ncol = 1, ...) {
+plot_dinucleotide_frequencies <- function(dinucleotide_frequencies, sample_order = NA, ncol = 1, ...) {
+
+	## Pull out some info from the DataFrame.
+	quantiles <- metadata(dinucleotide_frequencies)$quantiles
+
+	## Convert DataFrame to data.table.
+	freqs <- as.data.table(dinucleotide_frequencies)
 	
 	## Set factor order for dinucleotide.
-	factor_order <- dinucleotide_frequencies$dinucleotide_frequencies %>%
-		group_by(dinucleotide) %>%
-		summarize(avg_freq = mean(frequency)) %>%
-		arrange(desc(avg_freq)) %>%
-		mutate(dinucleotide = fct_reorder(dinucleotide, desc(avg_freq))) %>%
-		pull(dinucleotide) %>%
-		levels
-		
+	if (is.na(quantiles)) {
+		freqs <- freqs[,
+			.(sample, count, freqs, mean_freqs = mean(freqs)),
+			by = dinucleotide
+		]
+	} else {
+		freqs <- freqs[,
+			.(sample, count, freqs, ntile, mean_freqs = mean(freqs)),
+			by = dinucleotide
+		]
+	}
 
-	frequencies <- mutate(
-		dinucleotide_frequencies$dinucleotide_frequencies,
-		"dinucleotide" = factor(dinucleotide, levels = factor_order)
-	)
+	freqs[,
+		rank := dense_rank(mean_freqs)
+	][,
+		dinucleotide := fct_reorder(factor(dinucleotide), rank)
+	][,
+		c("mean_freqs", "rank") := list(NULL, NULL)
+	]
 
 	## Change sample order if specified.
-	if (!is.null(sample_order)) {
-		frequencies <- mutate(frequencies, "sample" = factor(sample, levels = sample_order))
+	if (!is.na(sample_order)) {
+		freqs[, sample := factor(sample, levels = sample_order)]
 	}
 
 	## Plot dinucleotide frequencies.
-	p <- ggplot(frequencies, aes(x = fct_rev(dinucleotide), y = frequency)) +
-		geom_col(width = 0.5, aes(fill = frequency), ...) +
+	p <- ggplot(freqs, aes(x = dinucleotide, y = freqs)) +
+		geom_col(width = 0.5, aes(fill = freqs), ...) +
 		theme_bw() +
 		scale_fill_viridis_c(name = "Frequency") +
 		coord_flip() +
@@ -139,7 +151,7 @@ plot_dinucleotide_frequencies <- function(dinucleotide_frequencies, sample_order
 			y="Frequency"
 		)
 
-	if (dinucleotide_frequencies$quantile_plot) {
+	if (!is.na(quantiles)) {
 		p <- p + facet_grid(fct_rev(factor(ntile)) ~ sample)
 	} else {
 		p <- p + facet_wrap(~ sample, ncol = ncol)

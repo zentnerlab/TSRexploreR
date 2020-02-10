@@ -5,7 +5,7 @@
 \title{Plot Dinucleotide Frequencies}
 \usage{
 plot_dinucleotide_frequencies(dinucleotide_frequencies,
-  sample_order = NULL, ncol = 1, ...)
+  sample_order = NA, ncol = 1, ...)
 }
 \arguments{
 \item{dinucleotide_frequencies}{tibble from dinucleotide_frequencies analysis}
