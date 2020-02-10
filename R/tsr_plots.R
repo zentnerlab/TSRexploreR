@@ -35,48 +35,61 @@ plot_tsr_metric <- function(
 ) {
 
 	## Grab data.
-	if (use_cpm) {
-		if (samples == "all") samples <- names(experiment@annotated$TSRs$cpm)
-		select_samples <- experiment@annotated$TSRs$cpm[samples]
-	} else {
-		if (samples == "all") samples <- names(experiment@annotated$TSRs$raw)
-		select_samples <- experiment@annotated$TSRs$raw[samples]
-	}
+	selected_data <- experiment %>%
+		extract_counts("tsr", samples, use_cpm) %>%
+		bind_rows(.id = "sample") %>%
+		as.data.table
 
-	selected_data <- select_samples %>%
-		bind_rows(.id = "samples") %>%
-		select_at(vars("samples", tsr_metrics)) %>%
-		gather(key = "tsr_stat", value = "stat_value", -samples)
+	selected_data <- selected_data[, c("sample", tsr_metrics), with = FALSE]
 
 	## Log2+1 transform data if requested
 	if (log2_transform) {
-		selected_data <- selected_data %>%
-			mutate(
-				stat_value = log2(stat_value),
-				tsr_stat = paste0("Log2(", tsr_stat, ")")
-			)
+		selected_data[,
+			(tsr_metrics) := lapply(.SD, function(x) log2(x + 1)),
+			.SDcols = tsr_metrics
+		]
+		setnames(
+			selected_data, old = tsr_metrics,
+			new = str_c("Log2(", tsr_metrics, " + 1)")
+		)
+		selected_data <- as.data.table(selected_data)
+	}
+
+	## Prepare data for plotting.
+	if (log2_transform) {
+		selected_data <- melt(
+			selected_data,
+			measure.vars = str_c("Log2(", tsr_metrics, " + 1)"),
+			variable.name = "metric"
+		)
+	} else {
+		selected_data <- melt(
+			selected_data,
+			measure.vars = tsr_metrics,
+			variable.name = "metric"
+		)
 	}
 
 	## Make density plot of metric.
-	p <- ggplot(selected_data, aes(x = samples, y = stat_value))
+	p <- ggplot(selected_data, aes(x = sample, y = value))
 
 	if (plot_type == "violin") {
-		p <- p + geom_violin(aes(fill = samples), ...)
+		p <- p + geom_violin(aes(fill = sample), ...)
 	} else if (plot_type == "box") {
-		p <- p + geom_boxplot(fill = NA, aes(color = samples), ...)
+		p <- p + geom_boxplot(fill = NA, aes(color = sample), ...)
 	} else if (plot_type == "jitter") {
-		p <- p + geom_jitter(aes(color = samples), ...)
+		p <- p + geom_jitter(aes(color = sample), ...)
 	} else if (plot_type == "boxjitter") {
 		p <- p +
 			geom_jitter(color = "lightgrey", ...) +
-			geom_boxplot(fill = NA, aes(color = samples), outlier.shape = NA)
+			geom_boxplot(fill = NA, aes(color = sample), outlier.shape = NA)
 	}
 		
 	p <- p +
 		theme_bw() +
 		scale_fill_viridis_d() +
 		scale_color_viridis_d() +
-		facet_wrap(~ tsr_stat, ncol = ncol, scales = "free") +
+		facet_wrap(~ metric, ncol = ncol, scales = "free") +
 		theme(axis.text.x = element_blank())
 
 	return(p)
