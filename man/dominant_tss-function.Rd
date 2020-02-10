@@ -6,7 +6,7 @@
 \usage{
 dominant_tss(experiment, samples = "all", threshold = 1,
   max_upstream = 2000, max_downstream = 500,
-  feature_type = c("transcriptId", "geneId"))
+  feature_type = c("transcriptId", "geneId"), quantiles = NA)
 }
 \arguments{
 \item{experiment}{tsrexplorer object with annotated TSSs}
@@ -20,6 +20,8 @@ dominant_tss(experiment, samples = "all", threshold = 1,
 \item{max_downstream}{Max downstream distance of TSS to consider}
 
 \item{feature_type}{Feature that was used to find TSS distance ("geneId", "transcriptId")}
+
+\item{quantiles}{Split data into quantiles}
 }
 \value{
 Tibble with dominant TSSs for each gene

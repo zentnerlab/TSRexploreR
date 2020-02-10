@@ -14,6 +14,7 @@
 #' @param max_upstream Max upstream distance of TSS to consider
 #' @param max_downstream Max downstream distance of TSS to consider
 #' @param feature_type Feature that was used to find TSS distance ("geneId", "transcriptId")
+#' @param quantiles Split data into quantiles
 #'
 #' @return Tibble with dominant TSSs for each gene
 #'
@@ -27,26 +28,42 @@ dominant_tss <- function(
 	threshold = 1, 
 	max_upstream = 2000,
 	max_downstream = 500, 
-	feature_type = c("transcriptId", "geneId")
+	feature_type = c("transcriptId", "geneId"),
+	quantiles = NA
 ) {
 	## Select samples.
-	if (samples == "all") samples <- names(experiment@annotated$TSSs$raw)
-	select_samples <- experiment@annotated$TSSs$raw[samples]	
+	select_samples <- experiment %>%
+		extract_counts("tss", samples) %>%
+		bind_rows(.id = "sample") %>%
+		as.data.table
 
-	## Get dominant TSSs.
-	dominant <- select_samples %>%
-		map(
-			~ rename(.x, "feature" = feature_type) %>%
-				select(feature, distanceToTSS, score) %>%
-				filter(
-					score >= threshold,
-					between(distanceToTSS, -max_upstream, max_downstream)
-				) %>%
-				group_by(feature) %>%
-				filter(score == max(score)) %>%
-				ungroup
-		) %>%
-		bind_rows(.id = "sample")
+	setnames(select_samples, old = feature_type, new = "feature")
+
+	## Filter the data.
+	select_samples <- select_samples[
+		score >= threshold &
+		dplyr::between(distanceToTSS, -max_upstream, max_downstream),
+		.(sample, distanceToTSS, feature, score)
+	]
+
+	## Grab dominant TSS.
+	dominant <- select_samples[,
+		.SD[which.max(score)],
+		by = .(feature, sample)
+	]
+
+	## Split data into quantiles if requested.
+	if (!is.na(quantiles)) {
+		dominant[, ntile := ntile(score, quantiles), by = sample]
+	}
+
+	## Convert to DataFrame.
+	dominant <- DataFrame(dominant)
+	metadata(dominant)$threshold <- threshold
+	metadata(dominant)$max_upstream <- max_upstream
+	metadata(dominant)$max_downstream <- max_downstream
+	metadata(dominant)$feature_type <- feature_type
+	metadata(dominant)$quantiles <- quantiles
 
 	return(dominant)
 }
@@ -65,6 +82,7 @@ dominant_tss <- function(
 #' @param upstream Bases upstream to display on plot
 #' @param downstream Bases downstream to display on plot
 #' @param ncol Number of columns to plot the data to
+#' @param consider_score Consider not just unique positions but the score of the TSS also
 #' @param ... Arguments passed to geom_density
 #'
 #' @return ggplot2 object dominant TSS plot
@@ -73,17 +91,25 @@ dominant_tss <- function(
 #'
 #' @export
 
-plot_dominant_tss <- function(dominant_tss, upstream = 2000, downstream = 500, ncol = 1, ...) {
-	## Format data for plotting
-	#dominant_tss <- dominant_tss %>%
-		#count(distanceToTSS) %>%
-		#pmap(function(distanceToTSS, n) rep(distanceToTSS, n)) %>%
-		#unlist %>%
-		#enframe(value="distanceToTSS") %>%
-		#select(-name)
+plot_dominant_tss <- function(
+	dominant_tss, upstream = 2000,
+	downstream = 500, 
+	ncol = 1, consider_score = FALSE, ...
+) {
+
+	## Grab some info from the DataFrame.
+	quantiles <- metadata(dominant_tss)$quantiles
+
+	## Format the data for plotting.
+	dominant_plot <- as.data.table(dominant_tss)
+
+	## Format data if score should be considered.
+	if (consider_score) {
+		dominant_plot <- dominant_plot[rep(seq_length(.N), score)]
+	}
 
 	## Plot data
-	p <- ggplot(dominant_tss, aes(distanceToTSS)) +
+	p <- ggplot(dominant_plot, aes(distanceToTSS)) +
 		geom_density(fill="#431352", color="#431352", ...) +
 		xlim(-upstream, downstream) +
 		theme_bw() +
@@ -91,8 +117,13 @@ plot_dominant_tss <- function(dominant_tss, upstream = 2000, downstream = 500, n
 			x="Start Codon",
 			y="Density"
 		) +
-		geom_vline(xintercept=0, lty=2) +
-		facet_wrap(~ sample, ncol = ncol)
+		geom_vline(xintercept=0, lty=2)
+
+	if (!is.na(quantiles)) {
+		p <- p + facet_grid(fct_rev(factor(ntile)) ~ sample)
+	} else {
+		p <- p + facet_wrap(~ sample, ncol = ncol)
+	}
 
 	return(p)
 }

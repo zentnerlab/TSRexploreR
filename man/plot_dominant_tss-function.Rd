@@ -5,7 +5,7 @@
 \title{Plot Dominant TSS}
 \usage{
 plot_dominant_tss(dominant_tss, upstream = 2000, downstream = 500,
-  ncol = 1, ...)
+  ncol = 1, consider_score = FALSE, ...)
 }
 \arguments{
 \item{dominant_tss}{Tibble of dominant TSSs from dominant_tss}
@@ -15,6 +15,8 @@ plot_dominant_tss(dominant_tss, upstream = 2000, downstream = 500,
 \item{downstream}{Bases downstream to display on plot}
 
 \item{ncol}{Number of columns to plot the data to}
+
+\item{consider_score}{Consider not just unique positions but the score of the TSS also}
 
 \item{...}{Arguments passed to geom_density}
 }
