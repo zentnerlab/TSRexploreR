@@ -144,6 +144,7 @@ plot_dominant_tss <- function(
 #' @param max_upstream Max upstream distance of TSS to consider
 #' @param max_downstream Max downstream distance of TSS to consider
 #' @param feature_type Feature type used when finding distance to TSS ("geneId", "transcriptId")
+#' @param quantiles Number of quantiles to break data into.
 #'
 #' @return tibble with max UTR length for features
 #'
@@ -157,25 +158,41 @@ max_utr <- function(
 	threshold = 1,
 	max_upstream = 1000,
 	max_downstream = 100,
-	feature_type = c("geneId", "transcriptId")
+	feature_type = c("geneId", "transcriptId"),
+	quantiles = NA
 ) {
 	## Grab selected samples.
-	if (samples == "all") samples <- names(experiment@annotated$TSSs$raw)
-	select_samples <- experiment@annotated$TSSs$raw[samples]
+	max_utr <- experiment %>%
+		extract_counts("tss", samples) %>%
+		bind_rows(.id = "sample") %>%
+		as.data.table
+
+	setnames(max_utr, old = feature_type, new = "feature")
+
+	## Filter data.
+	max_utr <- max_utr[
+		score >= threshold &
+		dplyr::between(distanceToTSS, -max_upstream, max_downstream),
+		.(sample, distanceToTSS, feature, score)
+	]
 
 	## Get TSS with minimum distance to start codon.
-	max_utr <- select_samples %>%
-		map(
-			~ rename(.x, "feature" = feature_type) %>%
-				select(feature, distanceToTSS, score) %>%
-				filter(
-					score >= threshold,
-					between(distanceToTSS, -max_upstream, max_downstream)
-				) %>%
-				group_by(feature) %>%
-				summarize(tss_max_distance = min(distanceToTSS))
-		) %>%
-		bind_rows(.id = "samples")
+	max_utr <- max_utr[,
+		.SD[which.min(distanceToTSS)],
+		by = .(sample, feature)
+	]
+
+	## Add quantiles if requested.
+	if (!is.na(quantiles)) {
+		max_utr[, ntile := ntile(score, quantiles), by = sample]
+	}
+
+	## Return DataFrame.
+	max_utr <- DataFrame(max_utr)
+	metadata(max_utr)$quantiles <- quantiles
+	metadata(max_utr)$max_upstream <- max_upstream
+	metadata(max_utr)$max_downstream <- max_downstream
+	metadata(max_utr)$threshold <- threshold
 
 	return(max_utr)
 }
@@ -199,17 +216,42 @@ max_utr <- function(
 #'
 #' @export
 
-plot_max_utr <- function(max_utr, upstream = 1000, downstream = 100, ncol = 1, ...) {
-	p <- ggplot(max_utr, aes(x = tss_max_distance)) +
-		geom_density(fill = "#431352", color = "#431352", ...) +
+plot_max_utr <- function(
+	max_utr, upstream = 1000, downstream = 100,
+	ncol = 1, consider_score = FALSE, ...
+) {
+
+	## Grab some info from DataFrame.
+	quantiles <- metadata(max_utr)$quantiles
+
+	## Prepare data for plotting.
+	utr_plot <- as.data.table(max_utr)
+	
+	if (!is.na(quantiles)) {
+		utr_plot[, ntile := fct_rev(factor(ntile))]
+	}
+
+	## Format data if score should be considered.
+	if (consider_score) {
+		utr_plot <- utr_plot[rep(seq_length(.N), score)]
+	}
+
+	## Plot max UTR length detected.
+	p <- ggplot(utr_plot, aes(x = distanceToTSS)) +
+		geom_density(fill = "#431352", color = "#431352")+#, ...) +
 		xlim(-upstream, downstream) +
 		theme_bw() +
 		labs(
 			x = "Max UTR Length",
 			y = "Density"
 		) +
-		geom_vline(xintercept = 0, lty = 2) +
-		facet_wrap(~ samples, ncol = ncol)
+		geom_vline(xintercept = 0, lty = 2)
+
+	if (!is.na(quantiles)) {
+		p <- p + facet_grid(ntile ~ sample)
+	} else {
+		p <- p + facet_wrap(~ sample, ncol = ncol)
+	}
 
 	return(p)
 }

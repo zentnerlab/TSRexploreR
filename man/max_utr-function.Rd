@@ -6,7 +6,7 @@
 \usage{
 max_utr(experiment, samples = "all", threshold = 1,
   max_upstream = 1000, max_downstream = 100,
-  feature_type = c("geneId", "transcriptId"))
+  feature_type = c("geneId", "transcriptId"), quantiles = NA)
 }
 \arguments{
 \item{experiment}{tsrexplorer object with annotated TSSs}
@@ -20,6 +20,8 @@ max_utr(experiment, samples = "all", threshold = 1,
 \item{max_downstream}{Max downstream distance of TSS to consider}
 
 \item{feature_type}{Feature type used when finding distance to TSS ("geneId", "transcriptId")}
+
+\item{quantiles}{Number of quantiles to break data into.}
 }
 \value{
 tibble with max UTR length for features
