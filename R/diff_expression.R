@@ -21,14 +21,13 @@
 
 fit_edger_model <- function(experiment, data_type = c("tss", "tsr", "features"), samples = c(), groups = c()) {
 
-	## Grab data from appropraite slot.
-	if (data_type == "tsr") {
-		sample_data <- experiment@counts$TSRs$raw_matrix
-	} else if (data_type == "features") {
-		sample_data <- experiment@counts$features$raw_matrix
-	} else if (data_type == "tss") {
-		sample_data <- experiment@counts$TSSs$raw_matrix
-	}
+	## Grab data from appropriate slot.
+	sample_data <- experiment %>%
+		extract_counts(data_type, samples) %>%
+		bind_rows(.id = "sample") %>%
+		as.data.table
+
+	sample_data <- 
 
 	## Select samples and turn to count matrix.
 	selected_samples <- sample_data %>%

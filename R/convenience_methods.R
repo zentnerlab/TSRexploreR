@@ -79,11 +79,11 @@ extract_counts <- function(experiment, data_type, samples, cpm_norm = FALSE) {
 
 	## Extract appropraite samples from TSSs or TSRs.
 	if (data_type == "tss") {
-		if (samples == "all") sample_names <- names(experiment@counts$TSSs$raw)
-		selected_samples <- experiment@counts$TSSs$raw %>% extract(sample_names)
+		if (samples == "all") samples <- names(experiment@counts$TSSs$raw)
+		selected_samples <- experiment@counts$TSSs$raw %>% extract(samples)
 	} else if (data_type == "tsr") {
-		if (samples == "all") sample_names <- names(experiment@counts$TSRs$raw)
-		selected_samples <- experiment@counts$TSRs$raw %>% extract(sample_names)
+		if (samples == "all") samples <- names(experiment@counts$TSRs$raw)
+		selected_samples <- experiment@counts$TSRs$raw %>% extract(samples)
 	}
 
 	## For each sample get the ranges and counts.
@@ -112,3 +112,33 @@ extract_counts <- function(experiment, data_type, samples, cpm_norm = FALSE) {
 	return(counts)
 	
 }
+
+#' Extract Count Matrices
+#'
+#' Extract the normalized count matrices.
+#'
+#' @import tibble
+#'
+#' @param experiment tsrexplorer object
+#' @param data_type Whether to extract 'tss', 'tsr', or 'feature' counts
+#' @param samples Sampels to extract
+#'
+#' @rdname extract_matrix-function
+#' @export
+
+extract_matrix <- function(experiment, data_type, samples) {
+
+	## Get counts.
+	if (data_type == "tss") {
+		TSS_matrices
+		if (samples == "all") samples <- names(experiment@counts$TSSs$normalized)
+		selected_samples <- experiment@counts$TSSs$normalized %>%
+			.[, .$sample %in% samples]
+	} else if (data_type == "tsr") {
+		if (samples == "all") samples <- names(experiment@counts$TSRs$normalized)
+		selected_samples <- experiment@counts$TSRs$normalized %>%
+			.[, .$sample %in% samples]
+	}
+
+	return(selected_samples)
+} 
