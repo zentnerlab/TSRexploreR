@@ -6,14 +6,12 @@
 \alias{tsr_explorer}
 \title{TSRexplorer Class}
 \usage{
-tsr_explorer(TSSs = NA, TSRs = NA, cores = 1)
+tsr_explorer(TSSs = NA, TSRs = NA)
 }
 \arguments{
 \item{TSSs}{Named list of TSS GRanges returned by TSRchitect}
 
 \item{TSRs}{Named list of TSR GRanges returned by TSRchitect}
-
-\item{cores}{Number of CPU cores/threads available}
 }
 \value{
 A tsrexplorer object containing TSSs and/or TSRs
@@ -29,13 +27,11 @@ start regions (TSRs) or clustered transcription start sites (cTSSs).
 \describe{
 \item{\code{experiment}}{Named lists containing GRanges of TSSs and/or TSRs}
 
-\item{\code{cores}}{Integer value for number of cores available}
-
-\item{\code{annotated}}{Named lists of annotated TSSs and/or TSRs}
-
 \item{\code{counts}}{Named lists of TMM and CPM normalized TSSs and/or TSRs}
 
 \item{\code{correlation}}{Named lists of correlation values between TSS and/or TSR sets}
+
+\item{\code{settings}}{storage location for arguments used in various functions}
 }}
 
 \examples{

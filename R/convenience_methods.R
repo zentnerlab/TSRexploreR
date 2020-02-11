@@ -80,10 +80,10 @@ extract_counts <- function(experiment, data_type, samples, cpm_norm = FALSE) {
 	## Extract appropraite samples from TSSs or TSRs.
 	if (data_type == "tss") {
 		if (samples == "all") samples <- names(experiment@counts$TSSs$raw)
-		selected_samples <- experiment@counts$TSSs$raw %>% extract(samples)
+		selected_samples <- experiment@counts$TSSs$raw[samples]
 	} else if (data_type == "tsr") {
 		if (samples == "all") samples <- names(experiment@counts$TSRs$raw)
-		selected_samples <- experiment@counts$TSRs$raw %>% extract(samples)
+		selected_samples <- experiment@counts$TSRs$raw[samples]
 	}
 
 	## For each sample get the ranges and counts.
@@ -130,12 +130,11 @@ extract_matrix <- function(experiment, data_type, samples) {
 
 	## Get counts.
 	if (data_type == "tss") {
-		TSS_matrices
-		if (samples == "all") samples <- names(experiment@counts$TSSs$normalized)
+		if (samples == "all") samples <- colnames(assay(experiment@counts$TSSs$normalized, "counts"))
 		selected_samples <- experiment@counts$TSSs$normalized %>%
 			.[, .$sample %in% samples]
 	} else if (data_type == "tsr") {
-		if (samples == "all") samples <- names(experiment@counts$TSRs$normalized)
+		if (samples == "all") samples <- colnames(assay(experiment@counts$TSRs$normalized, "counts"))
 		selected_samples <- experiment@counts$TSRs$normalized %>%
 			.[, .$sample %in% samples]
 	}

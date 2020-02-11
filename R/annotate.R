@@ -12,6 +12,7 @@
 #' @importFrom tidyr separate gather
 #' @importFrom dplyr filter select
 #' @importFrom SummarizedExperiment SummarizedExperiment rowRanges "rowRanges<-"
+#' @importFrom stringr str_detect
 #'
 #' @param experiment tsrexplorer object with TSS Granges
 #' @param annotation_file Either path and file name of annotation file, or TxDb object of annotation
@@ -58,8 +59,18 @@ annotate_features <- function(
 					sameStrand = TRUE,
 					level = feature_type
 				) %>%
-				as_tibble(.name_repair="unique") %>%
-				makeGRangesFromDataFrame(keep.extra.columns = TRUE)
+				as.data.table
+			
+			annotated[,
+				simple_annotations := case_when(
+					annotation == "Promoter" ~ "Promoter",
+					str_detect(annotation, pattern="(Exon|UTR)") ~ "Exon",
+					str_detect(annotation, pattern="Intron") ~ "Intron",
+					str_detect(annotation, pattern="Downstream") ~ "Downstream",
+					annotation == "Distal Intergenic" ~ "Intergenic"
+				)
+			]
+			annotated <- makeGRangesFromDataFrame(annotated, keep.extra.columns = TRUE)
 
 			rowRanges(x) <- annotated
 			return(x)
@@ -72,6 +83,14 @@ annotate_features <- function(
 	} else if (data_type == "tsr") {
 		experiment@counts$TSRs$raw <- counts_annotated
 	}
+
+	## Save annotation settings to tsrexplorer object.
+	anno_settings <- data.table(
+		"feature_type" = feature_type,
+		"upstream" = upstream,
+		"downstream" = downstream
+	)
+	experiment@settings <- list(experiment@settings, "annotation" = anno_settings)
 
 	return(experiment)
 }

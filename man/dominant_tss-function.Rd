@@ -2,30 +2,18 @@
 % Please edit documentation in R/misc_tss_plots.R
 \name{dominant_tss}
 \alias{dominant_tss}
-\title{Dominant TSS Average Distance}
+\title{Annotate Dominant TSS}
 \usage{
-dominant_tss(experiment, samples = "all", threshold = 1,
-  max_upstream = 2000, max_downstream = 500,
-  feature_type = c("transcriptId", "geneId"), quantiles = NA)
+dominant_tss(experiment, threshold = 1)
 }
 \arguments{
 \item{experiment}{tsrexplorer object with annotated TSSs}
 
-\item{samples}{Either 'all' or name of samples to analyze}
-
 \item{threshold}{Read threshold for TSS}
-
-\item{max_upstream}{Max upstream distance of TSS to consider}
-
-\item{max_downstream}{Max downstream distance of TSS to consider}
-
-\item{feature_type}{Feature that was used to find TSS distance ("geneId", "transcriptId")}
-
-\item{quantiles}{Split data into quantiles}
 }
 \value{
 Tibble with dominant TSSs for each gene
 }
 \description{
-Dominant TSS Average Distance
+Annotate Dominant TSS
 }

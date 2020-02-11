@@ -4,11 +4,11 @@
 \alias{plot_dominant_tss}
 \title{Plot Dominant TSS}
 \usage{
-plot_dominant_tss(dominant_tss, upstream = 2000, downstream = 500,
-  ncol = 1, consider_score = FALSE, ...)
+plot_dominant_tss(experiment, upstream = 2000, downstream = 500,
+  ncol = 1, consider_score = FALSE, quantiles = NA, ...)
 }
 \arguments{
-\item{dominant_tss}{Tibble of dominant TSSs from dominant_tss}
+\item{experiment}{tsrexplorer object}
 
 \item{upstream}{Bases upstream to display on plot}
 
@@ -18,7 +18,11 @@ plot_dominant_tss(dominant_tss, upstream = 2000, downstream = 500,
 
 \item{consider_score}{Consider not just unique positions but the score of the TSS also}
 
+\item{quantiles}{Break down data into quantiles}
+
 \item{...}{Arguments passed to geom_density}
+
+\item{samples}{Samples to plot}
 }
 \value{
 ggplot2 object dominant TSS plot

@@ -22,27 +22,19 @@
 fit_edger_model <- function(experiment, data_type = c("tss", "tsr", "features"), samples = c(), groups = c()) {
 
 	## Grab data from appropriate slot.
-	sample_data <- experiment %>%
-		extract_counts(data_type, samples) %>%
-		bind_rows(.id = "sample") %>%
-		as.data.table
+	sample_data <- extract_matrix(experiment, data_type, samples)
 
-	sample_data <- 
-
-	## Select samples and turn to count matrix.
-	selected_samples <- sample_data %>%
-		select_at(c("position", samples)) %>%
-		column_to_rownames("position") %>%
-		as.matrix
+	## Filter out features with low counts.
+	sample_data <- sample_data %>%
+		.[filterByExpr(assay(., "counts")),]
 
 	## Setting sample design.
 	groups_factor <- factor(groups, levels = sort(unique(groups)))
 	sample_design <- model.matrix(~ 0 + groups_factor)
 
 	## Create DE fitted object.
-	fitted_model <- selected_samples %>%
+	fitted_model <- assay(sample_data, "counts") %>%
 		DGEList(group = groups_factor) %>%
-		.[filterByExpr(.), , keep.lib.sizes = FALSE] %>%
 		calcNormFactors %>%
 		estimateDisp(design = sample_design) %>%
 		glmQLFit(design = sample_design)

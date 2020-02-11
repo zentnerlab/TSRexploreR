@@ -55,7 +55,33 @@ exp <- tsr_explorer(TSSs, TSRs)
 
 ## TSS Analysis
 
+### Preparing TSSs
+
+**Prepare Counts**
+
+```
+exp <- format_counts(exp, data_type = "tss")
+```
+
+**CPM Normalize Counts**
+
+```
+exp <- cpm_normalize(exp, data_type = "tss")
+```
+
+**Annotate Features**
+
+```
+exp <- annotate_features(exp, annotation_file = annotation, data_type = "tss", feature_type = "transcript")
+```
+**Dominant TSS**
+
+```
+exp <- dominant_tss(exp, threshold = 3)
+```
+
 ### Count Normalization and Correlation
+
 
 **tmm normalize counts**
 

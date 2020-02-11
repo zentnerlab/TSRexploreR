@@ -1,5 +1,5 @@
 
-#' Dominant TSS Average Distance
+#' Annotate Dominant TSS
 #'
 #' @include tsrexplorer.R
 #'
@@ -9,12 +9,7 @@
 #' @importFrom purrr map
 #'
 #' @param experiment tsrexplorer object with annotated TSSs
-#' @param samples Either 'all' or name of samples to analyze
 #' @param threshold Read threshold for TSS
-#' @param max_upstream Max upstream distance of TSS to consider
-#' @param max_downstream Max downstream distance of TSS to consider
-#' @param feature_type Feature that was used to find TSS distance ("geneId", "transcriptId")
-#' @param quantiles Split data into quantiles
 #'
 #' @return Tibble with dominant TSSs for each gene
 #'
@@ -22,50 +17,50 @@
 #'
 #' @export
 
-dominant_tss <- function(
-	experiment,
-	samples = "all",
-	threshold = 1, 
-	max_upstream = 2000,
-	max_downstream = 500, 
-	feature_type = c("transcriptId", "geneId"),
-	quantiles = NA
-) {
+dominant_tss <- function(experiment, threshold = 1) {
+	
 	## Select samples.
-	select_samples <- experiment %>%
-		extract_counts("tss", samples) %>%
-		bind_rows(.id = "sample") %>%
-		as.data.table
+	select_samples <- experiment@counts$TSSs$raw %>%
+		map(function(x) {
+			ranges <- rowRanges(x)
+			score(ranges) <- assay(x, "raw")[, 1]
+			ranges <- as.data.table(ranges)
+			return(ranges)
+		})
 
-	setnames(select_samples, old = feature_type, new = "feature")
+	## Add dominant TSS info.
+	dominant <- experiment@counts$TSSs$raw %>%
+		map(function(x) {
 
-	## Filter the data.
-	select_samples <- select_samples[
-		score >= threshold &
-		dplyr::between(distanceToTSS, -max_upstream, max_downstream),
-		.(sample, distanceToTSS, feature, score)
-	]
+			## Extract ranges and scores.
+			ranges <- rowRanges(x)
+			score(ranges) <- assay(x, "raw")[, 1]
+			ranges <- as.data.table(ranges)
 
-	## Grab dominant TSS.
-	dominant <- select_samples[,
-		.SD[which.max(score)],
-		by = .(feature, sample)
-	]
+			## Mark the dominant TSSs.
+			ranges[,
+				dominant := (
+					score == max(score) &
+					!simple_annotations %in% c("Downstream", "Intergenic") &
+					score >= threshold
+				),
+				by = eval(ifelse(
+					experiment@settings$annotation[, feature_type] == "transcript",
+					"transcriptId", "geneId"
+				))
+			]
+			
+			## Add range data back.
+			ranges <- makeGRangesFromDataFrame(ranges, keep.extra.columns = TRUE)
+			score(ranges) <- NULL
+			rowRanges(x) <- ranges
 
-	## Split data into quantiles if requested.
-	if (!is.na(quantiles)) {
-		dominant[, ntile := ntile(score, quantiles), by = sample]
-	}
+			return(x)
+		})
 
-	## Convert to DataFrame.
-	dominant <- DataFrame(dominant)
-	metadata(dominant)$threshold <- threshold
-	metadata(dominant)$max_upstream <- max_upstream
-	metadata(dominant)$max_downstream <- max_downstream
-	metadata(dominant)$feature_type <- feature_type
-	metadata(dominant)$quantiles <- quantiles
-
-	return(dominant)
+	## Return dominant TSSs.
+	experiment@counts$TSSs$raw <- dominant
+	return(experiment)
 }
 
 #' Plot Dominant TSS
@@ -78,11 +73,13 @@ dominant_tss <- function(
 #' @importFrom dplyr count filter select
 #' @importFrom purrr pmap
 #'
-#' @param dominant_tss Tibble of dominant TSSs from dominant_tss
+#' @param experiment tsrexplorer object
+#' @param samples Samples to plot
 #' @param upstream Bases upstream to display on plot
 #' @param downstream Bases downstream to display on plot
 #' @param ncol Number of columns to plot the data to
 #' @param consider_score Consider not just unique positions but the score of the TSS also
+#' @param quantiles Break down data into quantiles
 #' @param ... Arguments passed to geom_density
 #'
 #' @return ggplot2 object dominant TSS plot
@@ -92,16 +89,22 @@ dominant_tss <- function(
 #' @export
 
 plot_dominant_tss <- function(
-	dominant_tss, upstream = 2000,
-	downstream = 500, 
-	ncol = 1, consider_score = FALSE, ...
+	experiment, upstream = 2000, downstream = 500, 
+	ncol = 1, consider_score = FALSE, quantiles = NA, ...
 ) {
 
-	## Grab some info from the DataFrame.
-	quantiles <- metadata(dominant_tss)$quantiles
+	## Pull appropriate samples and filter for dominant TSSs.
+	dominant_plot <- experiment %>%
+		extract_counts("tss", samples) %>%
+		bind_rows(.id = "sample") %>%
+		as.data.table
 
-	## Format the data for plotting.
-	dominant_plot <- as.data.table(dominant_tss)
+	dominant_plot <- dominant_plot[(dominant)]
+
+	## Add quantile information if required.
+	if (!is.na(quantiles)) {
+		dominant_plot[, ntile := ntile(score, quantiles), by = sample]
+	}
 
 	## Format data if score should be considered.
 	if (consider_score) {
