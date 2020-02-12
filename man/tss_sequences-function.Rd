@@ -12,7 +12,7 @@ tss_sequences(experiment, samples = "all", genome_assembly,
 
 \item{samples}{Either "all" or names of samples to analyze}
 
-\item{genome_assembly}{Genome assembly in fasta format}
+\item{genome_assembly}{Genome assembly in fasta format or bioconductor BSgenome}
 
 \item{threshold}{Keep only TSSs with threshold number of reads or more}
 

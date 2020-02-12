@@ -56,7 +56,6 @@ Collate:
     'heatmaps.R'
     'misc_tss_plots.R'
     'motif.R'
-    'normalize.R'
     'prepare_counts.R'
     'rnaseq.R'
     'thresholding.R'
