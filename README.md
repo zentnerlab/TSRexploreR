@@ -80,13 +80,12 @@ exp <- annotate_features(exp, annotation_file = annotation, data_type = "tss", f
 exp <- dominant_tss(exp, threshold = 3)
 ```
 
-### Count Normalization and Correlation
+### Correlation
 
-
-**tmm normalize counts**
+**TMM normalize the count matrices for correlation analysis**
 
 ```
-exp <- count_normalization(exp, data_type = "tss", threshold = 3, n_samples = 1)
+exp <- tmm_normalize(exp, data_type = "tss", threshold = 3, n_samples = 1)
 ```
 
 **tss correlation heatmaps and scatter plots**
