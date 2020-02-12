@@ -15,6 +15,7 @@
 #' @param log2_transform Whether the metric should be log2 transformed prior to plotting
 #' @param ncol Number of columns to plot data
 #' @param use_cpm Whether to use the CPM normalized or raw counts
+#' @param dominant Whether to only consider dominant TSRs
 #' @param ... Arguments passed to ggplot2 plotting functions
 #'
 #' @return ggplot2 object with tsr metrix plotted
@@ -31,6 +32,7 @@ plot_tsr_metric <- function(
 	log2_transform = FALSE,
 	ncol = 1,
 	use_cpm = FALSE,
+	dominant = FALSE,
 	...
 ) {
 
@@ -40,7 +42,13 @@ plot_tsr_metric <- function(
 		bind_rows(.id = "sample") %>%
 		as.data.table
 
-	selected_data <- selected_data[, c("sample", tsr_metrics), with = FALSE]
+	selected_data <- selected_data[, c("sample", "dominant", tsr_metrics), with = FALSE]
+
+	## Consider only dominant TSRs if required.
+	if (dominant) {
+		selected_data <- selected_data[(dominant)]
+	}
+	selected_data <- selected_data[, dominant := NULL]
 
 	## Log2+1 transform data if requested
 	if (log2_transform) {

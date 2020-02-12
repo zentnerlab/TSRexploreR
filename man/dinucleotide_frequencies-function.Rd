@@ -5,7 +5,7 @@
 \title{Dinucleotide Analysis}
 \usage{
 dinucleotide_frequencies(experiment, genome_assembly, samples = "all",
-  threshold = 1, quantiles = NA)
+  threshold = 1, quantiles = NA, dominant = FALSE)
 }
 \arguments{
 \item{experiment}{tsrexplorer object with TSS GRanges}
@@ -17,6 +17,8 @@ dinucleotide_frequencies(experiment, genome_assembly, samples = "all",
 \item{threshold}{TSS read threshold}
 
 \item{quantiles}{Number of quantiles to break data into}
+
+\item{dominant}{Consider only dominant}
 }
 \value{
 tibble with dinucleotide frequencies

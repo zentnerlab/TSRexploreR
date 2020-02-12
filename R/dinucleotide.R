@@ -17,6 +17,7 @@
 #' @param genome_assembly fasta file of genome assembly
 #' @param threshold TSS read threshold
 #' @param quantiles Number of quantiles to break data into
+#' @param dominant Consider only dominant
 #'
 #' @return tibble with dinucleotide frequencies
 #'
@@ -24,7 +25,10 @@
 #'
 #' @export
 
-dinucleotide_frequencies <- function(experiment, genome_assembly, samples = "all", threshold = 1, quantiles = NA) {
+dinucleotide_frequencies <- function(
+	experiment, genome_assembly, samples = "all",
+	threshold = 1, quantiles = NA, dominant = FALSE
+) {
 
 	## Loading genome assembly.
 	fasta_assembly <- FaFile(genome_assembly)
@@ -38,7 +42,7 @@ dinucleotide_frequencies <- function(experiment, genome_assembly, samples = "all
 	## Prepare samples for analysis.
 	select_samples <- select_samples[
 		score >= threshold,
-		.(sample, seqnames, start, end, strand, score, tss = start)
+		.(sample, seqnames, start, end, strand, dominant,  score, tss = start)
 	]
 	select_samples[,
 		c("start", "end") := list(
@@ -46,6 +50,12 @@ dinucleotide_frequencies <- function(experiment, genome_assembly, samples = "all
 			ifelse(strand == "+", end, end + 1)
 		)
 	]
+
+	## Consider only dominant TSSs if required.
+	if (dominant) {
+		select_samples <- select_samples[(dominant)]
+	}
+	select_samples[, dominant := NULL]
 
 	## Get dinucleotides.
 	seqs <- select_samples %>%
@@ -106,7 +116,8 @@ dinucleotide_frequencies <- function(experiment, genome_assembly, samples = "all
 #'
 #' @export
 
-plot_dinucleotide_frequencies <- function(dinucleotide_frequencies, sample_order = NA, ncol = 1, ...) {
+plot_dinucleotide_frequencies <- function(
+	dinucleotide_frequencies, sample_order = NA, ncol = 1, ...) {
 
 	## Pull out some info from the DataFrame.
 	quantiles <- metadata(dinucleotide_frequencies)$quantiles
