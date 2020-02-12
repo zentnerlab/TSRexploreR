@@ -4,7 +4,7 @@
 #' Get the number of genes or transcripts detected
 #'
 #' @import tibble
-#' @importFrom dplyr bind_rows full_join rename filter select mutate distinct case_when between count
+#' @importFrom dplyr bind_rows full_join rename filter select mutate distinct case_when count
 #' @importFrom purrr map
 #' @importFrom magrittr extract %>%
 #' @importFrom SummarizedExperiment assay rowRanges SummarizedExperiment
@@ -13,9 +13,6 @@
 #' @param experiment tsrexplorer object with annotated TSSs or TSRs
 #' @param samples Either 'all' or vector of sample names
 #' @param data_type Whether TSSs or TSRs should be analyzed
-#' @param feature_type Whether the TSSs and TSRs were annotated relative to genes or transcripts
-#' @param upstream Number of bases upstream of annotated TSS to consider as part of promoter
-#' @param downstream Number of bases downstream of annotated TSS to consider as part of the promoter
 #' @param threshold The number of reads required in a TSS or TSR to avoid filtering
 #'
 #' @return tibble of detected feature numbers
@@ -28,51 +25,51 @@ detect_features <- function(
 	experiment,
 	samples = "all",
 	data_type = c("tss", "tsr"),
-	feature_type = c("gene", "transcript"),
-	upstream = 1000,
-	downstream = 1000,
-	threshold = 1
+	threshold = 1,
+	dominant = FALSE
 ) {
 	
 	## Get sample data.
 	sample_data <- experiment %>%
 		extract_counts(data_type, samples) %>%
 		bind_rows(.id = "sample") %>%
-		filter(score >= threshold)
+		as.data.table
+	setnames(
+		sample_data, old = ifelse(
+			experiment@settings$annotation[, feature_type] == "transcript",
+			"transcriptId", "geneId"
+		),
+		new = "feature"
+	)
 
-	## Pick feature type to use.
-	if (feature_type == "gene") {
-		sample_data <- rename(sample_data, feature = geneId)
-	} else if (feature_type == "transcript") {
-		sample_data <- rename(sample_data, feature = transcriptId)
+	## prepare sample data.
+	sample_data <- sample_data[
+		score >= threshold,
+		.(sample, feature, dominant, simple_annotations)
+	]
+
+	## Consider only dominant TSSs if required.
+	if (dominant) {
+		sample_data <- sample_data[(dominant)]
 	}
+	sample_data[, dominant := NULL]
 
 	## Get feature counts.
-	sample_data <- sample_data %>%
-		select(sample, feature, distanceToTSS) %>%
-		mutate(annotation = ifelse(
-			between(distanceToTSS, -upstream, downstream),
-			"promoter", "other"
-		)) %>%
-		select(-distanceToTSS)
+	sample_data <- sample_data[,
+		.(promoter = any(simple_annotations == "Promoter")),
+		by = .(sample, feature)
+	][,
+		.(with_promoter_tss = sum(promoter), no_promoter_tss = .N - sum(promoter), total = .N),
+		by = sample
+	]
 
-	total_features <- sample_data %>%
-		distinct(sample, feature) %>%
-		count(sample, name = "total_features")
-
-	promoter_proximal_features <- sample_data %>%
-		filter(annotation == "promoter") %>%
-		distinct(sample, feature) %>%
-		count(sample, name = "promoter_proximal_features")
-
-	## Create DataFrame with results and settings.
-	detected_features <- full_join(total_features, promoter_proximal_features, by = "sample") %>%
-		DataFrame
+	## Create DataFrame to export.
+	detected_features <- DataFrame(sample_data)
 
 	metadata(detected_features)$threshold <- threshold
 	metadata(detected_features)$data_type <- data_type
-	metadata(detected_features)$feature_type <- feature_type
-	metadata(detected_features)$promoter_region <- c(-upstream, downstream)
+	metadata(detected_features)$dominant <- dominant
+	metadata(detected_features)$feature_type <- experiment@settings$annotation[, feature_type]
 
 	return(detected_features)
 }
@@ -86,10 +83,9 @@ detect_features <- function(
 #' @importFrom dplyr mutate
 #' @importFrom tidyr gather
 #' @importFrom S4Vectors DataFrame metadata
-#' @importFrom stringr str_c
+#' @importFrom stringr str_c str_to_title
 #'
 #' @param detected_features Tibble of detected feature counts from detect_features
-#' @param ncol Number of columens to plot data to
 #' @param ... Arguments passed to geom_col
 #'
 #' @return ggplot2 object of detected feature counts
@@ -98,29 +94,30 @@ detect_features <- function(
 #'
 #' @export
 
-plot_detected_features <- function(detected_features, ncol = 1, ...) {
+plot_detected_features <- function(detected_features, ...) {
 	
-	## Prepare data for plotting.
-	plot_data <- detected_features %>%
-		as_tibble(.name_repair = "unique") %>%
-		gather(key = "feature_type", value = "feature_number", -sample) %>%
-		mutate(feature_type = factor(feature_type, levels = c("total_features", "promoter_proximal_features")))
+	## Get some info from DataFrame.
+	feature_type <- str_to_title(metadata(detected_features)$feature_type)	
 
-	## Extract settings.
-	feature_type <- metadata(detected_features)$feature_type
+	## Prepare data for plotting.
+	plot_data <- as.data.table(detected_features)
+	plot_data[, total := NULL]	
+	plot_data <- melt(plot_data,
+		measure.vars = c("with_promoter_tss", "no_promoter_tss"),
+		variable.name = "count_type",
+		value.name = "feature_count"
+	)
 
 	## Plot data.
-	p <- ggplot(plot_data, aes(x = feature_type, y = feature_number, fill = feature_type)) +
-		geom_col(...) +
+	p <- ggplot(plot_data, aes(x = sample, y = feature_count, fill = fct_rev(factor(count_type)))) +
+		geom_col(position = "stack", ...) +
 		theme_bw() +
-		scale_fill_viridis_d(name = "Feature Type") +
-		facet_wrap(~ sample, ncol = ncol) +
+		scale_fill_viridis_d(name = "Feature Type", direction = -1) +
 		ylim(c(0, NA)) +
 		ylab(str_c(feature_type, "Count", sep = " ")) +
+		xlab("Sample") +
 		theme(
-			axis.text.x = element_blank(),
-			axis.ticks.x = element_blank(),
-			axis.title.x = element_blank()
+			axis.text.x = element_text(angle = 45, hjust = 1)
 		)
 		
 }

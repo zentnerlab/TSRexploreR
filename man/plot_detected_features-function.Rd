@@ -4,12 +4,10 @@
 \alias{plot_detected_features}
 \title{Plot Detected Features}
 \usage{
-plot_detected_features(detected_features, ncol = 1, ...)
+plot_detected_features(detected_features, ...)
 }
 \arguments{
 \item{detected_features}{Tibble of detected feature counts from detect_features}
-
-\item{ncol}{Number of columens to plot data to}
 
 \item{...}{Arguments passed to geom_col}
 }

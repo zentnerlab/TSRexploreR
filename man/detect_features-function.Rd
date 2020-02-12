@@ -5,8 +5,7 @@
 \title{Genes/Transcripts Detected}
 \usage{
 detect_features(experiment, samples = "all", data_type = c("tss",
-  "tsr"), feature_type = c("gene", "transcript"), upstream = 1000,
-  downstream = 1000, threshold = 1)
+  "tsr"), threshold = 1, dominant = FALSE)
 }
 \arguments{
 \item{experiment}{tsrexplorer object with annotated TSSs or TSRs}
@@ -14,12 +13,6 @@ detect_features(experiment, samples = "all", data_type = c("tss",
 \item{samples}{Either 'all' or vector of sample names}
 
 \item{data_type}{Whether TSSs or TSRs should be analyzed}
-
-\item{feature_type}{Whether the TSSs and TSRs were annotated relative to genes or transcripts}
-
-\item{upstream}{Number of bases upstream of annotated TSS to consider as part of promoter}
-
-\item{downstream}{Number of bases downstream of annotated TSS to consider as part of the promoter}
 
 \item{threshold}{The number of reads required in a TSS or TSR to avoid filtering}
 }

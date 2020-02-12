@@ -111,13 +111,7 @@ dev.off()
 
 ![tss_correlation_hierarchical](./inst/images/tss_correlation_hierarchical.png)
 
-### TSS Annotation and Genomic Distribution
-
-**Annotate TSSs**
-
-```
-exp <- annotate_features(exp, annotation_file = annotation, data_type = "tss", feature_type = "transcript")
-```
+### TSS Genomic Distribution
 
 **TSS Genomic Distribution**
 
@@ -148,9 +142,9 @@ ggsave("tss_genomic_distribution_quantiles.png", plot = p, device = "png", type 
 ### TSS Feature Detection
 
 ```
-features <- detect_features(exp, data_type = "tss", feature_type = "transcript", threshold = 3)
+features <- detect_features(exp, data_type = "tss", threshold = 3)
 
-p <- plot_detected_features(features, ncol = 3) +
+p <- plot_detected_features(features) +
 	ggplot2::theme(text = element_text(size = 3), legend.key.size = unit(0.3, "cm"))
 
 ggsave("tss_feature_plot.png", plot = p, device = "png", type = "cairo", height = 1, width = 2.5)
