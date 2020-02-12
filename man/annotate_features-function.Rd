@@ -4,14 +4,14 @@
 \alias{annotate_features}
 \title{Annotate Data}
 \usage{
-annotate_features(experiment, annotation_file, data_type = c("tss",
+annotate_features(experiment, annotation_data, data_type = c("tss",
   "tsr"), feature_type = c("gene", "transcript"), upstream = 1000,
   downstream = 100)
 }
 \arguments{
 \item{experiment}{tsrexplorer object with TSS Granges}
 
-\item{annotation_file}{Either path and file name of annotation file, or TxDb object of annotation}
+\item{annotation_data}{Either path and file name of annotation file, or TxDb object of annotation}
 
 \item{data_type}{Whether to annotate TSSs or TSRs}
 

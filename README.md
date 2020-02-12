@@ -42,9 +42,6 @@ TSSs <- readRDS(TSSs)
 
 TSRs <- system.file("extdata", "yeast_TSRs.RDS", package = "tsrexplorer")
 TSRs <- readRDS(TSRs)
-
-annotation <- system.file("extdata", "yeast_annotation.gtf", package="tsrexplorer")
-assembly <- system.file("extdata", "yeast_assembly.fasta", package="tsrexplorer")
 ```
 
 **create tsr object**
@@ -72,7 +69,12 @@ exp <- cpm_normalize(exp, data_type = "tss")
 **Annotate Features**
 
 ```
-exp <- annotate_features(exp, annotation_file = annotation, data_type = "tss", feature_type = "transcript")
+library("TxDb.Scerevisiae.UCSC.sacCer3.sgdGene")
+
+exp <- annotate_features(
+	exp, annotation_data = TxDb.Scerevisiae.UCSC.sacCer3.sgdGene,
+	data_type = "tss", feature_type = "transcript"
+)
 ```
 **Dominant TSS**
 
@@ -357,7 +359,12 @@ ggsave("tsr_metrics.png", plot = p, device = "png", type = "cairo", width = 4, h
 **TSR Annotation**
 
 ```
-exp <- annotate_features(exp, annotation_file = annotation, data_type = "tsr", feature_type = "transcript")
+library("TxDb.Scerevisiae.UCSC.sacCer3.sgdGene")
+
+exp <- annotate_features(
+	exp, annotation_data = TxDb.Scerevisiae.UCSC.sacCer3.sgdGene,
+	data_type = "tsr", feature_type = "transcript"
+)
 ```
 
 **TSR Genomic Distribution**
