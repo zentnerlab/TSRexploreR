@@ -212,7 +212,12 @@ ggsave("tss_heatmap_quantiles.png", plot = p, device = "png", type = "cairo", he
 **TSS sequence logo**
 
 ```
-seqs <- tss_sequences(exp, genome_assembly = assembly, threshold = 3)
+library("BSgenome.Scerevisiae.UCSC.sacCer3")
+
+seqs <- tss_sequences(
+	exp, threshold = 3,
+	genome_assembly = BSgenome.Scerevisiae.UCSC.sacCer3
+)
 
 p <- plot_sequence_logo(seqs, ncol = 3)
 
@@ -227,7 +232,12 @@ dev.off()
 The seq logos can also be split by quantile.
 
 ```
-seqs <- tss_sequences(exp, genome_assembly = assembly, threshold = 3, quantiles = 5)
+library("BSgenome.Scerevisiae.UCSC.sacCer3")
+
+seqs <- tss_sequences(
+	exp, threshold = 3, quantiles = 5,
+	genome_assembly = BSgenome.Scerevisiae.UCSC.sacCer3
+)
 
 p <- plot_sequence_logo(seqs, ncol = 3)
 
@@ -241,7 +251,12 @@ dev.off()
 **TSS base color map**
 
 ```
-seqs <- tss_sequences(exp, genome_assembly = assembly, threshold = 3)
+library("BSgenome.Scerevisiae.UCSC.sacCer3")
+
+seqs <- tss_sequences(
+	exp, threshold = 3,
+	genome_assembly = BSgenome.Scerevisiae.UCSC.sacCer3
+)
 
 p <- plot_sequence_colormap(seqs, ncol = 3)
 
@@ -255,7 +270,12 @@ dev.off()
 The color maps can also be split by quantile.
 
 ```
-seqs <- tss_sequences(exp, genome_assembly = assembly, threshold = 3, quantiles = 5)
+library("BSgenome.Scerevisiae.UCSC.sacCer3")
+
+seqs <- tss_sequences(
+	exp, threshold = 3, quantiles = 5,
+	genome_assembly = BSgenome.Scerevisiae.UCSC.sacCer3
+)
 
 p <- plot_sequence_colormap(seqs) +
 	ggplot2::theme(text = element_text(size = 5))
@@ -268,7 +288,12 @@ ggsave("tss_seq_colormap_quantiles.png", plot = p, device = "png", type = "cairo
 **TSS dinucleotide frequencies**
 
 ```
-frequencies <- dinucleotide_frequencies(exp, genome_assembly = assembly, threshold = 3)
+library("BSgenome.Scerevisiae.UCSC.sacCer3")
+
+frequencies <- dinucleotide_frequencies(
+	exp, threshold = 3,
+	genome_assembly = BSgenome.Scerevisiae.UCSC.sacCer3
+)
 
 p <- plot_dinucleotide_frequencies(frequencies, ncol = 3) +
 	ggplot2::theme(text = element_text(size = 6))
@@ -281,7 +306,10 @@ ggsave("tss_dinucleotide_frequencies.png", plot = p, device = "png", type = "cai
 You can also plot dinucleotide frequencies by quantile
 
 ```
-freqs <- dinucleotide_frequencies(exp, assembly, threshold = 3, quantiles = 5)
+freqs <- dinucleotide_frequencies(
+	exp, threshold = 3, quantiles = 5,
+	genome_assembly = BSgenome.Scerevisiae.UCSC.sacCer3
+)
 
 p <- plot_dinucleotide_frequencies(freqs) +
 	ggplot2::theme(text = element_text(size = 5))

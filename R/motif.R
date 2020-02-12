@@ -17,7 +17,7 @@
 #'
 #' @param experiment tsrexplorer object with TSS GRanges
 #' @param samples Either "all" or names of samples to analyze
-#' @param genome_assembly Genome assembly in fasta format
+#' @param genome_assembly Genome assembly in fasta format or bioconductor BSgenome
 #' @param threshold Keep only TSSs with threshold number of reads or more
 #' @param distance Bases to add on each side of TSS
 #' @param quantiles Break data into quantiles
@@ -34,7 +34,11 @@ tss_sequences <- function(
 ) {
 
 	## Open genome assembly.
-	genome_assembly <- FaFile(genome_assembly)
+	if (is(genome_assembly, "character")) {
+		genome_assembly <- FaFile(genome_assembly)
+	} else if (is(genome_assembly, "BSgenome")) {
+		genome_assembly <- genome_assembly
+	}
 
 	## Pull selected samples.
 	select_samples <- experiment %>%
