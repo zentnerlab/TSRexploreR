@@ -69,6 +69,11 @@ tmm_normalize <- function(
 	)
 
 	## Return the TMM normalized counts.
-	experiment@correlation$tmm <- tmm_experiment
+	if (data_type == "tss") {
+		experiment@correlation$TSSs$tmm <- tmm_experiment
+	} else if (data_type == "tsr") {
+		experiment@correlation$TSSs$tmm <- tmm_experiment
+	}
+
 	return(experiment)
 }

@@ -28,18 +28,19 @@ find_correlation <- function(
 ) {
 	## Select appropriate data.
 	if (data_type == "tss") {
-		normalized_counts <- experiment@counts$TSSs$normalized %>% assay("tmm")
+		normalized_counts <- assay(experiment@correlation$TSSs$tmm, "tmm")
 		type_color <- "#431352"
 	} else if (data_type == "tsr") {
-		normalized_counts <- experiment@counts$TSRs$normalized %>% assay("tmm")
+		normalized_counts <- assay(experiment@correlation$TSRs$tmm, "tmm")
 		type_color <- "#34698c"
 	} else if (data_type == "features") {
-		normalized_counts <- experiment@counts$features$normalized %>% assay("tmm")
+		normalized_counts <- assay(experiment@correlation$features$tmm, "tmm")
 		type_color <- "#29AF7FFF"
 	}
 
 	## Select all samples if "all" specified.
-	if (length(samples) == 1 & samples == "all") samples <- colnames(normalized_counts)
+	if (samples == "all") samples <- colnames(normalized_counts)
+	normalized_counts <- normalized_counts[, samples]
 
 	## make correlation matrix.
 	correlation <- normalized_counts %>%
@@ -50,11 +51,11 @@ find_correlation <- function(
 
 	## Place correlation values into proper slot.
 	if (data_type == "tss") {
-		experiment@correlation$TSSs <- correlation
+		experiment@correlation$TSSs$cor_matrix <- correlation
 	} else if (data_type == "tsr") {
-		experiment@correlation$TSRs <- correlation
+		experiment@correlation$TSRs$cor_matrix <- correlation
 	} else {
-		experiment@correlation$features <- correlation
+		experiment@correlation$features$cor_matrix <- correlation
 	}
 
 	return(experiment)		
@@ -107,13 +108,13 @@ plot_correlation <- function(
 	
 	## Get data from proper slot.
 	if (data_type == "tss") {
-		normalized_counts <- experiment@counts$TSSs$normalized %>% assay("tmm")
+		normalized_counts <- assay(experiment@correlation$TSSs$tmm, "tmm")
 		type_color <- "#431352"
 	} else if (data_type == "tsr") {
-		normalized_counts <- experiment@counts$TSRs$normalized %>% assay("tmm")
+		normalized_counts <- assay(experiment@correlation$TSRs$tmm, "tmm")
 		type_color <- "#34698c"
 	} else if (data_type == "features") {
-		normalized_counts <- experiment@counts$features$normalized %>% assay("tmm")
+		normalized_counts <- assay(experiment@correlation$features$tmm, "tmm")
 		type_color <- "#29AF7FFF"
 	}
 
