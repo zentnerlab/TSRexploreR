@@ -18,6 +18,7 @@
 #' @param data_type Whether to get distribution of TSSs or TSRs
 #' @param threshold Filter out TSSs or TSRs under a certain read count number
 #' @param quantiles number of quantiles to break the data down into
+#' @param dominant Should all (FALSE) or only dominant TSSs (TRUE) be considered
 #'
 #' @return tibble with TSS or TSR genomic distribution stats
 #'
@@ -25,7 +26,9 @@
 #'
 #' @export 
 
-genomic_distribution <- function(experiment, data_type = c("tss", "tsr"), samples = "all", threshold = 1, quantiles = NA) {
+genomic_distribution <- function(
+	experiment, data_type = c("tss", "tsr"), samples = "all",
+	threshold = 1, quantiles = NA, dominant = FALSE) {
 
 	## Extract samples.
 	selected_samples <- experiment %>%
@@ -35,20 +38,20 @@ genomic_distribution <- function(experiment, data_type = c("tss", "tsr"), sample
 
 	selected_samples <- selected_samples[
 		score >= threshold,
-		.(samples, score,
-		annotation = case_when(
-                        annotation == "Promoter" ~ "Promoter",
-                        grepl(annotation, pattern="(Exon|UTR)") ~ "Exon",
-                        grepl(annotation, pattern="Intron") ~ "Intron",
-                        grepl(annotation, pattern="Downstream") ~ "Downstream",
-                        annotation == "Distal Intergenic" ~ "Intergenic"
-                ))
-	][,
-		.(samples, score,
-		annotation = factor(annotation,
-			levels = c("Promoter", "Exon", "Intron", "Downstream", "Intergenic")
-		))
+		.(samples, score, dominant, simple_annotations)
 	]
+	selected_samples[,
+		simple_annotations := factor(
+			simple_annotations,
+			levels = c("Promoter", "Exon", "Intron", "Downstream", "Intergenic")
+		)
+	]
+
+	## Only consider dominant TSSs if required.
+	if (dominant) {
+		selected_samples <- selected_samples[(dominant)]
+	}
+	selected_samples[, dominant := NULL]
 
 	## Break data into quantiles if quantiles set is greater than 1.
 	if (!is.na(quantiles)) {
@@ -59,17 +62,17 @@ genomic_distribution <- function(experiment, data_type = c("tss", "tsr"), sample
 	if (!is.na(quantiles)) {
 		genomic_distribution <- selected_samples[,
 			.(count = .N),
-			by = .(samples, annotation, ntile)
+			by = .(samples, simple_annotations, ntile)
 		][,
-			.(annotation, count, fraction = count / sum(count)),
+			.(simple_annotations, count, fraction = count / sum(count)),
 			by = .(samples, ntile)
 		]
 	} else {
 		genomic_distribution <- selected_samples[,
 			.(count = .N),
-			by = .(samples, annotation)
+			by = .(samples, simple_annotations)
 		][,
-			.(annotation, count, fraction = count / sum(cont)),
+			.(simple_annotations, count, fraction = count / sum(count)),
 			by = samples
 		]
 	}
@@ -78,11 +81,8 @@ genomic_distribution <- function(experiment, data_type = c("tss", "tsr"), sample
 	dist_exp <- DataFrame(genomic_distribution)
 
 	## Add quantile information to summarized experiment.
-	if (!is.na(quantiles)) {
-		metadata(dist_exp)$ntiles <- TRUE
-	} else {
-		metadata(dist_exp)$ntiles <- FALSE
-	}
+	metadata(dist_exp)$quantiles <- quantiles
+	metadata(dist_exp)$dominant <- dominant
 
 	return(dist_exp)
 }
