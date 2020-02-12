@@ -21,14 +21,17 @@
 #' @param threshold Keep only TSSs with threshold number of reads or more
 #' @param distance Bases to add on each side of TSS
 #' @param quantiles Break data into quantiles
-#'
+#' @param dominant Whether only dominant should be considered
 #' @return Sequences surrounding TSSs
 #'
 #' @rdname tss_sequences-function
 #'
 #' @export
 
-tss_sequences <- function(experiment, samples = "all", genome_assembly, threshold = 1, distance = 10, quantiles = NA) {
+tss_sequences <- function(
+	experiment, samples = "all", genome_assembly, threshold = 1,
+	distance = 10, quantiles = NA, dominant = FALSE
+) {
 
 	## Open genome assembly.
 	genome_assembly <- FaFile(genome_assembly)
@@ -41,8 +44,14 @@ tss_sequences <- function(experiment, samples = "all", genome_assembly, threshol
 
 	select_samples <- select_samples[
 		score >= threshold,
-		.(sample, seqnames, start, end, strand, score)
+		.(sample, seqnames, start, end, strand, dominant, score)
 	]
+
+	## Only consider dominant if required.
+	if (dominant) {
+		select_samples <- select_samples[(dominant)]
+	}
+	select_samples[, dominant := NULL]
 
 	## Add quantiles if necessary.
 	if (!is.na(quantiles)) {
@@ -66,6 +75,7 @@ tss_sequences <- function(experiment, samples = "all", genome_assembly, threshol
 	metadata(seqs)$quantiles <- quantiles
 	metadata(seqs)$threshold <- threshold
 	metadata(seqs)$distance <- distance
+	metadata(seqs)$dominant <- dominant
 
 	return(seqs)
 }

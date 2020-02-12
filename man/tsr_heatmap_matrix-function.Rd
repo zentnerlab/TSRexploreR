@@ -6,7 +6,7 @@
 \usage{
 tsr_heatmap_matrix(experiment, samples = "all", upstream = 1000,
   downstream = 1000, feature_type = c("transcriptId", "geneId"),
-  quantiles = NA, threshold = 1, use_cpm = FALSE)
+  quantiles = NA, threshold = 1, use_cpm = FALSE, dominant = FALSE)
 }
 \arguments{
 \item{experiment}{tsrexplorer object with annotated TSRs}
@@ -24,6 +24,8 @@ tsr_heatmap_matrix(experiment, samples = "all", upstream = 1000,
 \item{threshold}{Reads required per TSR}
 
 \item{use_cpm}{Whether to use CPM normalized or raw counts}
+
+\item{dominant}{Whether dominant only should be considered}
 }
 \value{
 matrix of counts for each gene/transcript and position

@@ -21,9 +21,9 @@
 #' @param upstream Bases upstream to consider
 #' @param downstream bases downstream to consider
 #' @param threshold Reads required per TSS
-#' @param anno_type Whether the heatmap is built on genes or transcripts ("geneId", "transcriptId")
 #' @param quantiles Number of quantiles to break data down into
 #' @param use_cpm Whether to use the CPM normalized values or not
+#' @param dominant Consider only dominant
 #'
 #' @return matrix of counts for each gene/transcript and position
 #'
@@ -37,9 +37,9 @@ tss_heatmap_matrix <- function(
 	upstream = 1000,
 	downstream = 1000,
 	threshold = 1,
-	anno_type = c("transcriptId", "geneId"),
 	quantiles = NA,
-	use_cpm = FALSE
+	use_cpm = FALSE,
+	dominant = FALSE
 ) {
 	## Grab requested samples.
 	annotated_tss <- experiment %>%
@@ -47,26 +47,34 @@ tss_heatmap_matrix <- function(
 		bind_rows(.id = "sample") %>%
 		as.data.table
 
-	setnames(annotated_tss, old = anno_type, new = "feature")
+	setnames(annotated_tss,
+		old = ifelse(
+			experiment@settings$annotation[, feature_type] == "transcript",
+			"transcriptId", "geneId"
+		),
+		new = "feature"
+	)
+
 	annotated_tss <- annotated_tss[
 		score >= threshold &
 		dplyr::between(distanceToTSS, -upstream, downstream),
-		.(sample, feature, distanceToTSS, score)
+		.(sample, feature, distanceToTSS, dominant, score)
 	]
 
+	## Keep only dominant if required.
+	if (dominant) {
+		annotated_tss <- annotated_tss[(dominant)]
+	}
+	annotated_tss[, dominant := NULL]
+
 	## Get order of genes for heatmap (mean across samples).
-	annotated_tss <- annotated_tss[,
-		.(sample, distanceToTSS, feature, score, feature_mean = mean(score)),
-		by = feature
-	][,
-		.(sample, distanceToTSS, feature, score, rank = dense_rank(feature_mean))
-	]
+	annotated_tss[, feature_mean := mean(score), by = feature]
+	annotated_tss[, rank := dense_rank(feature_mean)]
+	annotated_tss[, feature_mean := NULL]
 
 	## Add quantiles if specified.
 	if (!is.na(quantiles)) {
-		annotated_tss <- annotated_tss[,
-			.(sample, distanceToTSS, feature, score, rank, ntile = ntile(rank, quantiles))
-		]
+		annotated_tss[, ntile := ntile(rank, quantiles)]
 	}
 
 	## Format for plotting.
@@ -89,6 +97,7 @@ tss_heatmap_matrix <- function(
 	metadata(tss_df)$threshold <- threshold
 	metadata(tss_df)$quantiles <- quantiles
 	metadata(tss_df)$use_cpm <- use_cpm
+	metadata(tss_df)$dominant <- dominant
 	metadata(tss_df)$promoter <- c(upstream, downstream)
 
 	return(tss_df)
@@ -189,6 +198,7 @@ plot_heatmap <- function(heatmap_matrix, max_value = 5, ncol = 1, ...) {
 #' @param quantiles Number of quantiles to split data into
 #' @param threshold Reads required per TSR
 #' @param use_cpm Whether to use CPM normalized or raw counts
+#' @param dominant Whether dominant only should be considered
 #'
 #' @return matrix of counts for each gene/transcript and position
 #'
@@ -204,7 +214,8 @@ tsr_heatmap_matrix <- function(
 	feature_type = c("transcriptId", "geneId"),
 	quantiles = NA,
 	threshold = 1,
-	use_cpm = FALSE
+	use_cpm = FALSE,
+	dominant = FALSE
 ) {
 	
 	## Pull samples out.
@@ -213,24 +224,34 @@ tsr_heatmap_matrix <- function(
 		bind_rows(.id = "sample") %>%
 		as.data.table
 
+	setnames(annotated_tsr,
+		old = ifelse(
+			experiment@settings$annotation[, feature_type] == "transcript",
+			"transcriptId", "geneId"
+		),
+		new = "feature"
+	)
+
 	## Start preparing data for plotting.
-	setnames(annotated_tsr, old = feature_type, new = "feature")
 	annotated_tsr <- annotated_tsr[
 		score >= threshold,
-		.(sample, strand, start, end, feature, geneStart, geneEnd, score,
+		.(sample, strand, start, end, feature, dominant, geneStart, geneEnd, score,
 		startDist = ifelse(strand == "+", start - geneStart, -(end - geneEnd)),
 		endDist = ifelse(strand == "+", end - geneStart, -(start - geneEnd)))
 	][,
-		.(sample, strand, startDist, endDist, score, feature, tsr_id = seq_len(.N))
+		.(sample, strand, startDist, endDist, score, dominant, feature, tsr_id = seq_len(.N))
 	]
 
+	## Consider only dominant if required.
+	if (dominant) {
+		annotated_tsr <- annotated_tsr[(dominant)]
+	}
+	annotated_tsr[, dominant := NULL]
+
         ## Get order of genes for heatmap (mean across samples).
-	annotated_tsr <- annotated_tsr[,
-		.(sample, strand, startDist, endDist, feature, score, tsr_id, feature_mean = mean(score)),
-		by = feature
-	][,
-		.(sample, strand, startDist, endDist, feature, score, tsr_id, rank = dense_rank(feature_mean))
-	]
+	annotated_tsr[, feature_mean := mean(score), by = feature]
+	annotated_tsr[,	rank := dense_rank(feature_mean)]
+	annotated_tsr[, feature_mean := NULL]
 
         ## Put TSR score for entire range of TSR.
         annotated_tsr <- annotated_tsr[,
@@ -243,9 +264,7 @@ tsr_heatmap_matrix <- function(
 
 	## Add quantiles if specified.
 	if (!is.na(quantiles)) {
-		annotated_tsr <- annotated_tsr[,
-			.(sample, feature, score, distanceToTSS, rank, ntile = ntile(rank, quantile))
-		]
+		annotated_tsr[, ntile := ntile(rank, quantile)]
 	}
 
         ## Format for plotting.

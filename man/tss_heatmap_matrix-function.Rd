@@ -5,8 +5,8 @@
 \title{TSS Heatmap Count Matrix}
 \usage{
 tss_heatmap_matrix(experiment, samples = "all", upstream = 1000,
-  downstream = 1000, threshold = 1, anno_type = c("transcriptId",
-  "geneId"), quantiles = NA, use_cpm = FALSE)
+  downstream = 1000, threshold = 1, quantiles = NA,
+  use_cpm = FALSE, dominant = FALSE)
 }
 \arguments{
 \item{experiment}{tsrexplorer object with annotated TSSs}
@@ -19,11 +19,11 @@ tss_heatmap_matrix(experiment, samples = "all", upstream = 1000,
 
 \item{threshold}{Reads required per TSS}
 
-\item{anno_type}{Whether the heatmap is built on genes or transcripts ("geneId", "transcriptId")}
-
 \item{quantiles}{Number of quantiles to break data down into}
 
 \item{use_cpm}{Whether to use the CPM normalized values or not}
+
+\item{dominant}{Consider only dominant}
 }
 \value{
 matrix of counts for each gene/transcript and position

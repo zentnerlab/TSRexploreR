@@ -5,7 +5,7 @@
 \title{Retrieve Sequences Near TSSs}
 \usage{
 tss_sequences(experiment, samples = "all", genome_assembly,
-  threshold = 1, distance = 10, quantiles = NA)
+  threshold = 1, distance = 10, quantiles = NA, dominant = FALSE)
 }
 \arguments{
 \item{experiment}{tsrexplorer object with TSS GRanges}
@@ -19,6 +19,8 @@ tss_sequences(experiment, samples = "all", genome_assembly,
 \item{distance}{Bases to add on each side of TSS}
 
 \item{quantiles}{Break data into quantiles}
+
+\item{dominant}{Whether only dominant should be considered}
 }
 \value{
 Sequences surrounding TSSs

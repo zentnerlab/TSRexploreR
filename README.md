@@ -179,7 +179,7 @@ ggsave("tss_average_plot_quantiles.png", plot = p, device = "png", type = "cairo
 **TSS heatmap**
 
 ```
-count_matrix <- tss_heatmap_matrix(exp, threshold = 3, anno_type = "geneId", upstream = 250, downstream = 250)
+count_matrix <- tss_heatmap_matrix(exp, threshold = 3, upstream = 250, downstream = 250)
 
 p <- plot_heatmap(count_matrix, ncol = 3) +
 	ggplot2::theme(text = element_text(size = 4), legend.key.size = unit(0.3, "cm"))
@@ -212,9 +212,9 @@ ggsave("tss_heatmap_quantiles.png", plot = p, device = "png", type = "cairo", he
 ```
 seqs <- tss_sequences(exp, genome_assembly = assembly, threshold = 3)
 
-p <- plot_sequence_logo(seqs, ncol = 3) +
+p <- plot_sequence_logo(seqs, ncol = 3)
 
-png("tss_seq_logo_quantiles.png", units = "in", res = 300, height = 1, width = 6, type = "cairo")
+png("tss_seq_logo.png", units = "in", res = 300, height = 1, width = 6, type = "cairo")
 p
 dev.off()
 
