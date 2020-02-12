@@ -23,6 +23,7 @@
 #' @param ncol Number of columns to use when plotting data when quantiles not set
 #' @param quantiles Number of quantiles to split data into
 #' @param use_cpm Whether to use the CPM normalized or raw counts
+#' @param dominant Consider only dominant TSS or TSR
 #' @param ... Arguments passed to geom_density
 #'
 #' @return ggplot2 object of average plot
@@ -42,6 +43,7 @@ plot_average <- function(
 	ncol = 1,
 	quantiles = NA,
 	use_cpm = FALSE,
+	dominant = FALSE,
 	...
 ) {
 
@@ -54,8 +56,14 @@ plot_average <- function(
 	sample_data <- sample_data[
 		score >= threshold &
 		dplyr::between(distanceToTSS, -upstream, downstream),
-		.(distanceToTSS, score, samples), 
+		.(distanceToTSS, score, dominant, samples), 
 	]
+
+	## Consider only dominant if required.
+	if (dominant) {
+		sample_data <- sample_data[(dominant)]
+	}
+	sample_data[, dominant := NULL]
 
 	## Add quantile info if requested.
 	if (!is.na(quantiles)) {

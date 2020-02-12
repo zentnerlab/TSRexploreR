@@ -6,7 +6,8 @@
 \usage{
 plot_average(experiment, data_type = c("tss", "tsr"), samples = "all",
   consider_score = FALSE, upstream = 1000, downstream = 1000,
-  threshold = 1, ncol = 1, quantiles = NA, use_cpm = FALSE, ...)
+  threshold = 1, ncol = 1, quantiles = NA, use_cpm = FALSE,
+  dominant = FALSE, ...)
 }
 \arguments{
 \item{experiment}{tsr_explorer object with annotated TSSs}
@@ -28,6 +29,8 @@ plot_average(experiment, data_type = c("tss", "tsr"), samples = "all",
 \item{quantiles}{Number of quantiles to split data into}
 
 \item{use_cpm}{Whether to use the CPM normalized or raw counts}
+
+\item{dominant}{Consider only dominant TSS or TSR}
 
 \item{...}{Arguments passed to geom_density}
 }
