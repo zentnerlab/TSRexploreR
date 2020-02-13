@@ -98,12 +98,12 @@ format_counts <- function(experiment, data_type = c("tss", "tsr")) {
 	if (data_type == "tss") {
 		experiment@counts$TSSs <- list(
 			"raw" = raw_counts,
-			"raw_matrix" = matrix_counts
+			"matrix" = matrix_counts
 		)
 	} else if (data_type == "tsr") {
 		experiment@counts$TSRs <- list(
 			"raw" = raw_counts,
-			"raw_matrix" = matrix_counts
+			"matrix" = matrix_counts
 		)
 	}
 
