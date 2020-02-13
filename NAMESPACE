@@ -3,6 +3,7 @@
 export(add_feature_counts)
 export(annotate_differential)
 export(annotate_features)
+export(count_features)
 export(cpm_normalize)
 export(detect_features)
 export(differential_expression)

@@ -4,12 +4,12 @@
 \alias{format_counts}
 \title{Format Counts}
 \usage{
-format_counts(experiment, data_type = c("tss", "tsr", "features"))
+format_counts(experiment, data_type = c("tss", "tsr"))
 }
 \arguments{
 \item{experiment}{tsrexplorer object}
 
-\item{data_type}{'tss', 'tsr', or 'features'}
+\item{data_type}{'tss' or 'tsr'}
 }
 \description{
 Format counts for TSSs, TSRs, and/or features.

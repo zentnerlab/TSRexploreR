@@ -4,12 +4,12 @@
 #' Format counts for TSSs, TSRs, and/or features.
 #'
 #' @param experiment tsrexplorer object
-#' @param data_type 'tss', 'tsr', or 'features'
+#' @param data_type 'tss' or 'tsr'
 #'
 #' @rdname format_counts-function
 #' @export
 
-format_counts <- function(experiment, data_type = c("tss", "tsr", "features")) {
+format_counts <- function(experiment, data_type = c("tss", "tsr")) {
 
 	## Grab appropriate samples and generate raw count matrices.
 	if (data_type == "tss") {
@@ -98,12 +98,12 @@ format_counts <- function(experiment, data_type = c("tss", "tsr", "features")) {
 	if (data_type == "tss") {
 		experiment@counts$TSSs <- list(
 			"raw" = raw_counts,
-			"matrix" = matrix_counts
+			"raw_matrix" = matrix_counts
 		)
 	} else if (data_type == "tsr") {
 		experiment@counts$TSRs <- list(
 			"raw" = raw_counts,
-			"matrix" = matrix_counts
+			"raw_matrix" = matrix_counts
 		)
 	}
 
@@ -127,6 +127,8 @@ cpm_normalize <- function(experiment, data_type = c("tss", "tsr", "features")) {
 		select_samples <- experiment@counts$TSSs$raw
 	} else if (data_type == "tsr") {
 		select_samples <- experiment@counts$TSRs$raw
+	} else if (data_type == "features") {
+		select_samples <- experiment@counts$features$raw
 	}
 
 	## CPM normalize counts.
@@ -142,6 +144,8 @@ cpm_normalize <- function(experiment, data_type = c("tss", "tsr", "features")) {
 		experiment@counts$TSSs$raw <- cpm_counts
 	} else if (data_type == "tsr") {
 		experiment@counts$TSRs$raw <- cpm_counts
+	} else if (data_type == "features") {
+		experiment@counts$features$raw <- cpm_counts
 	}
 
 	return(experiment)
@@ -187,6 +191,8 @@ tmm_normalize <- function(
 		count_matrix <- experiment@counts$TSSs$matrix
 	} else if (data_type == "tsr") {
 		count_matrix <- experiment@counts$TSRs$matrix
+	} else if (data_type == "features") {
+		count_matrix <- experiment@counts$features$matrix
 	}
 
 	if (samples == "all") samples <- colnames(count_matrix)
@@ -207,22 +213,114 @@ tmm_normalize <- function(
 		calcNormFactors %>%
 		cpm
 
-	row_ranges <- rowRanges(select_samples)
+	if (data_type == "features") {
+		row_data <- DataFrame("feature" = rownames(select_samples))
+	} else {
+		row_ranges <- rowRanges(select_samples)
+	}
 	col_data <- DataFrame(sample = colnames(select_samples))
 
 	## Create filtered and TMM normalized RangedSummarizedExperiment.
-	tmm_experiment <- SummarizedExperiment(
-		assays = list("filtered" = filtered_counts, "tmm" = tmm_counts),
-		rowRanges = row_ranges,
-		colData = col_data
-	)
+	if (data_type == "features") {
+		tmm_experiment <- SummarizedExperiment(
+			assays = list("filtered" = filtered_counts, "tmm" = tmm_counts),
+			rowData = row_data,
+			colData = col_data
+		)
+	} else {
+		tmm_experiment <- SummarizedExperiment(
+			assays = list("filtered" = filtered_counts, "tmm" = tmm_counts),
+			rowRanges = row_ranges,
+			colData = col_data
+		)
+	}
 
 	## Return the TMM normalized counts.
 	if (data_type == "tss") {
 		experiment@correlation$TSSs$tmm <- tmm_experiment
 	} else if (data_type == "tsr") {
-		experiment@correlation$TSSs$tmm <- tmm_experiment
+		experiment@correlation$TSRs$tmm <- tmm_experiment
+	} else if (data_type == "features") {
+		experiment@correlation$features$tmm <- tmm_experiment
 	}
+
+	return(experiment)
+}
+
+#' Feature Counts
+#'
+#' Add feature counts
+#'
+#' @param experiment tsrexplorer object
+#'
+#' @rdname count_features-function
+#' @export
+
+count_features <- function(experiment) {
+	
+	## Get information on whether annotation was by gene or transcript.
+	anno_type <- ifelse(
+		experiment@settings$annotation[, feature_type] == "transcript",
+		"transcriptId", "geneId"
+	)
+
+	## Extract appropriate counts.
+	sample_data <- experiment %>%
+		extract_counts(data_type, "all") %>%
+		map(as.data.table)
+
+	## Get feature counts.
+	sample_data <- sample_data %>%
+		map(function(x) {
+			x <- x[
+				!simple_annotations %in% c("Downstream", "Intergenic"),
+				.(score = sum(score)),
+				by = eval(anno_type)
+			]
+			setnames(x, old = anno_type, new = "feature")
+			return(x)
+		})
+
+	## Turn feature counts into SummarizedExperiments.
+	exp_counts <- sample_data %>%
+		imap(function(x, y) {
+			setnames(x, old = "score", new = y)
+			mat <- x %>%
+				column_to_rownames("feature") %>%
+				as.matrix
+
+			row_data <- DataFrame("feature" = rownames(mat))
+			col_data <- DataFrame("sample" = colnames(mat))
+
+			se <- SummarizedExperiment(
+				assay = list("raw" = mat),
+				colData = col_data,
+				rowData = row_data
+			)
+			return(se)
+		})
+
+	## Create count matrix.
+	count_matrix <- sample_data %>%
+		imap(~ setnames(.x, old = .y, new = "score")) %>%
+		bind_rows(.id = "sample") %>%
+		dcast(feature ~ sample, fill = 0) %>%
+		column_to_rownames("feature") %>%
+		as.matrix
+
+	## Turn count matrix into SummarizedExperiment.
+	row_data <- DataFrame(feature = rownames(count_matrix))
+	col_data <- DataFrame(sample = colnames(count_matrix))
+
+	exp_matrix <- SummarizedExperiment(
+		assay= list("counts" = count_matrix),
+		rowData = row_data,
+		colData = col_data
+	)
+
+	## Store matrix and counts in appropriate slots.
+	experiment@counts$features$raw <- exp_counts
+	experiment@counts$features$matrix <- exp_matrix
 
 	return(experiment)
 }

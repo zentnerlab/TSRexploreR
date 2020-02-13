@@ -38,7 +38,7 @@ annotate_features <- function(
 	## Load GTF.
 	if (is(annotation_data, "character")) {
 		genome_annotation <- makeTxDbFromGFF(annotation_data)
-	} else if (is(annotation_file, "TxDb")) {
+	} else if (is(annotation_data, "TxDb")) {
 		genome_annotation <- annotation_data
 	}
 
