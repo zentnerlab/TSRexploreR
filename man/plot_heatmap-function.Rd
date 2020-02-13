@@ -4,7 +4,9 @@
 \alias{plot_heatmap}
 \title{Plot Heatmap}
 \usage{
-plot_heatmap(heatmap_matrix, max_value = 5, ncol = 1, ...)
+plot_heatmap(heatmap_matrix, max_value = 5, ncol = 1,
+  background_color = "#F0F0F0", low_color = "#56B1F7",
+  high_color = "#132B43", ...)
 }
 \arguments{
 \item{heatmap_matrix}{TSS or TSR heatmap matrix from tss_heatmap_matrix ot tsr_heatmap_matrix}
@@ -12,6 +14,12 @@ plot_heatmap(heatmap_matrix, max_value = 5, ncol = 1, ...)
 \item{max_value}{Max log2 value to truncate heatmap color}
 
 \item{ncol}{Number of columns when plotting multiple samples}
+
+\item{background_color}{The color of heatmap background}
+
+\item{low_color}{The low value gradient color}
+
+\item{high_color}{The high value gradient color}
 
 \item{...}{Arguments passed to geom_tile}
 }

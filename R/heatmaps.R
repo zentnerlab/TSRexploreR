@@ -118,6 +118,9 @@ tss_heatmap_matrix <- function(
 #' @param heatmap_matrix TSS or TSR heatmap matrix from tss_heatmap_matrix ot tsr_heatmap_matrix
 #' @param max_value Max log2 value to truncate heatmap color
 #' @param ncol Number of columns when plotting multiple samples
+#' @param background_color The color of heatmap background
+#' @param low_color The low value gradient color
+#' @param high_color The high value gradient color
 #' @param ... Arguments passed to geom_tile
 #'
 #' @return ggplot2 object of TSS heatmap
@@ -126,7 +129,13 @@ tss_heatmap_matrix <- function(
 #'
 #' @export
 
-plot_heatmap <- function(heatmap_matrix, max_value = 5, ncol = 1, ...) {
+plot_heatmap <- function(
+	heatmap_matrix, max_value = 5, ncol = 1, 
+	background_color = "#F0F0F0",
+	low_color = "#56B1F7",
+	high_color = "#132B43",
+	...
+) {
 
 	## Extract some info from the heatmap matrix.
 	upstream <- metadata(heatmap_matrix)$promoter[1]
@@ -149,11 +158,13 @@ plot_heatmap <- function(heatmap_matrix, max_value = 5, ncol = 1, ...) {
                         breaks = seq(-upstream, downstream, 1) %>% keep(~ (./100) %% 1 == 0),
                         labels = seq(-upstream, downstream, 1) %>% keep(~ (./100) %% 1 == 0)
                 ) +
-		scale_color_continuous (
+		scale_fill_continuous(
 			limits = c(0, max_value),
 			breaks = seq(0, max_value, 1),
 			labels = c(seq(0, max_value - 1, 1), paste0(">=", max_value)),
-			name = "Log2(Score)"
+			name = "Log2(Score)",
+			low = low_color,
+			high = high_color
 		) +
                 theme(
                         axis.text.x = element_text(angle = 45, hjust = 1),
@@ -161,7 +172,7 @@ plot_heatmap <- function(heatmap_matrix, max_value = 5, ncol = 1, ...) {
                         axis.text.y = element_blank(),
                         axis.ticks.y = element_blank(),
                         panel.grid = element_blank(),
-                        panel.background = element_rect(fill = "#E6E6E6", color = "black")
+                        panel.background = element_rect(fill = background_color, color = "black")
                 ) +
 		labs(x = "Position", y = "Feature")
 
