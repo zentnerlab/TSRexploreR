@@ -142,7 +142,7 @@ plot_heatmap <- function(heatmap_matrix, max_value = 5, ncol = 1, ...) {
         ## plot
         p <- ggplot(heatmap_mat, aes(x = distanceToTSS, y = feature, fill = log2(score))) +
                 geom_tile(...) +
-                geom_vline(xintercept = upstream, color = "black", linetype = "dashed") +
+                geom_vline(xintercept = upstream, color = "black", linetype = "dashed", size = 0.1) +
                 facet_grid(. ~ sample) +
                 theme_minimal() +
                 scale_x_discrete(
@@ -161,7 +161,7 @@ plot_heatmap <- function(heatmap_matrix, max_value = 5, ncol = 1, ...) {
                         axis.text.y = element_blank(),
                         axis.ticks.y = element_blank(),
                         panel.grid = element_blank(),
-                        panel.background = element_rect(fill = "#F7F7F7", color = "black")
+                        panel.background = element_rect(fill = "#E6E6E6", color = "black")
                 ) +
 		labs(x = "Position", y = "Feature")
 

@@ -159,3 +159,39 @@ ggsave("tss_feature_plot.png", plot = p, device = "png", type = "cairo", height 
 
 ![tss_feature_plot](../inst/images/tss_feature_plot.png)
 
+### Average Plots
+
+Another useful plot type for TSSs are average plots centered around annotated TSSs.
+The current yeast genome annotation does not contain any information on 5' or 3' UTRs,
+thus the average plot is centered on annotated start codons.
+Because of this one would expect the average plot to be slightly upstream of the start codon center point.
+Most other organisms have UTRs in their genome annotation,
+with the UTR length being the furthest TSS detected from the start codon.
+This would then result in average plots that are expected to be centered and slightly downstream from the annotated TSS center.
+
+```
+p <- plot_average(exp, data_type = "tss", threshold = 3, ncol = 3) +
+        ggplot2::theme(text = element_text(size = 4))
+
+ggsave("tss_average_plot.png", plot = p, device = "png", type = "cairo", height = 1, width = 2)
+```
+
+![tss_average_plot](../inst/images/tss_average_plot.png)
+
+### Heatmaps
+
+While an average plot may give a general overview of TSSs relative to annotated start codons or TSSs,
+it may sometimes be appropriate to generate a heatmap with TSS positions for all features displayed.
+Due to TSSs being single points and sometimes sparsely distributed, it may be hard to them on a heatmap.
+This option is provided regardless.
+
+```
+count_matrix <- tss_heatmap_matrix(exp, threshold = 3, upstream = 250, downstream = 250)
+
+p <- plot_heatmap(count_matrix, ncol = 3) +
+	ggplot2::theme(text = element_text(size = 4), legend.key.size = unit(0.3, "cm"))
+
+ggsave("tss_heatmap.png", plot = p, device = "png", type = "cairo", height = 2, width = 4)
+```
+
+![tss_heatmap](../inst/images/tss_heatmap.png)
