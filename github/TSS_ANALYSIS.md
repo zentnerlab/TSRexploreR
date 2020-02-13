@@ -226,6 +226,8 @@ p
 dev.off()
 ```
 
+![tss_sequence_logo](../inst/images/tss_seq_logo.png)
+
 ## Sequence Color Map
 
 A sequence logo "averages" the bases when displaying data, but it can be useful for a more raw visualization.
