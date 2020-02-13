@@ -37,10 +37,10 @@ library("tsrexplorer")
 **Load example data**
 
 ```
-TSSs <- system.file("extdata", "yeast_TSSs.RDS", package = "tsrexplorer")
+TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
 TSSs <- readRDS(TSSs)
 
-TSRs <- system.file("extdata", "yeast_TSRs.RDS", package = "tsrexplorer")
+TSRs <- system.file("extdata", "S288C_TSRs.RDS", package = "tsrexplorer")
 TSRs <- readRDS(TSRs)
 ```
 
