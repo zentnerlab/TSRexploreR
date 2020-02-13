@@ -55,7 +55,7 @@ exp <- cpm_normalize(exp, data_type = "tss")
 ### Annotating TSSs
 
 After formatting the counts and optionally CPM normalizing them, the TSSs will be annotated relative to known features.
-This function takes either the path and file name of a 'GTF' or 'GFF' file, or a 'BSgenome' package from bioconductor.
+This function takes either the path and file name of a 'GTF' or 'GFF' file, or a 'TxDb' package from bioconductor.
 The annotation information will be added onto the range of the 'RangedSummarizedExperiment'.
 The example below uses a 'GTF' file from Ensembl (R64-1-1 Release 99),
 and will annotate each TSS to the closest transcript.
@@ -195,3 +195,49 @@ ggsave("tss_heatmap.png", plot = p, device = "png", type = "cairo", height = 2, 
 ```
 
 ![tss_heatmap](../inst/images/tss_heatmap.png)
+
+## Sequence Analysis
+
+TSSs tend to occur in certain sequence contexts, and this context can vary between species.
+Knowing this bias can give mechanistic and biologically relevant information on promoter structure.
+
+### TSS Sequence Logo
+
+Generating sequence logos around TSSs is a good preliminary step to better understand the sequence context of TSSs.
+For example, in *S. cerevisiae* it has been previously published that there is a pyrimidine-purine bias in the -1 and +1 positions respectively.
+Furthermore, stronger TSSs tend to have a well position adenine in the -8 position, the loss of which diminishes promoter strength.
+
+First, the sequences centered around TSSs will be retrieved using a 'FASTA' genome assembly or'BSgenome' object.
+This example uses he Ensembl R64-1-1 Release 99 assembly FASTA.
+
+```
+assembly <- system.file("extdata", "S288C_Assembly.fasta", package = "tsrexplorer")
+
+seqs <- tss_sequences(exp, genome_assembly = assembly, threshold = 3)
+```
+
+After the sequences are retrieved, the sequence logos can be generated.
+
+```
+p <- plot_sequence_logo(seqs, ncol = 3)
+
+png("tss_seq_logo.png", units = "in", res = 300, height = 1, width = 6, type = "cairo")
+p
+dev.off()
+```
+
+## Sequence Color Map
+
+A sequence logo "averages" the bases when displaying data, but it can be useful for a more raw visualization.
+Sequence color maps will assign a color to each base, and then display the corresponding colors centered around TSSs.
+The prevalence of colors in certain positions can give further evidence towards putative sequence contexts.
+The same genome assembly and retrieved sequences that were used to make the sequence logos above will be used here.
+
+```
+p <- plot_sequence_colormap(seqs, ncol = 3) +
+	ggplot2::theme(text = element_text(size = 4), legend.key.size = unit(0.3, "cm"))
+
+ggsave("tss_seq_colormap.png", plot = p, device = "png", type = "cairo", height = 2, width = 4)
+```
+
+![tss_sequence_colormap](../inst/images/tss_seq_colormap.png)
