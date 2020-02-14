@@ -228,7 +228,7 @@ dev.off()
 
 ![tss_sequence_logo](../inst/images/tss_seq_logo.png)
 
-## Sequence Color Map
+### Sequence Color Map
 
 A sequence logo "averages" the bases when displaying data, but it can be useful for a more raw visualization.
 Sequence color maps will assign a color to each base, and then display the corresponding colors centered around TSSs.
@@ -239,7 +239,37 @@ The same genome assembly and retrieved sequences that were used to make the sequ
 p <- plot_sequence_colormap(seqs, ncol = 3) +
 	ggplot2::theme(text = element_text(size = 4), legend.key.size = unit(0.3, "cm"))
 
-ggsave("tss_seq_colormap.png", plot = p, device = "png", type = "cairo", height = 2, width = 4)
+ggsave("tss_seq_colormap.png", plot = p, device = "png", type = "cairo", height = 1.5, width = 3)
 ```
 
 ![tss_sequence_colormap](../inst/images/tss_seq_colormap.png)
+
+### Dinucleotide Frequency
+
+As previously discused, in most organisms there seems to be a strong pyrimidine-purine bias in the -1 and +1 positions respectively.
+A function to explore the -1/+1 dinucleotide frequencies is included to further explore this.
+
+```
+assembly <- system.file("extdata", "S288C_Assembly.fasta", package = "tsrexplorer")
+
+frequencies <- dinucleotide_frequencies(exp, genome_assembly = assembly, threshold = 3)
+
+p <- plot_dinucleotide_frequencies(frequencies, ncol = 3) +
+	ggplot2::theme(text = element_text(size = 6))
+
+ggsave("tss_dinucleotide_frequencies.png", plot = p, device = "png", type = "cairo", height = 2, width = 5)
+```
+
+![tss_dinucleotide_frequencies](../inst/images/tss_dinucleotide_frequencies.png)
+
+## Gene Tracks
+
+```
+annotation <- system.file("extdata", "S288C_Annotation.gtf", package = "tsrexplorer")
+
+png("gene_track.png", units = "in", res = 300, height = 3, width = 4, type = "cairo")
+gene_tracks(experiment, annotation, gene_name = "YAL012W", tsr_samples = NA)
+dev.off()
+```
+
+![gene_track](../inst/images/gene_track.png)

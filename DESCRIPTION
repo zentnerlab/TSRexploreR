@@ -52,6 +52,7 @@ Collate:
     'diff_expression.R'
     'dinucleotide.R'
     'gene_plots.R'
+    'gene_tracks.R'
     'genomic_distribution.R'
     'heatmaps.R'
     'misc_tss_plots.R'
