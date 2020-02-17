@@ -72,6 +72,17 @@ exp <- annotate_features(
 )
 ```
 
+### Feature Counting
+
+Now that the TSRs are annotated relative to known features, an RNA-seq like summary of counts per feature can be generated.
+TSRs that are upstream of the defined promoter region, or downstream of the last exon are ignored.
+The feature counts can also be optionally CPM normalized as well.
+
+```
+exp <- count_features(exp, data_type = "tsr")
+exp <- cpm_normalize(exp, data_type = "tsr_features")
+```
+
 ### Marking Dominant TSRs
 
 For the last processing step, the TSR with the highest score is marked for each feature.
@@ -114,3 +125,37 @@ ggsave("tsr_correlation.png", plot = p, device = "png", type = "cairo", height =
 ```
 ![tsr_corr_plot](../inst/images/tsr_correlation.png)
 
+## TSR Genomic Distribution
+
+As part of the TSR processing steps, TSRs were annotated relative to known features.
+This information can be used to explore the distribution of TSRs throughout the genome,
+as well as information on detected features.
+
+### Genomic Distribution Plot
+
+A stacked bar plot can be generated to showcase the fractional distribution of TSRs relative to features.
+
+```
+tsr_distribution <- genomic_distribution(exp, data_type = "tsr", threshold = 3)
+
+p <- plot_genomic_distribution(tsr_distribution) +
+        ggplot2::theme(text = element_text(size = 4), legend.key.size = unit(0.3, "cm"))
+
+ggsave("tsr_genomic_distribution.png", plot = p, device = "png", type = "cairo", height = 1, width = 2.5)
+```
+![tsr_genomic_distribution](../inst/images/tsr_genomic_distribution.png)
+
+### Feature Detection Plot
+
+The number of genes, and fraction of genes with a promoter proximal TSSs can be made into a stacked bar plot.
+
+```
+features <- detect_features(exp, data_type = "tsr")
+
+p <- plot_detected_features(features) +
+	ggplot2::theme(text = element_text(size = 3), legend.key.size = unit(0.3, "cm"))
+
+ggsave("tsr_feature_plot.png", plot = p, device = "png", type = "cairo", height = 1, width = 1.75)
+```
+
+![tsr_feature_plot](../inst/images/tsr_feature_plot.png)

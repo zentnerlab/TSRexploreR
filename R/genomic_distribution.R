@@ -119,7 +119,7 @@ plot_genomic_distribution <- function(genomic_distribution, sample_order = NA) {
 	}
 
 	## Plot the genomic distribution.
-	p <- ggplot(genomic_dist, aes(x = samples, y = count, fill = fct_rev(annotation))) +
+	p <- ggplot(genomic_dist, aes(x = samples, y = count, fill = fct_rev(simple_annotations))) +
 		geom_col(position = "fill") +
 		scale_fill_viridis_d(direction = -1, name="Annotation") +
 		coord_flip() +
@@ -130,7 +130,7 @@ plot_genomic_distribution <- function(genomic_distribution, sample_order = NA) {
 			panel.grid = element_blank()
 		)
 
-	if (metadata(genomic_distribution)$ntiles) p <- p + facet_grid(fct_rev(factor(ntile)) ~ .)
+	if (!is.na(metadata(genomic_distribution)$quantiles)) p <- p + facet_grid(fct_rev(factor(ntile)) ~ .)
 
 	return(p)
 }
