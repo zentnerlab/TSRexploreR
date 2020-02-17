@@ -194,3 +194,23 @@ ggsave("tsr_heatmap.png", plot = p, device = "png", type = "cairo", height = 2, 
 ```
 
 ![tsr_heatmap](../inst/images/tsr_heatmap.png)
+
+## Gene Tracks
+
+Vieweing TSSs and/or TSRs in gene tracks can be useful for a variety of reason.
+It can make obvious which 5' isoforms of a transcript are expressed,
+hint at potential misannotation of genes, uncover 5' UTR structure, and other various goodies.
+
+A convenient function to generate gene tracks for TSSs and/or TSRs is included in tsrexplorer.
+Tracks can be created based on a gene/transcript name, or genomic coordinates.
+Additionally, if tracks are generated based on genes/transcripts, the promoter region only can be optionally displayed.
+
+```
+annotation <- system.file("extdata", "S288C_Annotation.gtf", package = "tsrexplorer")
+
+png("tsr_tracks.png", units = "in", res = 300, height = 0.5, width = 4, type = "cairo")
+gene_tracks(experiment, annotation, feature_name = "YAL012W", tss_samples = NA, track_colors = viridis::viridis(3))
+dev.off()
+```
+
+![tsr_tracks](../inst/images/tsr_tracks.png)

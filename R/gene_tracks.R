@@ -69,7 +69,7 @@ gene_tracks <- function(
 		selected_TSSs <- extract_counts(experiment, "tss", tss_samples, use_cpm)
 	}
 	if (use_tsr) {
-		selected_TSRs <- extract_counts(expermient, "tsr", tsr_samples, use_cpm)
+		selected_TSRs <- extract_counts(experiment, "tsr", tsr_samples, use_cpm)
 	}
 
 	## Convert samples to GRanges.
@@ -92,7 +92,8 @@ gene_tracks <- function(
 					score >= threshold,
 					.(seqnames, start, end, strand, score)
 				]
-			
+				tsr_granges <- makeGRangesFromDataFrame(tsr_granges, keep.extra.columns = TRUE)
+				return(tsr_granges)
 			})
 	}
 
@@ -111,12 +112,19 @@ gene_tracks <- function(
 	## Build gene tracks.
 
 	# Assign colors to tracks.
-	if (length(track_colors) > 1) {
-		track_colors <- unlist(map(track_colors, ~ rep(., 2)))
-	} else {
-		track_colors <- rep(track_colors, length(split_TSSs))	
+	if (use_tss) {
+		if (length(track_colors) > 1) {
+			tss_colors <- unlist(map(track_colors, ~ rep(., 2)))
+		} else {
+			tss_colors <- rep(track_colors, length(split_TSSs))	
+		}
+		names(tss_colors) <- names(split_TSSs)
 	}
-	names(track_colors) <- names(split_TSSs)
+
+	if (use_tsr) {
+		tsr_colors <- track_colors
+		names(tsr_colors) <- names(selected_TSRs)
+	}
 
 	# Genome annotation track.
 	genome_track <- GeneRegionTrack(
@@ -125,27 +133,41 @@ gene_tracks <- function(
 	)
 
 	# Data tracks.
-	tss_tracks <- split_TSSs %>%
-		imap(function(gr, sample_name) {
+	if (use_tss) {
+		tss_tracks <- imap(split_TSSs, function(gr, sample_name) {
 			if (is.na(ymax)) {
 				data_track <- DataTrack(
 					gr, name = sample_name, cex.title = axis_scale,
 					cex.axis = axis_scale, col.histogram = track_colors[sample_name],
-					fill.histogram = track_colors[sample_name]
+					fill.histogram = tss_colors[sample_name]
 				)
 			} else {
-                                data_track <- DataTrack(
-                                        gr, name = sample_name, cex.title = axis_scale,
-                                        cex.axis = axis_scale, col.histogram = track_colors[sample_name],
-                                        fill.histogram = track_colors[sample_name], ylim = c(0, ymax)
-                                )
+                               	data_track <- DataTrack(
+                                       	gr, name = sample_name, cex.title = axis_scale,
+                                       	cex.axis = axis_scale, col.histogram = tss_colors[sample_name],
+                                       	fill.histogram = track_colors[sample_name], ylim = c(0, ymax)
+                               	)
 			}
 			return(data_track)
 		})
+	}
+
+	if (use_tsr) {
+		tsr_tracks <- imap(selected_TSRs, function(gr, sample_name) {
+			anno_track <- AnnotationTrack(
+				gr, name = sample_name, fill = tsr_colors[sample_name],
+				cex.title = axis_scale, col = NA 
+			)
+		})
+	}
 
 	# Combine and plot tracks.
+	tracks <- list(genome_track)
+	if (use_tss) tracks <- c(tracks, tss_tracks)
+	if (use_tsr) tracks <- c(tracks, tsr_tracks)
+
 	plotTracks(
-		c(genome_track, tss_tracks),
+		tracks,
 		chromosome = seqnames(feature_ranges),
 		from = start(feature_ranges),
 		to = end(feature_ranges),
@@ -154,6 +176,7 @@ gene_tracks <- function(
 		col.axis = "black",
 		type = "histogram",
 		baseline = 0,
-		col.baseline = "black"
+		col.baseline = "black",
+		title.width = 2
 	)
 }
