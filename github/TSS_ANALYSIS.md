@@ -265,8 +265,8 @@ ggsave("tss_dinucleotide_frequencies.png", plot = p, device = "png", type = "cai
 ## Gene Tracks
 
 Vieweing TSSs and/or TSRs in gene tracks can be useful for a variety of reason.
-It can make obvious which 5` isoforms of a transcript are expressed,
-hint at potential misannotation of genes, uncover 5` UTR structure, and other various goodies.
+It can make obvious which 5' isoforms of a transcript are expressed,
+hint at potential misannotation of genes, uncover 5' UTR structure, and other various goodies.
 
 A convenient function to generate gene tracks for TSSs and/or TSRs is included in tsrexplorer.
 Tracks can be created based on a gene/transcript name, or genomic coordinates.

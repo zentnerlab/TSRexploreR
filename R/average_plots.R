@@ -47,6 +47,13 @@ plot_average <- function(
 	...
 ) {
 
+	## Assign color type.
+	if (data_type == "tss") {
+		color_type <- "#431352"
+	} else if (data_type == "tsr") {
+		color_type <- "#34698c"
+	}
+
 	## Pull data out of appropriate slot.
 	sample_data <- experiment %>%
 		extract_counts(data_type, samples, use_cpm) %>%
