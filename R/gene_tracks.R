@@ -120,8 +120,8 @@ gene_tracks <- function(
 
 	# Genome annotation track.
 	genome_track <- GeneRegionTrack(
-		anno, name = "", shape = "arrow",
-		col = NA, fill = "black", showId = TRUE
+		anno, name = "", shape = "arrow", col = NA, fill = "black",
+		showId = TRUE, cex.group = axis_scale
 	)
 
 	# Data tracks.
