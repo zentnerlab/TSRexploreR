@@ -76,11 +76,11 @@ TSSs that are upstream of the defined promoter region, or downstream of the last
 The feature counts can also be optionally CPM normalized as well.
 
 ```
-exp <- count_features(exp)
-exp <- cpm_normalize(exp, data_type = "features")
+exp <- count_features(exp, "tss")
+exp <- cpm_normalize(exp, data_type = "tss_features")
 ```
 
-### Annotating Dominant TSSs
+### Marking Dominant TSSs
 
 For the last processing step, the TSS with the highest score is marked for each feature.
 Similar to the feature counting step above, TSSs that are upstream of the defined promoter region,
@@ -92,7 +92,7 @@ the subset of genomic features (such as sequence) that are most preferred when t
 It thus is sometimes easier to resolve important features when looking at only the dominant TSSs.
 
 ```
-exp <- dominant_tss(exp, threshold = 3)
+exp <- mark_dominant(exp, data_type = "tss", threshold = 3)
 ```
 
 ## TSS Correlation

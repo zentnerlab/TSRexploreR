@@ -4,12 +4,13 @@
 \alias{cpm_normalize}
 \title{CPM Normalize Counts}
 \usage{
-cpm_normalize(experiment, data_type = c("tss", "tsr", "features"))
+cpm_normalize(experiment, data_type = c("tss", "tsr", "tss_features",
+  "tsr_features"))
 }
 \arguments{
 \item{experiment}{tsrexplorer object}
 
-\item{data_type}{'tss', 'tsr', or 'features'}
+\item{data_type}{'tss', 'tsr', 'tss_features', 'tsr_features'}
 }
 \description{
 CPM normalize the TSS, TSR, and/or feature counts.

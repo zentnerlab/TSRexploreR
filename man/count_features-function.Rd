@@ -4,10 +4,12 @@
 \alias{count_features}
 \title{Feature Counts}
 \usage{
-count_features(experiment)
+count_features(experiment, data_type = c("tss", "tsr"))
 }
 \arguments{
 \item{experiment}{tsrexplorer object}
+
+\item{data_type}{Either 'tss' or 'tsr'}
 }
 \description{
 Add feature counts

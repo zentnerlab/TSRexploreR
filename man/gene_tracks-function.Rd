@@ -7,7 +7,8 @@
 gene_tracks(experiment, genome_annotation, feature_name,
   feature_type = "gene", tss_samples = "all", tsr_samples = "all",
   threshold = 1, upstream = 250, downstream = 250,
-  promoter_only = FALSE, use_cpm = FALSE, axis_scale = 0.25)
+  promoter_only = FALSE, use_cpm = FALSE, track_colors = "black",
+  axis_scale = 0.25, ymax = NA)
 }
 \arguments{
 \item{experiment}{tsrexplorer object}
@@ -32,7 +33,11 @@ gene_tracks(experiment, genome_annotation, feature_name,
 
 \item{use_cpm}{Use CPM normalized reads or not}
 
+\item{track_colors}{Either a single color value for all tracks, or a vector of colors}
+
 \item{axis_scale}{Relative size scale for axis text and title}
+
+\item{ymax}{Maximum value on Y axis for all TSS tracks}
 }
 \description{
 Generate gene tracks in GViz by gene name.

@@ -113,8 +113,11 @@ plot_correlation <- function(
 	} else if (data_type == "tsr") {
 		normalized_counts <- assay(experiment@correlation$TSRs$tmm, "tmm")
 		type_color <- "#34698c"
-	} else if (data_type == "features") {
-		normalized_counts <- assay(experiment@correlation$features$tmm, "tmm")
+	} else if (data_type == "tss_features") {
+		normalized_counts <- assay(experiment@correlation$TSS_features$tmm, "tmm")
+		type_color <- "#29AF7FFF"
+	} else if (data_type == "tsr_features") {
+		normalized_counts <- assay(experiment@correlation$TSR_features$tmm, "tmm")
 		type_color <- "#29AF7FFF"
 	}
 

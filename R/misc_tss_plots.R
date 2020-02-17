@@ -1,5 +1,5 @@
 
-#' Annotate Dominant TSS
+#' Mark Dominant
 #'
 #' @include tsrexplorer.R
 #'
@@ -8,28 +8,27 @@
 #' @importFrom dplyr select filter group_by ungroup between bind_rows
 #' @importFrom purrr map
 #'
-#' @param experiment tsrexplorer object with annotated TSSs
-#' @param threshold Read threshold for TSS
+#' @param experiment tsrexplorer object with annotated TSSs/TSRs
+#' @param data_type Either 'tss' or 'tsr'
+#' @param threshold Read threshold for TSS/TSRs
 #'
 #' @return Tibble with dominant TSSs for each gene
 #'
-#' @rdname dominant_tss-function
+#' @rdname mark_dominant-function
 #'
 #' @export
 
-dominant_tss <- function(experiment, threshold = 1) {
+mark_dominant <- function(experiment, data_type = c("tss", "tsr"), threshold = 1) {
 	
 	## Select samples.
-	select_samples <- experiment@counts$TSSs$raw %>%
-		map(function(x) {
-			ranges <- rowRanges(x)
-			score(ranges) <- assay(x, "raw")[, 1]
-			ranges <- as.data.table(ranges)
-			return(ranges)
-		})
+	if (data_type == "tss") {
+		select_samples <- experiment@counts$TSSs$raw
+	} else if (data_type == "tsr") {
+		select_samples <- experiment@counts$TSRs$raw
+	}
 
-	## Add dominant TSS info.
-	dominant <- experiment@counts$TSSs$raw %>%
+	## Mark dominant TSS/TSR.
+	dominant <- select_samples %>%
 		map(function(x) {
 
 			## Extract ranges and scores.
@@ -37,7 +36,7 @@ dominant_tss <- function(experiment, threshold = 1) {
 			score(ranges) <- assay(x, "raw")[, 1]
 			ranges <- as.data.table(ranges)
 
-			## Mark the dominant TSSs.
+			## Mark the dominant TSS/TSR.
 			ranges[,
 				dominant := (
 					score == max(score) &
@@ -58,8 +57,13 @@ dominant_tss <- function(experiment, threshold = 1) {
 			return(x)
 		})
 
-	## Return dominant TSSs.
-	experiment@counts$TSSs$raw <- dominant
+	## Return dominant TSS/TSR.
+	if (data_type == "tss") {
+		experiment@counts$TSSs$raw <- dominant
+	} else if (data_type == "tsr") {
+		experiment@counts$TSRs$raw <- dominant
+	}
+
 	return(experiment)
 }
 

@@ -17,7 +17,9 @@
 #' @param downstream bases downstream to extend gene or promoter track
 #' @param promoter_only Instead of plotting the entire gene, plot the promoter region
 #' @param use_cpm Use CPM normalized reads or not
+#' @param track_colors Either a single color value for all tracks, or a vector of colors
 #' @param axis_scale Relative size scale for axis text and title
+#' @param ymax Maximum value on Y axis for all TSS tracks
 #'
 #' @rdname gene_tracks-function
 #' @export
@@ -26,7 +28,8 @@ gene_tracks <- function(
 	experiment, genome_annotation, feature_name, feature_type = "gene",
 	tss_samples = "all", tsr_samples = "all", threshold = 1,
 	upstream = 250, downstream = 250, promoter_only = FALSE,
-	use_cpm = FALSE, axis_scale = 0.25
+	use_cpm = FALSE, track_colors = "black", axis_scale = 0.25,
+	ymax = NA
 ) {
 	
 	## Prepare genome annotation.
@@ -58,12 +61,10 @@ gene_tracks <- function(
 	## Get ranges for requested genes.
 	feature_ranges <- feature_ranges[feature_name, ]
 
-        ## Determine if TSSs and/or TSRs are required.
+	## Grab selected samples.
         use_tss <- !tss_samples %in% c("", " ", "none") & !is.na(tss_samples)
         use_tsr <- !tsr_samples %in% c("", " ", "none") & !is.na(tsr_samples)
 
-
-	## Grab selected samples.
 	if (use_tss) {
 		selected_TSSs <- extract_counts(experiment, "tss", tss_samples, use_cpm)
 	}
@@ -109,6 +110,14 @@ gene_tracks <- function(
 
 	## Build gene tracks.
 
+	# Assign colors to tracks.
+	if (length(track_colors) > 1) {
+		track_colors <- unlist(map(track_colors, ~ rep(., 2)))
+	} else {
+		track_colors <- rep(track_colors, length(split_TSSs))	
+	}
+	names(track_colors) <- names(split_TSSs)
+
 	# Genome annotation track.
 	genome_track <- GeneRegionTrack(
 		anno, name = "", shape = "arrow",
@@ -116,19 +125,27 @@ gene_tracks <- function(
 	)
 
 	# Data tracks.
-	data_tracks <- split_TSSs %>%
+	tss_tracks <- split_TSSs %>%
 		imap(function(gr, sample_name) {
-			data_track <- DataTrack(
-				gr, name = sample_name, cex.title = axis_scale,
-				cex.axis = axis_scale, col.histogram = "black",
-				fill.histogram = "black"
-			)
+			if (is.na(ymax)) {
+				data_track <- DataTrack(
+					gr, name = sample_name, cex.title = axis_scale,
+					cex.axis = axis_scale, col.histogram = track_colors[sample_name],
+					fill.histogram = track_colors[sample_name]
+				)
+			} else {
+                                data_track <- DataTrack(
+                                        gr, name = sample_name, cex.title = axis_scale,
+                                        cex.axis = axis_scale, col.histogram = track_colors[sample_name],
+                                        fill.histogram = track_colors[sample_name], ylim = c(0, ymax)
+                                )
+			}
 			return(data_track)
 		})
 
 	# Combine and plot tracks.
 	plotTracks(
-		c(genome_track, data_tracks),
+		c(genome_track, tss_tracks),
 		chromosome = seqnames(feature_ranges),
 		from = start(feature_ranges),
 		to = end(feature_ranges),

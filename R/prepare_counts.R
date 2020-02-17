@@ -115,20 +115,22 @@ format_counts <- function(experiment, data_type = c("tss", "tsr")) {
 #' CPM normalize the TSS, TSR, and/or feature counts.
 #'
 #' @param experiment tsrexplorer object
-#' @param data_type 'tss', 'tsr', or 'features'
+#' @param data_type 'tss', 'tsr', 'tss_features', 'tsr_features'
 #'
 #' @rdname cpm_normalize-function
 #' @export
 
-cpm_normalize <- function(experiment, data_type = c("tss", "tsr", "features")) {
+cpm_normalize <- function(experiment, data_type = c("tss", "tsr", "tss_features", "tsr_features")) {
 	
 	## Grab appropriate samples.
 	if (data_type == "tss") {
 		select_samples <- experiment@counts$TSSs$raw
 	} else if (data_type == "tsr") {
 		select_samples <- experiment@counts$TSRs$raw
-	} else if (data_type == "features") {
-		select_samples <- experiment@counts$features$raw
+	} else if (data_type == "tss_features") {
+		select_samples <- experiment@counts$TSS_features$raw
+	} else if (data_type == "tsr_features") {
+		select_samples <- experiment@counts$TSR_features$raw
 	}
 
 	## CPM normalize counts.
@@ -144,8 +146,10 @@ cpm_normalize <- function(experiment, data_type = c("tss", "tsr", "features")) {
 		experiment@counts$TSSs$raw <- cpm_counts
 	} else if (data_type == "tsr") {
 		experiment@counts$TSRs$raw <- cpm_counts
-	} else if (data_type == "features") {
-		experiment@counts$features$raw <- cpm_counts
+	} else if (data_type == "tss_features") {
+		experiment@counts$TSS_features$raw <- cpm_counts
+	} else if (data_type == "tsr_features") {
+		experiment@counts$TSR_features$raw <- cpm_counts
 	}
 
 	return(experiment)
@@ -180,7 +184,7 @@ cpm_normalize <- function(experiment, data_type = c("tss", "tsr", "features")) {
 
 tmm_normalize <- function(
 	experiment,
-	data_type = c("tss", "tsr", "features"),
+	data_type = c("tss", "tsr", "tss_features", "tsr_features"),
 	samples = "all",
 	threshold = 1,
 	n_samples = 1
@@ -191,8 +195,10 @@ tmm_normalize <- function(
 		count_matrix <- experiment@counts$TSSs$matrix
 	} else if (data_type == "tsr") {
 		count_matrix <- experiment@counts$TSRs$matrix
-	} else if (data_type == "features") {
-		count_matrix <- experiment@counts$features$matrix
+	} else if (data_type == "tss_features") {
+		count_matrix <- experiment@counts$TSS_features$matrix
+	} else if (data_type == "tsr_features") {
+		count_matrix <- experiment@counts$TSR_features$matrix
 	}
 
 	if (samples == "all") samples <- colnames(count_matrix)
@@ -213,7 +219,7 @@ tmm_normalize <- function(
 		calcNormFactors %>%
 		cpm
 
-	if (data_type == "features") {
+	if (data_type %in% c("tss_features", "tsr_features")) {
 		row_data <- DataFrame("feature" = rownames(select_samples))
 	} else {
 		row_ranges <- rowRanges(select_samples)
@@ -221,7 +227,7 @@ tmm_normalize <- function(
 	col_data <- DataFrame(sample = colnames(select_samples))
 
 	## Create filtered and TMM normalized RangedSummarizedExperiment.
-	if (data_type == "features") {
+	if (data_type %in% c("tss_features", "tsr_features")) {
 		tmm_experiment <- SummarizedExperiment(
 			assays = list("filtered" = filtered_counts, "tmm" = tmm_counts),
 			rowData = row_data,
@@ -240,8 +246,10 @@ tmm_normalize <- function(
 		experiment@correlation$TSSs$tmm <- tmm_experiment
 	} else if (data_type == "tsr") {
 		experiment@correlation$TSRs$tmm <- tmm_experiment
-	} else if (data_type == "features") {
-		experiment@correlation$features$tmm <- tmm_experiment
+	} else if (data_type == "tss_features") {
+		experiment@correlation$TSS_features$tmm <- tmm_experiment
+	} else if (data_type == "tsr_features") {
+		experiment@correlation$TSR_features$tmm <- tmm_experiment
 	}
 
 	return(experiment)
@@ -252,11 +260,12 @@ tmm_normalize <- function(
 #' Add feature counts
 #'
 #' @param experiment tsrexplorer object
+#' @param data_type Either 'tss' or 'tsr'
 #'
 #' @rdname count_features-function
 #' @export
 
-count_features <- function(experiment) {
+count_features <- function(experiment, data_type = c("tss", "tsr")) {
 	
 	## Get information on whether annotation was by gene or transcript.
 	anno_type <- ifelse(
@@ -319,8 +328,13 @@ count_features <- function(experiment) {
 	)
 
 	## Store matrix and counts in appropriate slots.
-	experiment@counts$features$raw <- exp_counts
-	experiment@counts$features$matrix <- exp_matrix
+	if (data_type == "tss") {
+		experiment@counts$TSS_features$raw <- exp_counts
+		experiment@counts$TSS_features$matrix <- exp_matrix
+	} else {
+		experiment@counts$TSR_features$raw <- exp_counts
+		experiment@counts$TSR_features$matrix <- exp_matrix
+	}
 
 	return(experiment)
 }
