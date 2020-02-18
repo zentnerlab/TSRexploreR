@@ -50,6 +50,7 @@ Collate:
     'correlation.R'
     'data_import.R'
     'diff_expression.R'
+    'dim_reduction.R'
     'dinucleotide.R'
     'gene_plots.R'
     'gene_tracks.R'
