@@ -19,28 +19,15 @@
 #' @export
 
 plot_ma <- function(
-	differential_expression,
+	experiment,
 	data_type = c("tss", "tsr", "tss_features", "tsr_features"),
 	de_comparisons = "all", ncol = 1, ...
 ){
 
 	## Get differential expression tables.
-	if (data_type == "tss") {
-		de_samples <- experiment@diff_features$TSSs
-	} else if (data_type == "tsr") {
-		de_samples <- experiment@diff_features$TSRs
-	} else if (data_type == "tss_features") {
-		de_samples <- experiment@diff_features$TSS_features
-	} else if (data_type == "tsr_features") {
-		de_samples <- experiment@diff_features$TSR_features
-	}
+	de_samples <- extract_de(experiment, data_type, de_comparisons)
 
-	if (de_comparisons == "all") {
-		de_samples <- discard(de_samples, names(de_samples) %in% c("model", "design"))
-	} else {
-		de_samples <- de_samples[de_comparisons]
-	}
-
+	## Prepare DE data for plotting.
 	de_samples <- bind_rows(de_samples)
 	de_samples <- de_samples[, .(sample, FID, log2FC, logCPM, DE)]
 	de_samples[, DE := factor(DE, levels = c("up", "unchanged", "down"))]
@@ -83,4 +70,39 @@ export_for_enrichment <- function(annotated_de, log2fc_cutoff = 1, fdr_cutoff = 
 		filter(change != "unchanged")
 
 	return(export_data)
+}
+
+#' Plot DE Numbers
+#'
+#' Plot number of DE features.
+#'
+#' @param experiment tsrexplorer object
+#' @param data_type Either 'tss', 'tsr', 'tss_features', or 'tsr_features'
+#' @param de_comparisons The comparisons to plot
+#' @param ... Additional arguments passed to geom_col
+#'
+#' @rdname plot_num_de-function
+#' @export
+
+plot_num_de <- function(
+	experiment, data_type = c("tss", "tsr", "tss_features", "tsr_features"),
+	de_comparisons = "all", ...
+) {
+	## Get appropriate samples.
+	de_samples <- experiment %>%
+		extract_de(data_type, de_comparisons) %>%
+		bind_rows
+
+	## prepare data for plotting.
+	de_data <- de_samples[, .(count = .N), by = .(sample, DE)]
+	de_data[, DE := factor(DE, levels = c("up", "unchanged", "down"))]
+
+	## Plot data.
+	p <- ggplot(de_data, aes(x = sample, y = count, fill = DE)) +
+		geom_col(position = "stack", ...) +
+		theme_bw() +
+		scale_fill_viridis_d() +
+		theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+	return(p)
 }

@@ -123,3 +123,15 @@ p <- plot_ma(exp, data_type = "tsr", de_comparisons = "Untreated_vs_Diamide", si
 ggsave("diff_tsr_ma.png", plot = p, device = "png", type = "cairo", height = 1.5, width = 2)
 ```
 ![diff_tsr_ma](../inst/images/diff_tsr_ma.png)
+
+### Number of DE TSRs
+
+A convenient plot to visualize the number of DE TSRs between the different comparisons.
+
+```
+p <- plot_num_de(exp, data_type = "tsr", de_comparisons = "Untreated_vs_Diamide") +
+	ggplot2::theme(text = element_text(size = 3), legend.key.size = unit(0.3, "cm"))
+
+ggsave("tsr_num_de.png", plot = p, device = "png", type = "cairo", height = 1.5, width = 1.25)
+```
+![tsr_num_de](../inst/images/tsr_num_de.png)

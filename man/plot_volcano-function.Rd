@@ -4,11 +4,12 @@
 \alias{plot_ma}
 \title{DE MA Plot}
 \usage{
-plot_ma(differential_expression, data_type = c("tss", "tsr",
-  "tss_features", "tsr_features"), de_comparisons = "all", ncol = 1,
-  ...)
+plot_ma(experiment, data_type = c("tss", "tsr", "tss_features",
+  "tsr_features"), de_comparisons = "all", ncol = 1, ...)
 }
 \arguments{
+\item{experiment}{tsrexplorer object}
+
 \item{data_type}{Either 'tss', 'tsr', 'tss_features', or 'tsr_features'}
 
 \item{de_comparisons}{Which differential expression comparisons to plot}
@@ -16,8 +17,6 @@ plot_ma(differential_expression, data_type = c("tss", "tsr",
 \item{ncol}{Number of columns for the facets}
 
 \item{...}{Arguments passed to geom_point}
-
-\item{experiment}{tsrexplorer object}
 }
 \value{
 ggplot2 object of differential TSRs volcano plot.
