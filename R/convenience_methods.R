@@ -128,16 +128,18 @@ extract_counts <- function(experiment, data_type, samples, cpm_norm = FALSE) {
 
 extract_matrix <- function(experiment, data_type, samples) {
 
-	## Get counts.
 	if (data_type == "tss") {
-		if (samples == "all") samples <- colnames(assay(experiment@counts$TSSs$normalized, "counts"))
-		selected_samples <- experiment@counts$TSSs$normalized %>%
-			.[, .$sample %in% samples]
+		selected_samples <- experiment@counts$TSSs$matrix
 	} else if (data_type == "tsr") {
-		if (samples == "all") samples <- colnames(assay(experiment@counts$TSRs$normalized, "counts"))
-		selected_samples <- experiment@counts$TSRs$normalized %>%
-			.[, .$sample %in% samples]
+		selected_samples <- experiment@counts$TSRs$matrix
+	} else if (data_type == "tss_features") {
+		selected_samples <- experiment@counts$TSS_features$matrix
+	} else if (data_type == "tsr_features") {
+		selected_samples <- experiment@counts$TSR_features$matrix
 	}
+
+	if (samples == "all") samples <- colnames(selected_samples)
+	selected_samples <- selected_samples[, samples]
 
 	return(selected_samples)
 } 

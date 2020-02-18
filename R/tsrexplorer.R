@@ -3,6 +3,7 @@
 #' @slot experiment Named lists containing GRanges of TSSs and/or TSRs
 #' @slot counts Named lists of TMM and CPM normalized TSSs and/or TSRs
 #' @slot correlation Named lists of correlation values between TSS and/or TSR sets
+#' @slot diff_features Differential features
 #' @slot settings storage location for arguments used in various functions
 #'
 #' @rdname tsr_explorer-class
@@ -14,12 +15,14 @@ setClass(
 		experiment = "list",
 		counts = "list",
 		correlation = "list",
+		diff_features = "list",
 		settings = "list"
 	),
 	prototype(
 		experiment = list(),
 		counts = list(),
 		correlation = list(),
+		diff_features = list(),
 		settings = list()
 	)
 )

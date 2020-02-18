@@ -31,6 +31,8 @@ start regions (TSRs) or clustered transcription start sites (cTSSs).
 
 \item{\code{correlation}}{Named lists of correlation values between TSS and/or TSR sets}
 
+\item{\code{diff_features}}{Differential features}
+
 \item{\code{settings}}{storage location for arguments used in various functions}
 }}
 

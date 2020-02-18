@@ -4,8 +4,8 @@
 \alias{fit_edger_model}
 \title{edgeR Model for DE}
 \usage{
-fit_edger_model(experiment, data_type = c("tss", "tsr", "features"),
-  samples = c(), groups = c())
+fit_edger_model(experiment, data_type = c("tss", "tsr", "tss_features",
+  "tsr_features"), samples, groups)
 }
 \arguments{
 \item{experiment}{tsrexplorer object after TMM normalization.}

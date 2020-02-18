@@ -84,3 +84,42 @@ p <- plot_reduction(exp, data_type = "tsr", size = 0.5) +
 ggsave("diff_tsr_reduction.png", plot = p, device = "png", type = "cairo", height = 1.25, width = 2)
 ```
 ![diff_tsr_reduction](../inst/images/diff_tsr_reduction.png)
+
+## Differential TSRs
+
+Between different developmental or environmental conditions, there may be differential useage of TSSs and TSRs.
+tsrexplorer takes advantage of edgeR to allow the discovery of these potential differential features.
+
+### Discovering Differential TSRs
+
+The first step is to build an edgeR model that contains the samples and their (replicate) groups.
+This can be done at the TSS, TSR, or feature level. This example will be looking at differential TSRs.
+
+```
+exp <- fit_edger_model(
+	exp, data_type = "tsr",
+	samples = c(
+		"S288C_WT_1", "S288C_WT_2", "S288C_WT_3",
+		"S288C_D_1", "S288C_D_2", "S288C_D_3"
+	),
+	groups = c(rep("Untreated", 3), rep("Diamide", 3))
+)
+```
+
+After building the edgeR model, the model can then be used to call differential TSRs.
+
+```
+exp <- differential_expression(exp, data_type = "tsr", compare_groups = c("Untreated", "Diamide"))
+```
+
+### MA Plots
+
+MA plots provide a good overview of the distribution of differentially expressed genes relative to average gene expression.
+
+```
+p <- plot_ma(exp, data_type = "tsr", de_comparisons = "Untreated_vs_Diamide", size = 0.25, stroke = 0.25) +
+	ggplot2::theme(text = element_text(size = 3), legend.key.size = unit(0.2, "cm"))
+
+ggsave("diff_tsr_ma.png", plot = p, device = "png", type = "cairo", height = 1.5, width = 2)
+```
+![diff_tsr_ma](../inst/images/diff_tsr_ma.png)

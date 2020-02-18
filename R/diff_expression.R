@@ -7,6 +7,7 @@
 #' @importFrom edgeR DGEList filterByExpr calcNormFactors cpm estimateDisp glmQLFit
 #' @importFrom dplyr select_at rename
 #' @importFrom magrittr %>%
+#' @importFrom forcats fct_inorder
 #'
 #' @param experiment tsrexplorer object after TMM normalization.
 #' @param data_type Whether TSSs, TSRs, or feature counts should be analyzed.
@@ -19,27 +20,47 @@
 #'
 #' @export
 
-fit_edger_model <- function(experiment, data_type = c("tss", "tsr", "features"), samples = c(), groups = c()) {
+fit_edger_model <- function(
+	experiment, data_type = c("tss", "tsr", "tss_features", "tsr_features"),
+	samples, groups
+) {
+	## Design table.
+	design <- data.table("samples" = samples, "groups" = groups)
+	design[, groups := fct_inorder(as.character(groups))]
 
 	## Grab data from appropriate slot.
-	sample_data <- extract_matrix(experiment, data_type, samples)
+	sample_data <- extract_matrix(experiment, data_type, design[["samples"]])
 
 	## Filter out features with low counts.
-	sample_data <- sample_data %>%
-		.[filterByExpr(assay(., "counts")),]
+	sample_data <- sample_data[filterByExpr(assay(sample_data, "counts")), ]
 
 	## Setting sample design.
-	groups_factor <- factor(groups, levels = sort(unique(groups)))
-	sample_design <- model.matrix(~ 0 + groups_factor)
+	sample_design <- model.matrix(~ 0 + design[["groups"]])
 
 	## Create DE fitted object.
 	fitted_model <- assay(sample_data, "counts") %>%
-		DGEList(group = groups_factor) %>%
+		set_rownames(rowRanges(sample_data)$FID) %>%
+		DGEList(group = design[["groups"]]) %>%
 		calcNormFactors %>%
 		estimateDisp(design = sample_design) %>%
 		glmQLFit(design = sample_design)
 
-	return(fitted_model)
+	## Store model in tsrexplorer object.
+	if (data_type == "tss") {
+		experiment@diff_features$TSSs$model <- fitted_model
+		experiment@diff_features$TSSs$design <- design
+	} else if (data_type == "tsr") {
+		experiment@diff_features$TSRs$model <- fitted_model
+		experiment@diff_features$TSRs$design <- design
+	} else if (data_type == "tss_features") {
+		experiment@diff_features$TSS_features$model <- fitted_model
+		experiment@diff_features$TSS_features$design <- design
+	} else if (data_type == "tsr_features") {
+		experiment@diff_features$TSR_features$model <- fitted_model
+		experiment@diff_features$TSR_features$design <- design
+	}
+
+	return(experiment)
 }
 
 #' Find Differential Expression
@@ -51,6 +72,7 @@ fit_edger_model <- function(experiment, data_type = c("tss", "tsr", "features"),
 #' @importFrom dplyr pull mutate
 #' @importFrom tidyr separate
 #' @importFrom magrittr %>%
+#' @importFrom purrr map_dbl
 #'
 #' @param fit_edger_model edgeR differential expression model from fit_edger_model
 #' @param data_type Whether the input was made from TSSs, TSRs, or features
@@ -62,99 +84,96 @@ fit_edger_model <- function(experiment, data_type = c("tss", "tsr", "features"),
 #'
 #' @export
 
-differential_expression <- function(fit_edger_model, data_type = c("tss", "tsr", "feature"), compare_groups = c()) {
+differential_expression <- function(
+	experiment, data_type = c("tss", "tsr", "tss_features", "tsr_features"),
+	compare_groups, fdr_cutoff = 0.05, log2fc_cutoff = 1) {
 	
-	## Set up contrasts.
-	comparison_contrast <- fit_edger_model$samples %>%
-		pull(group) %>%
-		levels %>%
-		as.numeric %>%
-		length %>%
-		numeric(length = .)
-
-	comparison_contrast[compare_groups[1]] <- -1
-	comparison_contrast[compare_groups[2]] <- 1
-
-	## Differential expression
-	diff_expression <- glmQLFTest(fit_edger_model, contrast = comparison_contrast)
-
-	## Prepare tibble for export
-	diff_expression <- diff_expression$table %>%
-		as_tibble(.name_repair = "universal", rownames = "position") %>%
-		mutate(FDR = p.adjust(PValue, method = "fdr")) %>%
-		rename(log2FC = logFC)
-
-	if (data_type %in% c("tss", "tsr")) {
-		diff_expression <- separate(
-			diff_expression,
-			position,
-			into = c("chr", "start", "end", "strand"),
-			sep = "_"
-		)
-	} else if (data_type == "feature") {
-		diff_expression <- rename(diff_expression, "gene_id" = position)
+	## Grab appropriate model.
+	if (data_type == "tss") {
+		edger_model <- experiment@diff_features$TSSs$model
+		edger_design <- experiment@diff_features$TSSs$design
+		anno_data <- as.data.table(rowRanges(experiment@counts$TSSs$matrix))
+	} else if (data_type == "tsr") {
+		edger_model <- experiment@diff_features$TSRs$model
+		edger_design <- experiment@diff_features$TSRs$design
+		anno_data <- as.data.table(rowRanges(experiment@counts$TSRs$matrix))
+	} else if (data_type == "tss_features") {
+		edger_model <- experiment@diff_features$TSS_features$model
+		edger_design <- experiment@diff_features$TSS_features$design
+		anno_data <- as.data.table(rowData(experiment@counts$TSS_features$matrix))
+	} else if (data_type == "tsr_features") {
+		edger_model <- experiment@diff_features$TSR_features$model
+		edger_design <- experiment@diff_features$TSR_features$design
+		anno_data <- as.data.table(rowData(experiment@counts$TSR_features$matrix))
 	}
 
-	return(diff_expression)
+	## Set up contrasts.
+	comparison_levels <- edger_design %>%
+		pull(groups) %>%
+		levels
+
+	comparison_contrast <- comparison_levels %>%
+		map_dbl(function(x) {
+			if (x == compare_groups[1]) {
+				return_value <- 1
+			} else if (x == compare_groups[2]) {
+				return_value <- -1
+			} else {
+				return_value <- 0
+			}
+			return(return_value)
+		})
+
+	## Differential expression
+	diff_expression <- glmQLFTest(edger_model, contrast = comparison_contrast)
+
+	diff_expression <- diff_expression$table %>%
+		rownames_to_column("FID") %>%
+		as.data.table
+
+	setnames(diff_expression, old = "logFC", new = "log2FC")
+
+	comparison_name <- str_c(compare_groups[1], "_vs_", compare_groups[2])
+	diff_expression[, c("FDR", "sample") := list(
+		p.adjust(PValue, "fdr"), comparison_name
+	)][, DE := case_when(
+		log2FC >= log2fc_cutoff & FDR <= fdr_cutoff ~ "up",
+		log2FC <= -log2fc_cutoff & FDR <= fdr_cutoff ~ "down",
+		TRUE ~ "unchanged"
+	)]
+
+	## Merge in the annotation information from the original matrix.
+	setkey(diff_expression, "FID")
+	setkey(anno_data, "FID")
+	comparison_name <- str_c(compare_groups[1], "_vs_", compare_groups[2])
+	diff_expression <- diff_expression[anno_data, nomatch = 0]
+
+	## Add differential expression data back to object.
+	if (data_type == "tss") {
+		experiment@diff_features$TSSs[[comparison_name]] <- diff_expression
+	} else if (data_type == "tsr") {
+		experiment@diff_features$TSRs[[comparison_name]] <- diff_expression
+	} else if (data_type == "tss_features") {
+		experiment@diff_features$TSS_features[[comparison_name]] <- diff_expression
+	} else if (data_type == "tsr_features") {
+		experiment@diff_features$TSR_features[[comparison_name]] <- diff_expression
+	}
+
+	return(experiment)
 }
 
-#' Annotate Differential TSSs or TSRs
+#' DE MA Plot
 #'
-#' Annotate Differential TSSs or TSRs to nearest gene or transcript.
-#'
-#' @import tibble
-#' @importFrom ChIPseeker annotatePeak
-#' @importFrom GenomicFeatures makeTxDbFromGFF
-#' @importFrom GenomicRanges makeGRangesFromDataFrame
-#' @importFrom magrittr %>%
-#'
-#' @param differential_exp Tibble of differential TSSs or TSRs from differential_expression
-#' @param annotation_file GTF genomic annotation file
-#' @param feature_type Whether to annotate TSSs or TSRs relative to genes or transcripts
-#' @param upstream Bases upstream of TSS
-#' @param downstream Bases downstream of TSS
-#'
-#' @return Tibble of annotated differential TSSs or TSRs
-#'
-#' @rdname annotate_differential-function
-#'
-#' @export
-
-annotate_differential <- function(
-	differential_exp,
-	annotation_file,
-	feature_type = c("gene", "transcript"),
-	upstream = 1000,
-	downstream = 100
-) {
-	## Load genome annotation file as TxDb.
-	genome_annotation <- makeTxDbFromGFF(annotation_file, "gtf")
-
-	## Annotate differential TSRs.
-	annotated_diff <- differential_exp %>%
-		makeGRangesFromDataFrame(keep.extra.columns = TRUE) %>%
-		annotatePeak(
-			tssRegion = c(-upstream, downstream),
-			TxDb = genome_annotation,
-			sameStrand = TRUE,
-			level = feature_type
-		) %>%
-		as_tibble(.name_repair = "universal")
-
-	return(annotated_diff)
-}
-
-#' DE Volcano Plot
-#'
-#' Generate volcano plot for differential TSRs or Genes (RNA-seq)
+#' Generate MA plot for differential TSRs or Genes (RNA-seq)
 #'
 #' @import tibble
 #' @import ggplot2
 #' @importFrom dplyr case_when mutate
 #'
-#' @param differential_expression Tibble of differential TSRs or genes (RNA-seq) from differential_expression
-#' @param log2fc_cutoff Log2 fold change cutoff for significance
-#' @param fdr_cutoff FDR value cutoff for significance
+#' @param experiment tsrexplorer object
+#' @param de_comparisons Which differential expression comparisons to plot
+#' @param data_type Either 'tss', 'tsr', 'tss_features', or 'tsr_features'
+#' @param ncol Number of columns for the facets
 #' @param ... Arguments passed to geom_point
 #'
 #' @return ggplot2 object of differential TSRs volcano plot.
@@ -163,30 +182,39 @@ annotate_differential <- function(
 #'
 #' @export
 
-plot_volcano <- function(
+plot_ma <- function(
 	differential_expression,
-	log2fc_cutoff = 1,
-	fdr_cutoff = 0.05,
-	...
+	data_type = c("tss", "tsr", "tss_features", "tsr_features"),
+	de_comparisons = "all", ncol = 1, ...
 ){
 
-	## Annotate TSRs based on significance cutoff.
-	diff_expression <- differential_expression %>%
-		mutate(Change = case_when(
-			log2FC >= log2fc_cutoff & FDR <= fdr_cutoff ~ "Increased",
-			log2FC <= -log2fc_cutoff & FDR <= fdr_cutoff ~ "Decreased",
-			TRUE ~ "Unchanged"
-		)) %>%
-		mutate(Change = factor(Change, levels = c("Decreased", "Unchanged", "Increased")))
+	## Get differential expression tables.
+	if (data_type == "tss") {
+		de_samples <- experiment@diff_features$TSSs
+	} else if (data_type == "tsr") {
+		de_samples <- experiment@diff_features$TSRs
+	} else if (data_type == "tss_features") {
+		de_samples <- experiment@diff_features$TSS_features
+	} else if (data_type == "tsr_features") {
+		de_samples <- experiment@diff_features$TSR_features
+	}
 
-	## Volcano plot of differential expression
-	p <- ggplot(diff_expression, aes(x = log2FC, y = -log10(FDR))) +
-		geom_point(aes(color = Change), ...) +
-		scale_color_viridis_d() +
+	if (de_comparisons == "all") {
+		de_samples <- discard(de_samples, names(de_samples) %in% c("model", "design"))
+	} else {
+		de_samples <- de_samples[de_comparisons]
+	}
+
+	de_samples <- bind_rows(de_samples)
+	de_samples <- de_samples[, .(sample, FID, log2FC, logCPM, DE)]
+	de_samples[, DE := factor(DE, levels = c("up", "unchanged", "down"))]
+
+	## MA plot of differential expression
+	p <- ggplot(de_samples, aes(x = logCPM, y = log2FC, color = DE)) +
+		geom_point(...) +
 		theme_bw() +
-		geom_vline(xintercept = -log2fc_cutoff, lty = 2) +
-		geom_vline(xintercept = log2fc_cutoff, lty = 2) +
-		geom_hline(yintercept = -log10(fdr_cutoff), lty = 2)
+		scale_color_viridis_d() +
+		facet_wrap(~ sample, ncol = ncol, scales = "free")
 
 	return(p)
 }

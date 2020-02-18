@@ -3,6 +3,8 @@
 #'
 #' Format counts for TSSs, TSRs, and/or features.
 #'
+#' @importFrom magrittr set_colnames set_rownames
+#'
 #' @param experiment tsrexplorer object
 #' @param data_type 'tss' or 'tsr'
 #'
@@ -69,6 +71,7 @@ format_counts <- function(experiment, data_type = c("tss", "tsr")) {
 
 				row_data <- gr
 				score(row_data) <- NULL
+				row_data$FID <- sprintf("FID%s", seq_len(length(row_data)))
 				col_data <- DataFrame(sample = sample_name)
 
 				raw_exp <- SummarizedExperiment(
@@ -83,7 +86,9 @@ format_counts <- function(experiment, data_type = c("tss", "tsr")) {
 	## Create RangedSummarizedExperiment for count matrices.
 	if (data_type %in% c("tss", "tsr")) {
 		count_matrix <- as.matrix(raw_matrix[,-1:-4])
+
 		row_data <- makeGRangesFromDataFrame(raw_matrix)
+		row_data$FID <- sprintf("FID%s", seq_len(length(row_data)))
 	}
 	
 	col_data <- DataFrame("sample" = colnames(count_matrix), row.names = colnames(count_matrix))

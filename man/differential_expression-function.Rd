@@ -4,15 +4,16 @@
 \alias{differential_expression}
 \title{Find Differential Expression}
 \usage{
-differential_expression(fit_edger_model, data_type = c("tss", "tsr",
-  "feature"), compare_groups = c())
+differential_expression(experiment, data_type = c("tss", "tsr",
+  "tss_features", "tsr_features"), compare_groups, fdr_cutoff = 0.05,
+  log2fc_cutoff = 1)
 }
 \arguments{
-\item{fit_edger_model}{edgeR differential expression model from fit_edger_model}
-
 \item{data_type}{Whether the input was made from TSSs, TSRs, or features}
 
 \item{compare_groups}{Vector of length two of the two groups to find differential TSRs}
+
+\item{fit_edger_model}{edgeR differential expression model from fit_edger_model}
 }
 \value{
 tibble of differential TSRs
