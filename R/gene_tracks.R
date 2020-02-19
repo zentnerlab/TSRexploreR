@@ -5,19 +5,21 @@
 #' Generate gene tracks in GViz by gene name.
 #'
 #' @import Gviz
+#' @importFrom stringr str_count
 #'
 #' @param experiment tsrexplorer object
 #' @param genome_annotation Genome annotation GTF/GFF file, or TxDb object
 #' @param feature_name Name of gene or transcript to plot
 #' @param feature_type Either 'gene' or 'transcript'
-#' @param tss_samples Names of samples to plot TSSs for, or 'none'
-#' @param tsr_samples Names of samples to plot TSRs for, or 'none'
+#' @param samples Names of samples to plot.
+#' Append sample names with 'TSS:' or 'TSR:' for TSS and TSR tracks respectively.
 #' @param threshold TSSs and TSRs below threshold are excluded from plotting
 #' @param upstream bases upstream to extend gene or promoter track
 #' @param downstream bases downstream to extend gene or promoter track
 #' @param promoter_only Instead of plotting the entire gene, plot the promoter region
 #' @param use_cpm Use CPM normalized reads or not
-#' @param track_colors Either a single color value for all tracks, or a vector of colors
+#' @param tss_colors Either a single color value for all TSS tracks, or a vector of colors
+#' @param tsr_colors Either a single color value for all TSR tracks, or a vector of colors
 #' @param axis_scale Relative size scale for axis text and title
 #' @param ymax Maximum value on Y axis for all TSS tracks
 #'
@@ -26,10 +28,9 @@
 
 gene_tracks <- function(
 	experiment, genome_annotation, feature_name, feature_type = "gene",
-	tss_samples = "all", tsr_samples = "all", threshold = 1,
-	upstream = 250, downstream = 250, promoter_only = FALSE,
-	use_cpm = FALSE, track_colors = "black", axis_scale = 0.25,
-	ymax = NA
+	samples = "all", threshold = 1, upstream = 250, downstream = 250,
+	promoter_only = FALSE, use_cpm = FALSE, tss_colors = "black",
+	tsr_colors = "black", axis_scale = 0.25, ymax = NA
 ) {
 	
 	## Prepare genome annotation.
@@ -58,17 +59,27 @@ gene_tracks <- function(
 			resize(., width = width(.) + upstream,  "end")
 	}
 
-	## Get ranges for requested genes.
-	feature_ranges <- feature_ranges[feature_name, ]
+	## Get ranges for requested gene.
+	if (feature_type == "transcript") {
+		feature_ranges <- feature_ranges[feature_ranges$tx_name == feature_name, ]
+	} else if (feature_type == "gene") {
+		feature_ranges <- feature_ranges[feature_ranges$gene_id == feature_name, ]
+	}
 
 	## Grab selected samples.
-        use_tss <- !tss_samples %in% c("", " ", "none") & !is.na(tss_samples)
-        use_tsr <- !tsr_samples %in% c("", " ", "none") & !is.na(tsr_samples)
+	use_tss <- sum(str_count(samples, "^TSS:")) > 0
+	use_tsr <- sum(str_count(samples, "^TSR:")) > 0
 
 	if (use_tss) {
+		tss_samples <- samples %>%
+			keep(~ str_detect(., "^TSS:")) %>%
+			str_replace("^TSS:", "")
 		selected_TSSs <- extract_counts(experiment, "tss", tss_samples, use_cpm)
 	}
 	if (use_tsr) {
+		tsr_samples <- samples %>%
+			keep(~ str_detect(., "^TSR:")) %>%
+			str_replace("^TSR:", "")
 		selected_TSRs <- extract_counts(experiment, "tsr", tsr_samples, use_cpm)
 	}
 
@@ -114,15 +125,17 @@ gene_tracks <- function(
 	# Assign colors to tracks.
 	if (use_tss) {
 		if (length(track_colors) > 1) {
-			tss_colors <- unlist(map(track_colors, ~ rep(., 2)))
+			tss_colors <- unlist(map(tss_colors, ~ rep(., 2)))
 		} else {
-			tss_colors <- rep(track_colors, length(split_TSSs))	
+			tss_colors <- rep(tss_colors, length(split_TSSs))	
 		}
 		names(tss_colors) <- names(split_TSSs)
 	}
 
 	if (use_tsr) {
-		tsr_colors <- track_colors
+		if (length(tsr_colors) == 1) {
+			tsr_colors <- rep(tsr_colors, length(selected_TSRs))
+		}
 		names(tsr_colors) <- names(selected_TSRs)
 	}
 
@@ -162,9 +175,19 @@ gene_tracks <- function(
 	}
 
 	# Combine and plot tracks.
-	tracks <- list(genome_track)
-	if (use_tss) tracks <- c(tracks, tss_tracks)
-	if (use_tsr) tracks <- c(tracks, tsr_tracks)
+	tracks <- map(samples, function(x) {
+		track_name <- str_replace(x, "^(TSS:|TSR:)", "")
+		if (str_detect(x, "^TSS:")) {
+			select_track <- c(
+				tss_tracks[[str_c(track_name, ".pos")]],
+				tss_tracks[[str_c(track_name, ".neg")]]
+			)
+		} else if (str_detect(x, "^TSR:")) {
+			select_track <- tsr_tracks[[track_name]]
+		}
+		return(select_track)
+	})
+	tracks <- c(genome_track, tracks)
 
 	plotTracks(
 		tracks,

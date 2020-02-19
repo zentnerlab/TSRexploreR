@@ -5,9 +5,9 @@
 \title{Gene Tracks by Gene}
 \usage{
 gene_tracks(experiment, genome_annotation, feature_name,
-  feature_type = "gene", tss_samples = "all", tsr_samples = "all",
-  threshold = 1, upstream = 250, downstream = 250,
-  promoter_only = FALSE, use_cpm = FALSE, track_colors = "black",
+  feature_type = "gene", samples = "all", threshold = 1,
+  upstream = 250, downstream = 250, promoter_only = FALSE,
+  use_cpm = FALSE, tss_colors = "black", tsr_colors = "black",
   axis_scale = 0.25, ymax = NA)
 }
 \arguments{
@@ -19,9 +19,8 @@ gene_tracks(experiment, genome_annotation, feature_name,
 
 \item{feature_type}{Either 'gene' or 'transcript'}
 
-\item{tss_samples}{Names of samples to plot TSSs for, or 'none'}
-
-\item{tsr_samples}{Names of samples to plot TSRs for, or 'none'}
+\item{samples}{Names of samples to plot.
+Append sample names with 'TSS:' or 'TSR:' for TSS and TSR tracks respectively.}
 
 \item{threshold}{TSSs and TSRs below threshold are excluded from plotting}
 
@@ -33,7 +32,9 @@ gene_tracks(experiment, genome_annotation, feature_name,
 
 \item{use_cpm}{Use CPM normalized reads or not}
 
-\item{track_colors}{Either a single color value for all tracks, or a vector of colors}
+\item{tss_colors}{Either a single color value for all TSS tracks, or a vector of colors}
+
+\item{tsr_colors}{Either a single color value for all TSR tracks, or a vector of colors}
 
 \item{axis_scale}{Relative size scale for axis text and title}
 

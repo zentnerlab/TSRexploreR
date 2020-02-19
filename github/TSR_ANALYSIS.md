@@ -209,7 +209,11 @@ Additionally, if tracks are generated based on genes/transcripts, the promoter r
 annotation <- system.file("extdata", "S288C_Annotation.gtf", package = "tsrexplorer")
 
 png("tsr_tracks.png", units = "in", res = 300, height = 0.5, width = 4, type = "cairo")
-gene_tracks(experiment, annotation, feature_name = "YAL012W", tss_samples = NA, track_colors = viridis::viridis(3))
+gene_tracks(
+	experiment, annotation, feature_name = "YAL012W", 
+	samples = c("TSR:S288C_WT_1", "TSR:S288C_WT_2", "TSR:S288C_WT_3"),
+	tsr_colors = viridis::viridis(3)
+)
 dev.off()
 ```
 
