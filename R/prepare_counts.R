@@ -17,8 +17,7 @@ format_counts <- function(experiment, data_type = c("tss", "tsr")) {
 	if (data_type == "tss") {
 
 		## Grab selected_samples.
-		if (length(samples) == 1 & samples == "all") samples <- names(tss_experiment(experiment))
-		select_samples <- tss_experiment(experiment)[samples]
+		select_samples <- tss_experiment(experiment)
 
 		## Create raw count matrix.
 		raw_matrix <- select_samples %>%
@@ -29,8 +28,7 @@ format_counts <- function(experiment, data_type = c("tss", "tsr")) {
 	} else if (data_type == "tsr") {
 
 		## Grab selected samples.
-		if (length(samples) == 1 & samples == "all") samples <- names(tsr_experiment(experiment))
-		select_samples <- tsr_experiment(experiment)[samples]
+		select_samples <- tsr_experiment(experiment)
 
 		## Merge overlapping TSRs to get consensus.
 		tsr_consensus <- select_samples %>%

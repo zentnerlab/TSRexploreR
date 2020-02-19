@@ -6,6 +6,7 @@
 #'
 #' @import Gviz
 #' @importFrom stringr str_count
+#' @importFrom purrr walk
 #'
 #' @param experiment tsrexplorer object
 #' @param genome_annotation Genome annotation GTF/GFF file, or TxDb object
@@ -124,7 +125,7 @@ gene_tracks <- function(
 
 	# Assign colors to tracks.
 	if (use_tss) {
-		if (length(track_colors) > 1) {
+		if (length(tss_colors) > 1) {
 			tss_colors <- unlist(map(tss_colors, ~ rep(., 2)))
 		} else {
 			tss_colors <- rep(tss_colors, length(split_TSSs))	
@@ -151,14 +152,14 @@ gene_tracks <- function(
 			if (is.na(ymax)) {
 				data_track <- DataTrack(
 					gr, name = sample_name, cex.title = axis_scale,
-					cex.axis = axis_scale, col.histogram = track_colors[sample_name],
+					cex.axis = axis_scale, col.histogram = tss_colors[sample_name],
 					fill.histogram = tss_colors[sample_name]
 				)
 			} else {
                                	data_track <- DataTrack(
                                        	gr, name = sample_name, cex.title = axis_scale,
                                        	cex.axis = axis_scale, col.histogram = tss_colors[sample_name],
-                                       	fill.histogram = track_colors[sample_name], ylim = c(0, ymax)
+                                       	fill.histogram = tss_colors[sample_name], ylim = c(0, ymax)
                                	)
 			}
 			return(data_track)
@@ -175,19 +176,16 @@ gene_tracks <- function(
 	}
 
 	# Combine and plot tracks.
-	tracks <- map(samples, function(x) {
-		track_name <- str_replace(x, "^(TSS:|TSR:)", "")
-		if (str_detect(x, "^TSS:")) {
-			select_track <- c(
-				tss_tracks[[str_c(track_name, ".pos")]],
-				tss_tracks[[str_c(track_name, ".neg")]]
-			)
-		} else if (str_detect(x, "^TSR:")) {
-			select_track <- tsr_tracks[[track_name]]
+	tracks <- list("genome_track" = genome_track)
+	for (samp in samples) {
+		track_name <- str_replace(samp, "^(TSS:|TSR:)", "")
+		if (str_detect(samp, "^TSS:")) {
+			tracks[[str_c(track_name, ".pos")]] <- tss_tracks[[str_c(track_name, ".pos")]]
+			tracks[[str_c(track_name, ".neg")]] <- tss_tracks[[str_c(track_name, ".neg")]]
+		} else if (str_detect(samp, "^TSR:")) {
+			tracks[[track_name]] <- tsr_tracks[[track_name]]
 		}
-		return(select_track)
-	})
-	tracks <- c(genome_track, tracks)
+	}
 
 	plotTracks(
 		tracks,

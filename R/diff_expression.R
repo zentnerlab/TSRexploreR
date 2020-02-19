@@ -115,9 +115,9 @@ differential_expression <- function(
 	comparison_contrast <- comparison_levels %>%
 		map_dbl(function(x) {
 			if (x == compare_groups[1]) {
-				return_value <- 1
-			} else if (x == compare_groups[2]) {
 				return_value <- -1
+			} else if (x == compare_groups[2]) {
+				return_value <- 1
 			} else {
 				return_value <- 0
 			}
@@ -160,4 +160,32 @@ differential_expression <- function(
 	}
 
 	return(experiment)
+}
+
+#' DE Table
+#'
+#' Output a table with differential features
+#'
+#' @param experiment tsrexplorer object
+#' @param data_type Either 'tss', 'tsr', 'tss_features', or 'tsr_features'
+#' @param de_comparisons The name of the DE comparison
+#' @param de_type A single value or combination of 'up, 'unchanged', and/or 'down'
+#'
+#' @rdname de_table-function
+#' @export
+
+de_table <- function(
+	experiment, data_type = c("tss", "tsr", "tss_features", "tsr_features"),
+	de_comparisons = "all", de_type = c("up", "unchanged", "down")
+) {
+	## Grab tables.
+	de_tables <- experiment %>%
+		extract_de(data_type, de_comparisons) %>%
+		bind_rows
+
+	## Filter tables.
+	de_tables <- de_tables[DE %in% de_type]
+
+	## Return tables.
+	return(de_tables)
 }

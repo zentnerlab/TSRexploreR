@@ -21,7 +21,10 @@ library("tsrexplorer")
 TSRs <- system.file("extdata", "S288C_TSRs.RDS", package = "tsrexplorer")
 TSRs <- readRDS(TSRs)
 
-exp <- tsr_explorer(TSRs = TSRs)
+TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
+TSSs <- readRDS(TSSs)
+
+exp <- tsr_explorer(TSSs = TSSs, TSRs = TSRs)
 ```
 
 ## Processing of TSRs
@@ -135,3 +138,25 @@ p <- plot_num_de(exp, data_type = "tsr", de_comparisons = "Untreated_vs_Diamide"
 ggsave("tsr_num_de.png", plot = p, device = "png", type = "cairo", height = 1.5, width = 1.25)
 ```
 ![tsr_num_de](../inst/images/tsr_num_de.png)
+
+## Gene Tracks.
+
+First, prepare the TSSs so they can be included in the plot.
+
+```
+exp <- format_counts(exp, data_type = "tss")
+```
+You can now make the gene track for an example gene that had a differential TSR.
+
+```
+annotation <- system.file("extdata", "S288C_Annotation.gtf", package = "tsrexplorer")
+
+png("diff_tsr_tracks.png", units = "in", res = 300, height = 2, width = 4, type = "cairo")
+gene_tracks(
+        experiment, annotation, feature_name = "YKR076W", threshold = 3, axis_scale = 0.25,
+        samples = c("TSS:S288C_WT_1", "TSR:S288C_WT_1", "TSS:S288C_D_1", "TSR:S288C_D_1"),
+        ymax = 80, tss_colors = viridis::viridis(2), tsr_colors = viridis::viridis(2)
+)
+dev.off()
+```
+![diff_tsr_tracks](../inst/images/diff_tsr_tracks.png)
