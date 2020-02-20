@@ -49,27 +49,27 @@ plot_ma <- function(
 #' @import tibble
 #' @importFrom dplyr select mutate case_when filter
 #' 
-#' @param annotated_de Annotated differential TSRs
-#' @param log2fc_cutoff Log2 fold change cutoff for significance
-#' @param fdr_cutoff FDR cutoff for significance
+#' @param experiment tsrexplorer object
+#' @param data_type Either 'tss', 'tsr', 'tss_features', or 'tsr_features'
+#' @param de_comparisons The DE comparisons to plot
 #'
 #' @rdname export_for_enrichment-function
 #'
 #' @export
 
-export_for_enrichment <- function(annotated_de, log2fc_cutoff = 1, fdr_cutoff = 0.05) {
+export_for_enrichment <- function(
+	experiment, data_type = c("tss", "tsr", "tss_features", "tsr_features"),
+	de_comparisons = "all" 
+) {
+	## Get DE comparisons.
+	de_data <- extract_de(experiment, data_type, de_comparisons) %>%
+		bind_rows
+	de_data <- de_data[
+		DE %in% c("up", "down"),
+		.(sample, FID, geneId, log2FC, FDR, DE)
+	]
 	
-	## Prepare data for export.
-	export_data <- annotated_de %>%
-		select(geneId, log2FC, FDR) %>%
-		mutate(change = case_when(
-			log2FC >= log2fc_cutoff & FDR <= fdr_cutoff ~ "increase",
-			log2FC <= -log2fc_cutoff & FDR <= fdr_cutoff ~ "decrease",
-			TRUE ~ "unchanged"
-		)) %>%
-		filter(change != "unchanged")
-
-	return(export_data)
+	return(de_data)
 }
 
 #' Plot DE Numbers

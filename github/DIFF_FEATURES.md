@@ -139,6 +139,41 @@ ggsave("tsr_num_de.png", plot = p, device = "png", type = "cairo", height = 1.5,
 ```
 ![tsr_num_de](../inst/images/tsr_num_de.png)
 
+## Gene Ontology.
+
+Gene ontology enrichment is a good way to uncover the higher order processes that are being changed.
+The preferred tool for enrichment analysis in R is the clusterProfiler library.
+tsrexplorer provides a convenient function to export DE features to a format ready for analysis with clusterProfiler.
+
+```
+enrichment_data <- export_for_enrichment(experiment, data_type = "tsr", de_comparisons = "Untreated_vs_Diamide")
+
+library("clusterProfiler")
+library("org.Sc.sgd.db")
+
+go_enrichment <- compareCluster(
+	geneId ~ sample + DE,
+	data = enrichment_data,
+	fun = "enrichGO",
+	OrgDb = "org.Sc.sgd.db",
+	pAdjustMethod = "fdr",
+	ont = "BP",
+	keyType = "ENSEMBL"
+)
+
+p <- dotplot(go_enrichment, font.size = 4) +
+	scale_color_viridis_c() +
+	theme(
+		text = element_text(size = 4),
+		axis.text.x = element_text(angle = 45, hjust = 1),
+		legend.key.size = unit(0.3, "cm")
+	)
+
+ggsave("tsr_enrichment.png", plot = p, device = "png", type = "cairo", height = 3, width = 3)
+
+```
+![tsr_enrichment](../inst/images/tsr_enrichment.png)
+
 ## Gene Tracks.
 
 First, prepare the TSSs so they can be included in the plot.
