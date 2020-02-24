@@ -4,12 +4,14 @@
 \alias{format_counts}
 \title{Format Counts}
 \usage{
-format_counts(experiment, data_type = c("tss", "tsr"))
+format_counts(experiment, data_type = c("tss", "tsr"), samples = "all")
 }
 \arguments{
 \item{experiment}{tsrexplorer object}
 
 \item{data_type}{'tss' or 'tsr'}
+
+\item{samples}{Sample names or merged replicate IDs to process}
 }
 \description{
 Format counts for TSSs, TSRs, and/or features.

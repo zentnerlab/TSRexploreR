@@ -7,17 +7,19 @@
 #'
 #' @param experiment tsrexplorer object
 #' @param data_type 'tss' or 'tsr'
+#' @param samples Sample names or merged replicate IDs to process
 #'
 #' @rdname format_counts-function
 #' @export
 
-format_counts <- function(experiment, data_type = c("tss", "tsr")) {
+format_counts <- function(experiment, data_type = c("tss", "tsr"), samples = "all") {
 
 	## Grab appropriate samples and generate raw count matrices.
 	if (data_type == "tss") {
 
 		## Grab selected_samples.
 		select_samples <- tss_experiment(experiment)
+		if (samples != "all") select_samples <- select_samples[samples]
 
 		## Create raw count matrix.
 		raw_matrix <- select_samples %>%
@@ -29,6 +31,7 @@ format_counts <- function(experiment, data_type = c("tss", "tsr")) {
 
 		## Grab selected samples.
 		select_samples <- tsr_experiment(experiment)
+		if (samples != "all") select_samples <- select_samples[samples]
 
 		## Merge overlapping TSRs to get consensus.
 		tsr_consensus <- select_samples %>%
