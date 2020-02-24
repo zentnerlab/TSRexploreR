@@ -16,14 +16,16 @@ setClass(
 		counts = "list",
 		correlation = "list",
 		diff_features = "list",
-		settings = "list"
+		settings = "list",
+		meta_data = "list"
 	),
 	prototype(
 		experiment = list(),
 		counts = list(),
 		correlation = list(),
 		diff_features = list(),
-		settings = list()
+		settings = list(),
+		meta_data = list()
 	)
 )
 

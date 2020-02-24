@@ -62,5 +62,6 @@ Collate:
     'normalize.R'
     'prepare_counts.R'
     'rnaseq.R'
+    'samples_groups.R'
     'thresholding.R'
     'tsr_plots.R'

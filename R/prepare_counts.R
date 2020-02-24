@@ -196,3 +196,108 @@ count_features <- function(experiment, data_type = c("tss", "tsr")) {
 
 	return(experiment)
 }
+
+#' Merge Samples
+#'
+#' Merge replicates or selected samples.
+#'
+#' @param experiment tsrexplorer object
+#' @param data_type Either 'tss' or 'tsr'
+#' @param merge_replicates If 'TRUE' replicate groups will be merged
+#' @param sample_list If merge_replicates is set to 'FALSE',
+#' specify what samples to merge in list format.
+#'
+#' @rdname merge_samples-function
+#' @export
+
+merge_samples <- function(
+	experiment, data_type = c("tss", "tsr"),
+	merge_replicates = TRUE, sample_list = NA
+) {
+	
+	## Prepare what samples will be merged.
+	if (merge_replicates) {
+		samples <- experiment@meta_data$sample_sheet[type == data_type] %>%
+			split(.$replicate_id) %>%
+			map(~ pull(., name))
+	}
+
+	## Get feature sets to be merged.
+	selected_samples <- extract_counts(experiment, data_type, unlist(samples))
+
+	## Merge feature sets.
+	if (data_type == "tss") {
+		merged_samples <- samples %>%
+			map(function(sample_group) {
+				merged <- bind_rows(selected_samples[sample_group])
+				merged <- as.data.table(merged)
+				merged[, score := sum(score), by = .(seqnames, start, end, strand)]
+				merged[, FID := sprintf("FID%s", seq_len(nrow(merged)))]
+				return(merged)
+			})
+	} else if (data_type == "tsr") {
+		merged_samples <- samples %>%
+			map(function(sample_group) {
+				merged <- selected_samples[sample_group] %>%
+					map(~ makeGRangesFromDataFrame(., keep.extra.columns = TRUE))
+				
+				tsr_consensus <- merged %>%
+					purrr::reduce(c) %>%
+					GenomicRanges::reduce(ignore.strand = FALSE)
+
+				merged <- merged %>%
+					map(
+						~ findOverlapPairs(query = tsr_consensus, subject = .) %>%
+						as.data.table
+					) %>%
+					bind_rows
+
+				setnames(
+					merged,
+					old = c(
+						"first.seqnames", "first.start", "first.end",
+						"first.strand", "second.X.score"
+					),
+					new = c("seqnames", "start", "end", "strand", "score")
+				)
+
+				merged <- merged[,
+					.(score = sum(score)),
+					by = .(seqnames, start, end, strand)
+				]
+
+				merged[, FID := sprintf("FID%s", seq_len(nrow(merged)))]
+			})
+	}
+
+	## Convert to RangedSummarizedExperiment.
+	merged_rse <- merged_samples %>%
+		imap(function(gr, replicate_id) {
+			gr <- makeGRangesFromDataFrame(gr, keep.extra.columns = TRUE)
+			
+			counts <- score(gr)
+			colnames(counts) <- replicate_id
+
+			row_ranges <- gr
+			score(gr) <- NULL
+
+			col_data <- DataFrame(sample = replicate_id, rownames = replicate_id)
+
+			rse <- SummarizedExperiment(
+				assays = list(raw = counts),
+				rowRanges = row_ranges,
+				colData = col_data
+			)
+
+			return(rse)
+		})
+
+	## Return merged samples.
+	if (data_type == "tss") {
+		experiment@counts$TSSs$raw <- c(experiment@counts$TSSs$raw, merged_rse)
+	} else if (data_type == "tsr") {
+		experiment@counts$TSRs$raw <- c(experiment@counts$TSRs$raw, merged_rse)
+	}
+
+	return(experiment)
+}
