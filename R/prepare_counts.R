@@ -223,7 +223,13 @@ merge_samples <- function(
 	}
 
 	## Get feature sets to be merged.
-	selected_samples <- extract_counts(experiment, data_type, unlist(samples))
+	if (data_type == "tss") {
+		selected_samples <- experiment@experiment$TSSs[unlist(samples)]
+	} else if (data_type == "tsr") {
+		selected_samples <- experiment@experiment$TSRs[unlist(samples)]
+	}
+
+	selected_samples <- map(selected_samples, as.data.table)
 
 	## Merge feature sets.
 	if (data_type == "tss") {
@@ -232,7 +238,6 @@ merge_samples <- function(
 				merged <- bind_rows(selected_samples[sample_group])
 				merged <- as.data.table(merged)
 				merged[, score := sum(score), by = .(seqnames, start, end, strand)]
-				merged[, FID := sprintf("FID%s", seq_len(nrow(merged)))]
 				return(merged)
 			})
 	} else if (data_type == "tsr") {
@@ -265,38 +270,17 @@ merge_samples <- function(
 					.(score = sum(score)),
 					by = .(seqnames, start, end, strand)
 				]
-
-				merged[, FID := sprintf("FID%s", seq_len(nrow(merged)))]
 			})
 	}
 
-	## Convert to RangedSummarizedExperiment.
-	merged_rse <- merged_samples %>%
-		imap(function(gr, replicate_id) {
-			gr <- makeGRangesFromDataFrame(gr, keep.extra.columns = TRUE)
-			
-			counts <- score(gr)
-			colnames(counts) <- replicate_id
-
-			row_ranges <- gr
-			score(gr) <- NULL
-
-			col_data <- DataFrame(sample = replicate_id, rownames = replicate_id)
-
-			rse <- SummarizedExperiment(
-				assays = list(raw = counts),
-				rowRanges = row_ranges,
-				colData = col_data
-			)
-
-			return(rse)
-		})
+	## Convert merged samples to GRanges.
+	merged_samples <- map(merged_samples, ~ makeGRangesFromDataFrame(., keep.extra.columns = TRUE))
 
 	## Return merged samples.
 	if (data_type == "tss") {
-		experiment@counts$TSSs$raw <- c(experiment@counts$TSSs$raw, merged_rse)
+		experiment@experiment$TSSs <- c(experiment@experiment$TSSs, merged_samples)
 	} else if (data_type == "tsr") {
-		experiment@counts$TSRs$raw <- c(experiment@counts$TSRs$raw, merged_rse)
+		experiment@experiment$TSRs <- c(experiment@experiment$TSRs, merged_samples)
 	}
 
 	return(experiment)
