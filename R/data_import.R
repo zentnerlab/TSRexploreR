@@ -95,13 +95,62 @@ setMethod("tss_import", signature(object = "tssObject"),
 
 #' CAGEr object
 #'
-#' @importFrom CAGEr CAGEexp
+#' @importFrom CAGEr CAGEexp CTSStagCount
+#'
+#' @param data_type Either "tss", "tsr", or "consensus"
 #'
 #' @rdname tss_import-generic
 
 setMethod("tss_import", signature(object = "CAGEexp"),
-	function(tsrexplorer_obj, object) {
+	function(tsrexplorer_obj, object, data_type) {
 		message("Importing TSSs from CAGEexp object")
+
+	if (data_type == "tss") {
+
+		## Grab TSS counts from CAGEexp object.
+		counts <- as.data.table(CTSStagCount(object))
+
+		## Format counts for input to tsrexplorer.
+		sample_names <- discard(colnames(counts), ~ . %in% c("chr", "pos", "strand"))
+		counts <- melt(
+			counts, variable.name = "sample", value.name = "score",
+			measure.vars = sample_names, fill = 0
+		)
+		counts <- counts[score > 0]
+		setnames(counts, old = c("chr", "pos"), new = c("seqnames", "start"))
+		counts[, end := start]
+		counts <- split(counts, counts$sample)
+
+		## Change counts to GRanges objects.
+		counts_gr <- counts %>%
+			map(function(x) {
+				x$sample <- NULL
+				x <- makeGRangesFromDataFrame(x, keep.extra.columns = TRUE)
+				return(x)
+			})
+
+		## Add counts to tsrexplorer object.
+		tss_experiment(tsrexplorer_obj) <- counts_gr
+
+	} else if (data_type == "tsr") {
+		
+		## Grab TSR counts from CAGEexp object.
+		counts <- tagClusters(object) %>%
+			map(as.data.table)
+
+		## Format counts for input to tsrexplorer.
+		counts <- counts %>%
+			map(function(x) {
+				setnames(x, old = c("chr", "tpm"), new = c("seqnames", "score"))
+				x <- makeGRangesFromDataFrame(x, keep.extra.columns = TRUE)
+				return(x)
+			})
+
+		## Add counts to tsrexplorer object.
+		tsr_experiment(tsrexplorer_obj) <- counts
+	
+		return(tsrexplorer_obj)
+	}
 	}
 )
 

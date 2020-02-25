@@ -26,6 +26,17 @@ TSSs <- readRDS(TSSs)
 
 exp <- tsr_explorer(TSSs = TSSs, TSRs = TSRs)
 ```
+Adding a sample sheet allows for easier processing downstream.
+
+```
+sample_sheet <- data.table(
+	replicate_id = c(rep("Diamide", 3), rep("Untreated", 3)),
+	tss_name = c(sprintf("S288C_D_%s", seq_len(3)), sprintf("S288C_WT_%s", seq_len(3))),
+	tsr_name = c(sprintf("S288C_D_%s", seq_len(3)), sprintf("S288C_WT_%s", seq_len(3)))
+)
+
+exp <- add_sample_sheet(exp, sample_sheet)
+```
 
 ## Processing of TSRs
 

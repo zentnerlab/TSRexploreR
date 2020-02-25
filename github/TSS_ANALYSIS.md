@@ -100,6 +100,14 @@ exp <- mark_dominant(exp, data_type = "tss", threshold = 3)
 Finding the correlation between samples can be informative of both sequencing efficacy,
 and to also get a cursory understanding about the differences between different samples.
 
+### Count Matrix
+
+A count matrix must first be generated.
+
+```
+exp <- count_matrix(exp, data_type = "tss")
+```
+
 ### TMM Normalization
 
 For correlation analysis, tsrexploreR uses 'TMM' normalization from the edgeR library.

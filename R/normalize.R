@@ -24,8 +24,7 @@ cpm_normalize <- function(experiment, data_type = c("tss", "tsr", "tss_features"
 	## CPM normalize counts.
 	cpm_counts <- select_samples %>%
 		map(function(x) {
-			cpm_matrix <- cpm(assay(x, "raw"))
-			assay(x, "cpm") <- cpm_matrix
+			x <- x[, cpm := cpm(score)]
 			return(x)
 		})
 

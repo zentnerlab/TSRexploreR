@@ -17,7 +17,7 @@ tss_import(object, ...)
 
 \S4method{tss_import}{tssObject}(tsrexplorer_obj, object)
 
-\S4method{tss_import}{CAGEexp}(tsrexplorer_obj, object)
+\S4method{tss_import}{CAGEexp}(tsrexplorer_obj, object, data_type)
 }
 \arguments{
 \item{object}{Object with TSSs to import into tsrexplorer}
@@ -25,6 +25,8 @@ tss_import(object, ...)
 \item{...}{Additional arguments for classes}
 
 \item{tsrexplorer_obj}{tsrexplorer object to add the TSSs to}
+
+\item{data_type}{Either "tss", "tsr", or "consensus"}
 }
 \description{
 Convenience function to import TSSs.

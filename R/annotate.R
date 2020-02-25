@@ -53,10 +53,11 @@ annotate_features <- function(
 
 	## Annotate features.
 	
-	# Individual counts.
 	counts_annotated <- counts %>%
 		map(function(x) {
-			annotated <- rowRanges(x) %>%
+			x <- makeGRangesFromDataFrame(x, keep.extra.columns = TRUE)
+
+			annotated <- x %>%
 				annotatePeak(
 					tssRegion = c(-upstream, downstream),
 					TxDb = genome_annotation,
@@ -74,41 +75,15 @@ annotate_features <- function(
 					annotation == "Distal Intergenic" ~ "Intergenic"
 				)
 			]
-			annotated <- makeGRangesFromDataFrame(annotated, keep.extra.columns = TRUE)
-
-			rowRanges(x) <- annotated
-			return(x)
+			
+			return(annotated)
 		})
 
-	# Count matrices.
-	matrix_annotated <- rowRanges(count_matrix) %>%
-		annotatePeak(
-			tssRegion = c(-upstream, downstream),
-			TxDb = genome_annotation,
-			sameStrand = TRUE,
-			level = feature_type
-		) %>%
-		as.data.table
-
-	matrix_annotated[,
-		simple_annotations := case_when(
-			annotation == "Promoter" ~ "Promoter",
-			str_detect(annotation, pattern="(Exon|UTR)") ~ "Exon",
-			str_detect(annotation, pattern="Intron") ~ "Intron",
-			str_detect(annotation, pattern="Downstream") ~ "Downstream",
-			annotation == "Distal Intergenic" ~ "Intergenic"
-		)
-	]
-	matrix_annotated <- makeGRangesFromDataFrame(matrix_annotated, keep.extra.columns = TRUE)
-	rowRanges(count_matrix) <- matrix_annotated
-	
 	## Place annotated features back into tsrexplorer object.
 	if (data_type == "tss") {
 		experiment@counts$TSSs$raw <- counts_annotated
-		experiment@counts$TSSs$matrix <- count_matrix
 	} else if (data_type == "tsr") {
 		experiment@counts$TSRs$raw <- counts_annotated
-		experiment@counts$TSRs$matrix <- count_matrix
 	}
 
 	## Save annotation settings to tsrexplorer object.

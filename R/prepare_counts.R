@@ -21,96 +21,24 @@ format_counts <- function(experiment, data_type = c("tss", "tsr"), samples = "al
 		select_samples <- tss_experiment(experiment)
 		if (samples != "all") select_samples <- select_samples[samples]
 
-		## Create raw count matrix.
-		raw_matrix <- select_samples %>%
-			map(as.data.table) %>%
-			bind_rows(.id = "sample")		
-		raw_matrix <- dcast(raw_matrix, seqnames + start + end + strand ~ sample, fill = 0)
-
 	} else if (data_type == "tsr") {
 
 		## Grab selected samples.
 		select_samples <- tsr_experiment(experiment)
 		if (samples != "all") select_samples <- select_samples[samples]
 
-		## Merge overlapping TSRs to get consensus.
-		tsr_consensus <- select_samples %>%
-			purrr::reduce(c) %>%
-			GenomicRanges::reduce(ignore.strand = FALSE)
-
-		## Create raw count matrix.
-		raw_matrix <- select_samples %>%
-			map(
-				~ findOverlapPairs(query = tsr_consensus, subject = .) %>%
-				as.data.table
-			) %>%
-			bind_rows(.id = "sample")
-		raw_matrix <- setnames(
-			raw_matrix,
-			old = c(
-				"first.seqnames", "first.start", "first.end",
-				"first.strand", "second.X.score"
-			),
-			new = c("seqnames", "start", "end", "strand", "score")
-		)
-		raw_matrix <- raw_matrix[,
-			.(score = sum(score)),
-			by = .(sample, seqnames, start, end, strand)
-		]
-		raw_matrix <- dcast(raw_matrix, seqnames + start + end + strand ~ sample, fill = 0)
-	
 	}
 
-	## Create RangedSummarizedExperiment for regular counts.
+	## Turn counts into data.table
 	if (data_type %in% c("tss", "tsr")) {
-		raw_counts <- select_samples %>%
-			imap(function(gr, sample_name) {
-				count_data <- gr %>%
-					score(.) %>%
-					as.matrix %>%
-					set_colnames(sample_name)
-
-				row_data <- gr
-				score(row_data) <- NULL
-				row_data$FID <- sprintf("FID%s", seq_len(length(row_data)))
-				col_data <- DataFrame(sample = sample_name)
-
-				raw_exp <- SummarizedExperiment(
-					assays = list(raw = count_data),
-					rowRanges = row_data,
-					colData = col_data
-				)
-				return(raw_exp)
-			})
+		raw_counts <- map(select_samples, as.data.table)
 	}
-
-	## Create RangedSummarizedExperiment for count matrices.
-	if (data_type %in% c("tss", "tsr")) {
-		count_matrix <- as.matrix(raw_matrix[,-1:-4])
-
-		row_data <- makeGRangesFromDataFrame(raw_matrix)
-		row_data$FID <- sprintf("FID%s", seq_len(length(row_data)))
-	}
-	
-	col_data <- DataFrame("sample" = colnames(count_matrix), row.names = colnames(count_matrix))
-	
-	matrix_counts <- SummarizedExperiment(
-		assays = list(counts = count_matrix),
-		rowRanges = row_data,
-		colData = col_data
-	)
 
 	## Place counts in proper object slot.
 	if (data_type == "tss") {
-		experiment@counts$TSSs <- list(
-			"raw" = raw_counts,
-			"matrix" = matrix_counts
-		)
+		experiment@counts$TSSs$raw <- raw_counts
 	} else if (data_type == "tsr") {
-		experiment@counts$TSRs <- list(
-			"raw" = raw_counts,
-			"matrix" = matrix_counts
-		)
+		experiment@counts$TSRs$raw <- raw_counts
 	}
 
 	return(experiment)
@@ -135,156 +63,187 @@ count_features <- function(experiment, data_type = c("tss", "tsr")) {
 	)
 
 	## Extract appropriate counts.
-	sample_data <- experiment %>%
-		extract_counts(data_type, "all") %>%
-		map(as.data.table)
+	sample_data <- extract_counts(experiment, data_type, "all")
 
 	## Get feature counts.
 	sample_data <- sample_data %>%
 		map(function(x) {
-			x <- x[
+			feature_scores <- x[
 				!simple_annotations %in% c("Downstream", "Intergenic"),
-				.(score = sum(score)),
+				.(feature_score = sum(score)),
 				by = eval(anno_type)
 			]
-			setnames(x, old = anno_type, new = "feature")
+
+			setkeyv(x, anno_type)
+			setkeyv(feature_scores, anno_type)
+			x <- merge(x, feature_scores, all.x = TRUE)
+			setcolorder(x, c(discard(colnames(x), ~ . == anno_type), anno_type))
+			
 			return(x)
 		})
 
-	## Turn feature counts into SummarizedExperiments.
-	exp_counts <- sample_data %>%
-		imap(function(x, y) {
-			setnames(x, old = "score", new = y)
-			mat <- x %>%
-				column_to_rownames("feature") %>%
-				as.matrix
+	## Get feature counts per sample.
+	counts <- sample_data %>%
+                map(function(x) {
+                        setnames(x, old = anno_type, new = "feature")
+                        x <- unique(x[, .(feature, feature_score)])
+                        x[, feature_score := ifelse(is.na(feature_score), 0, feature_score)]
+                        return(x)
+                })
 
-			row_data <- DataFrame("feature" = rownames(mat))
-			col_data <- DataFrame("sample" = colnames(mat))
+	## Store counts in appropriate slots.
+	walk(counts, ~ setnames(., old = c("feature", "feature_score"), new = c(anno_type, "score")))
+	walk(sample_data, ~ setnames(., old = "feature", new = anno_type))
 
-			se <- SummarizedExperiment(
-				assay = list("raw" = mat),
-				colData = col_data,
-				rowData = row_data
-			)
-			return(se)
-		})
-
-	## Create count matrix.
-	count_matrix <- sample_data %>%
-		imap(~ setnames(.x, old = .y, new = "score")) %>%
-		bind_rows(.id = "sample") %>%
-		dcast(feature ~ sample, fill = 0) %>%
-		column_to_rownames("feature") %>%
-		as.matrix
-
-	## Turn count matrix into SummarizedExperiment.
-	row_data <- DataFrame(feature = rownames(count_matrix))
-	col_data <- DataFrame(sample = colnames(count_matrix))
-
-	exp_matrix <- SummarizedExperiment(
-		assay= list("counts" = count_matrix),
-		rowData = row_data,
-		colData = col_data
-	)
-
-	## Store matrix and counts in appropriate slots.
 	if (data_type == "tss") {
-		experiment@counts$TSS_features$raw <- exp_counts
-		experiment@counts$TSS_features$matrix <- exp_matrix
+		experiment@counts$TSSs$raw <- sample_data
+		experiment@counts$TSS_features$raw <- counts
 	} else {
+		experiment@counts$TSRs$raw <- sample_data
 		experiment@counts$TSR_features$raw <- exp_counts
-		experiment@counts$TSR_features$matrix <- exp_matrix
 	}
 
 	return(experiment)
 }
 
-#' Merge Samples
+#' Count Matrix
 #'
-#' Merge replicates or selected samples.
+#' Generate count matrices
 #'
 #' @param experiment tsrexplorer object
-#' @param data_type Either 'tss' or 'tsr'
-#' @param merge_replicates If 'TRUE' replicate groups will be merged
-#' @param sample_list If merge_replicates is set to 'FALSE',
-#' specify what samples to merge in list format.
+#' @param data_type Either 'tss', 'tsr', 'tss_features', or 'tsr_features'
+#' @param samples The samples to turn into a count matrix
 #'
-#' @rdname merge_samples-function
+#' @rdname count_matrix-function
 #' @export
 
-merge_samples <- function(
-	experiment, data_type = c("tss", "tsr"),
-	merge_replicates = TRUE, sample_list = NA
+count_matrix <- function(
+	experiment, data_type = c("tss", "tsr", "tss_features", "tsr_features"),
+	samples = "all"
 ) {
+	## Extract counts.
+	select_samples <- extract_counts(experiment, data_type, samples)
+
+	if (data_type %in% c("tss", "tsr")) {
+		select_samples <- map(select_samples, function(x) {
+			x <- x[, .(seqnames, start, end, strand, score)]
+			return(x)
+		})
+	}
+
+	## Turn into matrix.
+	if (data_type == "tss") {
+
+		## Merge overlapping TSSs
+		select_samples <- bind_rows(select_samples, .id = "sample")
+		select_samples <- dcast(
+			select_samples,
+			seqnames + start + end + strand ~ sample,
+			fill = 0
+		)
+
+	} else if (data_type == "tsr") {
+
+                ## Merge overlapping TSRs to get consensus.
+                tsr_consensus <- select_samples %>%
+                        map(makeGRangesFromDataFrame) %>%
+			purrr::reduce(c) %>%
+                        GenomicRanges::reduce(ignore.strand = FALSE)
+
+                ## Create raw count matrix.
+                raw_matrix <- select_samples %>%
+                        map(
+                                ~ makeGRangesFromDataFrame(., keep.extra.columns = TRUE) %>%
+				findOverlapPairs(query = tsr_consensus, subject = .) %>%
+                                as.data.table
+                        ) %>%
+                        bind_rows(.id = "sample")
+
+                setnames(
+                        raw_matrix,
+                        old = c(
+                                "first.seqnames", "first.start", "first.end",
+                                "first.strand", "second.X.score"
+                        ),
+                        new = c("seqnames", "start", "end", "strand", "score")
+                )
+
+                raw_matrix <- raw_matrix[,
+                        .(score = sum(score)),
+                        by = .(sample, seqnames, start, end, strand)
+                ]
+
+                select_samples <- dcast(raw_matrix, seqnames + start + end + strand ~ sample, fill = 0)
+
+	} else if (data_type %in% c("tss_features", "tsr_features")) {
+		## Get annotation type.
+		anno_type <- experiment@settings$annotation[["feature_type"]]
+		anno_type <- ifelse(anno_type == "gene", "geneId", "transcriptId")
+
+		## Change feature counts to matrix
+		select_samples <- bind_rows(select_samples, .id = "sample")
+		select_samples <- dcast(
+			select_samples,
+			as.formula(str_c(anno_type, " ~ sample")),
+			fill = 0
+		)
+
+	}
+
+	## Create SummarizedExperiments.
+	if (data_type %in% c("tss", "tsr")) {
+		## Prepare data for RangedSummarizedExperiment
+		row_ranges <- makeGRangesFromDataFrame(select_samples)
+
+		select_samples[, c("seqnames", "start", "end", "strand") := NULL]
+		select_samples <- as.matrix(select_samples)
+
+        	col_data <- DataFrame(
+        		samples = colnames(select_samples),
+                	row.names = colnames(select_samples)
+        	)
 	
-	## Prepare what samples will be merged.
-	if (merge_replicates) {
-		samples <- experiment@meta_data$sample_sheet[type == data_type] %>%
-			split(.$replicate_id) %>%
-			map(~ pull(., name))
+		## Make RangedSummarizedExperiment.
+		rse <- SummarizedExperiment(
+			assays = list(counts = select_samples),
+			rowRanges = row_ranges,
+			colData = col_data
+		)
+	} else if (data_type %in% c("tss_features", "tsr_features")) {
+		## Prepare data for SummarizedExperiment.
+		row_data <- select_samples[, 1]
+		
+		select_samples[, eval(anno_type) := NULL]
+		select_samples <- as.matrix(select_samples)
+
+		col_data <- DataFrame(
+			samples = colnames(select_samples),
+			row.names = colnames(select_samples)
+		)
+
+		## Make SummarizedExperiment.
+		rse <- SummarizedExperiment(
+			assays = list(counts = select_samples),
+			rowData = row_data,
+			colData = col_data
+		)
 	}
 
-	## Get feature sets to be merged.
+	## Add RangedSummarizedExperiment back to trexplorer object.
 	if (data_type == "tss") {
-		selected_samples <- experiment@experiment$TSSs[unlist(samples)]
+		experiment@counts$TSSs$matrix <- rse
 	} else if (data_type == "tsr") {
-		selected_samples <- experiment@experiment$TSRs[unlist(samples)]
+		experiment@counts$TSRs$matrix <- rse
+	} else if (data_type == "tss_features") {
+		experiment@counts$TSS_features$matrix <- rse
+	} else if (data_type == "tsr_features") {
+		experiment@counts$TSR_features$matrix <- rse
 	}
 
-	selected_samples <- map(selected_samples, as.data.table)
-
-	## Merge feature sets.
-	if (data_type == "tss") {
-		merged_samples <- samples %>%
-			map(function(sample_group) {
-				merged <- bind_rows(selected_samples[sample_group])
-				merged <- as.data.table(merged)
-				merged[, score := sum(score), by = .(seqnames, start, end, strand)]
-				return(merged)
-			})
-	} else if (data_type == "tsr") {
-		merged_samples <- samples %>%
-			map(function(sample_group) {
-				merged <- selected_samples[sample_group] %>%
-					map(~ makeGRangesFromDataFrame(., keep.extra.columns = TRUE))
-				
-				tsr_consensus <- merged %>%
-					purrr::reduce(c) %>%
-					GenomicRanges::reduce(ignore.strand = FALSE)
-
-				merged <- merged %>%
-					map(
-						~ findOverlapPairs(query = tsr_consensus, subject = .) %>%
-						as.data.table
-					) %>%
-					bind_rows
-
-				setnames(
-					merged,
-					old = c(
-						"first.seqnames", "first.start", "first.end",
-						"first.strand", "second.X.score"
-					),
-					new = c("seqnames", "start", "end", "strand", "score")
-				)
-
-				merged <- merged[,
-					.(score = sum(score)),
-					by = .(seqnames, start, end, strand)
-				]
-			})
-	}
-
-	## Convert merged samples to GRanges.
-	merged_samples <- map(merged_samples, ~ makeGRangesFromDataFrame(., keep.extra.columns = TRUE))
-
-	## Return merged samples.
-	if (data_type == "tss") {
-		experiment@experiment$TSSs <- c(experiment@experiment$TSSs, merged_samples)
-	} else if (data_type == "tsr") {
-		experiment@experiment$TSRs <- c(experiment@experiment$TSRs, merged_samples)
-	}
-
-	return(experiment)
+	return(experiment)	
 }
+
+
+
+
+

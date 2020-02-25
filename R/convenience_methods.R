@@ -75,7 +75,7 @@ setMethod("tsr_experiment<-", signature(tsrexplorer_object = "tsr_explorer"),
 #' @rdname extract_counts-function
 #' @export
 
-extract_counts <- function(experiment, data_type, samples, cpm_norm = FALSE) {
+extract_counts <- function(experiment, data_type, samples) {
 
 	## Extract appropraite samples from TSSs or TSRs.
 	if (data_type == "tss") {
@@ -84,32 +84,16 @@ extract_counts <- function(experiment, data_type, samples, cpm_norm = FALSE) {
 	} else if (data_type == "tsr") {
 		if (samples == "all") samples <- names(experiment@counts$TSRs$raw)
 		selected_samples <- experiment@counts$TSRs$raw[samples]
+	} else if (data_type == "tss_features") {
+		if (samples == "all") samples <- names(experiment@counts$TSS_features$raw)
+		selected_samples <- experiment@counts$TSS_features$raw[samples]
+	} else if (data_type == "tsr_features") {
+		if (samples == "all") samples <- names(experiment@counts$TSR_features$raw)
+		selected_samples <- experiment@counts$TSR_features$raw[samples]
 	}
 
-	## For each sample get the ranges and counts.
-	counts <- selected_samples %>%
-		map(function(x) {
-			
-			# Pull out the raw or cpm normalized counts.
-			if (cpm_norm) {
-				counts <- assay(x, "cpm")
-			} else {
-				counts <- assay(x, "raw")
-			}
-			counts <- counts %>%
-				as_tibble(.name_repair = "unique") %>%
-				rename(score = 1)
-
-			# Add counts back to ranges.
-			ranges <- rowRanges(x) %>%
-				as_tibble(.name_repair = "unique") %>%
-				bind_cols(counts)
-
-			return(ranges)
-		})
-
 	## Return the ranges and counts as ouput of function.
-	return(counts)
+	return(selected_samples)
 	
 }
 

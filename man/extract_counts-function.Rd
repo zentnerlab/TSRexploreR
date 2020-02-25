@@ -4,7 +4,7 @@
 \alias{extract_counts}
 \title{Extract Counts}
 \usage{
-extract_counts(experiment, data_type, samples, cpm_norm = FALSE)
+extract_counts(experiment, data_type, samples)
 }
 \arguments{
 \item{experiment}{tsrexplorer object}

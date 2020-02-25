@@ -44,6 +44,7 @@ Suggests:
 RoxygenNote: 6.1.1
 Collate: 
     'annotate.R'
+    'association.R'
     'average_plots.R'
     'tsrexplorer.R'
     'convenience_methods.R'
