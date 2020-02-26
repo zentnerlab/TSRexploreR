@@ -42,7 +42,7 @@ detect_features <- function(
 		new = "feature"
 	)
 
-	## prepare sample data.
+	## Prepare sample data.
 	keep_cols <- c("sample", "feature", "simple_annotations")
 	if (dominant) keep_cols <- c(keep_cols, "dominant")
 
@@ -50,6 +50,12 @@ detect_features <- function(
 		score >= threshold,
 		..keep_cols
 	]
+
+	## Only keep dominant if requested.
+	if (dominant) {
+		sample_data <- sample_data[(dominant)]
+		sample_data[, dominant := NULL]
+	}
 
 	## Get feature counts.
 	sample_data <- sample_data[,

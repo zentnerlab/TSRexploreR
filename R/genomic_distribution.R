@@ -51,6 +51,12 @@ genomic_distribution <- function(
 		)
 	]
 
+	## Only consider dominant if requested.
+	if (dominant) {
+		selected_samples <- selected_samples[(dominant)]
+		selected_samples[, dominant := NULL]
+	}
+
 	## Break data into quantiles if quantiles set is greater than 1.
 	if (!is.na(quantiles)) {
 		selected_samples[, ntile := ntile(score, quantiles), by = samples]

@@ -46,16 +46,19 @@ tss_sequences <- function(
 		bind_rows(.id = "sample") %>%
 		as.data.table
 
+	keep_cols <- c("sample", "seqnames", "start", "end", "strand", "score")
+	if (dominant) keep_cols <- c(keep_cols, "dominant")
+
 	select_samples <- select_samples[
 		score >= threshold,
-		.(sample, seqnames, start, end, strand, dominant, score)
+		..keep_cols
 	]
 
 	## Only consider dominant if required.
 	if (dominant) {
 		select_samples <- select_samples[(dominant)]
+		select_samples[, dominant := NULL]
 	}
-	select_samples[, dominant := NULL]
 
 	## Add quantiles if necessary.
 	if (!is.na(quantiles)) {

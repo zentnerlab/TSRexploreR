@@ -44,8 +44,7 @@ tss_heatmap_matrix <- function(
 	## Grab requested samples.
 	annotated_tss <- experiment %>%
 		extract_counts("tss", samples, use_cpm) %>%	
-		bind_rows(.id = "sample") %>%
-		as.data.table
+		bind_rows(.id = "sample")
 
 	setnames(annotated_tss,
 		old = ifelse(
@@ -55,17 +54,20 @@ tss_heatmap_matrix <- function(
 		new = "feature"
 	)
 
+	keep_cols <- c("sample", "feature", "distanceToTSS", "score")
+	if (dominant) keep_cols <- c(keep_cols, "dominant")
+
 	annotated_tss <- annotated_tss[
 		score >= threshold &
 		dplyr::between(distanceToTSS, -upstream, downstream),
-		.(sample, feature, distanceToTSS, dominant, score)
+		..keep_cols
 	]
 
-	## Keep only dominant if required.
+	## Keep only dominant it requested.
 	if (dominant) {
 		annotated_tss <- annotated_tss[(dominant)]
+		annotated_tss[, dominant := NULL]
 	}
-	annotated_tss[, dominant := NULL]
 
 	## Get order of genes for heatmap (mean across samples).
 	annotated_tss[, feature_mean := mean(score), by = feature]
@@ -232,8 +234,7 @@ tsr_heatmap_matrix <- function(
 	## Pull samples out.
 	annotated_tsr <- experiment %>%
 		extract_counts("tsr", samples, use_cpm) %>%
-		bind_rows(.id = "sample") %>%
-		as.data.table
+		bind_rows(.id = "sample")
 
 	setnames(annotated_tsr,
 		old = ifelse(
@@ -243,21 +244,34 @@ tsr_heatmap_matrix <- function(
 		new = "feature"
 	)
 
-	## Start preparing data for plotting.
-	annotated_tsr <- annotated_tsr[
-		score >= threshold,
-		.(sample, strand, start, end, feature, dominant, geneStart, geneEnd, score,
-		startDist = ifelse(strand == "+", start - geneStart, -(end - geneEnd)),
-		endDist = ifelse(strand == "+", end - geneStart, -(start - geneEnd)))
-	][,
-		.(sample, strand, startDist, endDist, score, dominant, feature, tsr_id = seq_len(.N))
-	]
 
-	## Consider only dominant if required.
+
+	## Start preparing data for plotting.
+	if (dominant) {
+		annotated_tsr <- annotated_tsr[
+			score >= threshold,
+			.(sample, strand, start, end, feature, dominant, geneStart, geneEnd, score,
+			startDist = ifelse(strand == "+", start - geneStart, -(end - geneEnd)),
+			endDist = ifelse(strand == "+", end - geneStart, -(start - geneEnd)))
+		][,
+			.(sample, strand, startDist, endDist, score, dominant, feature, tsr_id = seq_len(.N))
+		]
+	} else {
+                annotated_tsr <- annotated_tsr[
+                        score >= threshold,
+                        .(sample, strand, start, end, feature, geneStart, geneEnd, score,
+                        startDist = ifelse(strand == "+", start - geneStart, -(end - geneEnd)),
+                        endDist = ifelse(strand == "+", end - geneStart, -(start - geneEnd)))
+                ][,
+                        .(sample, strand, startDist, endDist, score, feature, tsr_id = seq_len(.N))
+                ]
+	}
+
+	## Only keep dominant if requested.
 	if (dominant) {
 		annotated_tsr <- annotated_tsr[(dominant)]
+		annotated_tsr[, dominant := NULL]
 	}
-	annotated_tsr[, dominant := NULL]
 
         ## Get order of genes for heatmap (mean across samples).
 	annotated_tsr[, feature_mean := mean(score), by = feature]

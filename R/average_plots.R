@@ -69,6 +69,12 @@ plot_average <- function(
 		..keep_cols, 
 	]
 
+	## Only keep dominant if requested.
+	if (dominant) {
+		sample_data <- sample_data[(dominant)]
+		sample_data[, dominant := NULL]
+	}
+
 	## Add quantile info if requested.
 	if (!is.na(quantiles)) {
 		sample_data[,

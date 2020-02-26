@@ -88,7 +88,7 @@ gene_tracks <- function(
 	if (use_tss) {
 		selected_TSSs <- selected_TSSs %>%
 			map(function(x) {
-				tss_granges <- as.data.table(x)[
+				tss_granges <- x[
 					score >= threshold,
 					.(seqnames, start, end, strand, score)
 				]
@@ -100,7 +100,7 @@ gene_tracks <- function(
 	if (use_tsr) {
 		selected_TSRs <- selected_TSRs %>%
 			map(function(x) {
-				tsr_granges <- as.data.table(x)[
+				tsr_granges <- x[
 					score >= threshold,
 					.(seqnames, start, end, strand, score)
 				]

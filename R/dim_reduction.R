@@ -19,19 +19,11 @@ plot_reduction <- function(
 ) {
 	
 	## Grab TMM counts.
-	if (data_type == "tss") {
-		tmm_counts <- experiment@correlation$TSSs$tmm
-	} else if (data_type == "tsr") {
-		tmm_counts <- experiment@correlation$TSRs$tmm
-	} else if (data_type == "tss_features") {
-		tmm_counts <- experiment@correlation$TSS_features$tmm
-	} else if (data_type == "tsr_features") {
-		tmm_counts <- experiment@correlation$TSR_features$tmm
-	}
+	tmm_counts <- extract_matrix(experiment, data_type, "all")
 
 	## Filter out counts with too little expression.
 	keep_index <- tmm_counts %>%
-		assay("filtered") %>%
+		assay("counts") %>%
 		filterByExpr
 
 	tmm_counts <- tmm_counts[keep_index, ]

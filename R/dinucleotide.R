@@ -36,14 +36,17 @@ dinucleotide_frequencies <- function(
 	## Getting appropriate samples.
 	select_samples <- experiment %>%
 		extract_counts("tss", samples) %>%
-		bind_rows(.id = "sample") %>%
-		as.data.table
+		bind_rows(.id = "sample")
 
 	## Prepare samples for analysis.
+	keep_cols <- c("sample", "seqnames", "start", "end", "strand", "score")
+	if (dominant) keep_cols <- c(keep_cols, "dominant")
+
 	select_samples <- select_samples[
 		score >= threshold,
-		.(sample, seqnames, start, end, strand, dominant,  score, tss = start)
+		..keep_cols
 	]
+	select_samples[, tss := start]
 	select_samples[,
 		c("start", "end") := list(
 			ifelse(strand == "+", start - 1, start),
@@ -54,8 +57,8 @@ dinucleotide_frequencies <- function(
 	## Consider only dominant TSSs if required.
 	if (dominant) {
 		select_samples <- select_samples[(dominant)]
+		select_samples[, dominant := NULL]
 	}
-	select_samples[, dominant := NULL]
 
 	## Get dinucleotides.
 	seqs <- select_samples %>%
