@@ -18,7 +18,7 @@
 #' @param data_type Whether to get distribution of TSSs or TSRs
 #' @param threshold Filter out TSSs or TSRs under a certain read count number
 #' @param quantiles number of quantiles to break the data down into
-#' @param dominant Should all (FALSE) or only dominant TSSs (TRUE) be considered
+#' @param dominant Should dominant TSS per 'gene' or 'tsr' only be considered
 #'
 #' @return tibble with TSS or TSR genomic distribution stats
 #'
@@ -28,17 +28,21 @@
 
 genomic_distribution <- function(
 	experiment, data_type = c("tss", "tsr"), samples = "all",
-	threshold = 1, quantiles = NA, dominant = FALSE) {
+	threshold = 1, quantiles = NA, dominant = FALSE
+) {
 
 	## Extract samples.
 	selected_samples <- experiment %>%
 		extract_counts(data_type, samples) %>%
-		bind_rows(.id = "samples") %>%
-		as.data.table
+		bind_rows(.id = "samples")
 
+	## Retain dominant
+	keep_cols <- c("samples", "score", "simple_annotations")
+	if (dominant) keep_cols <- c(keep_cols, "dominant")
+ 
 	selected_samples <- selected_samples[
 		score >= threshold,
-		.(samples, score, dominant, simple_annotations)
+		..keep_cols
 	]
 	selected_samples[,
 		simple_annotations := factor(
@@ -47,18 +51,12 @@ genomic_distribution <- function(
 		)
 	]
 
-	## Only consider dominant TSSs if required.
-	if (dominant) {
-		selected_samples <- selected_samples[(dominant)]
-	}
-	selected_samples[, dominant := NULL]
-
 	## Break data into quantiles if quantiles set is greater than 1.
 	if (!is.na(quantiles)) {
 		selected_samples[, ntile := ntile(score, quantiles), by = samples]
 	}
 	
-	## Prepade data to be plotted later.
+	## Prepare data to be plotted later.
 	if (!is.na(quantiles)) {
 		genomic_distribution <- selected_samples[,
 			.(count = .N),

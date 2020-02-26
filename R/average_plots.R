@@ -60,17 +60,14 @@ plot_average <- function(
 		bind_rows(.id = "samples") %>%
 		as.data.table
 
+	keep_cols <- c("distanceToTSS", "score", "samples")
+	if (dominant) keep_cols <- c(keep_cols, "dominant")
+
 	sample_data <- sample_data[
 		score >= threshold &
 		dplyr::between(distanceToTSS, -upstream, downstream),
-		.(distanceToTSS, score, dominant, samples), 
+		..keep_cols, 
 	]
-
-	## Consider only dominant if required.
-	if (dominant) {
-		sample_data <- sample_data[(dominant)]
-	}
-	sample_data[, dominant := NULL]
 
 	## Add quantile info if requested.
 	if (!is.na(quantiles)) {

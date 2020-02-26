@@ -96,7 +96,7 @@ find_correlation <- function(
 
 plot_correlation <- function(
 	experiment,
-	data_type = c("tss", "tsr", "features"),
+	data_type = c("tss", "tsr", "tss_features", "tsr_features"),
 	samples = "all",
 	correlation_plot = "combined",
 	correlation_metric = "pearson",
@@ -107,34 +107,29 @@ plot_correlation <- function(
 ) {
 	
 	## Get data from proper slot.
-	if (data_type == "tss") {
-		normalized_counts <- assay(experiment@correlation$TSSs$tmm, "tmm")
-		type_color <- "#431352"
-	} else if (data_type == "tsr") {
-		normalized_counts <- assay(experiment@correlation$TSRs$tmm, "tmm")
-		type_color <- "#34698c"
-	} else if (data_type == "tss_features") {
-		normalized_counts <- assay(experiment@correlation$TSS_features$tmm, "tmm")
-		type_color <- "#29AF7FFF"
-	} else if (data_type == "tsr_features") {
-		normalized_counts <- assay(experiment@correlation$TSR_features$tmm, "tmm")
-		type_color <- "#29AF7FFF"
-	}
+	normalized_counts <- experiment %>%
+		extract_matrix(data_type, samples) %>%
+		assay("tmm")
+	
+	sample_names <- colnames(normalized_counts)
+
+	## Define default color palette.
+	color_palette <- c(
+		"tss" = "#431352", "tsr" = "#34698c",
+		"tss_features" = "#29AF7FFF",
+		"tsr_features" = "#29AF7FFF"
+	)
 
 	## Log2+1 transform data if indicated.
 	pre_transformed <- as_tibble(normalized_counts, .name_repair = "unique")
 	if (log2_transform) normalized_counts <- log2(normalized_counts + 1) %>% as_tibble(.name_repair = "unique")
-
-	## Select all samples if "all" specified.
-	if (length(samples) == 1 & samples == "all") samples <- colnames(normalized_counts)
-	normalized_counts <- normalized_counts[, samples]
 
 	## Make functions for scatter plot.
 
 	# Create custom scatter plot format.
 	custom_scatter <- function(data, mapping) {
 		ggplot(data = data, mapping = mapping) +
-			geom_point(size = pt_size, color = type_color, stroke = 0) +
+			geom_point(size = pt_size, color = color_palette[data_type], stroke = 0) +
 			geom_abline(intercept = 0, slope = 1, lty = 2)
 	}
 
@@ -159,7 +154,7 @@ plot_correlation <- function(
 	if (correlation_plot == "scatter") {
 		p <- ggpairs(
 			normalized_counts,
-			columns = samples,
+			columns = sample_names,
 			upper = list(continuous = custom_scatter),
 			lower = NULL,
 			diag = NULL,
@@ -168,7 +163,7 @@ plot_correlation <- function(
 	} else if (correlation_plot == "heatmap") {
 		p <- ggpairs(
 			normalized_counts,
-			columns = samples,
+			columns = sample_names,
 			upper = list(continuous = custom_heatmap),
 			lower = NULL,
 			diag = NULL,
@@ -177,7 +172,7 @@ plot_correlation <- function(
 	} else if (correlation_plot == "combined") {
 		p <- ggpairs(
 			normalized_counts,
-			columns = samples,
+			columns = sample_names,
 			upper = list(continuous = custom_heatmap),
 			lower = list(continuous = custom_scatter),
 			...

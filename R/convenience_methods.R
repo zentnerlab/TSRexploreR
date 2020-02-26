@@ -71,11 +71,12 @@ setMethod("tsr_experiment<-", signature(tsrexplorer_object = "tsr_explorer"),
 #' @param experiment tsrexplorer object
 #' @param data_type whether to extract from the 'tss' or 'tsr' sets
 #' @param samples names of samples to extract
+#' @param use_cpm Whether CPM values should be returned
 #'
 #' @rdname extract_counts-function
 #' @export
 
-extract_counts <- function(experiment, data_type, samples) {
+extract_counts <- function(experiment, data_type, samples, use_cpm = FALSE) {
 
 	## Extract appropraite samples from TSSs or TSRs.
 	if (data_type == "tss") {
@@ -92,8 +93,20 @@ extract_counts <- function(experiment, data_type, samples) {
 		selected_samples <- experiment@counts$TSR_features$raw[samples]
 	}
 
-	## Return the ranges and counts as ouput of function.
-	return(selected_samples)
+	## Want to return copies so you don't ovewrite the tsrexplorer object copies on accident.
+	return_samples <- map(selected_samples, copy)
+
+	## Return CPM score if requested.
+	if (use_cpm) {
+		walk(return_samples, function(x) {
+			x[, score := cpm]
+			x[, cpm := NULL]
+			return(x)
+		})
+	}
+
+	## Return the ranges and counts as output of function.
+	return(return_samples)
 	
 }
 
@@ -104,7 +117,7 @@ extract_counts <- function(experiment, data_type, samples) {
 #' @import tibble
 #'
 #' @param experiment tsrexplorer object
-#' @param data_type Whether to extract 'tss', 'tsr', or 'feature' counts
+#' @param data_type Whether to extract 'tss', 'tsr', 'tss_features', or 'tsr_features'
 #' @param samples Sampels to extract
 #'
 #' @rdname extract_matrix-function

@@ -9,7 +9,7 @@ extract_matrix(experiment, data_type, samples)
 \arguments{
 \item{experiment}{tsrexplorer object}
 
-\item{data_type}{Whether to extract 'tss', 'tsr', or 'feature' counts}
+\item{data_type}{Whether to extract 'tss', 'tsr', 'tss_features', or 'tsr_features'}
 
 \item{samples}{Sampels to extract}
 }

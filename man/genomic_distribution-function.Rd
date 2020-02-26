@@ -18,7 +18,7 @@ genomic_distribution(experiment, data_type = c("tss", "tsr"),
 
 \item{quantiles}{number of quantiles to break the data down into}
 
-\item{dominant}{Should all (FALSE) or only dominant TSSs (TRUE) be considered}
+\item{dominant}{Should dominant TSS per 'gene' or 'tsr' only be considered}
 }
 \value{
 tibble with TSS or TSR genomic distribution stats

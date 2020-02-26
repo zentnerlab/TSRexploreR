@@ -78,65 +78,34 @@ tmm_normalize <- function(
 ) {
 
 	## Select proper slot of data.
-	if (data_type == "tss") {
-		count_matrix <- experiment@counts$TSSs$matrix
-	} else if (data_type == "tsr") {
-		count_matrix <- experiment@counts$TSRs$matrix
-	} else if (data_type == "tss_features") {
-		count_matrix <- experiment@counts$TSS_features$matrix
-	} else if (data_type == "tsr_features") {
-		count_matrix <- experiment@counts$TSR_features$matrix
-	}
-
-	if (samples == "all") samples <- colnames(count_matrix)
-	select_samples <- count_matrix[, count_matrix$sample %in% samples]
+	select_samples <- extract_matrix(experiment, data_type, samples)
 
 	##  Filter the counts.
 	sample_matrix <- as.data.table(assay(select_samples, "counts"))
 	sample_matrix[, match := rowSums((.SD >= threshold)) >= n_samples]
 	keep_ids <- which(sample_matrix[, match])
 	
-	select_samples[keep_ids,]
+	select_samples <- select_samples[keep_ids, ]
 	filtered_counts <- assay(select_samples, "counts")
 
 	## TMM normalize filtered counts.
-	tmm_counts <- select_samples %>%
-		assay("counts") %>%
+	tmm_counts <- filtered_counts %>%
 		DGEList %>%
 		calcNormFactors %>%
 		cpm
 
-	if (data_type %in% c("tss_features", "tsr_features")) {
-		row_data <- DataFrame("feature" = rownames(select_samples))
-	} else {
-		row_ranges <- rowRanges(select_samples)
-	}
-	col_data <- DataFrame(sample = colnames(select_samples))
-
 	## Create filtered and TMM normalized RangedSummarizedExperiment.
-	if (data_type %in% c("tss_features", "tsr_features")) {
-		tmm_experiment <- SummarizedExperiment(
-			assays = list("filtered" = filtered_counts, "tmm" = tmm_counts),
-			rowData = row_data,
-			colData = col_data
-		)
-	} else {
-		tmm_experiment <- SummarizedExperiment(
-			assays = list("filtered" = filtered_counts, "tmm" = tmm_counts),
-			rowRanges = row_ranges,
-			colData = col_data
-		)
-	}
+	assay(select_samples, "tmm") <- tmm_counts
 
 	## Return the TMM normalized counts.
 	if (data_type == "tss") {
-		experiment@correlation$TSSs$tmm <- tmm_experiment
+		experiment@counts$TSSs$matrix <- select_samples
 	} else if (data_type == "tsr") {
-		experiment@correlation$TSRs$tmm <- tmm_experiment
+		experiment@counts$TSRs$matrix <- select_samples
 	} else if (data_type == "tss_features") {
-		experiment@correlation$TSS_features$tmm <- tmm_experiment
+		experiment@counts$TSS_features$matrix <- select_samples
 	} else if (data_type == "tsr_features") {
-		experiment@correlation$TSR_features$tmm <- tmm_experiment
+		experiment@counts$TSR_features$matrix <- select_samples
 	}
 
 	return(experiment)

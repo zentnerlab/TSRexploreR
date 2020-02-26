@@ -4,8 +4,8 @@
 \alias{plot_correlation}
 \title{Plot Sample Correlation}
 \usage{
-plot_correlation(experiment, data_type = c("tss", "tsr", "features"),
-  samples = "all", correlation_plot = "combined",
+plot_correlation(experiment, data_type = c("tss", "tsr", "tss_features",
+  "tsr_features"), samples = "all", correlation_plot = "combined",
   correlation_metric = "pearson", log2_transform = TRUE,
   font_size = 4, pt_size = 0.5, ...)
 }

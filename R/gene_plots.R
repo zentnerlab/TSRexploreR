@@ -32,8 +32,8 @@ detect_features <- function(
 	## Get sample data.
 	sample_data <- experiment %>%
 		extract_counts(data_type, samples) %>%
-		bind_rows(.id = "sample") %>%
-		as.data.table
+		bind_rows(.id = "sample")
+
 	setnames(
 		sample_data, old = ifelse(
 			experiment@settings$annotation[, feature_type] == "transcript",
@@ -43,16 +43,13 @@ detect_features <- function(
 	)
 
 	## prepare sample data.
+	keep_cols <- c("sample", "feature", "simple_annotations")
+	if (dominant) keep_cols <- c(keep_cols, "dominant")
+
 	sample_data <- sample_data[
 		score >= threshold,
-		.(sample, feature, dominant, simple_annotations)
+		..keep_cols
 	]
-
-	## Consider only dominant TSSs if required.
-	if (dominant) {
-		sample_data <- sample_data[(dominant)]
-	}
-	sample_data[, dominant := NULL]
 
 	## Get feature counts.
 	sample_data <- sample_data[,

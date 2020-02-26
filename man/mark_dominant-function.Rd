@@ -4,7 +4,8 @@
 \alias{mark_dominant}
 \title{Mark Dominant}
 \usage{
-mark_dominant(experiment, data_type = c("tss", "tsr"), threshold = 1)
+mark_dominant(experiment, data_type = c("tss", "tsr"), threshold = 1,
+  mark_per = "default")
 }
 \arguments{
 \item{experiment}{tsrexplorer object with annotated TSSs/TSRs}
@@ -12,6 +13,9 @@ mark_dominant(experiment, data_type = c("tss", "tsr"), threshold = 1)
 \item{data_type}{Either 'tss' or 'tsr'}
 
 \item{threshold}{Read threshold for TSS/TSRs}
+
+\item{mark_per}{By default marks dominant TSR per gene, and dominant TSS per TSR.
+TSSs can also be set per as dominant TSS per 'gene'.}
 }
 \value{
 Tibble with dominant TSSs for each gene

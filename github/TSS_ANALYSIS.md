@@ -92,7 +92,7 @@ the subset of genomic features (such as sequence) that are most preferred when t
 It thus is sometimes easier to resolve important features when looking at only the dominant TSSs.
 
 ```
-exp <- mark_dominant(exp, data_type = "tss", threshold = 3)
+exp <- mark_dominant(exp, data_type = "tss", threshold = 3, mark_per = "gene")
 ```
 
 ## TSS Correlation

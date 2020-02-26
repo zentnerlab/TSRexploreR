@@ -11,6 +11,8 @@
 #' @param experiment tsrexplorer object with annotated TSSs/TSRs
 #' @param data_type Either 'tss' or 'tsr'
 #' @param threshold Read threshold for TSS/TSRs
+#' @param mark_per By default marks dominant TSR per gene, and dominant TSS per TSR.
+#' TSSs can also be set per as dominant TSS per 'gene'.
 #'
 #' @return Tibble with dominant TSSs for each gene
 #'
@@ -18,26 +20,15 @@
 #'
 #' @export
 
-mark_dominant <- function(experiment, data_type = c("tss", "tsr"), threshold = 1) {
+mark_dominant <- function(experiment, data_type = c("tss", "tsr"), threshold = 1, mark_per = "default") {
 	
 	## Select samples.
-	if (data_type == "tss") {
-		select_samples <- experiment@counts$TSSs$raw
-	} else if (data_type == "tsr") {
-		select_samples <- experiment@counts$TSRs$raw
-	}
+	select_samples <- extract_counts(experiment, data_type, "all")
 
-	## Mark dominant TSS/TSR.
-	dominant <- select_samples %>%
-		map(function(x) {
-
-			## Extract ranges and scores.
-			ranges <- rowRanges(x)
-			score(ranges) <- assay(x, "raw")[, 1]
-			ranges <- as.data.table(ranges)
-
-			## Mark the dominant TSS/TSR.
-			ranges[,
+	## Mark dominant TSS/TSR per gene if requested.
+	if (data_type == "tsr" | (data_type == "tss" & mark_per == "gene")) {
+		dominant <- map(select_samples, function(x) {
+			x[,
 				dominant := (
 					score == max(score) &
 					!simple_annotations %in% c("Downstream", "Intergenic") &
@@ -48,14 +39,25 @@ mark_dominant <- function(experiment, data_type = c("tss", "tsr"), threshold = 1
 					"transcriptId", "geneId"
 				))
 			]
-			
-			## Add range data back.
-			ranges <- makeGRangesFromDataFrame(ranges, keep.extra.columns = TRUE)
-			score(ranges) <- NULL
-			rowRanges(x) <- ranges
 
 			return(x)
 		})
+	
+	## Mark the dominant TSS per TSR if requested.
+	} else if (data_type == "tss" & mark_per == "default") {
+		dominant <- map(select_samples, function(x) {
+			x[,
+				dominant := (
+					!is.na(score) &
+					score == max(score) &
+					score >= threshold
+				),
+				by = TSR_FID
+			]
+
+			return(x)
+		})
+	}
 
 	## Return dominant TSS/TSR.
 	if (data_type == "tss") {

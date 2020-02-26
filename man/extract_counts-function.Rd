@@ -4,7 +4,7 @@
 \alias{extract_counts}
 \title{Extract Counts}
 \usage{
-extract_counts(experiment, data_type, samples)
+extract_counts(experiment, data_type, samples, use_cpm = FALSE)
 }
 \arguments{
 \item{experiment}{tsrexplorer object}
@@ -12,6 +12,8 @@ extract_counts(experiment, data_type, samples)
 \item{data_type}{whether to extract from the 'tss' or 'tsr' sets}
 
 \item{samples}{names of samples to extract}
+
+\item{use_cpm}{Whether CPM values should be returned}
 }
 \description{
 Extract counts from a tsrexplorer object.
