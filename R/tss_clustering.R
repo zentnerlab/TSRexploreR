@@ -53,10 +53,16 @@ tss_clustering <- function(
 			clustered$score <- cluster_info$score
 			clustered$n_unique <- cluster_info$n_unique
 			clustered$revmap <- NULL
+
+			return(clustered)
 		})
 
 	## Add TSRs back to tsrexplorer object.
-	clustered_TSSs <- map(clustered_TSSs, as.data.table)
+	clustered_TSSs <- map(clustered_TSSs, function(x) {
+		x <- as.data.table(x)
+		x[, FID := seq_len(nrow(x))]
+		return(x)
+	})
 
 	experiment@counts$TSRs$raw <- clustered_TSSs
 	return(experiment)

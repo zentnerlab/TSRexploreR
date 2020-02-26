@@ -31,7 +31,11 @@ format_counts <- function(experiment, data_type = c("tss", "tsr"), samples = "al
 
 	## Turn counts into data.table
 	if (data_type %in% c("tss", "tsr")) {
-		raw_counts <- map(select_samples, as.data.table)
+		raw_counts <- map(select_samples, function(x) {
+			x <- as.data.table(x)
+			x[, FID := seq_len(nrow(x))]
+			return(x)
+		})
 	}
 
 	## Place counts in proper object slot.
