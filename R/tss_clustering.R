@@ -1,0 +1,64 @@
+
+#' TSS Clustering
+#'
+#' Basic function to cluster TSSs
+#'
+#' @param experiment tsrexplorer object
+#' @param threshold Minimum number of reads for a TSS to be considered
+#' @param samples The samples to call TSRs for
+#' @param max_distance The maximum distance to cluster TSSs
+#'
+#' @rdname tss_clustering-function
+#' @export
+
+tss_clustering <- function(
+	experiment, samples = "all", threshold = 1, max_distance = 25
+) {
+
+	## Retrive samples.
+	select_samples <- extract_counts(experiment, "tss", samples)
+	
+	select_samples <- select_samples %>%
+		map(function(x) {
+			x <- x[
+				score >= threshold,
+				.(seqnames, start, end, strand, score)
+			]
+			return(x)
+		})
+
+	## Convert samples to GRanges.
+	select_samples <- map(
+		select_samples,
+		~ makeGRangesFromDataFrame(., keep.extra.columns = TRUE)
+	)
+
+	## Call TSRs.
+	clustered_TSSs <- select_samples %>%
+		map(function(x) {
+
+			# Cluster TSSs within 'max_distance'.
+			clustered <- GenomicRanges::reduce(
+				x, with.revmap = TRUE,
+				min.gapwidth = max_distance + 1
+			)
+
+			# Get aggregate sum of scores.
+			cluster_info <- aggregate(
+				x, mcols(clustered)$revmap,
+				score = sum(score),
+				n_unique = lengths(score)
+			)
+
+			clustered$score <- cluster_info$score
+			clustered$n_unique <- cluster_info$n_unique
+			clustered$revmap <- NULL
+		})
+
+	## Add TSRs back to tsrexplorer object.
+	clustered_TSSs <- map(clustered_TSSs, as.data.table)
+
+	experiment@counts$TSRs$raw <- clustered_TSSs
+	return(experiment)
+
+}
