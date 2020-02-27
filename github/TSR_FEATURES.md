@@ -42,3 +42,9 @@ exp <- associate_with_tsr(
 	)
 )
 ```
+
+## TSR Metrics
+
+```
+exp <- tsr_metrics(exp)
+```

@@ -57,8 +57,7 @@ plot_average <- function(
 	## Pull data out of appropriate slot.
 	sample_data <- experiment %>%
 		extract_counts(data_type, samples, use_cpm) %>%
-		bind_rows(.id = "samples") %>%
-		as.data.table
+		bind_rows(.id = "samples")
 
 	keep_cols <- c("distanceToTSS", "score", "samples")
 	if (dominant) keep_cols <- c(keep_cols, "dominant")
