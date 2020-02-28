@@ -5,7 +5,7 @@
 \title{Genes/Transcripts Detected}
 \usage{
 detect_features(experiment, samples = "all", data_type = c("tss",
-  "tsr"), threshold = 1, dominant = FALSE)
+  "tsr"), threshold = NA, dominant = FALSE, condition_data = NA)
 }
 \arguments{
 \item{experiment}{tsrexplorer object with annotated TSSs or TSRs}
@@ -15,6 +15,8 @@ detect_features(experiment, samples = "all", data_type = c("tss",
 \item{data_type}{Whether TSSs or TSRs should be analyzed}
 
 \item{threshold}{The number of reads required in a TSS or TSR to avoid filtering}
+
+\item{condition_data}{Apply conditions to data (supports filtering, quantile, and/or grouping)}
 }
 \value{
 tibble of detected feature numbers

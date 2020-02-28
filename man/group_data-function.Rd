@@ -6,7 +6,7 @@
 \usage{
 group_data(signal_data, filter_by = NA, upper_filter = NA,
   lower_filter = NA, order_by = NA, order_direction = "descending",
-  quantile_by = NA, n_quantiles = NA)
+  quantile_by = NA, n_quantiles = NA, grouping = NA)
 }
 \arguments{
 \item{signal_data}{TSS or TSR data}
@@ -25,6 +25,8 @@ group_data(signal_data, filter_by = NA, upper_filter = NA,
 \item{quantile_by}{Continuous metric to calculate quantiles}
 
 \item{n_quantiles}{Number of quantiles to calculate for continuous metric}
+
+\item{grouping}{If quantiles not set split data by categorical variable}
 }
 \description{
 Group data for plotting

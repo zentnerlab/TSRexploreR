@@ -18,7 +18,7 @@
 #' @param data_type Whether to get distribution of TSSs or TSRs
 #' @param threshold Filter out TSSs or TSRs under a certain read count number
 #' @param dominant Should dominant TSS per 'gene' or 'tsr' only be considered
-#' @param data_group List of group options (filtering and quantiles available)
+#' @param data_conditions List of group options (filtering and quantiles/grouping available)
 #'
 #' @return tibble with TSS or TSR genomic distribution stats
 #'
@@ -28,7 +28,7 @@
 
 genomic_distribution <- function(
 	experiment, data_type = c("tss", "tsr"), samples = "all",
-	threshold = NA, dominant = FALSE, data_group = NA
+	threshold = NA, dominant = FALSE, data_conditions = NA
 ) {
 
 	## Extract samples.
@@ -48,21 +48,21 @@ genomic_distribution <- function(
 
 
 	## Apply advanced grouping.
-	if (!is.na(data_group)) {
-		selected_samples <- do.call(group_data, c(list(signal_data = selected_samples), data_group))
+	if (!is.na(data_conditions)) {
+		selected_samples <- do.call(group_data, c(list(signal_data = selected_samples), data_conditions))
 	}
 
 	## Prepare data to be plotted later.
 	selected_samples <- bind_rows(selected_samples, .id = "samples")
-	quantiles <- any(names(data_group) == "quantile_by")
+	groupings <- any(names(data_conditions) %in% c("quantile_by", "grouping"))
 
-	if (quantiles) {
+	if (groupings) {
 		genomic_distribution <- selected_samples[,
 			.(count = .N),
-			by = .(samples, simple_annotations, ntile)
+			by = .(samples, simple_annotations, grouping)
 		][,
 			.(simple_annotations, count, fraction = count / sum(count)),
-			by = .(samples, ntile)
+			by = .(samples, grouping)
 		]
 	} else {
 		genomic_distribution <- selected_samples[,
@@ -78,7 +78,7 @@ genomic_distribution <- function(
 	dist_exp <- DataFrame(genomic_distribution)
 
 	## Add quantile information to summarized experiment.
-	metadata(dist_exp)$quantiles <- quantiles
+	metadata(dist_exp)$groupings <- groupings
 	metadata(dist_exp)$dominant <- dominant
 
 	return(dist_exp)
@@ -127,7 +127,7 @@ plot_genomic_distribution <- function(genomic_distribution, sample_order = NA) {
 			panel.grid = element_blank()
 		)
 
-	if (!is.na(metadata(genomic_distribution)$quantiles)) p <- p + facet_grid(fct_rev(factor(ntile)) ~ .)
+	if (metadata(genomic_distribution)$groupings) p <- p + facet_grid(fct_rev(factor(grouping)) ~ .)
 
 	return(p)
 }

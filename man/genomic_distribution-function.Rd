@@ -6,7 +6,7 @@
 \usage{
 genomic_distribution(experiment, data_type = c("tss", "tsr"),
   samples = "all", threshold = NA, dominant = FALSE,
-  data_group = NA)
+  data_conditions = NA)
 }
 \arguments{
 \item{experiment}{tsrexplorer object with annotated TSRs}
@@ -19,7 +19,7 @@ genomic_distribution(experiment, data_type = c("tss", "tsr"),
 
 \item{dominant}{Should dominant TSS per 'gene' or 'tsr' only be considered}
 
-\item{data_group}{List of group options (filtering and quantiles available)}
+\item{data_conditions}{List of group options (filtering and quantiles/grouping available)}
 }
 \value{
 tibble with TSS or TSR genomic distribution stats

@@ -12,6 +12,7 @@
 #' @param filter_by Continuous variable to filter the data by
 #' @param upper_filter Upper value to filter continuous data by
 #' @param lower_filter Lower value to filter continuous data by
+#' @param grouping If quantiles not set split data by categorical variable
 #'
 #' @rdname group_data-function
 #' @export
@@ -20,7 +21,8 @@ group_data <- function(
 	signal_data,
 	filter_by = NA, upper_filter = NA, lower_filter = NA,
 	order_by = NA, order_direction = "descending",
-	quantile_by = NA, n_quantiles = NA
+	quantile_by = NA, n_quantiles = NA,
+	grouping = NA
 ) {
 	
 	## First filter the data if requested.	
@@ -60,6 +62,17 @@ group_data <- function(
 			x <- x[!is.na(x[[quantile_by]])]
 
 			x[, ntile := ntile(x[[quantile_by]], n_quantiles)]
+
+			return(x)
+		})
+	}
+
+	## If not using quantiles split by a categorical value.
+	if (!is.na(grouping) & is.na(quantile_by)) {
+		signal_data <- map(signal_data, function(x) {
+			x <- x[!is.na(x[[grouping]])]
+
+			x[, grouping := x[[grouping]]]
 
 			return(x)
 		})
