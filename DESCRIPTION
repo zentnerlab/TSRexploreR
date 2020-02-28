@@ -57,6 +57,7 @@ Collate:
     'gene_plots.R'
     'gene_tracks.R'
     'genomic_distribution.R'
+    'group_data.R'
     'heatmaps.R'
     'motif.R'
     'normalize.R'

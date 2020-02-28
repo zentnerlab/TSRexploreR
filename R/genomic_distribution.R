@@ -17,8 +17,8 @@
 #' @param samples Either "all" or vector of sample names
 #' @param data_type Whether to get distribution of TSSs or TSRs
 #' @param threshold Filter out TSSs or TSRs under a certain read count number
-#' @param quantiles number of quantiles to break the data down into
 #' @param dominant Should dominant TSS per 'gene' or 'tsr' only be considered
+#' @param data_group List of group options (filtering and quantiles available)
 #'
 #' @return tibble with TSS or TSR genomic distribution stats
 #'
@@ -28,42 +28,35 @@
 
 genomic_distribution <- function(
 	experiment, data_type = c("tss", "tsr"), samples = "all",
-	threshold = 1, quantiles = NA, dominant = FALSE
+	threshold = NA, dominant = FALSE, data_group = NA
 ) {
 
 	## Extract samples.
-	selected_samples <- experiment %>%
-		extract_counts(data_type, samples) %>%
-		bind_rows(.id = "samples")
+	selected_samples <- extract_counts(experiment, data_type, samples)
 
-	## Retain dominant
-	keep_cols <- c("samples", "score", "simple_annotations")
-	if (dominant) keep_cols <- c(keep_cols, "dominant")
- 
-	selected_samples <- selected_samples[
-		score >= threshold,
-		..keep_cols
-	]
-	selected_samples[,
-		simple_annotations := factor(
-			simple_annotations,
-			levels = c("Promoter", "Exon", "Intron", "Downstream", "Intergenic")
-		)
-	]
-
-	## Only consider dominant if requested.
-	if (dominant) {
-		selected_samples <- selected_samples[(dominant)]
-		selected_samples[, dominant := NULL]
+	## Preliminary sample preparation.
+	if (dominant | !is.na(threshold)) {
+		selected_samples <- preliminary_filter(selected_samples, dominant, threshold)
 	}
 
-	## Break data into quantiles if quantiles set is greater than 1.
-	if (!is.na(quantiles)) {
-		selected_samples[, ntile := ntile(score, quantiles), by = samples]
+	walk(selected_samples, function(x) {
+        	x[, simple_annotations := factor(
+                        simple_annotations,
+                        levels = c("Promoter", "Exon", "Intron", "Downstream", "Intergenic")
+                )]
+	})
+
+
+	## Apply advanced grouping.
+	if (!is.na(data_group)) {
+		selected_samples <- do.call(group_data, c(list(signal_data = selected_samples), data_group))
 	}
-	
+
 	## Prepare data to be plotted later.
-	if (!is.na(quantiles)) {
+	selected_samples <- bind_rows(selected_samples, .id = "samples")
+	quantiles <- any(names(data_group) == "quantile_by")
+
+	if (quantiles) {
 		genomic_distribution <- selected_samples[,
 			.(count = .N),
 			by = .(samples, simple_annotations, ntile)

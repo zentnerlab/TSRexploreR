@@ -5,7 +5,8 @@
 \title{Genomic Distribution}
 \usage{
 genomic_distribution(experiment, data_type = c("tss", "tsr"),
-  samples = "all", threshold = 1, quantiles = NA, dominant = FALSE)
+  samples = "all", threshold = NA, dominant = FALSE,
+  data_group = NA)
 }
 \arguments{
 \item{experiment}{tsrexplorer object with annotated TSRs}
@@ -16,9 +17,9 @@ genomic_distribution(experiment, data_type = c("tss", "tsr"),
 
 \item{threshold}{Filter out TSSs or TSRs under a certain read count number}
 
-\item{quantiles}{number of quantiles to break the data down into}
-
 \item{dominant}{Should dominant TSS per 'gene' or 'tsr' only be considered}
+
+\item{data_group}{List of group options (filtering and quantiles available)}
 }
 \value{
 tibble with TSS or TSR genomic distribution stats
