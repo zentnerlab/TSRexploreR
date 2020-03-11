@@ -21,9 +21,9 @@
 #' @param upstream Bases upstream to consider
 #' @param downstream bases downstream to consider
 #' @param threshold Reads required per TSS
-#' @param quantiles Number of quantiles to break data down into
 #' @param use_cpm Whether to use the CPM normalized values or not
 #' @param dominant Consider only dominant
+#' @param data_conditions Condition the data (filter, order, and quantile/group available)
 #'
 #' @return matrix of counts for each gene/transcript and position
 #'
@@ -32,72 +32,59 @@
 #' @export
 
 tss_heatmap_matrix <- function(
-	experiment,
-	samples = "all",
-	upstream = 1000,
-	downstream = 1000,
-	threshold = 1,
-	quantiles = NA,
-	use_cpm = FALSE,
-	dominant = FALSE
+        experiment, samples = "all", upstream = 1000, downstream = 1000,
+        threshold = NA, use_cpm = FALSE, dominant = FALSE,
+        data_conditions = NA
 ) {
-	## Grab requested samples.
-	annotated_tss <- experiment %>%
-		extract_counts("tss", samples, use_cpm) %>%	
-		bind_rows(.id = "sample")
 
-	setnames(annotated_tss,
-		old = ifelse(
-			experiment@settings$annotation[, feature_type] == "transcript",
-			"transcriptId", "geneId"
-		),
-		new = "feature"
-	)
+        ## Grab requested samples.
+        annotated_tss <- extract_counts(experiment, "tss", samples, use_cpm)
 
-	keep_cols <- c("sample", "feature", "distanceToTSS", "score")
-	if (dominant) keep_cols <- c(keep_cols, "dominant")
+        ## Preliminary filtering of data.
+        annotated_tss <- preliminary_filter(annotated_tss, dominant, threshold)
+        
+        annotated_tss <- annotated_tss %>%
+                map(function(x) {
+                        x <- x[dplyr::between(distanceToTSS, -upstream, downstream)]
+                        return(x)
+                })
 
-	annotated_tss <- annotated_tss[
-		score >= threshold &
-		dplyr::between(distanceToTSS, -upstream, downstream),
-		..keep_cols
-	]
+        ## Apply conditions to data.
+        if (!is.na(data_conditions)) {
+                annotated_tss <- do.call(group_data, c(list(signal_data = annotated_tss), data_conditions))
+        }
 
-	## Keep only dominant it requested.
-	if (dominant) {
-		annotated_tss <- annotated_tss[(dominant)]
-		annotated_tss[, dominant := NULL]
-	}
+        ## Rename feature column.
+        annotated_tss <- bind_rows(annotated_tss, .id = "sample")
+        setnames(annotated_tss,
+                old = ifelse(
+                        experiment@settings$annotation[, feature_type] == "transcript",
+                        "transcriptId", "geneId"
+                ),
+                new = "feature"
+        )
 
-	## Get order of genes for heatmap (mean across samples).
-	annotated_tss[, feature_mean := mean(score), by = feature]
-	annotated_tss[, rank := dense_rank(feature_mean)]
-	annotated_tss[, feature_mean := NULL]
+        ## Get order of genes for heatmap (mean across samples).
+        annotated_tss[, plot_order := as.numeric(plot_order)]
+	annotated_tss[, plot_order := mean(plot_order), by = .(feature)]
 
-	## Add quantiles if specified.
-	if (!is.na(quantiles)) {
-		annotated_tss[, ntile := ntile(rank, quantiles)]
-	}
 
 	## Format for plotting.
-	if(!is.na(quantiles)) {
-		annotated_tss <- annotated_tss[,
-			.(sample, score, rank, ntile,
-			distanceToTSS = factor(distanceToTSS, levels = seq(-upstream, downstream, 1)),
-			feature = fct_reorder(factor(feature), rank))
-		]
-	} else {
-		annotated_tss <- annotated_tss[,
-			.(sample, score, rank,
-			distanceToTSS = factor(distanceToTSS, levels = seq(-upstream, downstream, 1)),
-			feature = fct_reorder(factor(feature), rank))
+	groupings <- any(names(data_conditions) %in% c("quantile_by", "grouping"))
+
+	if(any(names(annotated_tss) == "plot_order")) {
+		annotated_tss[,
+			c("distanceToTSS", "feature") := list(
+				factor(distanceToTSS, levels = seq(-upstream, downstream, 1)),
+				feature = fct_reorder(factor(feature), plot_order)
+			)
 		]
 	}
 
 	## Return a DataFrame
 	tss_df <- DataFrame(annotated_tss)
 	metadata(tss_df)$threshold <- threshold
-	metadata(tss_df)$quantiles <- quantiles
+	metadata(tss_df)$groupings <- groupings
 	metadata(tss_df)$use_cpm <- use_cpm
 	metadata(tss_df)$dominant <- dominant
 	metadata(tss_df)$promoter <- c(upstream, downstream)
@@ -142,19 +129,16 @@ plot_heatmap <- function(
 	## Extract some info from the heatmap matrix.
 	upstream <- metadata(heatmap_matrix)$promoter[1]
 	downstream <- metadata(heatmap_matrix)$promoter[2]
+	groupings <- metadata(heatmap_matrix)$groupings
 
 	## Convert to data.table ,log2 transform scores, and then truncate values above 'max_value'.
 	heatmap_mat <- as.data.table(heatmap_matrix)
-	heatmap_mat <- heatmap_mat[,
-		.(sample, score = ifelse(log2(score) > max_value, max_value, log2(score)),
-		rank, distanceToTSS, feature)
-	]
+	heatmap_mat[, score := ifelse(log2(score) > max_value, max_value, log2(score))]
 
         ## plot
         p <- ggplot(heatmap_mat, aes(x = distanceToTSS, y = feature, fill = log2(score))) +
-                geom_tile(...) +
+                geom_tile() +
                 geom_vline(xintercept = upstream, color = "black", linetype = "dashed", size = 0.1) +
-                facet_grid(. ~ sample) +
                 theme_minimal() +
                 scale_x_discrete(
                         breaks = seq(-upstream, downstream, 1) %>% keep(~ (./100) %% 1 == 0),
@@ -178,8 +162,8 @@ plot_heatmap <- function(
                 ) +
 		labs(x = "Position", y = "Feature")
 
-	if (!is.na(metadata(heatmap_matrix)$quantiles)) {
-		p <- p + facet_grid(fct_rev(factor(ntile)) ~ sample)
+	if (metadata(heatmap_matrix)$groupings) {
+		p <- p + facet_wrap(grouping ~ sample, scales = "free")
 	} else {
 		p <- p + facet_wrap(. ~ sample, ncol = ncol)
 	}
