@@ -61,7 +61,7 @@ group_data <- function(
 		signal_data <- map(signal_data, function(x) {
 			x <- x[!is.na(x[[quantile_by]])]
 
-			x[, ntile := ntile(x[[quantile_by]], n_quantiles)]
+			x[, grouping := ntile(x[[quantile_by]], n_quantiles)]
 
 			return(x)
 		})
