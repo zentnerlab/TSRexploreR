@@ -53,7 +53,7 @@ genomic_distribution <- function(
 	}
 
 	## Prepare data to be plotted later.
-	selected_samples <- bind_rows(selected_samples, .id = "samples")
+	selected_samples <- rbindlist(selected_samples, idcol = "samples")
 	groupings <- any(names(data_conditions) %in% c("quantile_by", "grouping"))
 
 	if (groupings) {

@@ -34,7 +34,7 @@
 tss_heatmap_matrix <- function(
         experiment, samples = "all", upstream = 1000, downstream = 1000,
         threshold = NA, use_cpm = FALSE, dominant = FALSE,
-        data_conditions = NA
+        data_conditions = list(order_by = "score")
 ) {
 
         ## Grab requested samples.
@@ -55,7 +55,7 @@ tss_heatmap_matrix <- function(
         }
 
         ## Rename feature column.
-        annotated_tss <- bind_rows(annotated_tss, .id = "sample")
+        annotated_tss <- rbindlist(annotated_tss, idcol = "sample")
         setnames(annotated_tss,
                 old = ifelse(
                         experiment@settings$annotation[, feature_type] == "transcript",
@@ -191,11 +191,10 @@ plot_heatmap <- function(
 #' @param samples Either 'all' or names of samples to analyze
 #' @param upstream Bases upstream to consider
 #' @param downstream bases downstream to consider
-#' @param feature_type Whether the heatmap is built on genes or transcripts ("geneId", "transcriptId")
-#' @param quantiles Number of quantiles to split data into
 #' @param threshold Reads required per TSR
 #' @param use_cpm Whether to use CPM normalized or raw counts
 #' @param dominant Whether dominant only should be considered
+#' @param data_conditions Conditions to place on data
 #'
 #' @return matrix of counts for each gene/transcript and position
 #'
@@ -204,77 +203,56 @@ plot_heatmap <- function(
 #' @export
 
 tsr_heatmap_matrix <- function(
-	experiment,
-	samples = "all",
-	upstream = 1000,
-	downstream = 1000,
-	feature_type = c("transcriptId", "geneId"),
-	quantiles = NA,
-	threshold = 1,
-	use_cpm = FALSE,
-	dominant = FALSE
+	experiment, samples = "all", upstream = 1000,
+	downstream = 1000, threshold = NA, use_cpm = FALSE,
+	dominant = FALSE, data_conditions = list(order_by = "score")
 ) {
 	
 	## Pull samples out.
-	annotated_tsr <- experiment %>%
-		extract_counts("tsr", samples, use_cpm) %>%
-		bind_rows(.id = "sample")
+	annotated_tsr <- extract_counts(experiment, "tsr", samples, use_cpm)
 
-	setnames(annotated_tsr,
-		old = ifelse(
-			experiment@settings$annotation[, feature_type] == "transcript",
-			"transcriptId", "geneId"
-		),
-		new = "feature"
-	)
+	## Preliminary filtering of data.
+	if (!is.na(threshold) | dominant) {
+		anntotated_tsr <- preliminary_filter(annotated_tsr, dominant, threshold)
+	}
 
+	walk(annotated_tsr, function(x) {
+		setnames(x,
+			old = ifelse(
+				experiment@settings$annotation[, feature_type] == "transcript",
+				"transcriptId", "geneId"
+			),
+			new = "feature"
+		)
+	})
 
+	## Conditionals on data.
+	if (!is.na(data_conditions)) {
+		annotated_tsr <- do.call(group_data, c(list(signal_data = annotated_tsr), data_conditions))
+	}
 
 	## Start preparing data for plotting.
-	if (dominant) {
-		annotated_tsr <- annotated_tsr[
-			score >= threshold,
-			.(sample, strand, start, end, feature, dominant, geneStart, geneEnd, score,
-			startDist = ifelse(strand == "+", start - geneStart, -(end - geneEnd)),
-			endDist = ifelse(strand == "+", end - geneStart, -(start - geneEnd)))
-		][,
-			.(sample, strand, startDist, endDist, score, dominant, feature, tsr_id = seq_len(.N))
-		]
-	} else {
-                annotated_tsr <- annotated_tsr[
-                        score >= threshold,
-                        .(sample, strand, start, end, feature, geneStart, geneEnd, score,
-                        startDist = ifelse(strand == "+", start - geneStart, -(end - geneEnd)),
-                        endDist = ifelse(strand == "+", end - geneStart, -(start - geneEnd)))
-                ][,
-                        .(sample, strand, startDist, endDist, score, feature, tsr_id = seq_len(.N))
-                ]
-	}
-
-	## Only keep dominant if requested.
-	if (dominant) {
-		annotated_tsr <- annotated_tsr[(dominant)]
-		annotated_tsr[, dominant := NULL]
-	}
+	annotated_tsr <- rbindlist(annotated_tsr, idcol = "sample")
+	annotated_tsr[,
+		c("startDist", "endDist", "tsr_id") := list(
+			ifelse(strand == "+", start - geneStart, -(end - geneEnd)),
+			ifelse(strand == "+", end - geneStart, -(start - geneEnd)),
+			seq_len(.N)
+		)
+	]
 
         ## Get order of genes for heatmap (mean across samples).
-	annotated_tsr[, feature_mean := mean(score), by = feature]
-	annotated_tsr[,	rank := dense_rank(feature_mean)]
-	annotated_tsr[, feature_mean := NULL]
+	annotated_tsr[, plot_order := as.numeric(plot_order)]
+	annotated_tsr[,	plot_order := mean(plot_order), by = feature]
 
         ## Put TSR score for entire range of TSR.
         annotated_tsr <- annotated_tsr[,
-                .(sample, feature, score, rank, distanceToTSS = seq(as.numeric(startDist), as.numeric(endDist), 1)),
+                .(setdiff(names(annotated_tsr), "distanceToTSS"),
+		distanceToTSS = seq(as.numeric(startDist), as.numeric(endDist), 1)),
                 by = tsr_id
-        ][
-		dplyr::between(distanceToTSS, -upstream, downstream),
-		.(sample, feature, score, rank, distanceToTSS)
-	]
+        ]
 
-	## Add quantiles if specified.
-	if (!is.na(quantiles)) {
-		annotated_tsr[, ntile := ntile(rank, quantile)]
-	}
+	annotated_tsr <- annotated_tsr[dplyr::between(distanceToTSS, -upstream, downstream)]
 
         ## Format for plotting.
         if(!is.na(quantiles)) {

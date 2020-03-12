@@ -73,7 +73,7 @@ plot_average <- function(
         }
 
         ## Update data if score is also considered instead of just unique position.
-        sample_data <- bind_rows(sample_data, .id = "sample")
+        sample_data <- rbindlist(sample_data, idcol = "sample")
         if (consider_score) sample_data <- sample_data[rep(seq_len(.N), score)]
 
         ## Plot averages.

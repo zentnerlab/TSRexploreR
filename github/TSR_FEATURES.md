@@ -52,3 +52,12 @@ exp <- tsr_metrics(exp)
 ## Annotate TSSs
 
 ```
+annotation <- system.file("extdata", "S288C_Annotation.gtf", package = "tsrexplorer")
+
+exp <- annotate_features(
+        exp, annotation_data = annotation,
+        data_type = "tss", feature_type = "transcript"
+)
+```
+
+
