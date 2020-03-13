@@ -73,13 +73,10 @@ tss_heatmap_matrix <- function(
 	groupings <- any(names(data_conditions) %in% c("quantile_by", "grouping"))
 
 	if(any(names(annotated_tss) == "plot_order")) {
-		annotated_tss[,
-			c("distanceToTSS", "feature") := list(
-				factor(distanceToTSS, levels = seq(-upstream, downstream, 1)),
-				feature = fct_reorder(factor(feature), plot_order)
-			)
-		]
-	}
+                annotated_tss[, feature := fct_reorder(factor(feature), plot_order)]
+        }
+        annotated_tss[, distanceToTSS := factor(distanceToTSS, levels = seq(-upstream, downstream, 1))]
+
 
 	## Return a DataFrame
 	tss_df <- DataFrame(annotated_tss)
@@ -246,33 +243,30 @@ tsr_heatmap_matrix <- function(
 	annotated_tsr[,	plot_order := mean(plot_order), by = feature]
 
         ## Put TSR score for entire range of TSR.
-        annotated_tsr <- annotated_tsr[,
-                .(setdiff(names(annotated_tsr), "distanceToTSS"),
+        new_ranges <- annotated_tsr[,
+		.(sample, seqnames, start, end, strand,
 		distanceToTSS = seq(as.numeric(startDist), as.numeric(endDist), 1)),
                 by = tsr_id
         ]
+	new_ranges[, tsr_id := NULL]
+	setkeyv(new_ranges, c("sample", "seqnames", "start", "end", "strand"))
 
-	annotated_tsr <- annotated_tsr[dplyr::between(distanceToTSS, -upstream, downstream)]
+	annotated_tsr[, distanceToTSS := NULL]
+	setkeyv(annotated_tsr, c("sample", "seqnames", "start", "end", "strand"))
+	annotated_tsr <- merge(new_ranges, annotated_tsr, all.x = TRUE)[
+		dplyr::between(distanceToTSS, -upstream, downstream)
+	]
 
         ## Format for plotting.
-        if(!is.na(quantiles)) {
-                annotated_tsr <- annotated_tsr[,
-                        .(sample, score, rank, ntile,
-                        distanceToTSS = factor(distanceToTSS, levels = seq(-upstream, downstream, 1)),
-                        feature = fct_reorder(factor(feature), rank))
-                ]
-        } else {
-                annotated_tsr <- annotated_tsr[,
-                        .(sample, score, rank,
-                        distanceToTSS = factor(distanceToTSS, levels = seq(-upstream, downstream, 1)),
-                        feature = fct_reorder(factor(feature), rank))
-                ]
-        }
+	if(any(names(annotated_tss) == "plot_order")) {
+		annotated_tsr[, feature := fct_reorder(factor(feature), plot_order)]
+	}
+	annotated_tsr[, distanceToTSS := factor(distanceToTSS, levels = seq(-upstream, downstream, 1))]
 
 	## Return DataFrame
 	tsr_df <- DataFrame(annotated_tsr)
 	metadata(tsr_df)$threshold <- threshold
-	metadata(tsr_df)$quantiles <- quantiles
+	metadata(tsr_df)$groupings <- any(names(data_conditions) == "grouping")
 	metadata(tsr_df)$use_cpm <- use_cpm
 	metadata(tsr_df)$promoter <- c(upstream, downstream)
 

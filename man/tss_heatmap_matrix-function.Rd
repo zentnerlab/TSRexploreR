@@ -6,7 +6,7 @@
 \usage{
 tss_heatmap_matrix(experiment, samples = "all", upstream = 1000,
   downstream = 1000, threshold = NA, use_cpm = FALSE,
-  dominant = FALSE, data_conditions = NA)
+  dominant = FALSE, data_conditions = list(order_by = "score"))
 }
 \arguments{
 \item{experiment}{tsrexplorer object with annotated TSSs}
