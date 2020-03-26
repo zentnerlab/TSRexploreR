@@ -60,4 +60,13 @@ exp <- annotate_features(
 )
 ```
 
+## Annotate TSRs
 
+```
+annotation <- system.file("extdata", "S288C_Annotation.gtf", package = "tsrexplorer")
+
+exp <- annotate_features(
+        exp, annotation_data = annotation,
+        data_type = "tsr", feature_type = "transcript"
+)
+```
