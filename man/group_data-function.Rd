@@ -4,18 +4,15 @@
 \alias{group_data}
 \title{Group Data}
 \usage{
-group_data(signal_data, filter_by = NA, upper_filter = NA,
-  lower_filter = NA, order_by = NA, order_direction = "descending",
-  quantile_by = NA, n_quantiles = NA, grouping = NA)
+group_data(signal_data, filters = NA, order_by = NA,
+  order_direction = "descending", order_samples = NA,
+  order_group = NA, quantile_by = NA, n_quantiles = NA,
+  grouping = NA)
 }
 \arguments{
 \item{signal_data}{TSS or TSR data}
 
-\item{filter_by}{Continuous variable to filter the data by}
-
-\item{upper_filter}{Upper value to filter continuous data by}
-
-\item{lower_filter}{Lower value to filter continuous data by}
+\item{filters}{Logical string to subset/filter data by}
 
 \item{order_by}{Metric to order data by}
 
@@ -27,6 +24,8 @@ group_data(signal_data, filter_by = NA, upper_filter = NA,
 \item{n_quantiles}{Number of quantiles to calculate for continuous metric}
 
 \item{grouping}{If quantiles not set split data by categorical variable}
+
+\item{order_on}{Names of samples to order by}
 }
 \description{
 Group data for plotting
