@@ -1,4 +1,3 @@
-
 #' Group Data
 #'
 #' Group data for plotting
@@ -9,52 +8,66 @@
 #' @param order_by Metric to order data by
 #' @param order_direction Whether the values should be ordered in
 #' 'ascending' or 'descending' order
-#' @param filter_by Continuous variable to filter the data by
-#' @param upper_filter Upper value to filter continuous data by
-#' @param lower_filter Lower value to filter continuous data by
+#' @param order_on Names of samples to order by
+#' @param filters Logical string to subset/filter data by
 #' @param grouping If quantiles not set split data by categorical variable
 #'
 #' @rdname group_data-function
 #' @export
 
 group_data <- function(
-	signal_data,
-	filter_by = NA, upper_filter = NA, lower_filter = NA,
-	order_by = NA, order_direction = "descending",
-	quantile_by = NA, n_quantiles = NA,
-	grouping = NA
+        signal_data, filters = NA,
+        order_by = NA, order_direction = "descending",
+        order_samples = NA, order_group = NA,
+        quantile_by = NA, n_quantiles = NA,
+        grouping = NA
 ) {
 	
-	## First filter the data if requested.	
-	if (!is.na(filter_by)) {
-		signal_data <- map(signal_data, function(x) {
-			x <- x[!is.na(x[[filter_by]])]
+        ## First filter the data if requested.  
+        if (!is.na(filters)) {
+                signal_data <- map(signal_data, function(x) {
+                        x <- subset(x, eval(parse(text = filters)))
+                        return(x)
+                })
+        }
 
-			if (!is.na(upper_filter)) {
-				x <- x[x[[filter_by]] <= upper_filter]
-			}
-			if (!is.na(lower_filter)) {
-				x <- x[x[[filter_by]] >= lower_filter]
-			}
+        ## Next order the data for plotting if requested.
+        if (!is.na(order_by)) {
+                order_dataset <- rbindlist(signal_data, id = "sample")[,
+                        c("sample", ..order_by, ..order_group)
+                ]
 
-			return(x)
-		})
-	}
+                order_dataset <- dcast(
+                        order_dataset, as.formula(str_c("sample ~ ", order_group)),
+                        value.var = order_by, fun.aggregate = mean,
+                        fill = ifelse(order_direction == "descending", -Inf, Inf)
+                )
 
-	## Next order the data for plotting if requested.
-	if (!is.na(order_by)) {
-		signal_data <- map(signal_data, function(x) {
-			x <- x[!is.na(x[[order_by]])]
+                order_dataset <- melt(
+                        order_dataset, id.vars = "sample",
+                        variable.name = order_group, value.name = order_by
+                )
 
-			if (order_direction == "descending") {
-				x[, plot_order := dense_rank(desc(x[[order_by]]))]
-			} else if (order_direction == "ascending") {
-				x[, plot_order := dense_rank(x[[order_by]])]
-			}
+                if (!is.na(order_samples)) {
+                        order_dataset <- order_dataset[sample %in% order_samples]
+                }
 
-			return(x)
-		})
-	}
+                order_dataset <- order_dataset[, .(order_by = mean(get(order_by))), by = order_group]
+                setnames(order_dataset, old = "order_by", new = order_by)
+
+                if (order_direction == "descending") {
+                        order_dataset[, plot_order := dense_rank(desc(order_dataset[[order_by]]))]
+                } else if (order_direction == "ascending") {
+                        order_dataset[, plot_order := dense_rank(order_dataset[[order_by]])]
+                }
+
+                order_dataset[, c(order_by) := NULL]
+
+                signal_data <- map(signal_data, function(x) {
+                        x <- merge(x, order_dataset, by = order_group, all.x = TRUE)
+                        return(x)
+                })
+        }
 
 	## Quantile the metric if requested.
 	if (!is.na(quantile_by)) {
