@@ -24,6 +24,10 @@ group_data(signal_data, filters = NA, order_by = NA,
 
 \item{n_quantiles}{Number of quantiles to calculate for continuous metric}
 
+\item{quantile_samples}{Samples to use when setting quantiles}
+
+\item{quantile_group}{Group these features and quantile based on aggregate mean of feature}
+
 \item{grouping}{If quantiles not set split data by categorical variable}
 
 \item{order_on}{Names of samples to order by}

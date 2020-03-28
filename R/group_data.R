@@ -5,6 +5,8 @@
 #' @param signal_data TSS or TSR data
 #' @param quantile_by Continuous metric to calculate quantiles
 #' @param n_quantiles Number of quantiles to calculate for continuous metric
+#' @param quantile_samples Samples to use when setting quantiles
+#' @param quantile_group Group these features and quantile based on aggregate mean of feature
 #' @param order_by Metric to order data by
 #' @param order_direction Whether the values should be ordered in
 #' 'ascending' or 'descending' order
