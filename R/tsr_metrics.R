@@ -46,16 +46,16 @@ tsr_metrics <- function(experiment) {
 	select_TSRs <- experiment %>%
 		extract_counts("tsr", tsr_names) %>%
 		bind_rows(.id = "tsr_sample")
-	setnames(select_TSRs, old = "FID", new = "TSR_FID")
+	setnames(select_TSRs, old = c("FID", "FHASH"), new = c("TSR_FID", "TSR_FHASH"))
 
 	tsr_metrics <- select_samples[
 		!is.na(TSR_FID),
-		.(tsr_sample, TSR_FID, shape_index, shape_class, peak_concentration,
+		.(tsr_sample, TSR_FID, TSR_FHASH, shape_index, shape_class, peak_balance,
 		iqr_min, iqr_max, iqr_width, iqr_coords)
 	]
 	tsr_metrics <- unique(tsr_metrics)	
 
-	tsr_keys <- c("tsr_sample", "TSR_FID")
+	tsr_keys <- c("tsr_sample", "TSR_FID", "TSR_FHASH")
 	setkeyv(select_TSRs, tsr_keys)
 	setkeyv(tsr_metrics, tsr_keys)
 
