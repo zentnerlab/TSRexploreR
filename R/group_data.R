@@ -37,6 +37,8 @@ group_data <- function(
 
         ## Next order the data for plotting if requested.
         if (!is.na(order_by)) {
+		if (is.na(order_group)) order_group <- "FHASH"
+
                 order_dataset <- rbindlist(signal_data, id = "sample")[,
                         c("sample", ..order_by, ..order_group)
                 ]
@@ -75,7 +77,8 @@ group_data <- function(
 
 	## Quantile the metric if requested.
 	if (!is.na(quantile_by)) {
-		
+		if (is.na(quantile_group)) quantile_group <- "FHASH"
+	
 		quantile_dataset <- rbindlist(signal_data, id = "sample")[,
 			c("sample", ..quantile_by, ..quantile_group)
 		]
