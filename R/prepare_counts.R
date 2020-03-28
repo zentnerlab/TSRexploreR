@@ -36,7 +36,7 @@ format_counts <- function(experiment, data_type = c("tss", "tsr"), samples = "al
 			x <- as.data.table(x)
 			x[, FID := seq_len(nrow(x))]
 			x[,
-				FHASH := digest(str_c(seqnames, start, end, strand), collapse = ""),
+				FHASH := digest(str_c(seqnames, start, end, strand, collapse = "")),
 				by = seq_len(nrow(x))
 			]
 			return(x)
