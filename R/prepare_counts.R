@@ -4,6 +4,7 @@
 #' Format counts for TSSs, TSRs, and/or features.
 #'
 #' @importFrom magrittr set_colnames set_rownames
+#' @importFrom digest digest
 #'
 #' @param experiment tsrexplorer object
 #' @param data_type 'tss' or 'tsr'
@@ -34,6 +35,10 @@ format_counts <- function(experiment, data_type = c("tss", "tsr"), samples = "al
 		raw_counts <- map(select_samples, function(x) {
 			x <- as.data.table(x)
 			x[, FID := seq_len(nrow(x))]
+			x[,
+				FHASH := digest(str_c(seqnames, start, end, strand), collapse = ""),
+				by = seq_len(nrow(x))
+			]
 			return(x)
 		})
 	}

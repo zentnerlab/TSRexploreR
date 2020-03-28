@@ -20,6 +20,8 @@ group_data <- function(
         order_by = NA, order_direction = "descending",
         order_samples = NA, order_group = NA,
         quantile_by = NA, n_quantiles = NA,
+	quantile_samples = NA, quantile_group = NA,
+	quantile_direction = "descending",
         grouping = NA
 ) {
 	
@@ -71,11 +73,39 @@ group_data <- function(
 
 	## Quantile the metric if requested.
 	if (!is.na(quantile_by)) {
+		
+		quantile_dataset <- rbindlist(signal_data, id = "sample")[,
+			c("sample", ..quantile_by, ..quantile_group)
+		]
+
+		quantile_dataset <- dcast(
+			quantile_dataset, as.formula(str_c("sample ~ ", quantile_group)),
+			value.var = quantile_by, fun.aggregate = mean,
+			fill = ifelse(quantile_direction == "descending", -Inf, Inf)
+		)
+
+		quantile_dataset <- melt(
+			quantile_dataset, id.vars = "sample",
+			variable.name = quantile_group, value.name = quantile_by
+		)
+
+		if (!is.na(quantile_samples)) {
+			quantile_dataset <- quantile_dataset[sample %in% quantile_samples]
+		}
+
+		quantile_dataset <- quantile_dataset[, .(quantile_by = mean(get(quantile_by))), by = quantile_group]
+		setnames(quantile_dataset, old = "quantile_by", new = quantile_by)
+		
+		if (quantile_direction == "descending") {
+			quantile_dataset[, grouping := ntile(desc(quantile_dataset[[quantile_by]]), n_quantiles)]
+		} else if (quantile_direction == "ascending") {
+			quantile_dataset[, grouping := ntile(quantile_dataset[[quantile_by]], n_quantiles)]
+		}
+
+		quantile_dataset[, c(quantile_by) := NULL]
+
 		signal_data <- map(signal_data, function(x) {
-			x <- x[!is.na(x[[quantile_by]])]
-
-			x[, grouping := ntile(x[[quantile_by]], n_quantiles)]
-
+			x <- merge(x, quantile_dataset, by = quantile_group, all.x = TRUE)
 			return(x)
 		})
 	}

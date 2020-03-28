@@ -38,7 +38,8 @@ Imports:
     TSRchitect,
     CAGEr,
     S4Vectors,
-    SummarizedExperiment
+    SummarizedExperiment,
+    digest
 Suggests:
     clusterProfiler
 RoxygenNote: 6.1.1
