@@ -64,11 +64,6 @@ tss_heatmap_matrix <- function(
                 new = "feature"
         )
 
-        ## Get order of genes for heatmap (mean across samples).
-        annotated_tss[, plot_order := as.numeric(plot_order)]
-	annotated_tss[, plot_order := mean(plot_order), by = .(feature)]
-
-
 	## Format for plotting.
 	groupings <- any(names(data_conditions) %in% c("quantile_by", "grouping"))
 
@@ -237,10 +232,6 @@ tsr_heatmap_matrix <- function(
 			seq_len(.N)
 		)
 	]
-
-        ## Get order of genes for heatmap (mean across samples).
-	annotated_tsr[, plot_order := as.numeric(plot_order)]
-	annotated_tsr[,	plot_order := mean(plot_order), by = feature]
 
         ## Put TSR score for entire range of TSR.
         new_ranges <- annotated_tsr[,

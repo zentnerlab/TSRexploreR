@@ -61,9 +61,9 @@ group_data <- function(
                 order_dataset <- order_dataset[, .(order_by = mean(get(order_by))), by = order_group]
                 setnames(order_dataset, old = "order_by", new = order_by)
 
-                if (order_direction == "descending") {
+                if (order_direction == "ascending") {
                         order_dataset[, plot_order := dense_rank(desc(order_dataset[[order_by]]))]
-                } else if (order_direction == "ascending") {
+                } else if (order_direction == "descending") {
                         order_dataset[, plot_order := dense_rank(order_dataset[[order_by]])]
                 }
 
@@ -101,9 +101,9 @@ group_data <- function(
 		quantile_dataset <- quantile_dataset[, .(quantile_by = mean(get(quantile_by))), by = quantile_group]
 		setnames(quantile_dataset, old = "quantile_by", new = quantile_by)
 		
-		if (quantile_direction == "descending") {
+		if (quantile_direction == "ascending") {
 			quantile_dataset[, grouping := ntile(desc(quantile_dataset[[quantile_by]]), n_quantiles)]
-		} else if (quantile_direction == "ascending") {
+		} else if (quantile_direction == "descending") {
 			quantile_dataset[, grouping := ntile(quantile_dataset[[quantile_by]], n_quantiles)]
 		}
 

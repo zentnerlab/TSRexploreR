@@ -70,3 +70,30 @@ exp <- annotate_features(
         data_type = "tsr", feature_type = "transcript"
 )
 ```
+
+## TSS Plots
+
+### Genomic Distribution
+
+```
+conditions <- list(grouping = "shape_class")
+tss_distribution <- genomic_distribution(exp, data_type = "tss", threshold = 3, data_conditions = conditions)
+```
+
+### Average Plots
+
+```
+NULL
+```
+
+### Heatmaps
+
+```
+conditions <- list(order_by = "score", order_group = "transcriptId", grouping = "shape_class")
+mat <- tss_heatmap_matrix(
+	exp, upstream = 250, downstream = 250,
+	threshold = 3, data_conditions = conditions
+)
+
+p <- plot_heatmap(mat)
+```
