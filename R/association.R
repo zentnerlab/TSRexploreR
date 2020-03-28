@@ -114,17 +114,17 @@ associate_with_tsr <- function(experiment, use_sample_sheet = TRUE, sample_list 
 
 		# Make GRanges of TSSs.
 		tss_set <- extract_counts(experiment, "tss", tss_names) %>%
-			bind_rows(.id = "sample")
+			rbindlist(id = "sample")
 		
 		tss_gr <- makeGRangesFromDataFrame(tss_set, keep.extra.columns = TRUE)
 
 		# Make GRanges of TSRs.
 		tsr_set <- extract_counts(experiment, "tsr", tsr_name) %>%
-			bind_rows(.id = "tsr_sample")
+			rbindlist(id = "tsr_sample")
 		
 		tsr_gr <- tsr_set
-		setnames(tsr_gr, old = "FID", new = "TSR_FID")
-		tsr_gr <- tsr_gr[, .(seqnames, start, end, strand, TSR_FID)]
+		setnames(tsr_gr, old = c("FID", "FHASH"), new = c("TSR_FID", "TSR_FHASH"))
+		tsr_gr <- tsr_gr[, .(seqnames, start, end, strand, TSR_FID, TSR_FHASH)]
 		tsr_gr <- makeGRangesFromDataFrame(tsr_gr, keep.extra.columns = TRUE)
 
 		# Annotate TSS to overlapping TSR.
@@ -133,11 +133,12 @@ associate_with_tsr <- function(experiment, use_sample_sheet = TRUE, sample_list 
 			overlapping,
 			old = c(
 				"first.X.seqnames", "first.X.start", "first.X.end",
-				"first.X.strand", "second.TSR_FID", "first.sample"
+				"first.X.strand", "second.TSR_FID", "first.sample",
+				"second.X.TSR_FHASH"
 			),
-			new = c("seqnames", "start", "end", "strand", "TSR_FID", "sample")
+			new = c("seqnames", "start", "end", "strand", "TSR_FID", "sample", "TSR_FHASH")
 		)
-		overlapping <- overlapping[, .(seqnames, start, end, strand, TSR_FID, sample)]
+		overlapping <- overlapping[, .(seqnames, start, end, strand, TSR_FID, TSR_FHASH, sample)]
 
 		# Prepare tsr_set to merge into overalpping tss.
 		tsr_clean <- copy(tsr_set)
@@ -154,8 +155,8 @@ associate_with_tsr <- function(experiment, use_sample_sheet = TRUE, sample_list 
 		tss_set <- merge(tss_set, overlapping, all.x = TRUE)
 
 		# Merge TSRs into TSSs.
-		setkey(tsr_clean, "TSR_FID")
-		setkey(tss_set, "TSR_FID")
+		setkeyv(tsr_clean, c("TSR_FID", "TSR_FHASH"))
+		setkeyv(tss_set, c("TSR_FID", "TSR_FHASH"))
 		merged_set <- merge(tss_set, tsr_clean, all.x = TRUE)
 
 		merged_set <- merged_set %>%
