@@ -24,9 +24,9 @@ tsr_metrics <- function(experiment) {
 	select_samples <- merge(select_samples, si, all.x = TRUE)
 
 	## Calculate peak concentration.
-	pc <- peak_concentration(select_samples)
-	setkeyv(pc, keys)
-	select_samples <- merge(select_samples, pc, all.x = TRUE)
+	#pc <- peak_concentration(select_samples)
+	#setkeyv(pc, keys)
+	#select_samples <- merge(select_samples, pc, all.x = TRUE)
 
 	## Calculate peak balance.
 	pb <- peak_balance(select_samples)
@@ -51,7 +51,7 @@ tsr_metrics <- function(experiment) {
 	tsr_metrics <- select_samples[
 		!is.na(TSR_FID),
 		.(tsr_sample, TSR_FID, shape_index, shape_class, peak_concentration,
-		peak_balance, iqr_min, iqr_max, iqr_width, iqr_coords)
+		iqr_min, iqr_max, iqr_width, iqr_coords)
 	]
 	tsr_metrics <- unique(tsr_metrics)	
 
