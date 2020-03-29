@@ -20,8 +20,8 @@
 #' @param genome_assembly Genome assembly in fasta format or bioconductor BSgenome
 #' @param threshold Keep only TSSs with threshold number of reads or more
 #' @param distance Bases to add on each side of TSS
-#' @param quantiles Break data into quantiles
 #' @param dominant Whether only dominant should be considered
+#' @param data_condtions Condition the data (filter, quantile, and grouping available)
 #' @return Sequences surrounding TSSs
 #'
 #' @rdname tss_sequences-function
@@ -30,7 +30,7 @@
 
 tss_sequences <- function(
 	experiment, samples = "all", genome_assembly, threshold = 1,
-	distance = 10, quantiles = NA, dominant = FALSE
+	distance = 10, dominant = FALSE, data_conditions = NA
 ) {
 
 	## Open genome assembly.
@@ -41,31 +41,18 @@ tss_sequences <- function(
 	}
 
 	## Pull selected samples.
-	select_samples <- experiment %>%
-		extract_counts("tss", samples) %>%
-		bind_rows(.id = "sample") %>%
-		as.data.table
+	select_samples <- extract_counts(experiment, "tss", samples)
 
-	keep_cols <- c("sample", "seqnames", "start", "end", "strand", "score")
-	if (dominant) keep_cols <- c(keep_cols, "dominant")
+	## Preliminary filtering of data.
+	select_samples <- preliminary_filter(select_samples, dominant, threshold)
 
-	select_samples <- select_samples[
-		score >= threshold,
-		..keep_cols
-	]
-
-	## Only consider dominant if required.
-	if (dominant) {
-		select_samples <- select_samples[(dominant)]
-		select_samples[, dominant := NULL]
-	}
-
-	## Add quantiles if necessary.
-	if (!is.na(quantiles)) {
-		select_samples[, ntile := ntile(score, quantiles), by = sample]
+	## Add conditions to data.
+	if (!is.na(data_conditions)) {
+		select_samples <- do.call(group_data, c(list(signal_data = select_samples), data_conditions))
 	}
 
 	## Expand ranges.
+	select_samples <- rbindlist(select_samples, id = "sample")
 	select_samples[, c("start", "end", "tss") := list(start - distance, end + distance, start)]
 
 	## Get sequences.
@@ -78,8 +65,10 @@ tss_sequences <- function(
 	setnames(seqs, old = "x", new = "sequence")
 	
 	## Generate return DataFrame
+	groupings <- any(names(data_conditions) %in% c("quantile_by", "grouping"))
+	
 	seqs <- DataFrame(seqs)
-	metadata(seqs)$quantiles <- quantiles
+	metadata(seqs)$groupings <- groupings
 	metadata(seqs)$threshold <- threshold
 	metadata(seqs)$distance <- distance
 	metadata(seqs)$dominant <- dominant
@@ -115,10 +104,10 @@ plot_sequence_logo <- function(tss_sequences, ncol = 1, font_size = 6) {
 
 	## Get some info used to pull sequencs.
 	distance <- metadata(tss_sequences)$distance
-	quantiles <- metadata(tss_sequences)$quantiles
+	groupings <- metadata(tss_sequences)$groupings
 
 	## Grab sequences from input.
-	if (is.na(quantiles)) {
+	if (!groupings) {
 		sequences <- tss_sequences %>%
 			as.data.table %>%
 			split(.$sample) %>%
@@ -126,7 +115,7 @@ plot_sequence_logo <- function(tss_sequences, ncol = 1, font_size = 6) {
 	} else {
 		sequences <- tss_sequences %>%
 			as.data.table %>%
-			split(.$ntile) %>%
+			split(.$grouping) %>%
 			map(function(x) {
 				split(x, x$sample) %>%
 				map(function(y) {y[["sequence"]]})
@@ -141,7 +130,7 @@ plot_sequence_logo <- function(tss_sequences, ncol = 1, font_size = 6) {
 	)
 
 	## Make sequence logo.
-	if (is.na(quantiles)) {
+	if (!groupings) {
 		p <- ggseqlogo(sequences, ncol = ncol) +
 			theme(text = element_text(size = font_size)) #+
 			#scale_x_continuous(
@@ -159,7 +148,7 @@ plot_sequence_logo <- function(tss_sequences, ncol = 1, font_size = 6) {
 					#)
 			})
 
-		p <- plot_grid(plotlist = p, labels = seq_len(distance), ncol = 1)
+		p <- plot_grid(plotlist = p, labels = rev(names(sequences)), ncol = 1)
 	}
 
 	return(p)
