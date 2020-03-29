@@ -30,7 +30,8 @@
 
 tss_sequences <- function(
 	experiment, samples = "all", genome_assembly, threshold = 1,
-	distance = 10, dominant = FALSE, data_conditions = NA
+	distance = 10, dominant = FALSE,
+	data_conditions = list(order_by = "score")
 ) {
 
 	## Open genome assembly.
@@ -194,7 +195,7 @@ plot_sequence_colormap <- function(
 ) {
 	## Grab some information out of DataFrame.
 	distance <- metadata(tss_sequences)$distance
-	quantiles <- metadata(tss_sequences)$quantiles
+	groupings <- metadata(tss_sequences)$groupings
 
 	## Start preparing data for plotting.
 	seq_data <- as.data.table(tss_sequences)
@@ -210,13 +211,7 @@ plot_sequence_colormap <- function(
 	seq_data <- bind_cols(seq_data, split_seqs)
 
 	## Get order of TSSs for plotting.
-	if (!is.na(quantiles)) {
-		seq_data[, rank := dense_rank(score), by = .(sample, ntile)]
-		seq_data[, name := sprintf("TSS%010d", seq_len(.N)), by = .(sample, ntile)]
-	} else {
-		seq_data[, rank := dense_rank(score), by = sample]
-		seq_data[, name := sprintf("TSS%010d", seq_len(.N)), by = sample]
-	}
+	seq_data[, FHASH := fct_reorder(factor(FHASH), plot_order)]
 
 	## Format data for plotting.
 	long_data <- seq_data %>%
@@ -226,15 +221,14 @@ plot_sequence_colormap <- function(
 		)
 
 	long_data[,
-		c("name", "position", "base") := list(
-			name = fct_reorder(name, rank),
+		c("position", "base") := list(
 			position = as.numeric(position),
 			base = factor(base, levels = c("A", "C", "G", "T"))
 		)
 	]
 		
 	## Plot sequence colormap
-	p <- ggplot(long_data, aes(x = position, y = name)) +
+	p <- ggplot(long_data, aes(x = position, y = FHASH)) +
 		geom_tile(aes(fill = base, color = base)) +
 		scale_fill_manual(values = base_colors) +
 		scale_color_manual(values = base_colors) +
@@ -252,10 +246,10 @@ plot_sequence_colormap <- function(
 			labels = c(-distance, -1, 1, distance + 1)
 		)
 
-	if (is.na(quantiles)) {
+	if (!groupings) {
 		p <- p + facet_wrap(. ~ sample, scales = "free", ncol = ncol)
 	} else {
-		p <- p + facet_wrap(ntile ~ sample, scales = "free", ncol = ncol)
+		p <- p + facet_wrap(grouping ~ sample, scales = "free", ncol = ncol)
 	}
 
 	return(p)
