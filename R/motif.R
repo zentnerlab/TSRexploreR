@@ -53,7 +53,7 @@ tss_sequences <- function(
 	}
 
 	## Expand ranges.
-	select_samples <- rbindlist(select_samples, id = "sample")
+	select_samples <- rbindlist(select_samples, idcol = "sample")
 	select_samples[, c("start", "end", "tss") := list(start - distance, end + distance, start)]
 
 	## Get sequences.

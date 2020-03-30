@@ -45,7 +45,7 @@ dinucleotide_frequencies <- function(
 	}
 
 	## Prepare samples for analysis.
-	select_samples <- rbindlist(select_samples, id = "sample")
+	select_samples <- rbindlist(select_samples, idcol = "sample")
 	select_samples[, tss := start]
 	select_samples[,
 		c("start", "end") := list(

@@ -14,7 +14,7 @@
 #' @param samples Either 'all' or vector of sample names
 #' @param data_type Whether TSSs or TSRs should be analyzed
 #' @param threshold The number of reads required in a TSS or TSR to avoid filtering
-#' @param condition_data Apply conditions to data (supports filtering, quantile, and/or grouping)
+#' @param condition_data Apply conditions to data (supports filtering and quantiles/grouping)
 #'
 #' @return tibble of detected feature numbers
 #'
@@ -57,7 +57,7 @@ detect_features <- function(
 
 	## Get feature counts.
 	groupings <- any(names(data_group) %in% c("quantile_by", "grouping"))
-	sample_data <- bind_rows(sample_data, .id = "sample")
+	sample_data <- rbindlist(sample_data, idcol = "sample")
 	
 	if (groupings) {
 		sample_data <- sample_data[,
