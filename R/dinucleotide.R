@@ -16,8 +16,8 @@
 #' @param samples Either 'all' or vector of sample names to analyze
 #' @param genome_assembly fasta file of genome assembly
 #' @param threshold TSS read threshold
-#' @param quantiles Number of quantiles to break data into
 #' @param dominant Consider only dominant
+#' @param data_conditions Condition the data (filtering and quantile/grouping available)
 #'
 #' @return tibble with dinucleotide frequencies
 #'
@@ -27,25 +27,25 @@
 
 dinucleotide_frequencies <- function(
 	experiment, genome_assembly, samples = "all",
-	threshold = 1, quantiles = NA, dominant = FALSE
+	threshold = 1, dominant = FALSE, data_conditions = NA
 ) {
 
 	## Loading genome assembly.
 	fasta_assembly <- FaFile(genome_assembly)
 
 	## Getting appropriate samples.
-	select_samples <- experiment %>%
-		extract_counts("tss", samples) %>%
-		bind_rows(.id = "sample")
+	select_samples <- extract_counts(experiment, "tss", samples)
+
+	## Preliminary filtering of data.
+	select_samples <- preliminary_filter(select_samples, dominant, threshold)
+
+	## Apply conditions to data.
+	if (!is.na(data_conditions)) {
+		select_samples <- do.call(group_data, c(list(signal_data = select_samples), data_conditions))
+	}
 
 	## Prepare samples for analysis.
-	keep_cols <- c("sample", "seqnames", "start", "end", "strand", "score")
-	if (dominant) keep_cols <- c(keep_cols, "dominant")
-
-	select_samples <- select_samples[
-		score >= threshold,
-		..keep_cols
-	]
+	select_samples <- rbindlist(select_samples, id = "sample")
 	select_samples[, tss := start]
 	select_samples[,
 		c("start", "end") := list(
@@ -53,12 +53,6 @@ dinucleotide_frequencies <- function(
 			ifelse(strand == "+", end, end + 1)
 		)
 	]
-
-	## Consider only dominant TSSs if required.
-	if (dominant) {
-		select_samples <- select_samples[(dominant)]
-		select_samples[, dominant := NULL]
-	}
 
 	## Get dinucleotides.
 	seqs <- select_samples %>%
@@ -68,13 +62,10 @@ dinucleotide_frequencies <- function(
 		bind_cols(select_samples, .)
 	setnames(seqs, old = "x", new = "dinucleotide")
 
-	## Add ntile information if required.
-	if (!is.na(quantiles)) {
-		seqs[, ntile := ntile(score, quantiles), by = sample]
-	}
-
 	## Find dinucleotide frequencies.
-	if (is.na(quantiles)) {
+	groupings <- any(names(data_conditions) %in% c("quantile_by", "grouping"))
+
+	if (!groupings) {
 		freqs <- seqs[,
 			.(count = .N), by = .(sample, dinucleotide)
 		][,
@@ -83,16 +74,16 @@ dinucleotide_frequencies <- function(
 		]
 	} else {
 		freqs <- seqs[,
-			.(count = .N), by = .(sample, dinucleotide, ntile)
+			.(count = .N), by = .(sample, dinucleotide, grouping)
 		][,
 			.(dinucleotide, count, freqs = count / sum(count)),
-			by = .(sample, ntile)
+			by = .(sample, grouping)
 		]
 	}
 
 	## Prepare DataFrame to return.
 	freqs_df <- DataFrame(freqs)
-	metadata(freqs_df)$quantiles <- quantiles
+	metadata(freqs_df)$groupings <- groupings
 	metadata(freqs_df)$threshold <- threshold
 	
 	return(freqs_df)
@@ -123,20 +114,20 @@ plot_dinucleotide_frequencies <- function(
 	dinucleotide_frequencies, sample_order = NA, ncol = 1, ...) {
 
 	## Pull out some info from the DataFrame.
-	quantiles <- metadata(dinucleotide_frequencies)$quantiles
+	groupings <- metadata(dinucleotide_frequencies)$groupings
 
 	## Convert DataFrame to data.table.
 	freqs <- as.data.table(dinucleotide_frequencies)
 	
 	## Set factor order for dinucleotide.
-	if (is.na(quantiles)) {
+	if (!groupings) {
 		freqs <- freqs[,
 			.(sample, count, freqs, mean_freqs = mean(freqs)),
 			by = dinucleotide
 		]
 	} else {
 		freqs <- freqs[,
-			.(sample, count, freqs, ntile, mean_freqs = mean(freqs)),
+			.(sample, count, freqs, grouping, mean_freqs = mean(freqs)),
 			by = dinucleotide
 		]
 	}
@@ -146,7 +137,7 @@ plot_dinucleotide_frequencies <- function(
 	][,
 		dinucleotide := fct_reorder(factor(dinucleotide), rank)
 	][,
-		c("mean_freqs", "rank") := list(NULL, NULL)
+		c("mean_freqs", "rank") := NULL
 	]
 
 	## Change sample order if specified.
@@ -165,8 +156,8 @@ plot_dinucleotide_frequencies <- function(
 			y="Frequency"
 		)
 
-	if (!is.na(quantiles)) {
-		p <- p + facet_grid(fct_rev(factor(ntile)) ~ sample)
+	if (groupings) {
+		p <- p + facet_wrap(grouping ~ sample)
 	} else {
 		p <- p + facet_wrap(~ sample, ncol = ncol)
 	}
