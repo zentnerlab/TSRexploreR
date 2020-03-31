@@ -80,4 +80,4 @@ p <- plot_threshold_exploration(threshold_data, ncol = 3, point_size = 0.5) +
 ggsave("tss_thresholding.png", plot = p, device = "png", type = "cairo", height = 1.25, width = 5)
 ```
 
-[tss_thresholds](./inst/images/tss_thresholding.png)
+![tss_thresholds](../inst/images/tss_thresholding.png)
