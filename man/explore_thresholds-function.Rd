@@ -4,22 +4,12 @@
 \alias{explore_thresholds}
 \title{Threshold Exploration}
 \usage{
-explore_thresholds(experiment, annotation_file, feature_type = c("gene",
-  "transcript"), max_threshold = 50, upstream = 1000,
-  downstream = 100, samples = "all")
+explore_thresholds(experiment, max_threshold = 50, samples = "all")
 }
 \arguments{
 \item{experiment}{tsrexplorer object with TSSs}
 
-\item{annotation_file}{Either path and file name of annotation, or a TxDb object}
-
-\item{feature_type}{Annotate on gene or transcript level}
-
 \item{max_threshold}{Threshold from 1 to max_threshold will be explored}
-
-\item{upstream}{Bases upstream of TSS}
-
-\item{downstream}{Bases downstream of TSS}
 
 \item{samples}{Either 'all' or the names of the samples to analyze}
 }
