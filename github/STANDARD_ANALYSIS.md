@@ -81,3 +81,7 @@ ggsave("tss_thresholding.png", plot = p, device = "png", type = "cairo", height 
 ```
 
 ![tss_thresholds](../inst/images/tss_thresholding.png)
+
+Looking at the plot, a threshold of three or more reads is a sensible choice.
+There is a precipitous drop in detected features for a comparatively low gain in
+promoter proximal fraction of TSSs at higher thresholds.
