@@ -56,7 +56,7 @@ detect_features <- function(
 	})
 
 	## Get feature counts.
-	groupings <- any(names(data_group) %in% c("quantile_by", "grouping"))
+	groupings <- any(names(condition_data) %in% c("quantile_by", "grouping"))
 	sample_data <- rbindlist(sample_data, idcol = "sample")
 	
 	if (groupings) {

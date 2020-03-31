@@ -255,3 +255,39 @@ ggsave("tss_dinucleotide_frequencies.png", plot = p, device = "png", type = "cai
 ```
 
 ![tss_dinucleotide_frequencies](../inst/images/tss_dinucleotide_frequencies.png)
+
+## Clustering TSSs
+
+TSSs are often clustered together into Transcription Start Regions (TSRs).
+These clusters tend to capture the nature of the trancsription landscape better than looking at individual TSSs.
+Furthermore, cluster shape features have been shown to correlate with various functional gene control classes.
+
+### Distance Clustering
+
+TSSexploereR has a distance clustering algorithm built in.
+This approach clusters TSSs that pass a read threshold and are within a certain distance.
+If desired, TSRs dervived from more advanced clustering methods, such as Paraclu and RECLU from CAGEr, can be imported directly.
+
+```
+exp <- tss_clustering(exp, threshold = 3, max_distance = 25)
+```
+
+### Associating TSSs with TSRs
+
+TSSexploreR provides great flexibility when working with TSSs and TSRs.
+After TSRs are called or imported, TSSs can be assigned to TSRs they overlap with.
+Here TSSs will be associated with the TSRs that were derived from them.
+However, the TSSs could easilly be associated with merged or consensus TSRs.
+
+```
+exp <- associate_with_tsr(
+	exp, use_sample_sheet = FALSE,
+	sample_list <- list(
+		"S288C_WT_1" = "S288C_WT_1",
+		"S288C_WT_2" = "S288C_WT_2",
+		"S288C_WT_3" = "S288C_WT_3"
+	)
+)
+```
+
+
