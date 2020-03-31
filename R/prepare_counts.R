@@ -144,7 +144,7 @@ count_matrix <- function(
 	if (data_type == "tss") {
 
 		## Merge overlapping TSSs
-		select_samples <- bind_rows(select_samples, .id = "sample")
+		select_samples <- rbindlist(select_samples, idcol = "sample")
 		select_samples <- dcast(
 			select_samples,
 			seqnames + start + end + strand ~ sample,
@@ -166,7 +166,7 @@ count_matrix <- function(
 				findOverlapPairs(query = tsr_consensus, subject = .) %>%
                                 as.data.table
                         ) %>%
-                        bind_rows(.id = "sample")
+                        rbindlist(idcol = "sample")
 
                 setnames(
                         raw_matrix,
@@ -190,7 +190,7 @@ count_matrix <- function(
 		anno_type <- ifelse(anno_type == "gene", "geneId", "transcriptId")
 
 		## Change feature counts to matrix
-		select_samples <- bind_rows(select_samples, .id = "sample")
+		select_samples <- rbindlist(select_samples, idcol = "sample")
 		select_samples <- dcast(
 			select_samples,
 			as.formula(str_c(anno_type, " ~ sample")),
