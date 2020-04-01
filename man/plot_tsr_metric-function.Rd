@@ -6,7 +6,8 @@
 \usage{
 plot_tsr_metric(experiment, tsr_metrics, plot_type = "violin",
   samples = "all", log2_transform = FALSE, ncol = 1,
-  use_cpm = FALSE, dominant = FALSE, ...)
+  use_cpm = FALSE, dominant = FALSE, threshold = NA,
+  data_conditions = NA, ...)
 }
 \arguments{
 \item{experiment}{tsrexplorer object with TSR granges}
@@ -24,6 +25,10 @@ plot_tsr_metric(experiment, tsr_metrics, plot_type = "violin",
 \item{use_cpm}{Whether to use the CPM normalized or raw counts}
 
 \item{dominant}{Whether to only consider dominant TSRs}
+
+\item{threshold}{Filter TSRs under this count threshold}
+
+\item{data_conditions}{Condition the data (filter and quantile/group available)}
 
 \item{...}{Arguments passed to ggplot2 plotting functions}
 }

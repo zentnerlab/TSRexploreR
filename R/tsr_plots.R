@@ -36,7 +36,7 @@ plot_tsr_metric <- function(
 	use_cpm = FALSE,
 	dominant = FALSE,
 	threshold = NA,
-	data_conditions = NA
+	data_conditions = NA,
 	...
 ) {
 
