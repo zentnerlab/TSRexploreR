@@ -426,4 +426,14 @@ TSSexploreR allows for the deep exploration of TSSs and TSRs relative to these m
 
 ### Summary Plots
 
+Overall summary plots can be generated for most TSR metrics.
+In this example violin plot the log2 + 1 transformed TSR score and width are plotted.
 
+```
+p <- plot_tsr_metric(exp, tsr_metrics = c("score", "width"), log2_transform = TRUE, ncol = 2) +
+	ggplot2::theme(text = element_text(size = 5), legend.key.size = unit(0.3, "cm"))
+
+ggsave("tsr_metrics.png", plot = p, device = "png", type = "cairo", height = 1, width = 3)
+```
+
+![tsr_metrics](../inst/images/tsr_metrics.png)

@@ -102,7 +102,10 @@ plot_tsr_metric <- function(
 		theme_bw() +
 		scale_fill_viridis_d() +
 		scale_color_viridis_d() +
-		theme(axis.text.x = element_blank())
+		theme(
+			axis.text.x = element_blank(),
+			axis.ticks.x = element_blank()
+		)
 
 	if (groupings) {
 		p <- p + facet_wrap(grouping ~ metric, ncol = ncol, scales = "free")
