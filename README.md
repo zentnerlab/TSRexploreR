@@ -9,6 +9,7 @@ r-tidyverse \
 r-devtools \
 r-ggseqlogo \
 r-ggally \
+r-cowplot \
 bioconductor-genomicranges \
 bioconductor-genomicfeatures \
 bioconductor-biostrings \
@@ -16,7 +17,9 @@ bioconductor-rsamtools \
 bioconductor-chipseeker \
 bioconductor-edger \
 bioconductor-clusterProfiler \
-bioconductor-complexheatmap
+bioconductor-complexheatmap \
+bioconductor-cager \
+bioconductor-tsrchitect
 ```
 
 **Install latest version of tsrexplorer**
@@ -34,6 +37,8 @@ Furthermore, data can be imported directly from other R libraries such as TSRchi
 
 [Data Import Vignette](./github/DATA_IMPORT.md)
 
-### TSS Analysis
+### Standard Analysis
 
+This vignette goes over the standard analysis of TSSs and TSRs.
 
+[Standard analysis vignette](./github/STANDARD_ANALYSIS.md)

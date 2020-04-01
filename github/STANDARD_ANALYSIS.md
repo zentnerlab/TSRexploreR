@@ -464,3 +464,32 @@ dev.off()
 ```
 
 ![tss_seq_logo_conditioned](../inst/images/tss_seq_logo_conditioned.png)
+
+## Gene Tracks
+
+Vieweing TSSs and/or TSRs in gene tracks can be useful for a variety of reason.
+It can make obvious which 5' isoforms of a transcript are expressed,
+hint at potential misannotation of genes, uncover 5' UTR structure, and other various goodies.
+
+A convenient function to generate gene tracks for TSSs and/or TSRs is included in tsrexplorer.
+Tracks can be created based on a gene/transcript name, or genomic coordinates.
+Additionally, if tracks are generated based on genes/transcripts, the promoter region only can be optionally displayed.
+
+```
+annotation <- system.file("extdata", "S288C_Annotation.gtf", package = "tsrexplorer")
+
+png("gene_track.png", units = "in", res = 300, height = 3.5, width = 4, type = "cairo")
+gene_tracks(
+	experiment, annotation, feature_name = "YAL012W",
+	samples = c(
+		"TSS:S288C_WT_1", "TSR:S288C_WT_1",
+		"TSS:S288C_WT_2", "TSR:S288C_WT_2",
+		"TSS:S288C_WT_3", "TSR:S288C_WT_3"
+	),
+	ymax = 80, tss_colors = viridis::viridis(3), tsr_colors = viridis::viridis(3)
+)
+dev.off()
+```
+
+![gene_track](../inst/images/gene_track.png)
+
