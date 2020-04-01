@@ -290,4 +290,131 @@ exp <- associate_with_tsr(
 )
 ```
 
+## Initial TSR Processing
 
+Now that the TSSs have been clustered and associated with TSRs, the TSRs can undergo initial processing.
+This involves annotating the TSRs, calculating various metrics of TSR shape and strength,
+and optional normalization of the TSR scores.
+
+### TSR Metrics
+
+After TSSs have been associated with TSRs, various metrics describing TSR shape and strength can be computed.
+First, the dominant TSS within a TSR will be annotated in the dataset.
+Then, various shape features such as IQR, shape index, and balance will be calculated.
+
+```
+exp <- mark_dominant(exp, data_type = "tss", threshold = 3)
+exp <- tsr_metrics(exp)
+```
+
+### Normalize TSRs
+
+The TSRs can be optionally CPM normalized.
+
+```
+exp <- cpm_normalize(exp, data_type = "tsr")
+```
+
+### Annotate TSRs
+
+It is recommended to also annotate the TSRs if a genome annotation is available.
+
+```
+annotation <- system.file("extdata", "S288C_Annotation.gtf", package = "tsrexplorer")
+
+exp <- annotate_features(
+        exp, annotation_data = annotation,
+        data_type = "tsr", feature_type = "transcript"
+)
+```
+
+## TSR Correlation
+
+Smiilar to looking at the correlation of TSSs, looking at TSR correlation before further analysis is good practice.
+
+### TMM Normalization
+
+TMM normalization is also used for comparing TSRs.
+
+```
+exp <- tmm_normalize(exp, data_type = "tsr")
+```
+
+### Correlation Matrix Plots
+
+After TMM normalization, correlation plots can be generated.
+
+```
+p <- plot_correlation(exp, data_type = "tsr", font_size = 2, pt_size = 0.4) +
+        ggplot2::theme_bw() +
+        ggplot2::theme(text = element_text(size = 3), panel.grid = element_blank())
+
+ggsave("tsr_correlation.png", plot = p, device = "png", type = "cairo", height = 2, width = 2)
+```
+
+![tsr_corr_plot](../inst/images/tsr_correlation.png)
+
+## TSR Genomic Distribution
+
+It is also expected for TSRs to be enriched upstream of annotated start codons.
+TSSexploreR can generate many of the same plots used to explore TSS distribution for TSRs.
+
+### Genomic Distribution Plot
+
+A stacked bar plot can be generated to showcase the fractional distribution of TSRs relative to features.
+
+```
+tsr_distribution <- genomic_distribution(exp, data_type = "tsr", threshold = 3)
+
+p <- plot_genomic_distribution(tsr_distribution) +
+        ggplot2::theme(text = element_text(size = 4), legend.key.size = unit(0.3, "cm"))
+
+ggsave("tsr_genomic_distribution.png", plot = p, device = "png", type = "cairo", height = 1, width = 2.5)
+```
+
+![tsr_genomic_distribution](../inst/images/tsr_genomic_distribution.png)
+
+### Feature Detection Plot
+
+The number of genes, and fraction of genes with a promoter proximal TSRs can be made into a stacked bar plot.
+
+```
+features <- detect_features(exp, data_type = "tsr")
+
+p <- plot_detected_features(features) +
+        ggplot2::theme(text = element_text(size = 3), legend.key.size = unit(0.3, "cm"))
+
+ggsave("tsr_feature_plot.png", plot = p, device = "png", type = "cairo", height = 1, width = 1.75)
+```
+
+![tsr_feature_plot](../inst/images/tsr_feature_plot.png)
+
+### Average Plots
+
+Average plots are a convenient way to summarize the average distribution of TSRs relative to start codons
+or annotated TSSs.
+
+```
+p <- plot_average(exp, data_type = "tsr", ncol = 3) +
+        ggplot2::theme(text = element_text(size = 4))
+
+ggsave("tsr_average_plot.png", plot = p, device = "png", type = "cairo", height = 1, width = 2)
+```
+
+![tsr_average_plot](../inst/images/tsr_average_plot.png)
+
+### Heatmaps
+
+While an average plot may give a general overview of TSRs relative to annotated start codons or TSSs,
+it may sometimes be appropriate to generate a heatmap with TSR positions for all features displayed.
+
+```
+count_matrix <- tsr_heatmap_matrix(exp, threshold = 3, upstream = 500, downstream = 500)
+
+p <- plot_heatmap(count_matrix, ncol = 3, background_color = "white") +
+        ggplot2::theme(text = element_text(size = 4), legend.key.size = unit(0.3, "cm"))
+
+ggsave("tsr_heatmap.png", plot = p, device = "png", type = "cairo", height = 2, width = 4)
+```
+
+![tsr_heatmap](../inst/images/tsr_heatmap.png)
