@@ -24,7 +24,7 @@ bioconductor-tsrchitect
 
 **Install latest version of tsrexplorer**
 ```
-devtools::install_github("rpolicastro/tsrexplorer")
+devtools::install_github("rpolicastro/tsrexplorer", ref = "clean")
 ```
 
 ## Using TSRexplorer
