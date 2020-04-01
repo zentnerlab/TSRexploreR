@@ -463,4 +463,4 @@ p
 dev.off()
 ```
 
-![tss_seq_logo_conditioned](..inst/images/tss_seq_logo_conditioned.png)
+![tss_seq_logo_conditioned](../inst/images/tss_seq_logo_conditioned.png)
