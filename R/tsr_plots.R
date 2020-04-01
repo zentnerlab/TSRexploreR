@@ -16,6 +16,8 @@
 #' @param ncol Number of columns to plot data
 #' @param use_cpm Whether to use the CPM normalized or raw counts
 #' @param dominant Whether to only consider dominant TSRs
+#' @param threshold Filter TSRs under this count threshold
+#' @param data_conditions Condition the data (filter and quantile/group available)
 #' @param ... Arguments passed to ggplot2 plotting functions
 #'
 #' @return ggplot2 object with tsr metrix plotted
@@ -33,24 +35,27 @@ plot_tsr_metric <- function(
 	ncol = 1,
 	use_cpm = FALSE,
 	dominant = FALSE,
+	threshold = NA,
+	data_conditions = NA
 	...
 ) {
 
 	## Grab data.
-	selected_data <- experiment %>%
-		extract_counts("tsr", samples, use_cpm) %>%
-		bind_rows(.id = "sample") %>%
-		as.data.table
+	selected_data <- extract_counts(experiment, "tsr", samples, use_cpm)
 
-	selected_data <- selected_data[, c("sample", "dominant", tsr_metrics), with = FALSE]
-
-	## Consider only dominant TSRs if required.
-	if (dominant) {
-		selected_data <- selected_data[(dominant)]
+	## Preliminary filtering of data.
+	selected_data <- preliminary_filter(selected_data, dominant, threshold)
+	
+	## Condition the data.
+	if (!is.na(data_conditions)) {
+		selected_data <- do.call(group_data, c(list(signal_data = selected_data), data_conditions))
 	}
-	selected_data <- selected_data[, dominant := NULL]
+
+	groupings <- !is.na(data_conditions) & any(names(data_conditions) %in% c("grouping", "quantile_by"))
 
 	## Log2+1 transform data if requested
+	selected_data <- rbindlist(selected_data, idcol = "sample")
+
 	if (log2_transform) {
 		selected_data[,
 			(tsr_metrics) := lapply(.SD, function(x) log2(x + 1)),
@@ -97,8 +102,13 @@ plot_tsr_metric <- function(
 		theme_bw() +
 		scale_fill_viridis_d() +
 		scale_color_viridis_d() +
-		facet_wrap(~ metric, ncol = ncol, scales = "free") +
 		theme(axis.text.x = element_blank())
+
+	if (groupings) {
+		p <- p + facet_wrap(grouping ~ metric, ncol = ncol, scales = "free")
+	} else {
+		p <- p + facet_wrap(~ metric, ncol = ncol, scales = "free")
+	}
 
 	return(p)
 }

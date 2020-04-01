@@ -418,3 +418,12 @@ ggsave("tsr_heatmap.png", plot = p, device = "png", type = "cairo", height = 2, 
 ```
 
 ![tsr_heatmap](../inst/images/tsr_heatmap.png)
+
+## TSR Metrics and Shape
+
+After clustering the TSSs into TSRs, various descriptive and quantative measures were calculated.
+TSSexploreR allows for the deep exploration of TSSs and TSRs relative to these metrics.
+
+### Summary Plots
+
+
