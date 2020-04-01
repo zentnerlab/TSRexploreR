@@ -437,3 +437,30 @@ ggsave("tsr_metrics.png", plot = p, device = "png", type = "cairo", height = 1, 
 ```
 
 ![tsr_metrics](../inst/images/tsr_metrics.png)
+
+### Descriptive Plots
+
+Most plots in this vignette can be filtered, ordered, grouped, and quantiled
+by any of the desired metrics.
+Here is an example of what can be done with the TSS sequence motif plot using TSR metrics.
+In this plot the dominant TSSs of each TSRs are only considered, and TSSs with a score below 10 are discarded.
+The plot is then split by the shape class of the TSR.
+A more detailed guide on advanced plotting can be found here.
+
+```
+assembly <- system.file("extdata", "S288C_Assembly.fasta", package = "tsrexplorer")
+
+conditions <- list(order_by = "score", grouping = "shape_class")
+seqs <- tss_sequences(
+	exp, genome_assembly = assembly, threshold = 10,
+	dominant = TRUE, data_conditions = conditions
+)
+
+p <- plot_sequence_logo(seqs, ncol = 3)
+
+png("tss_seq_logo_conditioned.png", units = "in", res = 300, height = 2, width = 6, type = "cairo")
+p
+dev.off()
+```
+
+![tss_seq_logo_conditioned](..inst/images/tss_seq_logo_conditioned.png)
