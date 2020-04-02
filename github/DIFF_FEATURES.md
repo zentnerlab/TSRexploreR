@@ -1,9 +1,9 @@
 
 # Differential Features
 
-It has been previously shown that there are pervasive shifts in TSSs and TSRs between
+It has been previously shown that there are pervasive changes in TSSs and TSRs between
 different developmental conditions, disease states, and in response to the environment.
-These shifts in TSRs may be a functionally important readout for alternative promoter useage,
+These changes in TSRs may be a functionally important readout for alternative promoter useage,
 as well as other factors such as transcript isoform.
 
 tsrexplorer allows the discovery of differential TSSs, TSRs, and feature level counts similar to RNA-seq.
@@ -17,6 +17,7 @@ Diamide is a reducing agent that damages DNA, and was shown to cause large chang
 
 ```
 library("tsrexplorer")
+library("magrittr")
 
 TSRs <- system.file("extdata", "S288C_TSRs.RDS", package = "tsrexplorer")
 TSRs <- readRDS(TSRs)
@@ -38,23 +39,17 @@ sample_sheet <- data.table(
 exp <- add_sample_sheet(exp, sample_sheet)
 ```
 
-## Processing of TSRs
+## Processing of TSSs
 
-The start of TSR processing is similar to that of regular TSR analysis.
+The start of TSS processing is similar to that shown in the standard analysis vignette.
 Details about each step can be found [here](./TSR_ANALYSIS.md#processing-of-tsrs).
-A few of the steps from the TSR tutorial are skipped for expediencey of the vignette,
+A few of the steps are skipped for expediencey of the vignette,
 but all analysis and plots can be generated for the different treatment condition sets.
 
 ```
-# Formatting the TSRs as a RangedSummarizedExperiment.
-exp <- format_counts(exp, data_type = "tsr")
-
-# Annotating the TSR sets.
-annotation <- system.file("extdata", "S288C_Annotation.gtf", package = "tsrexplorer")
-exp <- annotate_features(
-        exp, annotation_data = annotation,
-        data_type = "tsr", feature_type = "transcript"
-)
+exp <- format_counts(exp, data_type = "tss") %>%
+	tss_clustering(threshold = 3, max_distance = 25) %>%
+	associate_with_tsr
 ```
 
 ## TSR Correlation and Dimension Reduction
@@ -67,6 +62,7 @@ Just as with the normal TSS and TSR analysis, 'TMM' normalization is used for mo
 These values will be used for both the correlation and dimensionality reduction plots.
 
 ```
+exp <- count_matrix(exp, data_type = "tsr")
 exp <- tmm_normalize(exp, data_type = "tsr")
 ```
 
@@ -83,6 +79,7 @@ p <- plot_correlation(exp, data_type = "tsr", font_size = 2, pt_size = 0.4) +
 
 ggsave("diff_tsr_correlation.png", plot = p, device = "png", type = "cairo", height = 3, width = 3)
 ```
+
 ![diff_tsr_corr_plot](../inst/images/diff_tsr_correlation.png)
 
 ### Dimensionality Reduction
@@ -97,6 +94,7 @@ p <- plot_reduction(exp, data_type = "tsr", size = 0.5) +
 
 ggsave("diff_tsr_reduction.png", plot = p, device = "png", type = "cairo", height = 1.25, width = 2)
 ```
+
 ![diff_tsr_reduction](../inst/images/diff_tsr_reduction.png)
 
 ## Differential TSRs

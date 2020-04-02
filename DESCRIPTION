@@ -39,7 +39,8 @@ Imports:
     CAGEr,
     S4Vectors,
     SummarizedExperiment,
-    digest
+    digest,
+    uwot
 Suggests:
     clusterProfiler
 RoxygenNote: 6.1.1

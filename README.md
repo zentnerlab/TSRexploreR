@@ -10,6 +10,7 @@ r-devtools \
 r-ggseqlogo \
 r-ggally \
 r-cowplot \
+r-uwot \
 bioconductor-genomicranges \
 bioconductor-genomicfeatures \
 bioconductor-biostrings \

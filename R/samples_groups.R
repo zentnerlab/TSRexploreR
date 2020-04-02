@@ -14,14 +14,11 @@ add_sample_sheet <- function(experiment, sample_sheet) {
 
 	## Import sample sheet if file.
 	if (is(sample_sheet, "character")) {
-		sample_sheet <- read.delim(
-			sample_sheet, sep = "\t", header = TRUE,
-			stringsAsFactors = FALSE
-		)
+		sample_sheet <- fread(sample_sheet, sep = "\t", header = TRUE)
 	}
 
 	## Convert sample sheet to data.table
-	sample_sheet <- data.table(sample_sheet)
+	sample_sheet <- as.data.table(sample_sheet)
 	
 	## Add sample sheet to tsrexplorer object.
 	experiment@meta_data$sample_sheet <- sample_sheet
