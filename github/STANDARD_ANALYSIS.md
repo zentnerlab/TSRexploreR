@@ -337,6 +337,7 @@ Smiilar to looking at the correlation of TSSs, looking at TSR correlation before
 TMM normalization is also used for comparing TSRs.
 
 ```
+exp <- count_matrix(exp, data_type = "tsr")
 exp <- tmm_normalize(exp, data_type = "tsr")
 ```
 
