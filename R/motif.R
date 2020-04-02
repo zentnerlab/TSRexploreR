@@ -21,7 +21,7 @@
 #' @param threshold Keep only TSSs with threshold number of reads or more
 #' @param distance Bases to add on each side of TSS
 #' @param dominant Whether only dominant should be considered
-#' @param data_condtions Condition the data (filter, quantile, and grouping available)
+#' @param data_conditions Condition the data (filter, quantile, and grouping available)
 #' @return Sequences surrounding TSSs
 #'
 #' @rdname tss_sequences-function

@@ -149,6 +149,8 @@ max_utr <- function(
 #' @param upstream Bases upstream to extend average to
 #' @param downstream Bases downstream to extend average to
 #' @param ncol Number of columns to plot the data to
+#' @param consider_score Whether the score of the TSS should be
+#' considered when plotting
 #' @param ... Arguments passed to geom_density
 #'
 #' @return ggplot2 object of max UTR length average

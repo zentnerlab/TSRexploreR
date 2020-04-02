@@ -14,6 +14,7 @@
 #' @param samples Either 'all' or vector of sample names
 #' @param data_type Whether TSSs or TSRs should be analyzed
 #' @param threshold The number of reads required in a TSS or TSR to avoid filtering
+#' @param dominant Whether to consider only the dominant TSS or TSR
 #' @param condition_data Apply conditions to data (supports filtering and quantiles/grouping)
 #'
 #' @return tibble of detected feature numbers

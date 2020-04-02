@@ -74,9 +74,11 @@ fit_edger_model <- function(
 #' @importFrom magrittr %>%
 #' @importFrom purrr map_dbl
 #'
-#' @param fit_edger_model edgeR differential expression model from fit_edger_model
+#' @param experiment tsrexplorer object with edgeR differential expression model from fit_edger_model
 #' @param data_type Whether the input was made from TSSs, TSRs, or features
 #' @param compare_groups Vector of length two of the two groups to find differential TSRs
+#' @param fdr_cutoff FDR cutoff
+#' @param log2fc_cutoff Log2 fold change cutoff
 #'
 #' @return tibble of differential TSRs
 #'

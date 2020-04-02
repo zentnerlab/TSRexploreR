@@ -7,10 +7,12 @@
 #' @param n_quantiles Number of quantiles to calculate for continuous metric
 #' @param quantile_samples Samples to use when setting quantiles
 #' @param quantile_group Group these features and quantile based on aggregate mean of feature
+#' @param quantile_direction Quantile in 'descending' or 'ascending' order of values
 #' @param order_by Metric to order data by
+#' @param order_group Features wil be aggregated by this group before ordering
 #' @param order_direction Whether the values should be ordered in
 #' 'ascending' or 'descending' order
-#' @param order_on Names of samples to order by
+#' @param order_samples Names of samples to order by
 #' @param filters Logical string to subset/filter data by
 #' @param grouping If quantiles not set split data by categorical variable
 #'

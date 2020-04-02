@@ -4,7 +4,8 @@
 #' @slot counts Named lists of TMM and CPM normalized TSSs and/or TSRs
 #' @slot correlation Named lists of correlation values between TSS and/or TSR sets
 #' @slot diff_features Differential features
-#' @slot settings storage location for arguments used in various functions
+#' @slot settings Storage location for arguments used in various functions
+#' @slot meta_data Storage for meta_data
 #'
 #' @rdname tsr_explorer-class
 #' @export
@@ -45,11 +46,6 @@ setClass(
 #' @param TSRs Named list of TSR GRanges returned by TSRchitect 
 #'
 #' @return A tsrexplorer object containing TSSs and/or TSRs
-#'
-#' @examples
-#' TSSs <- system.file("extdata", "yeast_TSSs.RDS", package = "tsrexplorer")
-#' TSSs <- readRDS(TSSs)
-#' exp <- tsr_explorer(TSSs)
 #'
 #' @rdname tsr_explorer-class
 #' @export

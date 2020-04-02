@@ -216,15 +216,3 @@ setMethod("tsr_import", signature(object = "data.frame"),
 		return(tsrexplorer_obj)
 	}
 )
-
-#' TSRchitect object (tssObject)
-#'
-#' @importFrom TSRchitect tssObject
-#'
-#' @rdname tsr_import
-
-setMethod("tsr_import", signature(object = "tssObject"),
-	function(tsrexplorer_object, object) {
-		stop()
-	}
-)

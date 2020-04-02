@@ -20,6 +20,10 @@ group_data(signal_data, filters = NA, order_by = NA,
 \item{order_direction}{Whether the values should be ordered in
 'ascending' or 'descending' order}
 
+\item{order_samples}{Names of samples to order by}
+
+\item{order_group}{Features wil be aggregated by this group before ordering}
+
 \item{quantile_by}{Continuous metric to calculate quantiles}
 
 \item{n_quantiles}{Number of quantiles to calculate for continuous metric}
@@ -28,9 +32,9 @@ group_data(signal_data, filters = NA, order_by = NA,
 
 \item{quantile_group}{Group these features and quantile based on aggregate mean of feature}
 
-\item{grouping}{If quantiles not set split data by categorical variable}
+\item{quantile_direction}{Quantile in 'descending' or 'ascending' order of values}
 
-\item{order_on}{Names of samples to order by}
+\item{grouping}{If quantiles not set split data by categorical variable}
 }
 \description{
 Group data for plotting

@@ -16,6 +16,8 @@ detect_features(experiment, samples = "all", data_type = c("tss",
 
 \item{threshold}{The number of reads required in a TSS or TSR to avoid filtering}
 
+\item{dominant}{Whether to consider only the dominant TSS or TSR}
+
 \item{condition_data}{Apply conditions to data (supports filtering and quantiles/grouping)}
 }
 \value{

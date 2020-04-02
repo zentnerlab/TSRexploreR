@@ -33,12 +33,8 @@ start regions (TSRs) or clustered transcription start sites (cTSSs).
 
 \item{\code{diff_features}}{Differential features}
 
-\item{\code{settings}}{storage location for arguments used in various functions}
+\item{\code{settings}}{Storage location for arguments used in various functions}
+
+\item{\code{meta_data}}{Storage for meta_data}
 }}
 
-\examples{
-TSSs <- system.file("extdata", "yeast_TSSs.RDS", package = "tsrexplorer")
-TSSs <- readRDS(TSSs)
-exp <- tsr_explorer(TSSs)
-
-}

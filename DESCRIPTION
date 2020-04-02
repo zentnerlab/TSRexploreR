@@ -40,7 +40,13 @@ Imports:
     S4Vectors,
     SummarizedExperiment,
     digest,
-    uwot
+    uwot,
+    Gviz,
+    IRanges,
+    data.table,
+    rtracklayer
+Depends:
+    R (>= 3.5.0)
 Suggests:
     clusterProfiler
 RoxygenNote: 6.1.1

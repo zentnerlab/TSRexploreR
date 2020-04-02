@@ -9,11 +9,15 @@ differential_expression(experiment, data_type = c("tss", "tsr",
   log2fc_cutoff = 1)
 }
 \arguments{
+\item{experiment}{tsrexplorer object with edgeR differential expression model from fit_edger_model}
+
 \item{data_type}{Whether the input was made from TSSs, TSRs, or features}
 
 \item{compare_groups}{Vector of length two of the two groups to find differential TSRs}
 
-\item{fit_edger_model}{edgeR differential expression model from fit_edger_model}
+\item{fdr_cutoff}{FDR cutoff}
+
+\item{log2fc_cutoff}{Log2 fold change cutoff}
 }
 \value{
 tibble of differential TSRs

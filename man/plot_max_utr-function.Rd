@@ -16,6 +16,9 @@ plot_max_utr(max_utr, upstream = 1000, downstream = 100, ncol = 1,
 
 \item{ncol}{Number of columns to plot the data to}
 
+\item{consider_score}{Whether the score of the TSS should be
+considered when plotting}
+
 \item{...}{Arguments passed to geom_density}
 }
 \value{

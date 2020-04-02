@@ -21,7 +21,7 @@ tss_sequences(experiment, samples = "all", genome_assembly,
 
 \item{dominant}{Whether only dominant should be considered}
 
-\item{data_condtions}{Condition the data (filter, quantile, and grouping available)}
+\item{data_conditions}{Condition the data (filter, quantile, and grouping available)}
 }
 \value{
 Sequences surrounding TSSs

@@ -6,6 +6,7 @@
 ```
 conda create -n tsrexplorer -y -c conda-forge -c bioconda \
 r-tidyverse \
+r-data.table \
 r-devtools \
 r-ggseqlogo \
 r-ggally \
@@ -20,7 +21,9 @@ bioconductor-edger \
 bioconductor-clusterProfiler \
 bioconductor-complexheatmap \
 bioconductor-cager \
-bioconductor-tsrchitect
+bioconductor-tsrchitect \
+bioconductor-gviz \
+bioconductor-rtracklayer
 ```
 
 **Install latest version of tsrexplorer**
