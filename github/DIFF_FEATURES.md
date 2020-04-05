@@ -120,6 +120,18 @@ After building the edgeR model, the model can then be used to call differential 
 ```
 exp <- differential_expression(exp, data_type = "tsr", compare_groups = c("Untreated", "Diamide"))
 ```
+### Annotating Differential Features
+
+The next step is to annotate the differential features.
+
+```
+annotation <- system.file("extdata", "S288C_Annotation.gtf", package = "tsrexplorer")
+
+exp <- annotate_features(
+	exp, annotation_data = annotation,
+	data_type = "tss_diff", feature_type = "transcript"
+)
+```
 
 ### MA Plots
 
@@ -182,12 +194,7 @@ ggsave("tsr_enrichment.png", plot = p, device = "png", type = "cairo", height = 
 
 ## Gene Tracks.
 
-First, prepare the TSSs so they can be included in the plot.
-
-```
-exp <- format_counts(exp, data_type = "tss")
-```
-You can now make the gene track for an example gene that had a differential TSR.
+You can make gene tracks for genes with differential TSRs.
 
 ```
 annotation <- system.file("extdata", "S288C_Annotation.gtf", package = "tsrexplorer")

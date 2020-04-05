@@ -91,8 +91,6 @@ extract_counts <- function(experiment, data_type, samples, use_cpm = FALSE) {
 	} else if (data_type == "tsr_features") {
 		if (samples == "all") samples <- names(experiment@counts$TSR_features$raw)
 		selected_samples <- experiment@counts$TSR_features$raw[samples]
-	} else if (data_type == "tss_diff") {
-		if (samples == "all") NULL
 	}
 
 	## Want to return copies so you don't ovewrite the tsrexplorer object copies on accident.
@@ -154,22 +152,20 @@ extract_matrix <- function(experiment, data_type, samples) {
 #' @rdname extract_de-function
 #' @export
 
-extract_de <- function(experiment, data_type, de_comparisons) {
+extract_de <- function(experiment, data_type, de_comparisons = "all") {
        	
 	if (data_type == "tss") {
-                de_samples <- experiment@diff_features$TSSs
+		if (de_comparisons == "all") de_comparisons <- names(experiment@diff_features$TSSs$results)
+                de_samples <- experiment@diff_features$TSSs$results[de_comparisons]
         } else if (data_type == "tsr") {
-                de_samples <- experiment@diff_features$TSRs
+		if (de_comparisons == "all") de_comparisons <- names(experiment@diff_features$TSRs$results)
+                de_samples <- experiment@diff_features$TSRs$results[de_comparisons]
         } else if (data_type == "tss_features") {
-                de_samples <- experiment@diff_features$TSS_features
+		if (de_comparisons == "all") de_comparisons <- names(experiment@diff_features$TSS_features$results)
+                de_samples <- experiment@diff_features$TSS_features$results[de_comparisons]
         } else if (data_type == "tsr_features") {
-                de_samples <- experiment@diff_features$TSR_features
-        }
-
-        if (de_comparisons == "all") {
-                de_samples <- discard(de_samples, names(de_samples) %in% c("model", "design"))
-        } else {
-                de_samples <- de_samples[de_comparisons]
+		if (de_comparisons == "all") de_comparisons <- names(experiment@diff_features$TSR_features$results)
+                de_samples <- experiment@diff_features$TSR_features$results[de_comparisons]
         }
 
 	return(de_samples)

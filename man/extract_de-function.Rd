@@ -4,7 +4,7 @@
 \alias{extract_de}
 \title{Extract Differential Gene Sets}
 \usage{
-extract_de(experiment, data_type, de_comparisons)
+extract_de(experiment, data_type, de_comparisons = "all")
 }
 \arguments{
 \item{experiment}{tsrexplorer object}

@@ -30,7 +30,7 @@
 annotate_features <- function(
 	experiment,
 	annotation_data,
-	data_type = c("tss", "tsr"),
+	data_type = c("tss", "tsr", "tss_diff", "tsr_diff"),
 	feature_type = c("gene", "transcript"),
 	upstream = 1000,
 	downstream = 100
@@ -48,7 +48,9 @@ annotate_features <- function(
 	} else if (data_type == "tsr") {
 		counts <- experiment@counts$TSRs$raw
 	} else if (data_type == "diff_tss") {
-		counts <- experiment@diff_ex
+		counts <- experiment@diff_features$TSSs$results
+	} else if (data_type == "diff_tsr") {
+		counts <- experiment@diff_features$TSRs$results
 	}
 
 	## Annotate features.
@@ -84,6 +86,10 @@ annotate_features <- function(
 		experiment@counts$TSSs$raw <- counts_annotated
 	} else if (data_type == "tsr") {
 		experiment@counts$TSRs$raw <- counts_annotated
+	} else if (data_type == "tss_diff") {
+		experiment@diff_features$TSSs$results <- counts_annotated
+	} else if (data_type == "tsr_diff") {
+		experiment@diff_features$TSRs$results <- counts_annotated
 	}
 
 	## Save annotation settings to tsrexplorer object.

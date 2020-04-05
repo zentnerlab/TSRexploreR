@@ -28,8 +28,7 @@ plot_ma <- function(
 	de_samples <- extract_de(experiment, data_type, de_comparisons)
 
 	## Prepare DE data for plotting.
-	de_samples <- bind_rows(de_samples)
-	de_samples <- de_samples[, .(sample, FID, log2FC, logCPM, DE)]
+	de_samples <- rbindlist(de_samples)
 	de_samples[, DE := factor(DE, levels = c("up", "unchanged", "down"))]
 
 	## MA plot of differential expression
@@ -63,7 +62,7 @@ export_for_enrichment <- function(
 ) {
 	## Get DE comparisons.
 	de_data <- extract_de(experiment, data_type, de_comparisons) %>%
-		bind_rows
+		rbindlist
 	de_data <- de_data[
 		DE %in% c("up", "down"),
 		.(sample, FID, geneId, log2FC, FDR, DE)
@@ -91,7 +90,7 @@ plot_num_de <- function(
 	## Get appropriate samples.
 	de_samples <- experiment %>%
 		extract_de(data_type, de_comparisons) %>%
-		bind_rows
+		rbindlist
 
 	## prepare data for plotting.
 	de_data <- de_samples[, .(count = .N), by = .(sample, DE)]
