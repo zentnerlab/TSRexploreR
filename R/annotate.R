@@ -47,9 +47,9 @@ annotate_features <- function(
 		counts <- experiment@counts$TSSs$raw
 	} else if (data_type == "tsr") {
 		counts <- experiment@counts$TSRs$raw
-	} else if (data_type == "diff_tss") {
+	} else if (data_type == "tss_diff") {
 		counts <- experiment@diff_features$TSSs$results
-	} else if (data_type == "diff_tsr") {
+	} else if (data_type == "tsr_diff") {
 		counts <- experiment@diff_features$TSRs$results
 	}
 

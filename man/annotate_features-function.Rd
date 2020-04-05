@@ -5,8 +5,8 @@
 \title{Annotate Data}
 \usage{
 annotate_features(experiment, annotation_data, data_type = c("tss",
-  "tsr"), feature_type = c("gene", "transcript"), upstream = 1000,
-  downstream = 100)
+  "tsr", "tss_diff", "tsr_diff"), feature_type = c("gene", "transcript"),
+  upstream = 1000, downstream = 100)
 }
 \arguments{
 \item{experiment}{tsrexplorer object with TSS Granges}

@@ -129,7 +129,7 @@ annotation <- system.file("extdata", "S288C_Annotation.gtf", package = "tsrexplo
 
 exp <- annotate_features(
 	exp, annotation_data = annotation,
-	data_type = "tss_diff", feature_type = "transcript"
+	data_type = "tsr_diff", feature_type = "transcript"
 )
 ```
 
@@ -164,7 +164,7 @@ The preferred tool for enrichment analysis in R is the clusterProfiler library.
 tsrexplorer provides a convenient function to export DE features to a format ready for analysis with clusterProfiler.
 
 ```
-enrichment_data <- export_for_enrichment(experiment, data_type = "tsr", de_comparisons = "Untreated_vs_Diamide")
+enrichment_data <- export_for_enrichment(experiment, data_type = "tsr")
 
 library("clusterProfiler")
 library("org.Sc.sgd.db")

@@ -65,7 +65,7 @@ export_for_enrichment <- function(
 		rbindlist
 	de_data <- de_data[
 		DE %in% c("up", "down"),
-		.(sample, FID, geneId, log2FC, FDR, DE)
+		.(sample, FHASH, geneId, log2FC, FDR, DE)
 	]
 	
 	return(de_data)
