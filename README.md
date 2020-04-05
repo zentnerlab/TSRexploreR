@@ -45,4 +45,10 @@ Furthermore, data can be imported directly from other R libraries such as TSRchi
 
 This vignette goes over the standard analysis of TSSs and TSRs.
 
-[Standard analysis vignette](./github/STANDARD_ANALYSIS.md)
+[Standard Analysis Vignette](./github/STANDARD_ANALYSIS.md)
+
+### Differential Features
+
+Differential TSSs or TSRs can be calculated based on different conditions.
+
+[Differential Features Vignette](./github/DIFF_FEATURES.md)
