@@ -54,7 +54,11 @@ tsr_explorer <- function(TSSs = NA, TSRs = NA) {
 
 		tsr_obj <- new(
 			"tsr_explorer",
-			experiment = list("TSSs" = TSSs, "TSRs" = TSRs)
+			experiment = list("TSSs" = TSSs, "TSRs" = TSRs),
+			diff_features = list(
+				"TSSs" = list(results = list()),
+				"TSRs" = list(results = list())
+			)
 		)
 
 		return(tsr_obj)

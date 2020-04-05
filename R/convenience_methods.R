@@ -91,6 +91,8 @@ extract_counts <- function(experiment, data_type, samples, use_cpm = FALSE) {
 	} else if (data_type == "tsr_features") {
 		if (samples == "all") samples <- names(experiment@counts$TSR_features$raw)
 		selected_samples <- experiment@counts$TSR_features$raw[samples]
+	} else if (data_type == "tss_diff") {
+		if (samples == "all") NULL
 	}
 
 	## Want to return copies so you don't ovewrite the tsrexplorer object copies on accident.

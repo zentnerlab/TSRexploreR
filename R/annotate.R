@@ -45,10 +45,10 @@ annotate_features <- function(
 	## Grab data from proper slot.
 	if (data_type == "tss") {
 		counts <- experiment@counts$TSSs$raw
-		count_matrix <- experiment@counts$TSSs$matrix
 	} else if (data_type == "tsr") {
 		counts <- experiment@counts$TSRs$raw
-		count_matrix <- experiment@counts$TSRs$matrix
+	} else if (data_type == "diff_tss") {
+		counts <- experiment@diff_ex
 	}
 
 	## Annotate features.

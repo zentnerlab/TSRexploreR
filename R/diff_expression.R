@@ -39,7 +39,6 @@ fit_edger_model <- function(
 
 	## Create DE fitted object.
 	fitted_model <- assay(sample_data, "counts") %>%
-		set_rownames(rowRanges(sample_data)$FID) %>%
 		DGEList(group = design[["groups"]]) %>%
 		calcNormFactors %>%
 		estimateDisp(design = sample_design) %>%
@@ -94,19 +93,17 @@ differential_expression <- function(
 	if (data_type == "tss") {
 		edger_model <- experiment@diff_features$TSSs$model
 		edger_design <- experiment@diff_features$TSSs$design
-		anno_data <- as.data.table(rowRanges(experiment@counts$TSSs$matrix))
+		original_ranges <- rowRanges(experiment@counts$TSSs$matrix)
 	} else if (data_type == "tsr") {
 		edger_model <- experiment@diff_features$TSRs$model
 		edger_design <- experiment@diff_features$TSRs$design
-		anno_data <- as.data.table(rowRanges(experiment@counts$TSRs$matrix))
+		original_ranges <- rowRanges(experiment@counts$TSRs$matrix)
 	} else if (data_type == "tss_features") {
 		edger_model <- experiment@diff_features$TSS_features$model
 		edger_design <- experiment@diff_features$TSS_features$design
-		anno_data <- as.data.table(rowData(experiment@counts$TSS_features$matrix))
 	} else if (data_type == "tsr_features") {
 		edger_model <- experiment@diff_features$TSR_features$model
 		edger_design <- experiment@diff_features$TSR_features$design
-		anno_data <- as.data.table(rowData(experiment@counts$TSR_features$matrix))
 	}
 
 	## Set up contrasts.
@@ -128,10 +125,7 @@ differential_expression <- function(
 
 	## Differential expression
 	diff_expression <- glmQLFTest(edger_model, contrast = comparison_contrast)
-
-	diff_expression <- diff_expression$table %>%
-		rownames_to_column("FID") %>%
-		as.data.table
+	diff_expression <- as.data.table(diff_expression$table, keep.rownames = "FHASH")
 
 	setnames(diff_expression, old = "logFC", new = "log2FC")
 
@@ -145,18 +139,23 @@ differential_expression <- function(
 	)]
 
 	## Merge in the annotation information from the original matrix.
-	setkey(diff_expression, "FID")
-	setkey(anno_data, "FID")
+	original <- as.data.table(original_ranges)
+	original[, FHASH := names(original_ranges)]
+
 	comparison_name <- str_c(compare_groups[1], "_vs_", compare_groups[2])
-	diff_expression <- diff_expression[anno_data, nomatch = 0]
+	diff_expression <- merge(diff_expression, original, by = "FHASH")
+
+	diff_expression <- sort(makeGRangesFromDataFrame(diff_expression, keep.extra.columns = TRUE))
+	diff_expression <- as.data.table(diff_expression)
+	
 
 	## Add differential expression data back to object.
 	if (data_type == "tss") {
-		experiment@diff_features$TSSs[[comparison_name]] <- diff_expression
+		experiment@diff_features$TSSs$results[[comparison_name]] <- diff_expression
 	} else if (data_type == "tsr") {
-		experiment@diff_features$TSRs[[comparison_name]] <- diff_expression
+		experiment@diff_features$TSRs$results[[comparison_name]] <- diff_expression
 	} else if (data_type == "tss_features") {
-		experiment@diff_features$TSS_features[[comparison_name]] <- diff_expression
+		experiment@diff_features$TSS_features$results[[comparison_name]] <- diff_expression
 	} else if (data_type == "tsr_features") {
 		experiment@diff_features$TSR_features[[comparison_name]] <- diff_expression
 	}

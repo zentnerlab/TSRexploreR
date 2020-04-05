@@ -135,7 +135,7 @@ count_matrix <- function(
 
 	if (data_type %in% c("tss", "tsr")) {
 		select_samples <- map(select_samples, function(x) {
-			x <- x[, .(seqnames, start, end, strand, score)]
+			x <- x[, .(seqnames, start, end, strand, score, FHASH)]
 			return(x)
 		})
 	}
@@ -147,7 +147,7 @@ count_matrix <- function(
 		select_samples <- rbindlist(select_samples, idcol = "sample")
 		select_samples <- dcast(
 			select_samples,
-			seqnames + start + end + strand ~ sample,
+			seqnames + start + end + strand + FHASH ~ sample,
 			fill = 0
 		)
 
@@ -183,6 +183,11 @@ count_matrix <- function(
                 ]
 
                 select_samples <- dcast(raw_matrix, seqnames + start + end + strand ~ sample, fill = 0)
+		select_samples[,
+			FHASH := digest(str_c(seqnames, start, end, strand, collapse = "")),
+			by = seq_len(nrow(select_samples))
+		]
+
 
 	} else if (data_type %in% c("tss_features", "tsr_features")) {
 		## Get annotation type.
@@ -205,7 +210,7 @@ count_matrix <- function(
 		row_ranges <- makeGRangesFromDataFrame(select_samples)
 
 		select_samples[, c("seqnames", "start", "end", "strand") := NULL]
-		select_samples <- as.matrix(select_samples)
+		select_samples <- as.matrix(select_samples, rownames = "FHASH")
 
         	col_data <- DataFrame(
         		samples = colnames(select_samples),
