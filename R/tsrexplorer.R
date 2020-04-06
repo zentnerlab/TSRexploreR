@@ -58,6 +58,10 @@ tsr_explorer <- function(TSSs = NA, TSRs = NA) {
 			diff_features = list(
 				"TSSs" = list(results = list()),
 				"TSRs" = list(results = list())
+			),
+			counts = list(
+				"TSSs" = list(raw = list()),
+				"TSRs" = list(raw = list())
 			)
 		)
 

@@ -5,6 +5,7 @@
 #' @param experiment tsrexplorer object
 #' @param data_type Either 'tss' or 'tsr'
 #' @param merge_replicates If 'TRUE' replicate groups will be merged
+#' @param threshold Filter out TSSs or TSRs below this threshold before merging
 #' @param sample_list If merge_replicates is set to 'FALSE',
 #' specify what samples to merge in list format.
 #'
@@ -12,7 +13,7 @@
 #' @export
 
 merge_samples <- function(
-	experiment, data_type = c("tss", "tsr"),
+	experiment, data_type = c("tss", "tsr"), threshold = NA,
 	merge_replicates = FALSE, sample_list = NA
 ) {
 	
@@ -32,7 +33,8 @@ merge_samples <- function(
 			select_samples <- map(select_samples, as.data.table)
 
 			merged <- rbindlist(select_samples)
-			merged[, .(score = sum(score)), by = .(seqnames, start, end, strand)]
+			if (!is.na(threshold)) merged <- merged[score >= threshold]
+			merged <- merged[, .(score = sum(score)), by = .(seqnames, start, end, strand)]
 
 			return(merged)
 		})
@@ -40,6 +42,12 @@ merge_samples <- function(
 		merged_samples <- map(sample_list, function(sample_group) {
 
 			select_samples <- experiment@experiment$TSRs[sample_group]
+			if (!is.na(threshold)) {
+				select_samples <- map(select_samples, function(x) {
+					x <- x[score(x) >= threshold]
+					return(x)
+				})
+			}
 
 			tsr_consensus <- select_samples %>%
 				purrr::reduce(c) %>%

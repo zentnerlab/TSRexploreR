@@ -4,13 +4,15 @@
 \alias{merge_samples}
 \title{Merge Samples}
 \usage{
-merge_samples(experiment, data_type = c("tss", "tsr"),
+merge_samples(experiment, data_type = c("tss", "tsr"), threshold = NA,
   merge_replicates = FALSE, sample_list = NA)
 }
 \arguments{
 \item{experiment}{tsrexplorer object}
 
 \item{data_type}{Either 'tss' or 'tsr'}
+
+\item{threshold}{Filter out TSSs or TSRs below this threshold before merging}
 
 \item{merge_replicates}{If 'TRUE' replicate groups will be merged}
 

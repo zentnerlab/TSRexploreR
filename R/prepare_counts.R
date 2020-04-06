@@ -45,9 +45,9 @@ format_counts <- function(experiment, data_type = c("tss", "tsr"), samples = "al
 
 	## Place counts in proper object slot.
 	if (data_type == "tss") {
-		experiment@counts$TSSs$raw <- raw_counts
+		experiment@counts$TSSs$raw <- c(experiment@counts$TSSs$raw, raw_counts)
 	} else if (data_type == "tsr") {
-		experiment@counts$TSRs$raw <- raw_counts
+		experiment@counts$TSRs$raw <- c(experiment@counts$TSRs$raw, raw_counts)
 	}
 
 	return(experiment)
