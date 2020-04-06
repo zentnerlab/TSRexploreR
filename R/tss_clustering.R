@@ -68,6 +68,13 @@ tss_clustering <- function(
 		return(x)
 	})
 
+	TSR_granges <- map(clustered_TSSs, function(x) {
+		TSR_granges <- x[, .(seqnames, start, end, strand, score)]
+		TSR_granges <- makeGRangesFromDataFrame(TSR_granges, keep.extra.columns = TRUE)
+		return(TSR_granges)
+	})
+
+	experiment@experiment$TSRs <- TSR_granges
 	experiment@counts$TSRs$raw <- clustered_TSSs
 	return(experiment)
 

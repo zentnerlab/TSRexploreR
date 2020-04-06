@@ -5,7 +5,7 @@
 \title{Merge Samples}
 \usage{
 merge_samples(experiment, data_type = c("tss", "tsr"),
-  merge_replicates = TRUE, sample_list = NA)
+  merge_replicates = FALSE, sample_list = NA)
 }
 \arguments{
 \item{experiment}{tsrexplorer object}

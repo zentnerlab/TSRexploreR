@@ -13,65 +13,63 @@
 
 merge_samples <- function(
 	experiment, data_type = c("tss", "tsr"),
-	merge_replicates = TRUE, sample_list = NA
+	merge_replicates = FALSE, sample_list = NA
 ) {
 	
 	## Prepare what samples will be merged.
 	if (merge_replicates) {
-		samples <- experiment@meta_data$sample_sheet[type == data_type] %>%
+		data_column <- ifelse(data_type == "tss", "tss_name", "tsr_name")
+
+		sample_list <- experiment@meta_data$sample_sheet[type == data_type] %>%
 			split(.$replicate_id) %>%
 			map(~ pull(., name))
 	}
 
-	## Get feature sets to be merged.
-	if (data_type == "tss") {
-		selected_samples <- experiment@experiment$TSSs[unlist(samples)]
-	} else if (data_type == "tsr") {
-		selected_samples <- experiment@experiment$TSRs[unlist(samples)]
-	}
-
-	selected_samples <- map(selected_samples, as.data.table)
-
 	## Merge feature sets.
 	if (data_type == "tss") {
-		merged_samples <- samples %>%
-			map(function(sample_group) {
-				merged <- bind_rows(selected_samples[sample_group])
-				merged <- as.data.table(merged)
-				merged[, score := sum(score), by = .(seqnames, start, end, strand)]
-				return(merged)
-			})
+		merged_samples <- map(sample_list, function(sample_group) {
+			select_samples <- experiment@experiment$TSSs[sample_group]
+			select_samples <- map(select_samples, as.data.table)
+
+			merged <- rbindlist(select_samples)
+			merged[, .(score = sum(score)), by = .(seqnames, start, end, strand)]
+
+			return(merged)
+		})
 	} else if (data_type == "tsr") {
-		merged_samples <- samples %>%
-			map(function(sample_group) {
-				merged <- selected_samples[sample_group] %>%
-					map(~ makeGRangesFromDataFrame(., keep.extra.columns = TRUE))
-				
-				tsr_consensus <- merged %>%
-					purrr::reduce(c) %>%
-					GenomicRanges::reduce(ignore.strand = FALSE)
+		merged_samples <- map(sample_list, function(sample_group) {
 
-				merged <- merged %>%
-					map(
-						~ findOverlapPairs(query = tsr_consensus, subject = .) %>%
-						as.data.table
-					) %>%
-					bind_rows
+			select_samples <- experiment@experiment$TSRs[sample_group]
 
-				setnames(
-					merged,
-					old = c(
-						"first.seqnames", "first.start", "first.end",
-						"first.strand", "second.X.score"
-					),
-					new = c("seqnames", "start", "end", "strand", "score")
-				)
+			tsr_consensus <- select_samples %>%
+				purrr::reduce(c) %>%
+				GenomicRanges::reduce(ignore.strand = FALSE)
 
-				merged <- merged[,
-					.(score = sum(score)),
-					by = .(seqnames, start, end, strand)
-				]
+			merged <- map(select_samples, function(x) {
+					overlap <- findOverlapPairs(query = tsr_consensus, subject = x)
+					overlap <- as.data.table(overlap)
 			})
+			merged <- rbindlist(merged)[,
+				.(first.seqnames, first.start, first.end,
+				first.strand, second.X.score)
+			]
+
+			setnames(
+				merged,
+				old = c(
+					"first.seqnames", "first.start", "first.end",
+					"first.strand", "second.X.score"
+				),
+				new = c("seqnames", "start", "end", "strand", "score")
+			)
+
+			merged <- merged[,
+				.(score = sum(score)),
+				by = .(seqnames, start, end, strand)
+			]
+
+			return(merged)
+		})
 	}
 
 	## Convert merged samples to GRanges.
