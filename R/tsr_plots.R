@@ -7,6 +7,7 @@
 #' @import ggplot2
 #' @importFrom dplyr mutate_at select select_at bind_rows vars mutate
 #' @importFrom tidyr gather
+#' @importFrom forcats fct_inorder
 #'
 #' @param experiment tsrexplorer object with TSR granges
 #' @param tsr_metrics Names of metrics in tsrexplorer TSR granges to plot
@@ -53,9 +54,16 @@ plot_tsr_metric <- function(
 
 	groupings <- !is.na(data_conditions) & any(names(data_conditions) %in% c("grouping", "quantile_by"))
 
-	## Log2+1 transform data if requested
+	## Combine data into one data table.
 	selected_data <- rbindlist(selected_data, idcol = "sample")
+	
+	if (samples == "all") {
+		selected_data[, sample := fct_inorder(factor(sample))]
+	} else {
+		selected_data[, sample := factor(sample, levels = samples)]
+	}
 
+	## Log2+1 transform data if requested
 	if (log2_transform) {
 		selected_data[,
 			(tsr_metrics) := lapply(.SD, function(x) log2(x + 1)),
