@@ -44,13 +44,15 @@ Imports:
     Gviz,
     IRanges,
     data.table,
-    rtracklayer
+    rtracklayer,
+    Rcpp
 Depends:
     R (>= 3.5.0)
 Suggests:
     clusterProfiler
 RoxygenNote: 6.1.1
 Collate: 
+    'RcppExports.R'
     'annotate.R'
     'association.R'
     'average_plots.R'
@@ -75,6 +77,10 @@ Collate:
     'thresholding.R'
     'tsr_metrics.R'
     'tsr_plots.R'
+    'tsrexplorer-package.R'
     'tss_clustering.R'
     'tss_metrics.R'
     'tss_shifting.R'
+LinkingTo: 
+    Rcpp,
+    RcppArmadillo
