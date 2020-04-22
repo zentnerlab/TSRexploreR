@@ -7,15 +7,15 @@
 using namespace Rcpp;
 
 // allTheShiftScores
-mat allTheShiftScores(CharacterVector fhash, uvec dists, vec scores, vec sample, int calcP, int nresamp, int ntests);
+arma::mat allTheShiftScores(CharacterVector fhash, arma::uvec dists, arma::vec scores, arma::vec sample, int calcP, int nresamp, int ntests);
 RcppExport SEXP _tsrexplorer_allTheShiftScores(SEXP fhashSEXP, SEXP distsSEXP, SEXP scoresSEXP, SEXP sampleSEXP, SEXP calcPSEXP, SEXP nresampSEXP, SEXP ntestsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< CharacterVector >::type fhash(fhashSEXP);
-    Rcpp::traits::input_parameter< uvec >::type dists(distsSEXP);
-    Rcpp::traits::input_parameter< vec >::type scores(scoresSEXP);
-    Rcpp::traits::input_parameter< vec >::type sample(sampleSEXP);
+    Rcpp::traits::input_parameter< arma::uvec >::type dists(distsSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type scores(scoresSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type sample(sampleSEXP);
     Rcpp::traits::input_parameter< int >::type calcP(calcPSEXP);
     Rcpp::traits::input_parameter< int >::type nresamp(nresampSEXP);
     Rcpp::traits::input_parameter< int >::type ntests(ntestsSEXP);
