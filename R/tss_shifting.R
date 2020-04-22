@@ -4,12 +4,18 @@
 #' Calculate TSS shifting statistics
 #'
 #' @param experiment tsrexplorer object
-#' @param compare_samples Vector of two samples to compare
+#' @param compare_samples Vector of sample names of the two TSRs to compare
+#' @param min_distance TSRs below this distance will be merged into regions
+#' @param min_threshold Minimum number of reads required at each region for both TSRs
+#' @param n_resamples Number of resamples for permutation test of shifting scores
 #'
 #' @rdname tss_shift-function
 #' @export
 
-tss_shift <- function(experiment, compare_samples, min_distance = 100) {
+tss_shift <- function(
+	experiment, compare_samples, min_distance = 100, min_threshold = 10,
+	n_resamples = 1000L
+){
 	
 	## Grab samples to be compared.
 	select_samples <- extract_counts(experiment, "tss", compare_samples)
@@ -67,7 +73,8 @@ tss_shift <- function(experiment, compare_samples, min_distance = 100) {
 	shifts <- ShiftScores(
 		fhash = overlap$FHASH, sample_indicator = overlap$sample, 
 		distances = overlap$distance, scores = overlap$score,
-		nresamp = 1000L, baseline_level = "Untreated", nthresh = 5
+		nresamp = n_resamples, baseline_level = compare_samples[1],
+		nthresh = min_threshold
 	)
 
 	shifts <- as.data.table(shifts)
@@ -77,6 +84,12 @@ tss_shift <- function(experiment, compare_samples, min_distance = 100) {
 	## Merging data back into
 	shift_results <- as.data.table(consensus_tsrs)
 	shift_results <- merge(shift_results, shifts, by = "FHASH")
+
+	## Return table of results.
+	shift_results[, FHASH := NULL]
+	shift_results <- shift_results[order(FDR)]
+
+	return(shift_results)
 }
 
 #' Shifting Score
