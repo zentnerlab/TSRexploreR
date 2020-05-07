@@ -12,7 +12,7 @@
 #' @export
 
 setGeneric("tss_experiment", function(tsrexplorer_object) standardGeneric("tss_experiment"))
-setGeneric("tss_experiment<-", function(tsrexplorer_object, fiveprime_data) standardGeneric("tss_experiment<-"))
+setGeneric("tss_experiment<-", function(tsrexplorer_object, value) standardGeneric("tss_experiment<-"))
 
 #' @rdname tss_experiment-generic
 
@@ -23,8 +23,8 @@ setMethod("tss_experiment", signature(tsrexplorer_object = "tsr_explorer"),
 )
 
 setMethod("tss_experiment<-", signature(tsrexplorer_object = "tsr_explorer"),
-	function(tsrexplorer_object, fiveprime_data) {
-		tsrexplorer_object@experiment$TSSs <- fiveprime_data
+	function(tsrexplorer_object, value) {
+		tsrexplorer_object@experiment$TSSs <- value
 	}
 )
 
@@ -41,7 +41,7 @@ setMethod("tss_experiment<-", signature(tsrexplorer_object = "tsr_explorer"),
 #' @export
 
 setGeneric("tsr_experiment", function(tsrexplorer_object) standardGeneric("tsr_experiment"))
-setGeneric("tsr_experiment<-", function(tsrexplorer_object, fiveprime_data) standardGeneric("tsr_experiment<-"))
+setGeneric("tsr_experiment<-", function(tsrexplorer_object, value) standardGeneric("tsr_experiment<-"))
 
 #' @rdname tsr_experiment-generic
 
@@ -52,8 +52,8 @@ setMethod("tsr_experiment", signature(tsrexplorer_object = "tsr_explorer"),
 )
 
 setMethod("tsr_experiment<-", signature(tsrexplorer_object = "tsr_explorer"),
-        function(tsrexplorer_object, fiveprime_data) {
-                tsrexplorer_object@experiment$TSRs <- fiveprime_data
+        function(tsrexplorer_object, value) {
+                tsrexplorer_object@experiment$TSRs <- value
         }
 )
 

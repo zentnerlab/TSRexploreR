@@ -9,9 +9,10 @@
 \alias{tss_import,CAGEexp-method}
 \title{Import TSSs}
 \usage{
-tss_import(object, ...)
+tss_import(tsrexplorer_obj, object, ...)
 
-\S4method{tss_import}{character}(tsrexplorer_obj, object)
+\S4method{tss_import}{character}(tsrexplorer_obj, object, delim = "\\t",
+  col_names = TRUE)
 
 \S4method{tss_import}{data.frame}(tsrexplorer_obj, object)
 
@@ -24,9 +25,13 @@ tss_import(object, ...)
 
 \item{...}{Additional arguments for classes}
 
-\item{tsrexplorer_obj}{tsrexplorer object to add the TSSs to}
+\item{delim}{Delimiter for sample_sheet file}
+
+\item{col_names}{Logical, whether the sample_sheet file has a header (TRUE) or not (FALSE)}
 
 \item{data_type}{Either "tss", "tsr", or "consensus"}
+
+\item{tsrexplorer}{tsrexplorer object}
 }
 \description{
 Convenience function to import TSSs.

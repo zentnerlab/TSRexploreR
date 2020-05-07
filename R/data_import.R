@@ -10,38 +10,45 @@
 #' @importFrom purrr pmap set_names
 #' @importFrom magrittr %>%
 #'
+#' @param tsrexplorer tsrexplorer object
 #' @param object Object with TSSs to import into tsrexplorer
-#' @param tsrexplorer_obj tsrexplorer object to add the TSSs to
 #' @param ... Additional arguments for classes
 #'
 #' @rdname tss_import-generic
 #'
 #' @export
 
-setGeneric("tss_import", function(object, ...) {
-	standardGeneric("tss_import")
-})
+setGeneric(
+	"tss_import",
+	function(tsrexplorer_obj, object, ...) standardGeneric("tss_import"),
+	signature = "object"
+)
 
 #' Bedgraph/bigwig files (sample sheet saved as file)
 #'
+#' @param delim Delimiter for sample_sheet file
+#' @param col_names Logical, whether the sample_sheet file has a header (TRUE) or not (FALSE)
+#'
 #' @rdname tss_import-generic
+#'
+#' @export
 
-setMethod("tss_import", signature(object = "character"),
-	function(tsrexplorer_obj, object) {
-		## Prepare sample sheet.
+setMethod("tss_import", signature = signature(object = "character"),
+	function(tsrexplorer_obj, object, delim = "\t", col_names = TRUE) {
+		
+		## Check to see if sample sheet exists.
 		if (!file.exists(object)) {
-			message(paste(object, "does not exist"))
-			stop()
-		} else {
-			sample_sheet <- read.delim(object, sep = "\t", header = TRUE, stringsAsFactors = FALSE)
+			message(str_c(object, "does not exist", sep = " "))
 		}
+
+		sample_sheet <- read.delim(object, sep = delim, header = col_names, stringsAsFactors = FALSE)
 
 		## Import data.
 		imported_data <- sample_sheet %>%
-			pmap(function(sample_name, pos, neg) {
-				pos <- import(pos)
-				neg <- import(neg)
-				imported_data <- c(pos, neg)
+			pmap(function(sample_name, file_1, file_2) {
+				pos <- import(file_1)
+				neg <- import(file_2)
+				imported_data <- sort(c(pos, neg))
 			}) %>%
 			set_names(pull(sample_sheet, sample_name))
 
@@ -54,15 +61,17 @@ setMethod("tss_import", signature(object = "character"),
 #' Bedgraph/bigwig files (data.frame)
 #'
 #' @rdname tss_import-generic
+#'
+#' @export
 
-setMethod("tss_import", signature(object = "data.frame"),
+setMethod("tss_import", signature = signature(object = "data.frame"),
 	function(tsrexplorer_obj, object) {
 		## Import data.
 		imported_data <- sample_sheet %>%
-			pmap(function(sample_name, pos, neg) {
-				pos <- import(pos)
-				neg <- import(neg)
-				imported_data <- c(pos, neg)
+			pmap(function(sample_name, file_1, file_2) {
+				pos <- import(file_1)
+				neg <- import(file_2)
+				imported_data <- sort(c(pos, neg))
 			}) %>%
 			set_names(pull(sample_sheet, sample_name))
 
@@ -171,9 +180,11 @@ setMethod("tss_import", signature(object = "CAGEexp"),
 #'
 #' @export
 
-setGeneric("tsr_import", function(object, ...) {
-        standardGeneric("tsr_import")
-})
+setGeneric(
+	"tsr_import",
+	function(tsrexplorer_obj, object, ...) standardGeneric("tsr_import"),
+	signature = "object"
+)
 
 #' Bed files (sample sheet saved as file) 
 #'
@@ -191,7 +202,7 @@ setMethod("tsr_import", signature(object = "character"),
 
 		## Import data.
 		imported_data <- sample_sheet %>%
-			pmap(function(sample_name, bed) {imported_data <- import(bed)}) %>%
+			pmap(function(sample_name, file_1, file_2) {imported_data <- import(file_1)}) %>%
 			set_names(pull(sample_sheet, sample_name))
 
 		## Add TSRs to tsrexplorer object.
@@ -208,7 +219,7 @@ setMethod("tsr_import", signature(object = "data.frame"),
 	function(tsrexplorer_obj, object) {
 		## Import data.
 		imported_data <- object %>%
-			pmap(function(sample_name, bed) {imported_data <- import(bed)}) %>%
+			pmap(function(sample_name, file_1, file_2) {imported_data <- import(file_1)}) %>%
 			set_names(pull(object, sample_name))
 
 		## Add TSRs to tsrexplorer object.
