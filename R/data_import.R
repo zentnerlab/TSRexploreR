@@ -202,11 +202,14 @@ setMethod("tsr_import", signature(object = "character"),
 
 		## Import data.
 		imported_data <- sample_sheet %>%
-			pmap(function(sample_name, file_1, file_2) {imported_data <- import(file_1)}) %>%
-			set_names(pull(sample_sheet, sample_name))
+			pmap(function(sample_name, file_1, file_2) {
+				imported_data <- import(file_1)
+				return(imported_data)
+			}) %>%
+			set_names(pull(sample_sheet, "sample_name"))
 
 		## Add TSRs to tsrexplorer object.
-		tsrexplorer_obj <- tsr_experiment(imported_data)
+		tsrexplorer_obj@experiment$TSRs <- imported_data
 		return(tsrexplorer_obj)
 	}
 )
@@ -219,11 +222,14 @@ setMethod("tsr_import", signature(object = "data.frame"),
 	function(tsrexplorer_obj, object) {
 		## Import data.
 		imported_data <- object %>%
-			pmap(function(sample_name, file_1, file_2) {imported_data <- import(file_1)}) %>%
-			set_names(pull(object, sample_name))
+			pmap(function(sample_name, file_1, file_2) {
+				imported_data <- import(file_1)
+				return(imported_data)
+			}) %>%
+			set_names(pull(object, "sample_name"))
 
 		## Add TSRs to tsrexplorer object.
-		tsrexplorer_obj <- tsr_experiment(imported_data)
+		tsrexplorer_obj@experiment$TSRs <- imported_data
 		return(tsrexplorer_obj)
 	}
 )

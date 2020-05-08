@@ -59,6 +59,7 @@ Collate:
     'tsrexplorer.R'
     'convenience_methods.R'
     'correlation.R'
+    'data_export.R'
     'data_import.R'
     'diff_exp_analysis.R'
     'diff_expression.R'
