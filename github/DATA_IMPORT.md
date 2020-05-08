@@ -89,14 +89,54 @@ The first column, 'sample_name' is the name you would like associated to that sa
 The second and last column 'bed' is the path to the bed files to import.
 The sample sheet can be a tab delimited file, or a data.frame.
 
+First, we will create some sample bedgraph files to import.
+
 ```
-# Sample sheet as tab delimited file
-exp <- tsr_import(exp, "example_path/sample_sheet.tsv")
+library("GRanges")
+library("rtracklayer")
+library("purrr")
+library("magrittr")
 
-or
+# Load two example TSS files.
+TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
+TSSs <- readRDS(TSSs)[c("S288C_WT_1", "S288C_WT_2")]
 
-# Sample sheet as data.frame 'df'.
-exp <- tsr_import(exp, sample_sheet = df)
+# Keep only the TSSs from chromosome I (for example purposes).
+TSSs <- map(TSSs, function(x) x[seqnames(x) == "I"])
+
+# Call TSRs.
+exp <- tsr_explorer(TSSs) %>%
+	format_counts(data_type = "tss") %>%
+	tss_clustering(threshold = 3, max_distance = 25)
+
+# Save the TSRs as BEDs.
+iwalk(exp@counts$TSRs$raw, function(x, y) {
+	x <- makeGRangesFromDataFrame(x, keep.extra.columns = TRUE)
+	export(x, str_c(y, ".bed"), "bed")
+})
+
+```
+
+Now that there are example BED files to import, we can make a sample sheet.
+
+```
+sample_sheet <- data.frame(
+        "sample_name" = c("S288C_WT_1", "S288C_WT_2"),
+        "file_1" = c("S288C_WT_1.bed", "S288C_WT_2.bed"),
+        "file_2" = c(NA, NA),
+        stringsAsFactors = FALSE
+)
+```
+Finally, we can import the BEDs and add them to the tsrexplorer object.
+A reminder that the sample sheet can also be a tab delimited file of the same format as the
+data.frame created above.
+
+```
+# Initialize an empty object.
+exp <- tsr_explorer()
+
+# Import the BEDs.
+exp <- tsr_import(exp, sample_sheet)
 ```
 
 ### TSRchitect Derived TSRs
