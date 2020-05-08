@@ -5,7 +5,7 @@
 \title{Export TSRs}
 \usage{
 tsr_export(experiment, samples = "all", file_type = "bed",
-  out_dir = NA)
+  out_dir = NA, diff_tsr = FALSE)
 }
 \arguments{
 \item{experiment}{tsrexplorer object}
@@ -15,6 +15,8 @@ tsr_export(experiment, samples = "all", file_type = "bed",
 \item{file_type}{either 'bed' or 'table'}
 
 \item{out_dir}{Output directory for files}
+
+\item{diff_tsr}{Whether to pull out the diff TSRs}
 }
 \description{
 Export TSRs to table or BED

@@ -7,6 +7,7 @@
 #' @param samples Samples to export
 #' @param file_type either 'bedgraph' or 'table'
 #' @param out_dir Output directory for files
+#' @param diff_tss Whether to pull out the differential TSSs
 #'
 #' @rdname tss_export-function
 #'
@@ -16,12 +17,18 @@ tss_export <- function(
 	experiment,
 	samples = "all",
 	file_type = "bedgraph",
-	out_dir = NA
+	out_dir = NA,
+	diff_tss = FALSE
 ) {
 
 	## Retrieve samples.
-	if (all(samples == "all")) samples <- names(experiment@counts$TSSs$raw)
-	export_samples <- experiment@counts$TSSs$raw[samples]
+	if (!diff_tss) {
+		if (all(samples == "all")) samples <- names(experiment@counts$TSSs$raw)
+		export_samples <- experiment@counts$TSSs$raw[samples]
+	} else {
+		if (all(samples == "all")) samples <- names(experiment@diff_features$TSSs$results)
+		export_samples <- experiment@diff_features$TSSs$results[samples]
+	}
 
 	## Export files.
 	if (file_type == "bedgraph") {
@@ -64,6 +71,7 @@ tss_export <- function(
 #' @param samples Samples to export
 #' @param file_type either 'bed' or 'table'
 #' @param out_dir Output directory for files
+#' @param diff_tsr Whether to pull out the diff TSRs
 #'
 #' @rdname tsr_export-function
 #'
@@ -73,12 +81,18 @@ tsr_export <- function(
 	experiment,
 	samples = "all",
 	file_type = "bed",
-	out_dir = NA
+	out_dir = NA,
+	diff_tsr = FALSE
 ) {
 
 	## Retrieve samples.
-	if (all(samples == "all")) samples <- names(experiment@counts$TSRs$raw)
-	export_samples <- experiment@counts$TSRs$raw[samples]
+	if (!diff_tsr) {
+		if (all(samples == "all")) samples <- names(experiment@counts$TSRs$raw)
+		export_samples <- experiment@counts$TSRs$raw[samples]
+	} else {
+		if (all(samples == "all")) samples <- names(experiment@diff_features$TSRs$results)
+		export_samples <- experiment@diff_features$TSRs$results[samples]
+	}
 
 	## Export files.
 	if (file_type == "bed") {

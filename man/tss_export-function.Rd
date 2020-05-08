@@ -5,7 +5,7 @@
 \title{Export TSSs}
 \usage{
 tss_export(experiment, samples = "all", file_type = "bedgraph",
-  out_dir = NA)
+  out_dir = NA, diff_tss = FALSE)
 }
 \arguments{
 \item{experiment}{tsrexplorer object}
@@ -15,6 +15,8 @@ tss_export(experiment, samples = "all", file_type = "bedgraph",
 \item{file_type}{either 'bedgraph' or 'table'}
 
 \item{out_dir}{Output directory for files}
+
+\item{diff_tss}{Whether to pull out the differential TSSs}
 }
 \description{
 Export TSSs to table or bedgraph
