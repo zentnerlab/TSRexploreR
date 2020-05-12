@@ -12,15 +12,30 @@ tmm_normalize(experiment, data_type = c("tss", "tsr", "tss_features",
 
 \item{data_type}{Whether TSSs, TSRs, RNA-seq & five-prime feature counts should be normalized}
 
-\item{samples}{Vector with names of samples to include in he normalization}
+\item{samples}{Vector with names of samples to include in the normalization}
 
 \item{threshold}{Filter out positions missing at least 'n_samples' number of samples with reads greater than or equal to threshold}
 
 \item{n_samples}{Filter out positions missing at least n_samples number of samples with reads greater than or equal to 'threshold'}
 }
 \value{
-tibble of TMM normalized read counts
+tsr explorer object with tmm normalized count matrices
 }
 \description{
-Using edgeR to TMM normalize TSSs or TSRs
+Using edgeR to TMM normalize TSSs or TSRs.
+This methods helps to reduce the influence that differing number of reads
+  between samples can have on inter-sample comparisons.
+}
+\examples{
+TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
+TSSs <- readRDS(TSSs)
+tsre_exp <- tsr_explorer(TSSs)
+tsre_exp <- format_counts(tsre_exp, data_type = "tss")
+tsre_exp <- count_matrix(tsre_exp, data_type = "tss")
+tsre_exp <- tmm_normalize(exp, data_type = "tss")
+
+}
+\seealso{
+\code{\link{count_matrix}} to prepare the matrices.
+  \code{\link{plot_correlation}} for various correlation plots.
 }

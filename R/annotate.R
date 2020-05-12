@@ -6,12 +6,8 @@
 #' @import tibble
 #' @importFrom magrittr %>%
 #' @importFrom ChIPseeker annotatePeak
-#' @importFrom purrr map
 #' @importFrom GenomicFeatures makeTxDbFromGFF
 #' @importFrom GenomicRanges GRanges makeGRangesFromDataFrame
-#' @importFrom tidyr separate gather
-#' @importFrom dplyr filter select
-#' @importFrom SummarizedExperiment SummarizedExperiment rowRanges "rowRanges<-"
 #' @importFrom stringr str_detect
 #'
 #' @param experiment tsrexplorer object with TSS Granges
@@ -21,10 +17,20 @@
 #' @param upstream Bases upstream of TSS
 #' @param downstream Bases downstream of TSS
 #'
-#' @return Annotated TSS slot in tsrchitect object
+#' @return tsrchitect object with annotated features
+#'
+#' @examples
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
+#' TSSs <- readRDS(TSSs)
+#' tsre_exp <- tsr_explorer(TSSs)
+#' tsre_exp <- format_counts(tsre_exp, data_type = "tss")
+#' annotation <- system.file("extdata", "S288C_Annotation.gtf", package = "tsrexplorer")
+#' tsre_exp <- annotate_features(
+#'   tsre_exp, annotation_data = annotation,
+#'   data_type = "tss", feature_type = "transcript"
+#' )
 #'
 #' @rdname annotate_features-function
-#'
 #' @export
 
 annotate_features <- function(
@@ -35,6 +41,34 @@ annotate_features <- function(
 	upstream = 1000,
 	downstream = 100
 ) {
+
+	## Check inputs.
+	if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsr explorer object")
+
+	if (!is(annotation_data, "character") & !is(annotation_data, "TxDb")) {
+		stop("annotation_data must be an annotation file or TxDb object")
+	}
+	
+        if (!is(data_type, "character")) stop("data_type must be a character")
+        if (length(data_type) > 1) stop("data_type must be a character")
+        data_type <- str_to_lower(data_type)
+        if (!data_type %in% c("tss", "tsr")) stop("data_type must be 'tss' or 'tsr'")
+
+	if (!is(feature_type, "character")) stop("feature_type must be a character")
+	if (length(feature_type) > 1) stop("feature_type must be either 'gene' or 'transcript'")
+	feature_type <- str_to_lower(feature_type)
+	if (!feature_type %in% c("gene", "transcript")) {
+		stop("feature_type must be either 'gene' or 'transcript'")
+	}
+
+	if (!is(upstream, "numeric") | !is(downstream, "numeric")) {
+		stop("upstream and downstream must be positive integers")
+	}
+	if (upstream %% 1 != 0 | downstream %% 1 != 0) {
+		stop("upstream and downstream must be positive integers")
+	}
+	if (upstream < 0 | downstream < 0) stop("upstream and downstream must be positive integers")
+
 	## Load GTF.
 	if (is(annotation_data, "character")) {
 		genome_annotation <- makeTxDbFromGFF(annotation_data)

@@ -12,6 +12,17 @@ cpm_normalize(experiment, data_type = c("tss", "tsr", "tss_features",
 
 \item{data_type}{'tss', 'tsr', 'tss_features', 'tsr_features'}
 }
+\value{
+tsrexplorer object with added CPM counts column.
+}
 \description{
 CPM normalize the TSS, TSR, and/or feature counts.
+}
+\examples{
+TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
+TSSs <- readRDS(TSSs)
+tsre_exp <- tsr_explorer(TSSs)
+tsre_exp <- format_counts(tsre_exp, data_type = "tss")
+tsre_exp <- cpm_normalize(tsre_exp, data_type = "tss")
+
 }

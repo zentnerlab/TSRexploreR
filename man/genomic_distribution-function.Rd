@@ -22,8 +22,25 @@ genomic_distribution(experiment, data_type = c("tss", "tsr"),
 \item{data_conditions}{List of group options (filtering and quantiles/grouping available)}
 }
 \value{
-tibble with TSS or TSR genomic distribution stats
+DataFrame with TSS or TSR genomic distribution stats
 }
 \description{
 Get genomic distribution of TSSs and TSRs
+}
+\examples{
+TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
+TSSs <- readRDS(TSSs)
+tsre_exp <- tsr_explorer(TSSs)
+tsre_exp <- format_counts(tsre_exp, data_type = "tss")
+annotation <- system.file("extdata", "S288C_Annotation.gtf", package = "tsrexplorer")
+tsre_exp <- annotate_features(
+  tsre_exp, annotation_data = annotation,
+  data_type = "tss", feature_type = "transcript"
+)
+genomic_dist <- genomic_distribution(tsre_exp, data_type = "tss")
+
+}
+\seealso{
+\code{\link{annotate_features}} to annotate the TSSs or TSRs.
+  \code{\link{plot_genomic_distribution}} to plot the genomic distribution.
 }

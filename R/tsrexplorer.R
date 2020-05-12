@@ -8,6 +8,7 @@
 #' @slot meta_data Storage for meta_data
 #'
 #' @rdname tsr_explorer-class
+#'
 #' @export
 
 setClass(
@@ -36,18 +37,24 @@ setClass(
 #' This function generates a new tsr_explorer object for
 #' detailed analysis of transcription start sites (TSSs)
 #' and TSS clusters, referred to as transcription
-#' start regions (TSRs) or clustered transcription start sites (cTSSs).
+#' start regions (TSRs).
 #'
 #' @import methods
 #' @importFrom GenomicRanges GRanges
 #' @importFrom tibble tibble
 #'
-#' @param TSSs Named list of TSS GRanges returned by TSRchitect
-#' @param TSRs Named list of TSR GRanges returned by TSRchitect 
+#' @param TSSs Named list of TSS GRanges
+#' @param TSRs Named list of TSR GRanges
 #'
 #' @return A tsrexplorer object containing TSSs and/or TSRs
 #'
+#' @examples
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
+#' TSSs <- readRDS(TSSs)
+#' exp <- tsr_explorer(TSSs)
+#'
 #' @rdname tsr_explorer-class
+#'
 #' @export
 
 tsr_explorer <- function(TSSs = NA, TSRs = NA) {

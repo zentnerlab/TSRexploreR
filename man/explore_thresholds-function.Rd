@@ -14,8 +14,24 @@ explore_thresholds(experiment, max_threshold = 50, samples = "all")
 \item{samples}{Either 'all' or the names of the samples to analyze}
 }
 \value{
-tibble containing information for each threshold and sample
+data.frame containing information for each threshold and sample
 }
 \description{
-Explore various naive thresholds
+Explore various naive thresholds.
+}
+\examples{
+TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
+TSSs <- readRDS(TSSs)
+tsre_exp <- tsr_explorer(TSSs)
+tsre_exp <- format_counts(tsre_exp, data_type = "tss")
+annotation <- system.file("extdata", "S288C_Annotation.gtf", package = "tsrexplorer")
+tsre_exp <- annotate_features(
+  tsre_exp, annotation_data = annotation,
+  data_type = "tss", feature_type = "transcript"
+)
+thresh_results <- explore_thresholds(tsre_exp)
+
+}
+\seealso{
+\code{\link{plot_threshold_exploration}} to plot the results.
 }

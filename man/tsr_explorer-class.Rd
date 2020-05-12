@@ -9,9 +9,9 @@
 tsr_explorer(TSSs = NA, TSRs = NA)
 }
 \arguments{
-\item{TSSs}{Named list of TSS GRanges returned by TSRchitect}
+\item{TSSs}{Named list of TSS GRanges}
 
-\item{TSRs}{Named list of TSR GRanges returned by TSRchitect}
+\item{TSRs}{Named list of TSR GRanges}
 }
 \value{
 A tsrexplorer object containing TSSs and/or TSRs
@@ -20,7 +20,7 @@ A tsrexplorer object containing TSSs and/or TSRs
 This function generates a new tsr_explorer object for
 detailed analysis of transcription start sites (TSSs)
 and TSS clusters, referred to as transcription
-start regions (TSRs) or clustered transcription start sites (cTSSs).
+start regions (TSRs).
 }
 \section{Slots}{
 
@@ -38,3 +38,9 @@ start regions (TSRs) or clustered transcription start sites (cTSSs).
 \item{\code{meta_data}}{Storage for meta_data}
 }}
 
+\examples{
+TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
+TSSs <- readRDS(TSSs)
+exp <- tsr_explorer(TSSs)
+
+}

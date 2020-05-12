@@ -5,11 +5,30 @@
 #' @param experiment tsrexplorer object
 #' @param data_type 'tss', 'tsr', 'tss_features', 'tsr_features'
 #'
+#' @return tsrexplorer object with added CPM counts column.
+#'
+#' @examples
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
+#' TSSs <- readRDS(TSSs)
+#' tsre_exp <- tsr_explorer(TSSs)
+#' tsre_exp <- format_counts(tsre_exp, data_type = "tss")
+#' tsre_exp <- cpm_normalize(tsre_exp, data_type = "tss")
+#'
 #' @rdname cpm_normalize-function
 #' @export
 
 cpm_normalize <- function(experiment, data_type = c("tss", "tsr", "tss_features", "tsr_features")) {
-	
+
+	## Check inputs.
+	if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsr explorer object")
+
+	if (!is(data_type, "character")) stop("data_type must be a character")
+	if (length(data_type) > 1) stop("data_type must be a character")
+	data_type <- str_to_lower(data_type)
+	if (!data_type %in% c("tss", "tsr", "tss_features", "tsr_features")) {
+		stop("data_type must be 'tss', 'tsr', 'tss_features', or 'tsr_features'")
+	}
+
 	## Grab appropriate samples.
 	if (data_type == "tss") {
 		select_samples <- experiment@counts$TSSs$raw
@@ -44,29 +63,34 @@ cpm_normalize <- function(experiment, data_type = c("tss", "tsr", "tss_features"
 
 #' TMM Normalize TSSs or TSRs
 #'
-#' Using edgeR to TMM normalize TSSs or TSRs
+#' @description
+#' Using edgeR to TMM normalize TSSs or TSRs.
+#' This methods helps to reduce the influence that differing number of reads
+#'   between samples can have on inter-sample comparisons.
 #'
-#' @import tibble
-#' @importFrom dplyr mutate mutate_at mutate_all vars select bind_rows group_by summarize mutate_if left_join rename
 #' @importFrom edgeR DGEList calcNormFactors cpm
-#' @importFrom GenomicRanges makeGRangesFromDataFrame score "score<-" mcols "mcols<-"
-#' @importFrom SummarizedExperiment SummarizedExperiment assay "assay<-"
-#' @importFrom S4Vectors DataFrame
-#' @importFrom IRanges findOverlapPairs
-#' @importFrom tidyr spread complete
-#' @importFrom purrr map imap
-#' @importFrom magrittr %>% extract set_colnames
+#' @importFrom SummarizedExperiment assay "assay<-"
 #'
 #' @param experiment tsrexplorer object
 #' @param data_type Whether TSSs, TSRs, RNA-seq & five-prime feature counts should be normalized
 #' @param threshold Filter out positions missing at least 'n_samples' number of samples with reads greater than or equal to threshold
 #' @param n_samples Filter out positions missing at least n_samples number of samples with reads greater than or equal to 'threshold'
-#' @param samples Vector with names of samples to include in he normalization
+#' @param samples Vector with names of samples to include in the normalization
 #'
-#' @return tibble of TMM normalized read counts
+#' @return tsr explorer object with tmm normalized count matrices
+#'
+#' @examples
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
+#' TSSs <- readRDS(TSSs)
+#' tsre_exp <- tsr_explorer(TSSs)
+#' tsre_exp <- format_counts(tsre_exp, data_type = "tss")
+#' tsre_exp <- count_matrix(tsre_exp, data_type = "tss")
+#' tsre_exp <- tmm_normalize(exp, data_type = "tss")
+#'
+#' @seealso \code{\link{count_matrix}} to prepare the matrices.
+#'   \code{\link{plot_correlation}} for various correlation plots.
 #'
 #' @rdname tmm_normalize-function
-#'
 #' @export
 
 tmm_normalize <- function(
@@ -76,6 +100,28 @@ tmm_normalize <- function(
 	threshold = 1,
 	n_samples = 1
 ) {
+
+	## Check inputs.
+	if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsr explorer object")
+
+	if (!is(data_type, "character")) stop("data_type must be a character")
+        if (length(data_type) > 1) stop("data_type must be a character")
+        data_type <- str_to_lower(data_type)
+        if (!data_type %in% c("tss", "tsr", "tss_features", "tsr_features")) {
+                stop("data_type must be either 'tss', 'tsr', 'tss_features', or 'tsr_features'")
+        }
+
+	if (!is(samples, "character")) stop("samples must be a character vector")
+
+	if (!is(threshold, "numeric") | !is(n_samples, "numeric")) {
+		stop("threshold and n_samples must be positive integers")
+	}
+	if (threshold %% 1 != 0 | n_samples %% 1 != 0) {
+		stop("threshold and n_samples must be positive integers")
+	}
+	if (threshold < 1 | n_samples < 1) {
+		stop("threshold and n_samples must be greater than or equal to 1")
+	}
 
 	## Select proper slot of data.
 	select_samples <- extract_matrix(experiment, data_type, samples)

@@ -66,16 +66,12 @@ find_correlation <- function(
 #' heatmaps and/or scatter plots to explore replicate concordance of TSSs or TSRs.
 #'
 #' @import tibble
-#' @import ggplot2
-#' @importFrom dplyr mutate_at left_join vars
-#' @importFrom purrr discard
 #' @importFrom tidyr gather
 #' @importFrom GGally ggpairs
 #' @importFrom ComplexHeatmap Heatmap
 #' @importFrom circlize colorRamp2 
 #' @importFrom viridis viridis
 #' @importFrom grid gpar
-#' @importFrom SummarizedExperiment SummarizedExperiment assay
 #' @importFrom stringr str_replace
 #'
 #' @param experiment tsrexplorer object with TMM normalized counts
@@ -88,10 +84,21 @@ find_correlation <- function(
 #' @param pt_size Point size for the scatter plots
 #' @param ... Additional arguments passed to ComplexHeatmap::Heatmap or GGally::ggpairs
 #'
-#' @return ggplot2 object
+#' @return ggplot2 object of correlation plot
+#'
+#' @examples
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
+#' TSSs <- readRDS(TSSs)
+#' tsre_exp <- tsr_explorer(TSSs)
+#' tsre_exp <- format_counts(tsre_exp, data_type = "tss")
+#' tsre_exp <- count_matrix(tsre_exp, data_type = "tss")
+#' tsre_exp <- tmm_normalize(exp, data_type = "tss")
+#' plot_correlation(tsre_exp, data_type = "tss")
+#'
+#' @seealso \code{\link{count_matrix}} to generate the count matrices.
+#'   \code{\link{tmm_normalize}} to TMM normalize the matrices.
 #'
 #' @rdname plot_correlation-function
-#'
 #' @export
 
 plot_correlation <- function(
@@ -105,6 +112,41 @@ plot_correlation <- function(
 	pt_size = 0.5,
 	...
 ) {
+
+	## Check inputs.
+	if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsrexplorer object")
+
+        if (!is(data_type, "character")) stop("data_type must be a character")
+        if (length(data_type) > 1) stop("data_type must be a character")
+        data_type <- str_to_lower(data_type)
+        if (!data_type %in% c("tss", "tsr", "tss_features", "tsr_features")) {
+                stop("data_type must be either 'tss', 'tsr', 'tss_features', or 'tsr_features'")
+        }
+
+	if (!is(samples, "character")) stop("samples must be a character vector")
+
+	if (!is(correlation_plot, "character")) stop("correlation_plot must be a character")
+	if (length(correlation_plot) > 1) {
+		stop("correlation_plot must be either 'heatmap', 'scatter', 'combined' or 'hierarchical'")
+	}
+	correlation_plot <- str_to_lower(correlation_plot)
+	if (!correlation_plot %in% c("heatmap", "scatter", "combined", "hierarchical")) {
+		stop("correlation_plot must be either 'heatmap', 'scatter', 'combined' or 'hierarchical'")
+	}
+
+	if (!is(correlation_metric, "character")) stop("correlation_metric must be a character")
+	if (length(correlation_metric) > 1) stop("correlation_metric must be either 'pearson' or 'spearman'")
+	correlation_metric <- str_to_lower(correlation_metric)
+	if (!correlation_metric %in% c("pearson", "spearman")) {
+		stop("correlation_metric should be either 'pearson' or 'spearman'")
+	}
+
+	if (!is(log2_transform, "logical")) stop("log2_transform must be logical value")
+
+	if(!is(font_size, "numeric") | !is(pt_size, "numeric")) {
+		stop("font_size and pt_size must be positive numbers")
+	}
+	if (!(font_size >= 0) | !(pt_size >= 0)) stop("font_size and point_size must be positive numbers")
 	
 	## Get data from proper slot.
 	normalized_counts <- experiment %>%

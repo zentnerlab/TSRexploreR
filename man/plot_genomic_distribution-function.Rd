@@ -4,16 +4,32 @@
 \alias{plot_genomic_distribution}
 \title{Plot Genomic Distribution}
 \usage{
-plot_genomic_distribution(genomic_distribution, sample_order = NA)
+plot_genomic_distribution(genomic_distribution)
 }
 \arguments{
-\item{genomic_distribution}{tibble of TSS or TSR genomic distributions from tsr_genomic_distribution}
-
-\item{sample_order}{Optional vector specifying order of samples to plot by sample name}
+\item{genomic_distribution}{DataFrame of TSS or TSR genomic distributions from tsr_genomic_distribution}
 }
 \value{
 ggplot2 object with TSS or TSR genomic distribution plot
 }
 \description{
-Plot genomic distribution of TSSs or TSRs
+Plot genomic distribution of TSSs or TSRs.
+}
+\examples{
+TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
+TSSs <- readRDS(TSSs)
+tsre_exp <- tsr_explorer(TSSs)
+tsre_exp <- format_counts(tsre_exp, data_type = "tss")
+annotation <- system.file("extdata", "S288C_Annotation.gtf", package = "tsrexplorer")
+tsre_exp <- annotate_features(
+  tsre_exp, annotation_data = annotation,
+  data_type = "tss", feature_type = "transcript"
+)
+genomic_dist <- genomic_distribution(tsre_exp, data_type = "tss")
+plot_genomic_distribution(genomic_dist)
+
+}
+\seealso{
+\code{\link{annotate_features}} to annotate the TSSs or TSRs to genomic features.
+  \code{\link{genomic_distribution}} to prepare the annotated features for plotting.
 }

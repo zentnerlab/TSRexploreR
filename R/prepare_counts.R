@@ -1,32 +1,50 @@
 
 #' Format Counts
 #'
-#' Format counts for TSSs, TSRs, and/or features.
+#' Format counts for TSSs, TSRs, and/or features. 
 #'
-#' @importFrom magrittr set_colnames set_rownames
-#' @importFrom digest digest
+#' @importFrom stringr str_c str_to_lower
 #'
 #' @param experiment tsrexplorer object
 #' @param data_type 'tss' or 'tsr'
 #' @param samples Sample names or merged replicate IDs to process
+#'
+#' @return tsrexplorer object with properly formatted features
+#'    in data.table format.
+#'
+#' @examples
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
+#' TSSs <- readRDS(TSSs)
+#' tsre_exp <- tsr_explorer(TSSs)
+#' tsre_exp <- format_counts(tsre_exp, data_type = "tss")
 #'
 #' @rdname format_counts-function
 #' @export
 
 format_counts <- function(experiment, data_type = c("tss", "tsr"), samples = "all") {
 
+	## Check inputs.
+	if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsr explorer object")
+
+	if (!is(data_type, "character")) stop("data_type must be a character")
+	if (length(data_type) > 1) stop("data_type must be a character")
+	data_type <- str_to_lower(data_type)
+	if (!data_type %in% c("tss", "tsr")) stop("data_type must be 'tss' or 'tsr'")
+	
+	if (!is(samples, "character")) stop("samples must be a character vector")
+
 	## Grab appropriate samples and generate raw count matrices.
 	if (data_type == "tss") {
 
 		## Grab selected_samples.
 		select_samples <- tss_experiment(experiment)
-		if (samples != "all") select_samples <- select_samples[samples]
+		if (!all(samples == "all")) select_samples <- select_samples[samples]
 
 	} else if (data_type == "tsr") {
 
 		## Grab selected samples.
 		select_samples <- tsr_experiment(experiment)
-		if (samples != "all") select_samples <- select_samples[samples]
+		if (!all(samples == "all")) select_samples <- select_samples[samples]
 
 	}
 
@@ -35,10 +53,7 @@ format_counts <- function(experiment, data_type = c("tss", "tsr"), samples = "al
 		raw_counts <- map(select_samples, function(x) {
 			x <- as.data.table(x)
 			x[, FID := seq_len(nrow(x))]
-			x[,
-				FHASH := digest(str_c(seqnames, start, end, strand, collapse = "")),
-				by = seq_len(nrow(x))
-			]
+			x[, FHASH := str_c(seqnames, start, end, strand, collapse = ":")]
 			return(x)
 		})
 	}
@@ -117,19 +132,47 @@ count_features <- function(experiment, data_type = c("tss", "tsr")) {
 
 #' Count Matrix
 #'
-#' Generate count matrices
+#' Generate count matrices for correlation analysis.
+#'
+#' @importFrom S4Vectors DataFrame
+#' @importFrom SummarizedExperiment SummarizedExperiment
 #'
 #' @param experiment tsrexplorer object
 #' @param data_type Either 'tss', 'tsr', 'tss_features', or 'tsr_features'
 #' @param samples The samples to turn into a count matrix
 #'
+#' @return tsr explorer object with added count matrices
+#'
+#' @examples
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
+#' TSSs <- readRDS(TSSs)
+#' tsre_exp <- tsr_explorer(TSSs)
+#' tsre_exp <- format_counts(tsre_exp, data_type = "tss")
+#' tsre_exp <- count_matrix(tsre_exp, data_type = "tss")
+#'
+#' @seealso \code{\link{tmm_normalize}} to normalize the count matrices.
+#'   \code{\link{plot_correlation}} for various correlation plots.
+#'
 #' @rdname count_matrix-function
 #' @export
 
 count_matrix <- function(
-	experiment, data_type = c("tss", "tsr", "tss_features", "tsr_features"),
+	experiment,
+	data_type = c("tss", "tsr", "tss_features", "tsr_features"),
 	samples = "all"
 ) {
+	## Check inputs.
+	if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsr explorer object")
+	
+	if (!is(data_type, "character")) stop("data_type must be a character")
+	if (length(data_type) > 1) stop("data_type must be a character")
+	data_type <- str_to_lower(data_type)
+	if (!data_type %in% c("tss", "tsr", "tss_features", "tsr_features")) {
+		stop("data_type must be either 'tss', 'tsr', 'tss_features', or 'tsr_features'")
+	}
+
+	if (!is(samples, "character")) stop("samples must be a character vector")
+
 	## Extract counts.
 	select_samples <- extract_counts(experiment, data_type, samples)
 
@@ -183,10 +226,7 @@ count_matrix <- function(
                 ]
 
                 select_samples <- dcast(raw_matrix, seqnames + start + end + strand ~ sample, fill = 0)
-		select_samples[,
-			FHASH := digest(str_c(seqnames, start, end, strand, collapse = "")),
-			by = seq_len(nrow(select_samples))
-		]
+		select_samples[, FHASH := str_c(seqnames, start, end, strand, collapse = ":")]
 
 
 	} else if (data_type %in% c("tss_features", "tsr_features")) {

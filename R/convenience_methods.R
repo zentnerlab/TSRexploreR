@@ -80,16 +80,16 @@ extract_counts <- function(experiment, data_type, samples, use_cpm = FALSE) {
 
 	## Extract appropraite samples from TSSs or TSRs.
 	if (data_type == "tss") {
-		if (samples == "all") samples <- names(experiment@counts$TSSs$raw)
+		if (all(samples == "all")) samples <- names(experiment@counts$TSSs$raw)
 		selected_samples <- experiment@counts$TSSs$raw[samples]
 	} else if (data_type == "tsr") {
-		if (samples == "all") samples <- names(experiment@counts$TSRs$raw)
+		if (all(samples == "all")) samples <- names(experiment@counts$TSRs$raw)
 		selected_samples <- experiment@counts$TSRs$raw[samples]
 	} else if (data_type == "tss_features") {
-		if (samples == "all") samples <- names(experiment@counts$TSS_features$raw)
+		if (all(samples == "all")) samples <- names(experiment@counts$TSS_features$raw)
 		selected_samples <- experiment@counts$TSS_features$raw[samples]
 	} else if (data_type == "tsr_features") {
-		if (samples == "all") samples <- names(experiment@counts$TSR_features$raw)
+		if (all(samples == "all")) samples <- names(experiment@counts$TSR_features$raw)
 		selected_samples <- experiment@counts$TSR_features$raw[samples]
 	}
 

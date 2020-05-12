@@ -3,15 +3,7 @@
 #'
 #' Get genomic distribution of TSSs and TSRs
 #'
-#' @import tibble
-#' @import data.table
-#' @importFrom GenomicRanges GRanges score "score<-"
-#' @importFrom SummarizedExperiment SummarizedExperiment
-#' @importFrom S4Vectors DataFrame "metadata<-"
-#' @importFrom dplyr bind_rows select filter group_by mutate ntile case_when count ungroup arrange rename bind_cols
-#' @importFrom magrittr %>% extract
-#' @importFrom purrr map
-#' @importFrom tidyr spread
+#' @importFrom S4Vectors "metadata<-"
 #'
 #' @param experiment tsrexplorer object with annotated TSRs
 #' @param samples Either "all" or vector of sample names
@@ -20,16 +12,54 @@
 #' @param dominant Should dominant TSS per 'gene' or 'tsr' only be considered
 #' @param data_conditions List of group options (filtering and quantiles/grouping available)
 #'
-#' @return tibble with TSS or TSR genomic distribution stats
+#' @return DataFrame with TSS or TSR genomic distribution stats
+#'
+#' @examples
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
+#' TSSs <- readRDS(TSSs)
+#' tsre_exp <- tsr_explorer(TSSs)
+#' tsre_exp <- format_counts(tsre_exp, data_type = "tss")
+#' annotation <- system.file("extdata", "S288C_Annotation.gtf", package = "tsrexplorer")
+#' tsre_exp <- annotate_features(
+#'   tsre_exp, annotation_data = annotation,
+#'   data_type = "tss", feature_type = "transcript"
+#' )
+#' genomic_dist <- genomic_distribution(tsre_exp, data_type = "tss")
+#'
+#' @seealso \code{\link{annotate_features}} to annotate the TSSs or TSRs.
+#'   \code{\link{plot_genomic_distribution}} to plot the genomic distribution.
 #'
 #' @rdname genomic_distribution-function
-#'
 #' @export 
 
 genomic_distribution <- function(
-	experiment, data_type = c("tss", "tsr"), samples = "all",
-	threshold = NA, dominant = FALSE, data_conditions = NA
+	experiment,
+	data_type = c("tss", "tsr"),
+	samples = "all",
+	threshold = NA,
+	dominant = FALSE,
+	data_conditions = NA
 ) {
+
+	## Check inputs.
+	if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsrexplorer object")
+
+        if (!is(data_type, "character")) stop("data_type must be a character")
+        if (length(data_type) > 1) stop("data_type must be a character")
+        data_type <- str_to_lower(data_type)
+        if (!data_type %in% c("tss", "tsr")) {
+                stop("data_type must be either 'tss' or 'tsr'")
+        }
+
+	if (!is(samples, "character")) stop("samples must be a character")
+
+	if (!is.na(threshold) & !is(threshold, "numeric")) stop("threshold must be a positive integer")
+	if (!is.na(threshold) & threshold %% 1 != 0) stop("threshold must be a positive integer")
+	if (!is.na(threshold) & threshold < 1) stop("threshold must be greater than or equal to 1")
+	
+	if (!is.logical(dominant)) stop("dominant must be logical")
+
+	if (!is.na(data_conditions) & !is(data_conditions, "list")) stop("data_conditions must in list form")
 
 	## Extract samples.
 	selected_samples <- extract_counts(experiment, data_type, samples)
@@ -86,34 +116,44 @@ genomic_distribution <- function(
 
 #' Plot Genomic Distribution
 #'
-#' Plot genomic distribution of TSSs or TSRs
+#' Plot genomic distribution of TSSs or TSRs.
 #'
 #' @import tibble
 #' @import ggplot2
 #' @importFrom forcats fct_rev
-#' @importFrom dplyr mutate
-#' @importFrom SummarizedExperiment assay rowData
-#' @importFrom S4Vectors metadata
 #'
-#' @param genomic_distribution tibble of TSS or TSR genomic distributions from tsr_genomic_distribution
-#' @param sample_order Optional vector specifying order of samples to plot by sample name
+#' @param genomic_distribution DataFrame of TSS or TSR genomic distributions from tsr_genomic_distribution
 #'
 #' @return ggplot2 object with TSS or TSR genomic distribution plot
 #'
-#' @rdname plot_genomic_distribution-function
+#' @examples
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
+#' TSSs <- readRDS(TSSs)
+#' tsre_exp <- tsr_explorer(TSSs)
+#' tsre_exp <- format_counts(tsre_exp, data_type = "tss")
+#' annotation <- system.file("extdata", "S288C_Annotation.gtf", package = "tsrexplorer")
+#' tsre_exp <- annotate_features(
+#'   tsre_exp, annotation_data = annotation,
+#'   data_type = "tss", feature_type = "transcript"
+#' )
+#' genomic_dist <- genomic_distribution(tsre_exp, data_type = "tss")
+#' plot_genomic_distribution(genomic_dist)
 #'
+#' @seealso \code{\link{annotate_features}} to annotate the TSSs or TSRs to genomic features.
+#'   \code{\link{genomic_distribution}} to prepare the annotated features for plotting.
+#'
+#' @rdname plot_genomic_distribution-function
 #' @export 
 
-plot_genomic_distribution <- function(genomic_distribution, sample_order = NA) {
+plot_genomic_distribution <- function(
+	genomic_distribution
+) {
+
+	## Check inputs.
+	if (!is(genomic_distribution, "DataFrame")) stop("genomic distribution must be a DataFrame")
 	
 	## Pull out information from DataFrame.
 	genomic_dist <- as_tibble(genomic_distribution, .name_repair = "unique")
-
-	## Order the samples if required.
-	if (!is.na(sample_order)) {
-		genomic_dist <- genomic_dist %>%
-			mutate(samples = fct_rev(factor(samples, levels = sample_order)))
-	}
 
 	## Plot the genomic distribution.
 	p <- ggplot(genomic_dist, aes(x = samples, y = count, fill = fct_rev(simple_annotations))) +

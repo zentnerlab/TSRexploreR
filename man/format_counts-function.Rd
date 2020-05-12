@@ -13,6 +13,17 @@ format_counts(experiment, data_type = c("tss", "tsr"), samples = "all")
 
 \item{samples}{Sample names or merged replicate IDs to process}
 }
+\value{
+tsrexplorer object with properly formatted features
+   in data.table format.
+}
 \description{
 Format counts for TSSs, TSRs, and/or features.
+}
+\examples{
+TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
+TSSs <- readRDS(TSSs)
+tsre_exp <- tsr_explorer(TSSs)
+tsre_exp <- format_counts(tsre_exp, data_type = "tss")
+
 }

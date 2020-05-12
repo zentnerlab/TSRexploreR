@@ -29,8 +29,22 @@ plot_correlation(experiment, data_type = c("tss", "tsr", "tss_features",
 \item{...}{Additional arguments passed to ComplexHeatmap::Heatmap or GGally::ggpairs}
 }
 \value{
-ggplot2 object
+ggplot2 object of correlation plot
 }
 \description{
 heatmaps and/or scatter plots to explore replicate concordance of TSSs or TSRs.
+}
+\examples{
+TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
+TSSs <- readRDS(TSSs)
+tsre_exp <- tsr_explorer(TSSs)
+tsre_exp <- format_counts(tsre_exp, data_type = "tss")
+tsre_exp <- count_matrix(tsre_exp, data_type = "tss")
+tsre_exp <- tmm_normalize(exp, data_type = "tss")
+plot_correlation(tsre_exp, data_type = "tss")
+
+}
+\seealso{
+\code{\link{count_matrix}} to generate the count matrices.
+  \code{\link{tmm_normalize}} to TMM normalize the matrices.
 }
