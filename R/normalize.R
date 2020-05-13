@@ -1,9 +1,15 @@
 #' CPM Normalize Counts
 #'
+#' @description
 #' CPM normalize the TSS, TSR, and/or feature counts.
 #'
 #' @param experiment tsrexplorer object
 #' @param data_type 'tss', 'tsr', 'tss_features', 'tsr_features'
+#'
+#' @details
+#' Counts Per Million (CPM) normalization allows for slightly better
+#'   comparison between samples for various downstream analysis and plots.
+#' For more quantitative comparison TMM normalization is recommended.
 #'
 #' @return tsrexplorer object with added CPM counts column.
 #'
@@ -17,7 +23,10 @@
 #' @rdname cpm_normalize-function
 #' @export
 
-cpm_normalize <- function(experiment, data_type = c("tss", "tsr", "tss_features", "tsr_features")) {
+cpm_normalize <- function(
+	experiment,
+	data_type = c("tss", "tsr", "tss_features", "tsr_features")
+) {
 
 	## Check inputs.
 	if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsr explorer object")

@@ -18,6 +18,11 @@ tsrexplorer object with added CPM counts column.
 \description{
 CPM normalize the TSS, TSR, and/or feature counts.
 }
+\details{
+Counts Per Million (CPM) normalization allows for slightly better
+  comparison between samples for various downstream analysis and plots.
+For more quantitative comparison TMM normalization is recommended.
+}
 \examples{
 TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
 TSSs <- readRDS(TSSs)

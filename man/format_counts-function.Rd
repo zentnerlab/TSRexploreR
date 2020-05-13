@@ -11,14 +11,20 @@ format_counts(experiment, data_type = c("tss", "tsr"), samples = "all")
 
 \item{data_type}{'tss' or 'tsr'}
 
-\item{samples}{Sample names or merged replicate IDs to process}
+\item{samples}{character vector of sample names}
 }
 \value{
 tsrexplorer object with properly formatted features
    in data.table format.
 }
 \description{
-Format counts for TSSs, TSRs, and/or features.
+Format counts for TSSs or TSRs for further analysis.
+}
+\details{
+When TSSs or TSRs are first loaded into the tsrexplorer object
+  they are stored as GRanges objects.
+This function converts these into data.table format,
+  and adds a few important columns for downstream analysis.
 }
 \examples{
 TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")

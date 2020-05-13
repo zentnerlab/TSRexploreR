@@ -1,6 +1,7 @@
 
 #' Annotate Data
 #'
+#' @description
 #' Use ChIPseeker package to annotate TSSs or TSRs.
 #'
 #' @import tibble
@@ -17,7 +18,17 @@
 #' @param upstream Bases upstream of TSS
 #' @param downstream Bases downstream of TSS
 #'
-#' @return tsrchitect object with annotated features
+#' @details
+#' This function attempts to assign TSSs or TSRs to the nearest genomic feature.
+#' Genomic annotation data can be provided as either a 'GTF' or 'GFF' file,
+#'   or as a TxDb package from bioconductor.
+#'
+#' 'feature_type' will let you assign as gene or transcript level.
+#' Furthermore, the promoter region can be defined using
+#'   'upstream' and 'downstream' which are relative to the TSSs
+#'   defined in your annotation data.
+#'
+#' @return tsrexplorer object with annotated features
 #'
 #' @examples
 #' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")

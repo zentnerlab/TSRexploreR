@@ -1,13 +1,20 @@
 
 #' Format Counts
 #'
-#' Format counts for TSSs, TSRs, and/or features. 
+#' @description
+#' Format counts for TSSs or TSRs for further analysis. 
 #'
 #' @importFrom stringr str_c str_to_lower
 #'
 #' @param experiment tsrexplorer object
 #' @param data_type 'tss' or 'tsr'
-#' @param samples Sample names or merged replicate IDs to process
+#' @param samples character vector of sample names
+#'
+#' @details
+#' When TSSs or TSRs are first loaded into the tsrexplorer object
+#'   they are stored as GRanges objects.
+#' This function converts these into data.table format,
+#'   and adds a few important columns for downstream analysis.
 #'
 #' @return tsrexplorer object with properly formatted features
 #'    in data.table format.
