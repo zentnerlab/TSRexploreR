@@ -19,3 +19,16 @@ ggplot2 object with sequence logo
 \description{
 Create a sequence logo for the sequences around TSSs
 }
+\examples{
+TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
+TSSs <- readRDS(TSSs)
+tsre_exp <- tsr_explorer(TSSs)
+tsre_exp <- format_counts(tsre_exp, data_type = "tss")
+seqs <- tss_sequences(tsre_exp)
+plot_sequence_logo(seqs)
+
+}
+\seealso{
+\code{\link{tss_sequences}} to get the surrounding sequences.
+\code{\link{plot_sequence_colormap}} for a sequence color map plot.
+}

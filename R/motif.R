@@ -5,15 +5,9 @@
 #'
 #' @include tsrexplorer.R
 #'
-#' @import tibble
-#' @import data.table
-#' @importFrom S4Vectors DataFrame "metadata<-"
+#' @importFrom tools file_ext
 #' @importFrom Rsamtools FaFile
-#' @importFrom purrr map map2
-#' @importFrom dplyr mutate filter ntile pull bind_rows
 #' @importFrom Biostrings getSeq DNAStringSet
-#' @importFrom GenomicRanges GRanges resize width makeGRangesFromDataFrame
-#' @importFrom magrittr %>%
 #'
 #' @param experiment tsrexplorer object with TSS GRanges
 #' @param samples Either "all" or names of samples to analyze
@@ -22,17 +16,63 @@
 #' @param distance Bases to add on each side of TSS
 #' @param dominant Whether only dominant should be considered
 #' @param data_conditions Condition the data (filter, quantile, and grouping available)
-#' @return Sequences surrounding TSSs
+#'
+#' @return DataFrame of sequences surrounding TSSs.
+#'
+#' @examples
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
+#' TSSs <- readRDS(TSSs)
+#' tsre_exp <- tsr_explorer(TSSs)
+#' tsre_exp <- format_counts(tsre_exp, data_type = "tss")
+#' seqs <- tss_sequences(tsre_exp)
+#'
+#' @seealso
+#' \code{\link{plot_sequence_logo}} to make sequence logos.
+#' \code{\link{plot_sequence_colormap}} to make sequence color maps.
 #'
 #' @rdname tss_sequences-function
-#'
 #' @export
 
 tss_sequences <- function(
-	experiment, samples = "all", genome_assembly, threshold = 1,
-	distance = 10, dominant = FALSE,
+	experiment,
+	samples = "all",
+	genome_assembly,
+	threshold = 1,
+	distance = 10,
+	dominant = FALSE,
 	data_conditions = list(order_by = "score")
 ) {
+
+	## Check inputs.
+	if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsrexplorer object")
+
+	if (!is(samples, "character")) stop("samples must be a character")
+
+	if (!is(genome_assembly, "character") & !is(genome_assembly, "BSgenome")) {
+		stop("genome assembly must be a fasta file or BSgenome package")
+	}
+	if (is(genome_assembly, "character")) {
+		extension <- file_ext(genome_assembly)
+		if (!extension %in% c("fasta", "fa")) {
+			stop("genome_assembly file extension must be '.fa' or '.fasta'")
+		}
+	}
+
+	if (!is(threshold, "numeric") | !is(distance, "numeric")) {
+		stop("threshold and/or distance must be positive integers")
+	}
+	if (threshold %% 1 != 0 | distance %% 1 != 0) {
+		stop("threshold and/or distance must be positive integers")
+	}
+	if (threshold < 1 | distance < 1) {
+		stop("threshold and/or distance must be positive integers")
+	}
+
+	if (!is(dominant, "logical")) stop("dominant must be logical")
+
+	if (!is.na(data_conditions) & !is(data_conditions, "list")) {
+		stop("data_conditions must be a list of values")
+	}
 
 	## Open genome assembly.
 	if (is(genome_assembly, "character")) {
@@ -81,14 +121,8 @@ tss_sequences <- function(
 #'
 #' Create a sequence logo for the sequences around TSSs
 #'
-#' @import tibble
-#' @import ggplot2
 #' @import ggseqlogo
-#' @importFrom Biostrings DNAStringSet consensusMatrix
-#' @importFrom purrr map pmap
-#' @importFrom dplyr pull
-#' @importFrom tidyr unite separate
-#' @importFrom magrittr %>%
+#' @importFrom Biostrings consensusMatrix
 #' @importFrom cowplot plot_grid
 #'
 #' @param tss_sequences Sequences surrounding TSS generated with tss_sequences
@@ -97,11 +131,36 @@ tss_sequences <- function(
 #'
 #' @return ggplot2 object with sequence logo
 #'
-#' @rdname plot_sequence_logo-function
+#' @examples
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
+#' TSSs <- readRDS(TSSs)
+#' tsre_exp <- tsr_explorer(TSSs)
+#' tsre_exp <- format_counts(tsre_exp, data_type = "tss")
+#' seqs <- tss_sequences(tsre_exp)
+#' plot_sequence_logo(seqs)
 #'
+#' @seealso
+#' \code{\link{tss_sequences}} to get the surrounding sequences.
+#' \code{\link{plot_sequence_colormap}} for a sequence color map plot.
+#'
+#' @rdname plot_sequence_logo-function
 #' @export
 
-plot_sequence_logo <- function(tss_sequences, ncol = 1, font_size = 6) {
+plot_sequence_logo <- function(
+	tss_sequences,
+	ncol = 1,
+	font_size = 6
+) {
+
+	## Check inputs.
+	if (!is(tss_sequences, "DataFrame")) stop("tss_sequences must be a DataFrame")
+
+	if (!is(ncol, "numeric")) stop("ncol must be a positive integer")
+	if (ncol %% 1 != 0) stop("ncol must be a positive integer")
+	if (ncol < 1) stop("ncol must be greater than or equal to 1")
+
+	if (!is(font_size, "numeric")) stop("font_size must be a positive number")
+	if (!font_size > 0) stop("font_size must be greater than 0")
 
 	## Get some info used to pull sequencs.
 	distance <- metadata(tss_sequences)$distance
@@ -177,8 +236,19 @@ plot_sequence_logo <- function(tss_sequences, ncol = 1, font_size = 6) {
 #'
 #' @return ggplot2 object of sequence colormap
 #'
-#' @rdname plot_sequence_colormap-function
+#' @examples
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
+#' TSSs <- readRDS(TSSs)
+#' tsre_exp <- tsr_explorer(TSSs)
+#' tsre_exp <- format_counts(tsre_exp, data_type = "tss")
+#' seqs <- tss_sequences(tsre_exp)
+#' plot_sequence_colormap(seqs)
 #'
+#' @seealso
+#' \code{\link{tss_sequences}} to get the surrounding sequence.
+#' \code{\link{plot_sequence_logo}} to plot a sequence logo.
+#'
+#' @rdname plot_sequence_colormap-function
 #' @export
 
 plot_sequence_colormap <- function(
@@ -193,6 +263,23 @@ plot_sequence_colormap <- function(
 	text_size = 6,
 	...
 ) {
+	## Check inputs.
+	if (!is(tss_sequences, "DataFrame")) stop("tss_sequences must be a DataFrame")
+
+        if (!is(ncol, "numeric")) stop("ncol must be a positive integer")
+        if (ncol %% 1 != 0) stop("ncol must be a positive integer")
+        if (ncol < 1) stop("ncol must be greater than or equal to 1")
+
+        if (!is(text_size, "numeric")) stop("font_size must be a positive number")
+        if (!text_size > 0) stop("font_size must be greater than 0")
+
+	if (!is(base_colors, "character")) stop("base_colors must be a named character vector")
+	if (length(base_colors) < 4) stop("base_colors must be a named character vector")
+	if (is.null(names(base_colors))) stop(" base_colors must be a named character vector")
+	if (!all(str_to_lower(names(base_colors)) %in% c("a", "t", "g", "c"))) {
+		stop("base_colors must be a named character vector")
+	}
+
 	## Grab some information out of DataFrame.
 	distance <- metadata(tss_sequences)$distance
 	groupings <- metadata(tss_sequences)$groupings

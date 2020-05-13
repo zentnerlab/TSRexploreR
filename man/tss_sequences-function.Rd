@@ -24,8 +24,20 @@ tss_sequences(experiment, samples = "all", genome_assembly,
 \item{data_conditions}{Condition the data (filter, quantile, and grouping available)}
 }
 \value{
-Sequences surrounding TSSs
+DataFrame of sequences surrounding TSSs.
 }
 \description{
 Retrieve sequences surrounding TSSs for further plotting
+}
+\examples{
+TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
+TSSs <- readRDS(TSSs)
+tsre_exp <- tsr_explorer(TSSs)
+tsre_exp <- format_counts(tsre_exp, data_type = "tss")
+seqs <- tss_sequences(tsre_exp)
+
+}
+\seealso{
+\code{\link{plot_sequence_logo}} to make sequence logos.
+\code{\link{plot_sequence_colormap}} to make sequence color maps.
 }
