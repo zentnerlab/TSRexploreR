@@ -24,7 +24,8 @@ All TSS mapping technologies have some degree of spurious background reads.
 tsr_explorer allows for basic thresholding of these background reads by requiring
   a minimum number of reads for a TSS to be considered.
 
-An easy way to pick a threshold is with a threshold plot.
+An easy way to pick a threshold with the threshold plot generated
+  by 'plot_exploration_threshold'.
 This plot shows the proportion of promoter-proximal TSS positions when
   various naive threshold values are tested.
 'max_threshold' defines the maximum threshold value tested from 1 to that value.
