@@ -26,8 +26,26 @@ tss_heatmap_matrix(experiment, samples = "all", upstream = 1000,
 \item{data_conditions}{Condition the data (filter, order, and quantile/group available)}
 }
 \value{
-matrix of counts for each gene/transcript and position
+DataFrame of counts for each gene/transcript and position
 }
 \description{
 Generate count matrix to make TSS heatmap
+}
+\examples{
+TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
+TSSs <- readRDS(TSSs)
+tsre_exp <- tsr_explorer(TSSs)
+tsre_exp <- format_counts(tsre_exp, data_type = "tss")
+annotation <- system.file("extdata", "S288C_Annotation.gtf", package = "tsrexplorer")
+tsre_exp <- annotate_features(
+  tsre_exp, annotation_data = annotation,
+  data_type = "tss", feature_type = "transcript"
+)
+hm_mat <- tss_heatmap_matrix(tsre_exp)
+
+}
+\seealso{
+\code{\link{annotate_features}} to annotate the TSSs or TSRs.
+\code{\link{plot_heatmap}} to plot the heatmap.
+\code{\link{tsr_heatmap_matrix}} to generate the TSR matrix data for plotting.
 }
