@@ -18,7 +18,7 @@
 #' This plot shows the proportion of promoter-proximal TSS positions when
 #'   various naive threshold values are tested.
 #' 'max_threshold' defines the maximum threshold value tested from 1 to that value.
-#' A recommended final value will likely result in a promoter-proximal fraction above 80-85%
+#' A recommended final value will likely result in a promoter-proximal fraction above .80 to .85
 #'   and without sacrificing the ability to detect too many unique genes or transcripts.
 #'
 #' @return data.frame containing information for each threshold and sample
