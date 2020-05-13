@@ -6,15 +6,7 @@
 #' @include tsrexplorer.R
 #' @include annotate.R
 #'
-#' @import tibble
-#' @import data.table
-#' @importFrom S4Vectors DataFrame "metadata<-"
-#' @importFrom SummarizedExperiment SummarizedExperiment rowRanges assay
-#' @importFrom dplyr bind_rows dense_rank rename ntile filter between select mutate group_by summarize pull ungroup left_join desc
-#' @importFrom magrittr %>% extract
-#' @importFrom tidyr complete
 #' @importFrom forcats fct_reorder
-#' @importFrom purrr keep
 #'
 #' @param experiment tsrexplorer object with annotated TSSs
 #' @param samples Either 'all' or name of samples to analyze
@@ -25,15 +17,35 @@
 #' @param dominant Consider only dominant
 #' @param data_conditions Condition the data (filter, order, and quantile/group available)
 #'
-#' @return matrix of counts for each gene/transcript and position
+#' @return DataFrame of counts for each gene/transcript and position
+#'
+#' @examples
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
+#' TSSs <- readRDS(TSSs)
+#' tsre_exp <- tsr_explorer(TSSs)
+#' tsre_exp <- format_counts(tsre_exp, data_type = "tss")
+#' annotation <- system.file("extdata", "S288C_Annotation.gtf", package = "tsrexplorer")
+#' tsre_exp <- annotate_features(
+#'   tsre_exp, annotation_data = annotation,
+#'   data_type = "tss", feature_type = "transcript"
+#' )
+#' hm_mat <- tss_heatmap_matrix(tsre_exp)
+#'
+#' @seealso
+#' \code{\link{annotate_features}} to annotate the TSSs or TSRs.
+#' \code{\link{plot_heatmap}} to plot the heatmap.
 #'
 #' @rdname tss_heatmap_matrix-function
-#'
 #' @export
 
 tss_heatmap_matrix <- function(
-        experiment, samples = "all", upstream = 1000, downstream = 1000,
-        threshold = NA, use_cpm = FALSE, dominant = FALSE,
+        experiment,
+	samples = "all",
+	upstream = 1000,
+	downstream = 1000,
+        threshold = NA,
+	use_cpm = FALSE,
+	dominant = FALSE,
         data_conditions = list(order_by = "score")
 ) {
 

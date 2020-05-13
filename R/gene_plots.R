@@ -3,12 +3,7 @@
 #'
 #' Get the number of genes or transcripts detected
 #'
-#' @import tibble
-#' @importFrom dplyr bind_rows full_join rename filter select mutate distinct case_when count
-#' @importFrom purrr map
-#' @importFrom magrittr extract %>%
-#' @importFrom SummarizedExperiment assay rowRanges SummarizedExperiment
-#' @importFrom S4Vectors DataFrame "metadata<-"
+#' @importFrom purrr walk
 #'
 #' @param experiment tsrexplorer object with annotated TSSs or TSRs
 #' @param samples Either 'all' or vector of sample names
@@ -17,10 +12,25 @@
 #' @param dominant Whether to consider only the dominant TSS or TSR
 #' @param condition_data Apply conditions to data (supports filtering and quantiles/grouping)
 #'
-#' @return tibble of detected feature numbers
+#' @return DataFrame of detected feature numbers.
+#'
+#' @examples
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
+#' TSSs <- readRDS(TSSs)
+#' tsre_exp <- tsr_explorer(TSSs)
+#' tsre_exp <- format_counts(tsre_exp, data_type = "tss")
+#' annotation <- system.file("extdata", "S288C_Annotation.gtf", package = "tsrexplorer")
+#' tsre_exp <- annotate_features(
+#'   tsre_exp, annotation_data = annotation,
+#'   data_type = "tss", feature_type = "transcript"
+#' )
+#' detected <- detect_features(tsre_exp, data_type = "tss")
+#'
+#' @seealso
+#' \code{\link{annotate_features}} to annotate the TSSs and TSRs.
+#' \code{\link{plot_detected_features}} to plot detected features.
 #'
 #' @rdname detect_features-function
-#'
 #' @export
 
 detect_features <- function(
@@ -31,6 +41,26 @@ detect_features <- function(
 	dominant = FALSE,
 	condition_data = NA
 ) {
+
+	## Check inputs.
+	if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsr explorer object")
+
+	if (!is(samples, "character")) stop("samples must be a character vecotor")
+
+        if (!is(data_type, "character")) stop("data_type must be a character")
+        if (length(data_type) > 1) stop("data_type must be a character")
+        data_type <- str_to_lower(data_type)
+        if (!data_type %in% c("tss", "tsr")) stop("data_type must be 'tss' or 'tsr'")
+
+        if (!is.na(threshold) & !is(threshold, "numeric")) stop("threshold must be a positive integer")
+        if (!is.na(threshold) & threshold %% 1 != 0) stop("threshold must be a positive integer")
+        if (!is.na(threshold) & threshold < 1) stop("threshold must be greater than or equal to 1")
+
+	if (!is(dominant, "logical")) stop("dominant must be logical")
+
+	if (!is.na(condition_data) & !is(condition_data, "list")) {
+		stop("condition_data must be a list of values")
+	}
 	
 	## Get sample data.
 	sample_data <- extract_counts(experiment, data_type, samples)
@@ -94,23 +124,40 @@ detect_features <- function(
 #'
 #' Plot number of features detected per sample.
 #'
-#' @import tibble
-#' @import ggplot2
-#' @importFrom dplyr mutate
-#' @importFrom tidyr gather
-#' @importFrom S4Vectors DataFrame metadata
-#' @importFrom stringr str_c str_to_title
+#' @importFrom stringr str_to_title
 #'
-#' @param detected_features Tibble of detected feature counts from detect_features
+#' @param detected_features DataFrame of detected feature counts from detect_features
 #' @param ... Arguments passed to geom_col
 #'
 #' @return ggplot2 object of detected feature counts
 #'
-#' @rdname plot_detected_features-function
+#' @examples
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
+#' TSSs <- readRDS(TSSs)
+#' tsre_exp <- tsr_explorer(TSSs)
+#' tsre_exp <- format_counts(tsre_exp, data_type = "tss")
+#' annotation <- system.file("extdata", "S288C_Annotation.gtf", package = "tsrexplorer")
+#' tsre_exp <- annotate_features(
+#'   tsre_exp, annotation_data = annotation,
+#'   data_type = "tss", feature_type = "transcript"
+#' )
+#' detected <- detect_features(tsre_exp, data_type = "tss")
+#' plot_detected_features(detected)
 #'
+#' @seealso
+#' \code{\link{annotate_features}} to annotate the TSSs or TSRs.
+#' \code{\link{detect_features}} to first detect feature numbers.
+#'
+#' @rdname plot_detected_features-function
 #' @export
 
-plot_detected_features <- function(detected_features, ...) {
+plot_detected_features <- function(
+	detected_features,
+	...
+) {
+
+	## Check inputs.
+	if (!is(detected_features, "DataFrame")) stop("detected_features must be a DataFrame")
 	
 	## Get some info from DataFrame.
 	feature_type <- str_to_title(metadata(detected_features)$feature_type)	

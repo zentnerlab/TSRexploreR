@@ -21,8 +21,25 @@ detect_features(experiment, samples = "all", data_type = c("tss",
 \item{condition_data}{Apply conditions to data (supports filtering and quantiles/grouping)}
 }
 \value{
-tibble of detected feature numbers
+DataFrame of detected feature numbers.
 }
 \description{
 Get the number of genes or transcripts detected
+}
+\examples{
+TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
+TSSs <- readRDS(TSSs)
+tsre_exp <- tsr_explorer(TSSs)
+tsre_exp <- format_counts(tsre_exp, data_type = "tss")
+annotation <- system.file("extdata", "S288C_Annotation.gtf", package = "tsrexplorer")
+tsre_exp <- annotate_features(
+  tsre_exp, annotation_data = annotation,
+  data_type = "tss", feature_type = "transcript"
+)
+detected <- detect_features(tsre_exp, data_type = "tss")
+
+}
+\seealso{
+\code{\link{annotate_features}} to annotate the TSSs and TSRs.
+\code{\link{plot_detected_features}} to plot detected features.
 }
