@@ -24,7 +24,8 @@
 #' TSSs <- readRDS(TSSs)
 #' tsre_exp <- tsr_explorer(TSSs)
 #' tsre_exp <- format_counts(tsre_exp, data_type = "tss")
-#' seqs <- tss_sequences(tsre_exp)
+#' assembly <- system.file("extdata", "S288C_Assembly.fasta", package = "tsrexplorer")
+#' seqs <- tss_sequences(tsre_exp, genome_assembly = assembly)
 #'
 #' @seealso
 #' \code{\link{plot_sequence_logo}} to make sequence logos.
@@ -136,7 +137,8 @@ tss_sequences <- function(
 #' TSSs <- readRDS(TSSs)
 #' tsre_exp <- tsr_explorer(TSSs)
 #' tsre_exp <- format_counts(tsre_exp, data_type = "tss")
-#' seqs <- tss_sequences(tsre_exp)
+#' assembly <- system.file("extdata", "S288C_Assembly.fasta", package = "tsrexplorer")
+#' seqs <- tss_sequences(tsre_exp, genome_assembly = assembly)
 #' plot_sequence_logo(seqs)
 #'
 #' @seealso
@@ -241,7 +243,8 @@ plot_sequence_logo <- function(
 #' TSSs <- readRDS(TSSs)
 #' tsre_exp <- tsr_explorer(TSSs)
 #' tsre_exp <- format_counts(tsre_exp, data_type = "tss")
-#' seqs <- tss_sequences(tsre_exp)
+#' assembly <- system.file("extdata", "S288C_Assembly.fasta", package = "tsrexplorer")
+#' seqs <- tss_sequences(tsre_exp, genome_assembly = assembly)
 #' plot_sequence_colormap(seqs)
 #'
 #' @seealso

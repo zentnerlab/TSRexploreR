@@ -21,8 +21,20 @@ dinucleotide_frequencies(experiment, genome_assembly, samples = "all",
 \item{data_conditions}{Condition the data (filtering and quantile/grouping available)}
 }
 \value{
-tibble with dinucleotide frequencies
+DataFrame with dinucleotide frequencies
 }
 \description{
 Analysis of -1 and +1 dinucleotide frequencies.
+}
+\examples{
+TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
+TSSs <- readRDS(TSSs)
+tsre_exp <- tsr_explorer(TSSs)
+tsre_exp <- format_counts(tsre_exp, data_type = "tss")
+assembly <- system.file("extdata", "S288C_Assembly.fasta", package = "tsrexplorer")
+freqs <- dinucleotide_frequencies(tsre_exp, genome_assembly = assembly)
+
+}
+\seealso{
+\code{\link{plot_dinculeotide_frequencies}} to plot the dinucleotide frequencies.
 }

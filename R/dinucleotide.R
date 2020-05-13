@@ -5,12 +5,7 @@
 #'
 #' @include tsrexplorer.R
 #'
-#' @import tibble
-#' @importFrom GenomicRanges GRanges resize score
-#' @importFrom dplyr mutate bind_rows group_by ntile ungroup select count
-#' @importFrom Rsamtools FaFile getSeq
-#' @importFrom purrr map map2
-#' @importFrom magrittr %>%
+#' @importFrom dplyr bind_cols
 #'
 #' @param experiment tsrexplorer object with TSS GRanges
 #' @param samples Either 'all' or vector of sample names to analyze
@@ -19,16 +14,55 @@
 #' @param dominant Consider only dominant
 #' @param data_conditions Condition the data (filtering and quantile/grouping available)
 #'
-#' @return tibble with dinucleotide frequencies
+#' @return DataFrame with dinucleotide frequencies
+#'
+#' @examples
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
+#' TSSs <- readRDS(TSSs)
+#' tsre_exp <- tsr_explorer(TSSs)
+#' tsre_exp <- format_counts(tsre_exp, data_type = "tss")
+#' assembly <- system.file("extdata", "S288C_Assembly.fasta", package = "tsrexplorer")
+#' freqs <- dinucleotide_frequencies(tsre_exp, genome_assembly = assembly)
+#'
+#' @seealso
+#' \code{\link{plot_dinculeotide_frequencies}} to plot the dinucleotide frequencies.
 #'
 #' @rdname dinucleotide_frequencies-function
-#'
 #' @export
 
 dinucleotide_frequencies <- function(
-	experiment, genome_assembly, samples = "all",
-	threshold = 1, dominant = FALSE, data_conditions = NA
+	experiment,
+	genome_assembly,
+	samples = "all",
+	threshold = 1,
+	dominant = FALSE,
+	data_conditions = NA
 ) {
+
+	## Check inputs.
+	if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsrexplorer object")
+
+        if (!is(genome_assembly, "character") & !is(genome_assembly, "BSgenome")) {
+                stop("genome assembly must be a fasta file or BSgenome package")
+        }
+        if (is(genome_assembly, "character")) {
+                extension <- file_ext(genome_assembly)
+                if (!extension %in% c("fasta", "fa")) {
+                        stop("genome_assembly file extension must be '.fa' or '.fasta'")
+                }
+        }
+
+	if (!is(samples, "character")) stop("samples must be a character")
+
+        if (!is(threshold, "numeric")) stop("threshold must be a positive integer")
+        if (threshold %% 1 != 0) stop("threshold must be a positive integer")
+        if (threshold < 1) stop("threshold must be a positive integer")
+
+	if (!is(dominant, "logical")) stop("dominant must be logical")
+
+	if (!is.na(data_conditions) & !is(data_conditions, "list")) {
+		stop("data_conditions must be a list of values")
+	}
 
 	## Loading genome assembly.
 	fasta_assembly <- FaFile(genome_assembly)
@@ -93,25 +127,41 @@ dinucleotide_frequencies <- function(
 #'
 #' Plot results from dinucleotide analysis
 #'
-#' @import tibble
-#' @import ggplot2
-#' @importFrom dplyr mutate pull group_by summarize arrange desc
-#' @importFrom forcats fct_rev fct_reorder
-#' @importFrom magrittr %>%
-#'
 #' @param dinucleotide_frequencies tibble from dinucleotide_frequencies analysis
 #' @param ncol Number of columns to plot if not quantile plot
-#' @param sample_order Optional vector of sample names to order plots
 #' @param ... Arguments passed to geom_col
 #'
 #' @return ggplot2 object of dinucleotide frequencies plot
 #'
-#' @rdname plot_dinucleotide_frequencies-function
+#' @examples
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
+#' TSSs <- readRDS(TSSs)
+#' tsre_exp <- tsr_explorer(TSSs)
+#' tsre_exp <- format_counts(tsre_exp, data_type = "tss")
+#' assembly <- system.file("extdata", "S288C_Assembly.fasta", package = "tsrexplorer")
+#' freqs <- dinucleotide_frequencies(tsre_exp, genome_assembly = assembly)
+#' plot_dinucleotide_frequencies(freqs)
 #'
+#' @seealso
+#' \code{\link{dinucleotide_frequencies}} to calculate the dinucleotide frequencies.
+#'
+#' @rdname plot_dinucleotide_frequencies-function
 #' @export
 
 plot_dinucleotide_frequencies <- function(
-	dinucleotide_frequencies, sample_order = NA, ncol = 1, ...) {
+	dinucleotide_frequencies,
+	ncol = 1,
+	...
+) {
+
+	## Check inputs.
+	if (!is(dinucleotide_frequencies, "DataFrame")) {
+		stop("dinucleotide_frequencies must be a DataFrame")
+	}
+
+	if (!is(ncol, "numeric")) stop("ncol must be a positive integer")
+	if (ncol %% 1 != 0) stop("ncol must be a positive integer")
+	if (ncol < 1) stop("ncol must be a positive integer")
 
 	## Pull out some info from the DataFrame.
 	groupings <- metadata(dinucleotide_frequencies)$groupings
@@ -140,12 +190,8 @@ plot_dinucleotide_frequencies <- function(
 		c("mean_freqs", "rank") := NULL
 	]
 
-	## Change sample order if specified.
-	if (!is.na(sample_order)) {
-		freqs[, sample := factor(sample, levels = sample_order)]
-	}
-
 	## Plot dinucleotide frequencies.
+
 	p <- ggplot(freqs, aes(x = dinucleotide, y = freqs)) +
 		geom_col(width = 0.5, aes(fill = freqs), ...) +
 		theme_bw() +

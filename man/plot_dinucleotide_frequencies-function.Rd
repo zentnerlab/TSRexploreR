@@ -4,13 +4,10 @@
 \alias{plot_dinucleotide_frequencies}
 \title{Plot Dinucleotide Frequencies}
 \usage{
-plot_dinucleotide_frequencies(dinucleotide_frequencies,
-  sample_order = NA, ncol = 1, ...)
+plot_dinucleotide_frequencies(dinucleotide_frequencies, ncol = 1, ...)
 }
 \arguments{
 \item{dinucleotide_frequencies}{tibble from dinucleotide_frequencies analysis}
-
-\item{sample_order}{Optional vector of sample names to order plots}
 
 \item{ncol}{Number of columns to plot if not quantile plot}
 
@@ -21,4 +18,17 @@ ggplot2 object of dinucleotide frequencies plot
 }
 \description{
 Plot results from dinucleotide analysis
+}
+\examples{
+TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
+TSSs <- readRDS(TSSs)
+tsre_exp <- tsr_explorer(TSSs)
+tsre_exp <- format_counts(tsre_exp, data_type = "tss")
+assembly <- system.file("extdata", "S288C_Assembly.fasta", package = "tsrexplorer")
+freqs <- dinucleotide_frequencies(tsre_exp, genome_assembly = assembly)
+plot_dinucleotide_frequencies(freqs)
+
+}
+\seealso{
+\code{\link{dinucleotide_frequencies}} to calculate the dinucleotide frequencies.
 }
