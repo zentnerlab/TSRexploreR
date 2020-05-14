@@ -7,6 +7,8 @@ library("magrittr")
 
 TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
 TSSs <- readRDS(TSSs)
+
+annotation <- system.file("extdata", "S288C_Annotation.gtf", package = "tsrexplorer")
 ```
 
 ```
@@ -34,6 +36,7 @@ exp <- tsr_explorer(TSSs) %>%
 		Untreated = "Untreated", Diamide = "Diamide"
 	))
 
+```
 ## Calculate the shifting scores and return as table.
 shift_results <- tss_shift(
 	exp, compare_samples = c("Untreated", "Diamide"), min_distance = 100,
