@@ -74,8 +74,6 @@ cpm_normalize <- function(
 #'
 #' @description
 #' Using edgeR to TMM normalize TSSs or TSRs.
-#' This methods helps to reduce the influence that differing number of reads
-#'   between samples can have on inter-sample comparisons.
 #'
 #' @importFrom edgeR DGEList calcNormFactors cpm
 #' @importFrom SummarizedExperiment assay "assay<-"
@@ -85,6 +83,16 @@ cpm_normalize <- function(
 #' @param threshold Filter out positions missing at least 'n_samples' number of samples with reads greater than or equal to threshold
 #' @param n_samples Filter out positions missing at least n_samples number of samples with reads greater than or equal to 'threshold'
 #' @param samples Vector with names of samples to include in the normalization
+#'
+#' @details
+#' The TMM normalization method employed by edgeR is designed to reduce the influence of
+#'   library size for inter-sample comparison.
+#'
+#' For TMM normalization it is recommended to remove features with none or few reads as
+#'   these may bias the final results.
+#' To facilitate this filtering two arguments are provided, 'threshold' and 'n_samples'.
+#' Features must have grater than or equal to 'threshold' number of reads in at least
+#'   'n_samples' number of samples to be retained.
 #'
 #' @return tsr explorer object with tmm normalized count matrices
 #'

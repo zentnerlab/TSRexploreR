@@ -15,6 +15,12 @@ ggplot2 object with TSS or TSR genomic distribution plot
 \description{
 Plot genomic distribution of TSSs or TSRs.
 }
+\details{
+This plotting function will create a stacked barplot of genomic feature types for each sample.
+The underlying data used for plotting comes from the 'genomic_distribution' function.
+Genomic features include exons, introns, intergenic, downstream and promoter regions.
+The promoter region is user defined when annotating the TSSs or TSRs.
+}
 \examples{
 TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
 TSSs <- readRDS(TSSs)

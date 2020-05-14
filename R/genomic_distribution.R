@@ -1,6 +1,7 @@
 
 #' Genomic Distribution
 #'
+#' @description
 #' Get genomic distribution of TSSs and TSRs
 #'
 #' @importFrom S4Vectors "metadata<-"
@@ -11,6 +12,22 @@
 #' @param threshold Filter out TSSs or TSRs under a certain read count number
 #' @param dominant Should dominant TSS per 'gene' or 'tsr' only be considered
 #' @param data_conditions List of group options (filtering and quantiles/grouping available)
+#'
+#' @details
+#' This function summarizes the distribution of TSSs or TSRs relative
+#'   to the features they are annotated to.
+#' Genomic features include exons, introns, intergenic, downstream and promoter regions.
+#' The promoter region is user defined when annotating the TSSs or TSRs.
+#'
+#' A set of functions to control data structure for plotting are included.
+#' 'threshold' will define the minimum number of reads a TSS or TSR
+#'  must have to be considered.
+#' 'dominant' specifies whether only the dominant TSS or TSR is considered 
+#'   from the 'mark_dominant' function.
+#' For TSSs this can be either dominant per TSR or gene, and for TSRs
+#'   it is just the dominant TSR per gene.
+#' 'data_conditions' allows for the advanced filtering, ordering, and grouping
+#'   of data.
 #'
 #' @return DataFrame with TSS or TSR genomic distribution stats
 #'
@@ -123,6 +140,12 @@ genomic_distribution <- function(
 #' @importFrom forcats fct_rev
 #'
 #' @param genomic_distribution DataFrame of TSS or TSR genomic distributions from tsr_genomic_distribution
+#'
+#' @details
+#' This plotting function will create a stacked barplot of genomic feature types for each sample.
+#' The underlying data used for plotting comes from the 'genomic_distribution' function.
+#' Genomic features include exons, introns, intergenic, downstream and promoter regions.
+#' The promoter region is user defined when annotating the TSSs or TSRs.
 #'
 #' @return ggplot2 object with TSS or TSR genomic distribution plot
 #'

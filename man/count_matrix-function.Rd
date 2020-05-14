@@ -20,6 +20,15 @@ tsr explorer object with added count matrices
 \description{
 Generate count matrices for correlation analysis.
 }
+\details{
+In order to compare samples, a matrix must first be generated with
+  genomic positions as rows and samples as columns.
+
+For TSSs the genomic position is simply the one base coordinate that
+  the TSS is on.
+However, for TSRs, overlapping TSRs between samples are first merged
+  to generate consensus TSRs for the samples.
+}
 \examples{
 TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
 TSSs <- readRDS(TSSs)

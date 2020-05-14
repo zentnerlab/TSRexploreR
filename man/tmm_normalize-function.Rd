@@ -23,8 +23,16 @@ tsr explorer object with tmm normalized count matrices
 }
 \description{
 Using edgeR to TMM normalize TSSs or TSRs.
-This methods helps to reduce the influence that differing number of reads
-  between samples can have on inter-sample comparisons.
+}
+\details{
+The TMM normalization method employed by edgeR is designed to reduce the influence of
+  library size for inter-sample comparison.
+
+For TMM normalization it is recommended to remove features with none or few reads as
+  these may bias the final results.
+To facilitate this filtering two arguments are provided, 'threshold' and 'n_samples'.
+Features must have grater than or equal to 'threshold' number of reads in at least
+  'n_samples' number of samples to be retained.
 }
 \examples{
 TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
