@@ -19,6 +19,14 @@ ggplot2 object with sequence logo
 \description{
 Create a sequence logo for the sequences around TSSs
 }
+\details{
+This plotting function uses the ggseqlogo library to make sequence logos
+  from the sequences retrieved by the 'tss_sequences' function.
+Sequence logos show the enrichment of bases with certain positional biases
+  in a centered set of sequences.
+This is particularly important for TSS analysis since literature has shown
+  strong base preferences spanning TSSs and surrounding sequences.
+}
 \examples{
 TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
 TSSs <- readRDS(TSSs)

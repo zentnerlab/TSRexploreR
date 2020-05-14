@@ -26,6 +26,22 @@ DataFrame of detected feature numbers.
 \description{
 Get the number of genes or transcripts detected
 }
+\details{
+This function will return either the number of genes or transcripts detected
+  depending on what feature type was used during annotation.
+Information on whether the feature has a promoter-proximal TSS or TSR is included
+  in the output for plotting purposes.
+
+A set of functions to control data structure for plotting are included.
+'threshold' will define the minimum number of reads a TSS or TSR
+ must have to be considered.
+'dominant' specifies whether only the dominant TSS or TSR is considered 
+  from the 'mark_dominant' function.
+For TSSs this can be either dominant per TSR or gene, and for TSRs
+  it is just the dominant TSR per gene.
+'data_conditions' allows for the advanced filtering, ordering, and grouping
+  of data.
+}
 \examples{
 TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
 TSSs <- readRDS(TSSs)

@@ -29,6 +29,27 @@ DataFrame of sequences surrounding TSSs.
 \description{
 Retrieve sequences surrounding TSSs for further plotting
 }
+\details{
+This function will retrieve the genomic sequence surrounding TSSs for later use in
+  plotting sequence color maps or sequence logos.
+
+'genome_assembly' must be a valid genome assembly in either fasta or BSgenome format.
+fasta formatted genome assemblies should have the file extension '.fasta' or '.fa'.
+BSgenome assemblies are precompiled Bioconductor libraries for common organisms.
+
+'distance' controls the length extending upstream and downstream of the TSS
+  in which the sequence will be retrieved.
+
+A set of functions to control data structure for plotting are included.
+'threshold' will define the minimum number of reads a TSS or TSR
+ must have to be considered.
+'dominant' specifies whether only the dominant TSS or TSR is considered 
+  from the 'mark_dominant' function.
+For TSSs this can be either dominant per TSR or gene, and for TSRs
+  it is just the dominant TSR per gene.
+'data_conditions' allows for the advanced filtering, ordering, and grouping
+  of data.
+}
 \examples{
 TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
 TSSs <- readRDS(TSSs)

@@ -19,6 +19,12 @@ ggplot2 object of dinucleotide frequencies plot
 \description{
 Plot results from dinucleotide analysis
 }
+\details{
+This plotting function returns a ggplot2 barplot of the +1 and -1 base
+  frequencies (corresponding to the TSS and adjacent upstream base respectively)
+  surrounding TSSs.
+The results of the 'dinucleotide_frequencies' function are used as input.
+}
 \examples{
 TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
 TSSs <- readRDS(TSSs)

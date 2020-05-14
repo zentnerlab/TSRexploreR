@@ -1,6 +1,7 @@
 
 #' Retrieve Sequences Near TSSs
 #'
+#' @description
 #' Retrieve sequences surrounding TSSs for further plotting
 #'
 #' @include tsrexplorer.R
@@ -16,6 +17,27 @@
 #' @param distance Bases to add on each side of TSS
 #' @param dominant Whether only dominant should be considered
 #' @param data_conditions Condition the data (filter, quantile, and grouping available)
+#'
+#' @details
+#' This function will retrieve the genomic sequence surrounding TSSs for later use in
+#'   plotting sequence color maps or sequence logos.
+#'
+#' 'genome_assembly' must be a valid genome assembly in either fasta or BSgenome format.
+#' fasta formatted genome assemblies should have the file extension '.fasta' or '.fa'.
+#' BSgenome assemblies are precompiled Bioconductor libraries for common organisms.
+#'
+#' 'distance' controls the length extending upstream and downstream of the TSS
+#'   in which the sequence will be retrieved.
+#'
+#' A set of functions to control data structure for plotting are included.
+#' 'threshold' will define the minimum number of reads a TSS or TSR
+#'  must have to be considered.
+#' 'dominant' specifies whether only the dominant TSS or TSR is considered 
+#'   from the 'mark_dominant' function.
+#' For TSSs this can be either dominant per TSR or gene, and for TSRs
+#'   it is just the dominant TSR per gene.
+#' 'data_conditions' allows for the advanced filtering, ordering, and grouping
+#'   of data.
 #'
 #' @return DataFrame of sequences surrounding TSSs.
 #'
@@ -120,6 +142,7 @@ tss_sequences <- function(
 
 #' Generate Sequence Logo
 #'
+#' @description
 #' Create a sequence logo for the sequences around TSSs
 #'
 #' @import ggseqlogo
@@ -129,6 +152,14 @@ tss_sequences <- function(
 #' @param tss_sequences Sequences surrounding TSS generated with tss_sequences
 #' @param ncol Number of columns to plot if quantiles is not set
 #' @param font_size Font size plots
+#'
+#' @details
+#' This plotting function uses the ggseqlogo library to make sequence logos
+#'   from the sequences retrieved by the 'tss_sequences' function.
+#' Sequence logos show the enrichment of bases with certain positional biases
+#'   in a centered set of sequences.
+#' This is particularly important for TSS analysis since literature has shown
+#'   strong base preferences spanning TSSs and surrounding sequences.
 #'
 #' @return ggplot2 object with sequence logo
 #'
@@ -235,6 +266,16 @@ plot_sequence_logo <- function(
 #' @param base_colors Named vector specifying colors for each base
 #' @param text_size Size of text for plots
 #' @param ... Arguments passed to geom_tile
+#'
+#' @details
+#' This plotting function generates a ggplot2 base color map surrounding TSSs.
+#' Base color maps represent each base surrounding a TSS as a different color.
+#' Since the base composition for every TSS can be seen in one plot, it's a good
+#'   companion figure to sequence logos.
+#'
+#' The color of each base is set using the 'base_colors' argument.
+#' The argument input should be a named vector, with the base as the name,
+#' and the desired color of the base as the vector element.
 #'
 #' @return ggplot2 object of sequence colormap
 #'

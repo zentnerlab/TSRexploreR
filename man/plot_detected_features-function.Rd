@@ -17,6 +17,11 @@ ggplot2 object of detected feature counts
 \description{
 Plot number of features detected per sample.
 }
+\details{
+This plotting function returns a stacked bar-plot showing the number of
+  features detected with and without a promoter proximal TSS or TSR.
+The information is first prepared using the 'detect_features' function.
+}
 \examples{
 TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
 TSSs <- readRDS(TSSs)

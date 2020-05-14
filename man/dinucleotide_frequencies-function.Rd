@@ -26,6 +26,25 @@ DataFrame with dinucleotide frequencies
 \description{
 Analysis of -1 and +1 dinucleotide frequencies.
 }
+\details{
+It has been shown in many organisms that a particular base preference exists in the
+  +1 and -1 bases (corresponding to the TSS and upstream adjacent base respectively).
+This function returns the dinucleotide frequencies surrounding each TSS.
+
+'genome_assembly' must be a valid genome assembly in either fasta or BSgenome format.
+fasta formatted genome assemblies should have the file extension '.fasta' or '.fa'.
+BSgenome assemblies are precompiled Bioconductor libraries for common organisms.
+
+A set of arguments to control data structure for plotting are included.
+'threshold' will define the minimum number of reads a TSS or TSR
+ must have to be considered.
+'dominant' specifies whether only the dominant TSS or TSR is considered 
+  from the 'mark_dominant' function.
+For TSSs this can be either dominant per TSR or gene, and for TSRs
+  it is just the dominant TSR per gene.
+'data_conditions' allows for the advanced filtering, ordering, and grouping
+  of data.
+}
 \examples{
 TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
 TSSs <- readRDS(TSSs)

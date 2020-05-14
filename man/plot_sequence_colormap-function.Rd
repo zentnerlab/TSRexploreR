@@ -25,6 +25,16 @@ ggplot2 object of sequence colormap
 \description{
 Make a sequence colormap for the sequences around TSSs.
 }
+\details{
+This plotting function generates a ggplot2 base color map surrounding TSSs.
+Base color maps represent each base surrounding a TSS as a different color.
+Since the base composition for every TSS can be seen in one plot, it's a good
+  companion figure to sequence logos.
+
+The color of each base is set using the 'base_colors' argument.
+The argument input should be a named vector, with the base as the name,
+and the desired color of the base as the vector element.
+}
 \examples{
 TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
 TSSs <- readRDS(TSSs)

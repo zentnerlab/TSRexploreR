@@ -1,6 +1,7 @@
 
 #' Genes/Transcripts Detected
 #'
+#' @description
 #' Get the number of genes or transcripts detected
 #'
 #' @importFrom purrr walk
@@ -11,6 +12,22 @@
 #' @param threshold The number of reads required in a TSS or TSR to avoid filtering
 #' @param dominant Whether to consider only the dominant TSS or TSR
 #' @param condition_data Apply conditions to data (supports filtering and quantiles/grouping)
+#'
+#' @details
+#' This function will return either the number of genes or transcripts detected
+#'   depending on what feature type was used during annotation.
+#' Information on whether the feature has a promoter-proximal TSS or TSR is included
+#'   in the output for plotting purposes.
+#'
+#' A set of functions to control data structure for plotting are included.
+#' 'threshold' will define the minimum number of reads a TSS or TSR
+#'  must have to be considered.
+#' 'dominant' specifies whether only the dominant TSS or TSR is considered 
+#'   from the 'mark_dominant' function.
+#' For TSSs this can be either dominant per TSR or gene, and for TSRs
+#'   it is just the dominant TSR per gene.
+#' 'data_conditions' allows for the advanced filtering, ordering, and grouping
+#'   of data.
 #'
 #' @return DataFrame of detected feature numbers.
 #'
@@ -122,12 +139,18 @@ detect_features <- function(
 
 #' Plot Detected Features
 #'
+#' @description
 #' Plot number of features detected per sample.
 #'
 #' @importFrom stringr str_to_title
 #'
 #' @param detected_features DataFrame of detected feature counts from detect_features
 #' @param ... Arguments passed to geom_col
+#'
+#' @details
+#' This plotting function returns a stacked bar-plot showing the number of
+#'   features detected with and without a promoter proximal TSS or TSR.
+#' The information is first prepared using the 'detect_features' function.
 #'
 #' @return ggplot2 object of detected feature counts
 #'

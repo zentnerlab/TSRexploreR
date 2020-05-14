@@ -31,6 +31,27 @@ DataFrame of counts for each gene/transcript and position
 \description{
 Generate count matrix to make TSS heatmap
 }
+\details{
+This function makes a count matrix for each gene or transcript with detected features
+  relative to the annotated TSS.
+Whether genes or transripts are used depends on the feature type chosen
+  when annotating the TSSs with the 'annotate_features' function.
+The count matrix is used for plotting a heatmap using the 'plot_heatmap' function.
+
+The region around the annotated TSS used for plotting is controlled by
+  'upstream' and 'downstream', which should be positive integers.
+
+A set of arguments to control data structure for plotting are included.
+'use_cpm' will use the CPM normalized scores as opposed to raw read counts.
+'threshold' will define the minimum number of reads a TSS or TSR
+ must have to be considered.
+'dominant' specifies whether only the dominant TSS or TSR is considered 
+  from the 'mark_dominant' function.
+For TSSs this can be either dominant per TSR or gene, and for TSRs
+  it is just the dominant TSR per gene.
+'data_conditions' allows for the advanced filtering, ordering, and grouping
+  of data.
+}
 \examples{
 TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
 TSSs <- readRDS(TSSs)

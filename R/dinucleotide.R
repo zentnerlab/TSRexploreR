@@ -1,6 +1,7 @@
 
 #' Dinucleotide Analysis
 #'
+#' @description
 #' Analysis of -1 and +1 dinucleotide frequencies.
 #'
 #' @include tsrexplorer.R
@@ -13,6 +14,25 @@
 #' @param threshold TSS read threshold
 #' @param dominant Consider only dominant
 #' @param data_conditions Condition the data (filtering and quantile/grouping available)
+#'
+#' @details
+#' It has been shown in many organisms that a particular base preference exists in the
+#'   +1 and -1 bases (corresponding to the TSS and upstream adjacent base respectively).
+#' This function returns the dinucleotide frequencies surrounding each TSS.
+#'
+#' 'genome_assembly' must be a valid genome assembly in either fasta or BSgenome format.
+#' fasta formatted genome assemblies should have the file extension '.fasta' or '.fa'.
+#' BSgenome assemblies are precompiled Bioconductor libraries for common organisms.
+#'
+#' A set of arguments to control data structure for plotting are included.
+#' 'threshold' will define the minimum number of reads a TSS or TSR
+#'  must have to be considered.
+#' 'dominant' specifies whether only the dominant TSS or TSR is considered 
+#'   from the 'mark_dominant' function.
+#' For TSSs this can be either dominant per TSR or gene, and for TSRs
+#'   it is just the dominant TSR per gene.
+#' 'data_conditions' allows for the advanced filtering, ordering, and grouping
+#'   of data.
 #'
 #' @return DataFrame with dinucleotide frequencies
 #'
@@ -125,11 +145,18 @@ dinucleotide_frequencies <- function(
 
 #' Plot Dinucleotide Frequencies
 #'
+#' @description
 #' Plot results from dinucleotide analysis
 #'
 #' @param dinucleotide_frequencies tibble from dinucleotide_frequencies analysis
 #' @param ncol Number of columns to plot if not quantile plot
 #' @param ... Arguments passed to geom_col
+#'
+#' @details
+#' This plotting function returns a ggplot2 barplot of the +1 and -1 base
+#'   frequencies (corresponding to the TSS and adjacent upstream base respectively)
+#'   surrounding TSSs.
+#' The results of the 'dinucleotide_frequencies' function are used as input.
 #'
 #' @return ggplot2 object of dinucleotide frequencies plot
 #'

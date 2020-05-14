@@ -40,6 +40,31 @@ ggplot2 object of average plot
 \description{
 Generate average plots of TSSs or TSRs
 }
+\details{
+This plotting function generates an average plot of TSS or TSR signal
+  relative to annotated TSSs.
+The plot is returned as a ggplot2 object.
+
+By default only the TSS or TSR position is considered, effectively giving every
+  TSS or TSR a score of 1.
+If 'consider_score' is set to TRUE, the score of the TSS or TSR will be considered when
+  making the average plot, which gives more weight to stronger TSSs or TSRs.
+
+The region around the annotated TSS used for plotting is controlled by
+  'upstream' and 'downstream', which should be positive integers.
+
+A set of functions to control data structure for plotting are included.
+'use_cpm' will use the CPM normalized scores, which only matters if
+  'consider_score' is TRUE.
+'threshold' will define the minimum number of reads a TSS or TSR
+ must have to be considered.
+'dominant' specifies whether only the dominant TSS or TSR is considered 
+  from the 'mark_dominant' function.
+For TSSs this can be either dominant per TSR or gene, and for TSRs
+  it is just the dominant TSR per gene.
+'data_conditions' allows for the advanced filtering, ordering, and grouping
+  of data.
+}
 \examples{
 TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
 TSSs <- readRDS(TSSs)
