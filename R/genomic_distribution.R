@@ -4,7 +4,7 @@
 #' @description
 #' Get genomic distribution of TSSs and TSRs
 #'
-#' @importFrom S4Vectors "metadata<-"
+#' @importFrom S4Vectors "metadata<-" metadata
 #'
 #' @param experiment tsrexplorer object with annotated TSRs
 #' @param samples Either "all" or vector of sample names
@@ -61,8 +61,9 @@ genomic_distribution <- function(
 	## Check inputs.
 	if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsrexplorer object")
 
-        if (!is(data_type, "character")) stop("data_type must be a character")
-        if (length(data_type) > 1) stop("data_type must be a character")
+	if (!is(data_type, "character") || length(data_type) > 1) {
+        	stop("data_type must be either 'tss' or 'tsr'")
+	}
         data_type <- str_to_lower(data_type)
         if (!data_type %in% c("tss", "tsr")) {
                 stop("data_type must be either 'tss' or 'tsr'")
@@ -70,13 +71,16 @@ genomic_distribution <- function(
 
 	if (!is(samples, "character")) stop("samples must be a character")
 
-	if (!is.na(threshold) & !is(threshold, "numeric")) stop("threshold must be a positive integer")
-	if (!is.na(threshold) & threshold %% 1 != 0) stop("threshold must be a positive integer")
-	if (!is.na(threshold) & threshold < 1) stop("threshold must be greater than or equal to 1")
-	
+	if (
+		!is.na(threshold) && !is(threshold, "numeric") ||
+		threshold %% 1 != 0 || threshold < 1
+	) {
+		stop("threshold must be a positive integer greater than or equal to 1")
+	}
+		
 	if (!is.logical(dominant)) stop("dominant must be logical")
 
-	if (!is.na(data_conditions) & !is(data_conditions, "list")) stop("data_conditions must in list form")
+	if (!is.na(data_conditions) && !is(data_conditions, "list")) stop("data_conditions must in list form")
 
 	## Extract samples.
 	selected_samples <- extract_counts(experiment, data_type, samples)
@@ -119,6 +123,11 @@ genomic_distribution <- function(
 			.(simple_annotations, count, fraction = count / sum(count)),
 			by = samples
 		]
+	}
+
+	## Order samples if required.
+	if (!all(samples == "all")) {
+		genomic_distribution[, samples := factor(samples, levels = samples)]
 	}
 
 	## Prepare DataFrame to return.

@@ -74,13 +74,16 @@ dinucleotide_frequencies <- function(
 
 	if (!is(samples, "character")) stop("samples must be a character")
 
-        if (!is(threshold, "numeric")) stop("threshold must be a positive integer")
-        if (threshold %% 1 != 0) stop("threshold must be a positive integer")
-        if (threshold < 1) stop("threshold must be a positive integer")
+        if (
+                !is.na(threshold) && !is(threshold, "numeric") ||
+                threshold %% 1 != 0 || threshold < 1
+        ) {
+                stop("threshold must be a positive integer greater than or equal to 1")
+        }
 
 	if (!is(dominant, "logical")) stop("dominant must be logical")
 
-	if (!is.na(data_conditions) & !is(data_conditions, "list")) {
+	if (!is.na(data_conditions) && !is(data_conditions, "list")) {
 		stop("data_conditions must be a list of values")
 	}
 
@@ -186,9 +189,9 @@ plot_dinucleotide_frequencies <- function(
 		stop("dinucleotide_frequencies must be a DataFrame")
 	}
 
-	if (!is(ncol, "numeric")) stop("ncol must be a positive integer")
-	if (ncol %% 1 != 0) stop("ncol must be a positive integer")
-	if (ncol < 1) stop("ncol must be a positive integer")
+	if (!is(ncol, "numeric") || ncol %% 1 != 0 || ncol < 1) {
+		stop("ncol must be a positive integer")
+	}
 
 	## Pull out some info from the DataFrame.
 	groupings <- metadata(dinucleotide_frequencies)$groupings

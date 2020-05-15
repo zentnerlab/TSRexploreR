@@ -93,7 +93,7 @@ tss_sequences <- function(
 
 	if (!is(dominant, "logical")) stop("dominant must be logical")
 
-	if (!is.na(data_conditions) & !is(data_conditions, "list")) {
+	if (!is.na(data_conditions) && !is(data_conditions, "list")) {
 		stop("data_conditions must be a list of values")
 	}
 
@@ -188,12 +188,13 @@ plot_sequence_logo <- function(
 	## Check inputs.
 	if (!is(tss_sequences, "DataFrame")) stop("tss_sequences must be a DataFrame")
 
-	if (!is(ncol, "numeric")) stop("ncol must be a positive integer")
-	if (ncol %% 1 != 0) stop("ncol must be a positive integer")
-	if (ncol < 1) stop("ncol must be greater than or equal to 1")
+	if (!is(ncol, "numeric") || ncol %% 1 != 0 || ncol < 1) {
+		stop("ncol must be a positive integer")
+	}
 
-	if (!is(font_size, "numeric")) stop("font_size must be a positive number")
-	if (!font_size > 0) stop("font_size must be greater than 0")
+	if (!is(font_size, "numeric") || !font_size > 0) {
+		stop("font_size must be a positive number")
+	}
 
 	## Get some info used to pull sequencs.
 	distance <- metadata(tss_sequences)$distance
@@ -310,17 +311,19 @@ plot_sequence_colormap <- function(
 	## Check inputs.
 	if (!is(tss_sequences, "DataFrame")) stop("tss_sequences must be a DataFrame")
 
-        if (!is(ncol, "numeric")) stop("ncol must be a positive integer")
-        if (ncol %% 1 != 0) stop("ncol must be a positive integer")
-        if (ncol < 1) stop("ncol must be greater than or equal to 1")
+        if (!is(ncol, "numeric") || ncol %% 1 != 0 || ncol < 1) {
+		stop("ncol must be a positive integer")
+	}
 
-        if (!is(text_size, "numeric")) stop("font_size must be a positive number")
-        if (!text_size > 0) stop("font_size must be greater than 0")
+        if (!is(text_size, "numeric") || !text_size > 0) {
+		stop("font_size must be a positive number")
+	}
 
-	if (!is(base_colors, "character")) stop("base_colors must be a named character vector")
-	if (length(base_colors) < 4) stop("base_colors must be a named character vector")
-	if (is.null(names(base_colors))) stop(" base_colors must be a named character vector")
-	if (!all(str_to_lower(names(base_colors)) %in% c("a", "t", "g", "c"))) {
+	if (
+		!is(base_colors, "character") || length(base_colors) < 4 ||
+		is.null(names(base_colors)) ||
+		!all(str_to_lower(names(base_colors)) %in% c("a", "t", "g", "c"))
+	) {
 		stop("base_colors must be a named character vector")
 	}
 

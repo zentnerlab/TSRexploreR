@@ -90,6 +90,12 @@ explore_thresholds <- function(
 		]
 	})
 
+	## Set order of samples if specified.
+	if (!all(samples == "all")) {
+		summarized_data[, sample := factor(sample, levels = samples)]
+	}
+
+	## Return results.
 	return(summarized_data)
 }
 
@@ -144,12 +150,13 @@ plot_threshold_exploration <- function(threshold_data, ncol = 1, point_size = 1,
 	## Check inputs.
 	if (!is(threshold_data, "data.frame")) stop("threshold_data must be a data.frame")
 	
-	if (!is(ncol, "numeric")) stop("ncol must be a positive integer")
-	if (ncol %% 1 != 0) stop("ncol must be a positive integer")
-	if (ncol < 1) stop("ncol must be a positive integer")
+	if (!is(ncol, "numeric") || ncol %% 1 != 0 || ncol < 1) {
+		stop("ncol must be a positive integer")
+	}
 
-	if (!is(point_size, "numeric")) stop("point_size must be a positive number")
-	if (!point_size > 0) stop("point_size must be a positive number")
+	if (!is(point_size, "numeric") || !point_size > 0) {
+		stop("point_size must be a positive number")
+	}
 
 	## Plot data.
 	p <- ggplot(threshold_data, aes(x = threshold, y = frac_promoter_proximal)) +

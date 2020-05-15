@@ -60,13 +60,15 @@ annotate_features <- function(
 		stop("annotation_data must be an annotation file or TxDb object")
 	}
 	
-        if (!is(data_type, "character")) stop("data_type must be a character")
-        if (length(data_type) > 1) stop("data_type must be a character")
+        if (!is(data_type, "character") || length(data_type) > 1) {
+		stop("data_type must be a character")
+	}
         data_type <- str_to_lower(data_type)
         if (!data_type %in% c("tss", "tsr")) stop("data_type must be 'tss' or 'tsr'")
 
-	if (!is(feature_type, "character")) stop("feature_type must be a character")
-	if (length(feature_type) > 1) stop("feature_type must be either 'gene' or 'transcript'")
+	if (!is(feature_type, "character") || length(feature_type) > 1) {
+		stop("feature_type must be a either 'gene' or 'transcript'")
+	}
 	feature_type <- str_to_lower(feature_type)
 	if (!feature_type %in% c("gene", "transcript")) {
 		stop("feature_type must be either 'gene' or 'transcript'")

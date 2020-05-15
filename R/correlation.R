@@ -144,8 +144,9 @@ plot_correlation <- function(
 	## Check inputs.
 	if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsrexplorer object")
 
-        if (!is(data_type, "character")) stop("data_type must be a character")
-        if (length(data_type) > 1) stop("data_type must be a character")
+        if (!is(data_type, "character") || length(data_type) > 1) {
+		stop("data_type must be a character")
+	}
         data_type <- str_to_lower(data_type)
         if (!data_type %in% c("tss", "tsr", "tss_features", "tsr_features")) {
                 stop("data_type must be either 'tss', 'tsr', 'tss_features', or 'tsr_features'")
@@ -153,8 +154,7 @@ plot_correlation <- function(
 
 	if (!is(samples, "character")) stop("samples must be a character vector")
 
-	if (!is(correlation_plot, "character")) stop("correlation_plot must be a character")
-	if (length(correlation_plot) > 1) {
+	if (!is(correlation_plot, "character") || length(correlation_plot) > 1) {
 		stop("correlation_plot must be either 'heatmap', 'scatter', 'combined' or 'hierarchical'")
 	}
 	correlation_plot <- str_to_lower(correlation_plot)
@@ -162,8 +162,9 @@ plot_correlation <- function(
 		stop("correlation_plot must be either 'heatmap', 'scatter', 'combined' or 'hierarchical'")
 	}
 
-	if (!is(correlation_metric, "character")) stop("correlation_metric must be a character")
-	if (length(correlation_metric) > 1) stop("correlation_metric must be either 'pearson' or 'spearman'")
+	if (!is(correlation_metric, "character") || length(correlation_metric) > 1) {
+		stop("correlation_metric must be either 'pearson' or 'spearman'")
+	}
 	correlation_metric <- str_to_lower(correlation_metric)
 	if (!correlation_metric %in% c("pearson", "spearman")) {
 		stop("correlation_metric should be either 'pearson' or 'spearman'")

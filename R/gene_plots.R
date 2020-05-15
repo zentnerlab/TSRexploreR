@@ -64,18 +64,22 @@ detect_features <- function(
 
 	if (!is(samples, "character")) stop("samples must be a character vecotor")
 
-        if (!is(data_type, "character")) stop("data_type must be a character")
-        if (length(data_type) > 1) stop("data_type must be a character")
+        if (!is(data_type, "character") || length(data_type) > 1) {
+		stop("data_type must be either 'tss' or 'tsr'")
+	}
         data_type <- str_to_lower(data_type)
         if (!data_type %in% c("tss", "tsr")) stop("data_type must be 'tss' or 'tsr'")
 
-        if (!is.na(threshold) & !is(threshold, "numeric")) stop("threshold must be a positive integer")
-        if (!is.na(threshold) & threshold %% 1 != 0) stop("threshold must be a positive integer")
-        if (!is.na(threshold) & threshold < 1) stop("threshold must be greater than or equal to 1")
+        if (
+                !is.na(threshold) && !is(threshold, "numeric") ||
+                threshold %% 1 != 0 || threshold < 1
+        ) {
+                stop("threshold must be a positive integer greater than or equal to 1")
+        }
 
 	if (!is(dominant, "logical")) stop("dominant must be logical")
 
-	if (!is.na(condition_data) & !is(condition_data, "list")) {
+	if (!is.na(condition_data) && !is(condition_data, "list")) {
 		stop("condition_data must be a list of values")
 	}
 	
@@ -123,6 +127,11 @@ detect_features <- function(
 			.(with_promoter = sum(promoter), without_promoter = .N - sum(promoter), total = .N),
 			by = sample
 		]
+	}
+
+	## Order samples if required.
+	if (!all(samples == "all")) {
+		sample_data[, samples := factor(samples, levels = samples)]
 	}
 
 	## Create DataFrame to export.

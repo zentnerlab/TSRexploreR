@@ -108,14 +108,18 @@ plot_average <- function(
         }
         if (upstream < 0 | downstream < 0) stop("upstream and downstream must be positive integers")
 
-        if (!is.na(threshold) & !is(threshold, "numeric")) stop("threshold must be a positive integer")
-        if (!is.na(threshold) & threshold %% 1 != 0) stop("threshold must be a positive integer")
-        if (!is.na(threshold) & threshold < 1) stop("threshold must be greater than or equal to 1")
+	if (
+                !is.na(threshold) && !is(threshold, "numeric") ||
+                threshold %% 1 != 0 || threshold < 1
+        ) {
+                stop("threshold must be a positive integer greater than or equal to 1")
+        }
 
-	if (!is(ncol, "numeric")) stop("ncol must be a positive integer")
-	if (ncol %% 1 != 0 | ncol < 1) stop("ncol must be a positive integer")
+	if (!is(ncol, "numeric") || ncol %% 1 != 0 || ncol < 1) {
+		stop("ncol must be a positive integer")
+	}
 
-	if (is.na(data.conditions) & !is(data_conditions, "list")) {
+	if (is.na(data.conditions) && !is(data_conditions, "list")) {
 		stop("data_conditions should be a list of values")
 	}
 
@@ -147,6 +151,11 @@ plot_average <- function(
         ## Update data if score is also considered instead of just unique position.
         sample_data <- rbindlist(sample_data, idcol = "sample")
         if (consider_score) sample_data <- sample_data[rep(seq_len(.N), score)]
+
+	## Set sample order if required.
+	if (!all(samples == "all")) {
+		sample_data[, samples := factor(samples, levels = samples)]
+	}
 
         ## Plot averages.
         groupings <- any(names(data_conditions) %in% c("quantile_by", "grouping"))

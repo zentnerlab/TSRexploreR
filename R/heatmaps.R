@@ -85,15 +85,18 @@ tss_heatmap_matrix <- function(
         }
         if (upstream < 0 | downstream < 0) stop("upstream and downstream must be positive integers")
 
-        if (!is.na(threshold) & !is(threshold, "numeric")) stop("threshold must be a positive integer")
-        if (!is.na(threshold) & threshold %% 1 != 0) stop("threshold must be a positive integer")
-        if (!is.na(threshold) & threshold < 1) stop("threshold must be greater than or equal to 1")
+        if (
+                !is.na(threshold) && !is(threshold, "numeric") ||
+                threshold %% 1 != 0 || threshold < 1
+        ) {
+                stop("threshold must be a positive integer greater than or equal to 1")
+        }
 
 	if (!is(use_cpm, "logical") | !is(dominant, "logical")) {
 		stop("use_cpm and/or dominant must be logical")
 	}
 
-	if (!is.na(data_conditions) & !is(data_conditions, "list")) {
+	if (!is.na(data_conditions) && !is(data_conditions, "list")) {
 		stop("data_conditions must be a list of values")
 	}
 
