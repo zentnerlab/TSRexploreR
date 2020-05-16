@@ -67,17 +67,25 @@ explore_thresholds <- function(
 	## Grab information needed for thresholding plot.
 	summarized_data <- map_df(seq_len(max_threshold), function(x) {
 		filtered <- select_samples[score >= x]
-
-		feature_stats <- filtered[,
-			.(count = uniqueN(get(feature_type))),
-			by = .(sample, promoter_proximity = ifelse(
+		filtered[,
+			promoter_proximity := ifelse(
 				simple_annotations == "Promoter",
 				"n_promoter_proximal", "n_promoter_distal"
-			))
+			)
+		]
+		filtered[,
+			n_features := uniqueN(get(feature_type)),
+			by = sample
 		]
 
+		feature_stats <- filtered[,
+			.(n_features, count = .N),
+			by = .(sample, promoter_proximity)
+		]
+		feature_stats <- unique(feature_stats)
+
 		feature_stats <- dcast(
-			feature_stats, sample ~ promoter_proximity,
+			feature_stats, sample + n_features ~ promoter_proximity,
 			value.var = "count"
 		)
 
@@ -161,7 +169,7 @@ plot_threshold_exploration <- function(threshold_data, ncol = 1, point_size = 1,
 	## Plot data.
 	p <- ggplot(threshold_data, aes(x = threshold, y = frac_promoter_proximal)) +
 		geom_line(color = "lightgrey") +
-		geom_point(aes(color = n_total), size = point_size, ...) +
+		geom_point(aes(color = n_features), size = point_size, ...) +
 		scale_color_viridis_c() +
 		theme_bw() +
 		xlab("Count Threshold") +

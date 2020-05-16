@@ -60,7 +60,10 @@ format_counts <- function(experiment, data_type = c("tss", "tsr"), samples = "al
 		raw_counts <- map(select_samples, function(x) {
 			x <- as.data.table(x)
 			x[, FID := seq_len(nrow(x))]
-			x[, FHASH := str_c(seqnames, start, end, strand, collapse = ":")]
+			x[,
+				FHASH := str_c(seqnames, start, end, strand, sep = ":"),
+				by = seq_len(nrow(x))
+			]
 			return(x)
 		})
 	}
@@ -208,7 +211,7 @@ count_matrix <- function(
 		select_samples <- dcast(
 			select_samples,
 			seqnames + start + end + strand + FHASH ~ sample,
-			fill = 0
+			value.var = "score", fill = 0
 		)
 
 	} else if (data_type == "tsr") {
@@ -243,7 +246,10 @@ count_matrix <- function(
                 ]
 
                 select_samples <- dcast(raw_matrix, seqnames + start + end + strand ~ sample, fill = 0)
-		select_samples[, FHASH := str_c(seqnames, start, end, strand, collapse = ":")]
+		select_samples[,
+			FHASH := str_c(seqnames, start, end, strand, sep = ":"),
+			by = seq_len(nrow(select_samples))
+		]
 
 
 	} else if (data_type %in% c("tss_features", "tsr_features")) {

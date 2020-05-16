@@ -127,6 +127,11 @@ tss_sequences <- function(
 		bind_cols(select_samples, .)
 			
 	setnames(seqs, old = "x", new = "sequence")
+
+	## Order samples if required.
+	if (!all(samples == "all")) {
+		select_samples[, sample := factor(sample, levels = samples)]
+	}
 	
 	## Generate return DataFrame
 	groupings <- any(names(data_conditions) %in% c("quantile_by", "grouping"))

@@ -2,6 +2,8 @@
 #'
 #' Group data for plotting
 #'
+#' @importFrom dplyr dense_rank ntile desc
+#'
 #' @param signal_data TSS or TSR data
 #' @param quantile_by Continuous metric to calculate quantiles
 #' @param n_quantiles Number of quantiles to calculate for continuous metric
@@ -118,7 +120,7 @@ group_data <- function(
 	}
 
 	## If not using quantiles split by a categorical value.
-	if (!is.na(grouping) & is.na(quantile_by)) {
+	if (!is.na(grouping) && is.na(quantile_by)) {
 		signal_data <- map(signal_data, function(x) {
 			x <- x[!is.na(x[[grouping]])]
 

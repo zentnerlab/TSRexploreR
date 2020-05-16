@@ -138,6 +138,11 @@ dinucleotide_frequencies <- function(
 		]
 	}
 
+	## Order samples if required.
+	if (!all(samples == "all")) {
+		freqs[, sample := factor(sample, levels = samples)]
+	}
+
 	## Prepare DataFrame to return.
 	freqs_df <- DataFrame(freqs)
 	metadata(freqs_df)$groupings <- groupings

@@ -135,6 +135,10 @@ tss_heatmap_matrix <- function(
         }
         annotated_tss[, distanceToTSS := factor(distanceToTSS, levels = seq(-upstream, downstream, 1))]
 
+	## Order samples if requried.
+	if (!all(samples == "all")) {
+		annotated_tss[, sample := factor(sample, levels = samples)]
+	}
 
 	## Return a DataFrame
 	tss_df <- DataFrame(annotated_tss)
