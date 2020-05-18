@@ -1,26 +1,81 @@
 
 #' Mark Dominant
 #'
-#' @include tsrexplorer.R
-#'
-#' @import tibble
-#' @importFrom magrittr %>%
-#' @importFrom dplyr select filter group_by ungroup between bind_rows
-#' @importFrom purrr map
+#' @description
+#' Mark TSSs as dominant TSS per TSR or gene, or TSRs as dominant per gene. 
 #'
 #' @param experiment tsrexplorer object with annotated TSSs/TSRs
 #' @param data_type Either 'tss' or 'tsr'
 #' @param threshold Read threshold for TSS/TSRs
 #' @param mark_per By default marks dominant TSR per gene, and dominant TSS per TSR.
-#' TSSs can also be set per as dominant TSS per 'gene'.
+#'   TSSs can also be set per as dominant TSS per 'gene'.
 #'
-#' @return Tibble with dominant TSSs for each gene
+#' @details
+#' This function marks which TSSs are dominant per TSR or gene,
+#'   or which TSR is dominant per gene.
+#' Analysis of dominant features may help to cut through the noise to get
+#'   information such as the primary 5' UTR, sequence features associated with the
+#'   the strongest TSS, and other related questions.
+#'
+#' Setting a 'threshold' will only mark a TSS or TSR as dominant if their score
+#'    is greater than or equal to the threshold.
+#'
+#' 'mark_per' controls the behavior of the function.
+#' For TSSs 'default' will mark dominant TSS per TSR, and for TSRs the dominant
+#'   TSR per gene is marked.
+#' for TSSs, 'gene' can also be specified, which will mark the dominant TSS per gene.  
+#'
+#' @examples
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
+#' TSSs <- readRDS(TSSs)
+#' tsre_exp <- tsr_explorer(TSSs)
+#' tsre_exp <- format_counts(tsre_exp, data_type = "tss")
+#' tsre_exp <- tss_clustering(tsre_exp)
+#' tsre_exp <- associate_with_tsr(tsre_exp, sample_list = list(
+#'   "S288C_WT_1" = "S288C_WT_1", "S288C_WT_2" = "S288C_WT_2", "S288C_WT_3" = "S288C_WT_3",
+#'   "S288C_D_1" = "S288C_D_1", "S288C_D_2" = "S288C_D_2", "S288C_D_3" = "S288C_D_3"
+#' ))
+#' tsre_exp <- mark_dominant(tsre_exp, data_type = "tss")
+#'
+#' @return tsr exlorer object with dominant status added to TSSs or TSRs.
+#'
+#' @seealso
+#' \code{\link{associate_wth_tsr}} to associate TSSs with TSRs prior to marking
+#'   dominant TSS per TSR.
 #'
 #' @rdname mark_dominant-function
-#'
 #' @export
 
-mark_dominant <- function(experiment, data_type = c("tss", "tsr"), threshold = 1, mark_per = "default") {
+mark_dominant <- function(
+	experiment,
+	data_type = c("tss", "tsr"),
+	threshold = 1,
+	mark_per = "default"
+) {
+
+	## Check inputs.
+	if (!is(experiment, "tsr_explorer")) stop("'experiment' must be a tsr explorer object")
+
+        if (!is(data_type, "character") || length(data_type) > 1) {
+                stop("data_type must be either 'tss' or 'tsr'")
+        }
+        data_type <- str_to_lower(data_type)
+        if (!data_type %in% c("tss", "tsr")) {
+                stop("data_type must be either 'tss' or 'tsr'")
+        }
+
+        if (
+                !is.na(threshold) && !is(threshold, "numeric") ||
+                threshold %% 1 != 0 || threshold < 1
+        ) {
+                stop("threshold must be a positive integer greater than or equal to 1")
+        }
+
+	if (!is(mark_per, "character")) stop("'mark_per' must be either 'default' or 'gene'")
+	mark_per <- str_to_lower(mark_per)
+	if (!mark_per %in% c("default", "gene")) {
+		stop("'mark_per' must be either 'default' or 'gene'")
+	}
 	
 	## Select samples.
 	select_samples <- extract_counts(experiment, data_type, "all")
@@ -72,12 +127,6 @@ mark_dominant <- function(experiment, data_type = c("tss", "tsr"), threshold = 1
 #' Max UTR Length
 #'
 #' Get TSS with furthest distance
-#'
-#' @include tsrexplorer.R
-#'
-#' @import tibble
-#' @importFrom dplyr filter between group_by select summarize bind_rows
-#' @importFrom purrr map
 #'
 #' @param experiment tsrexplorer object with annotated TSSs
 #' @param samples Either 'all' or names of sample to analyze

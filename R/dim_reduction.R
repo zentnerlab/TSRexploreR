@@ -1,6 +1,9 @@
 
 #' Dimensionality Reduction.
 #'
+#' @description
+#' Dimension reduction plot using PCA or UMAP.
+#'
 #' @importFrom uwot umap
 #'
 #' @param experiment tsrexplorer object
@@ -10,12 +13,40 @@
 #' @param min_dist Minimum distance between points parameter for umap
 #' @param ... Additional arguments passed to geom_point
 #'
+#' @details
+#' This function will generate a dimension reduction plot.
+#' These help to visualize the relative similairty or difference of samples
+#'   based on the most variables features.
+#'
+#' 'method' lets you choose between the more traditional PCA plot or newer
+#'   UMAP plot.
+#'
+#' If a UMAP plot is chosen, there are two parameters available
+#'   for tweaking the results.
+#' 'n_neighbors' will find the specified number of nearest neighbor points,
+#'   and 'min_dist' specifies the minimum distance two points are allowed to be
+#'   in space when plotting.
+#'
+#' @examples
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
+#' TSSs <- readRDS(TSSs)
+#' tsre_exp <- tsr_explorer(TSSs)
+#' tsre_exp <- format_counts(tsre_exp, data_type = "tss")
+#' tsre_exp <- tss_clustering(tsre_exp)
+#' plot_reduction(tsre_exp, data_type = "tsr")
+#'
+#' @return ggplot2 plot of dimension reduction
+#'
 #' @rdname plot_reduction-function
 #' @export
 
 plot_reduction <- function(
-	experiment, data_type = c("tss", "tsr", "tss_features", "tsr_features"),
-	method = "umap", n_neighbors = 2, min_dist = 0.1, ...
+	experiment,
+	data_type = c("tss", "tsr", "tss_features", "tsr_features"),
+	method = "umap",
+	n_neighbors = 2,
+	min_dist = 0.1,
+	...
 ) {
 	
 	## Grab TMM counts.

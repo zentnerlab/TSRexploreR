@@ -23,7 +23,7 @@
 #' TSSs <- readRDS(TSSs)
 #' tsre_exp <- tsr_explorer(TSSs)
 #' tsre_exp <- format_counts(tsre_exp, data_type = "tss")
-#' tsre-exp <- tss_clustering(tsre_exp)
+#' tsre_exp <- tss_clustering(tsre_exp)
 #'
 #' @rdname tss_clustering-function
 #' @export

@@ -34,6 +34,6 @@ TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
 TSSs <- readRDS(TSSs)
 tsre_exp <- tsr_explorer(TSSs)
 tsre_exp <- format_counts(tsre_exp, data_type = "tss")
-tsre-exp <- tss_clustering(tsre_exp)
+tsre_exp <- tss_clustering(tsre_exp)
 
 }

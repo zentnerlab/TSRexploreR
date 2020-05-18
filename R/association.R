@@ -95,18 +95,72 @@ merge_samples <- function(
 
 #' Associate TSSs
 #'
+#' @description
 #' Associate TSSs with TSRs
 #'
-#' @importFrom purrr iwalk
+#' @importFrom purrr imap
 #'
 #' @param experiment tsrexplorer object
 #' @param use_sample_sheet Whether to associate TSSs with their matching TSR in the sample sheet
 #' @param sample_list If 'use_sample_sheet' is FALSE, provide list with TSR as name and vector of TSSs to associate with it.
 #'
+#' @examples
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
+#' TSSs <- readRDS(TSSs)
+#' tsre_exp <- tsr_explorer(TSSs)
+#' tsre_exp <- format_counts(tsre_exp, data_type = "tss")
+#' tsre_exp <- tss_clustering(tsre_exp)
+#' tsre_exp <- associate_with_tsr(tsre_exp, sample_list = list(
+#'   "S288C_WT_1" = "S288C_WT_1", "S288C_WT_2" = "S288C_WT_2", "S288C_WT_3" = "S288C_WT_3",
+#'   "S288C_D_1" = "S288C_D_1", "S288C_D_2" = "S288C_D_2", "S288C_D_3" = "S288C_D_3"
+#' ))
+#'
+#' @details
+#' tsr explorer provides many options for the import and merging of TSSs and TSRs.
+#' Because of this, TSS samples must be associated with TSR samples after TSR import,
+#'   TSR merging, or TSS clustering using this function.
+#' This adds an extra workflow step, but provides more flexibility for analysis of results.
+#' Each TSS within the sample will be linked to the TSR of the specified sample
+#'   with overlapping genomic coordinates.
+#' TSSs without an overlapping TSR will not be associated to any TSR.
+#'
+#' TSS samples can be associated with TSR samples using a list or sample sheet format.
+#' 'sample_list' should be a named list of character vectors, with the names being the TSR
+#'   sample name, and the character vector as the TSS samples(s) that should be associated with
+#'   that TSR sample.
+#' If 'use_sample_sheet' is set to true, a previously added sample sheet will be used to group
+#'   TSR samples with TSS samples.
+#' The sample sheet can be added to the tsr explorer object using the 'add_sample_sheet' function.
+#' It should have 3 columns: 'replicate_id', 'tss_name', and 'tsr_name'.
+#'
 #' @rdname associate_with_tsr-function
 #' @export
 
-associate_with_tsr <- function(experiment, use_sample_sheet = TRUE, sample_list = NA) {
+associate_with_tsr <- function(
+	experiment,
+	sample_list = NA,
+	use_sample_sheet = FALSE
+) {
+
+	## Check inputs.
+	if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsr explorer object")
+
+	if (!is(use_sample_sheet, "logical")) stop("'use_sample_sheet' must be logical")
+
+	if (
+		(!use_sample_sheet & is.na(sample_list)) |
+		(use_sample_sheet & !is.na(sample_list))
+	) {
+		stop("a sample list or sample sheet must be specified")
+	}
+
+	if (
+		!use_sample_sheet && !is(sample_list, "list") ||
+		is.null(names(sample_list))
+	)
+	{
+		stop("'sample_list' must be a named list")
+	}
 
 	## Grab sample sheet if being used.
 	if (use_sample_sheet) {
