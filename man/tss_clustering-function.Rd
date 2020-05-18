@@ -16,6 +16,24 @@ tss_clustering(experiment, samples = "all", threshold = 1,
 
 \item{max_distance}{The maximum distance to cluster TSSs}
 }
+\value{
+tsr explorer object with TSRs
+}
 \description{
-Basic function to cluster TSSs
+Basic distance and threshold based clustering of TSSs.
+}
+\details{
+This function clusters TSSs into Transcription Start Regions (TSRs).
+
+TSSs are clustered if their score is greater than or equal to
+  'threshold' and are less than or equal to 'max_distance'
+  from eachother.
+}
+\examples{
+TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
+TSSs <- readRDS(TSSs)
+tsre_exp <- tsr_explorer(TSSs)
+tsre_exp <- format_counts(tsre_exp, data_type = "tss")
+tsre-exp <- tss_clustering(tsre_exp)
+
 }

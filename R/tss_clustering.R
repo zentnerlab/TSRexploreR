@@ -1,19 +1,58 @@
 
 #' TSS Clustering
 #'
-#' Basic function to cluster TSSs
+#' @description
+#' Basic distance and threshold based clustering of TSSs.
 #'
 #' @param experiment tsrexplorer object
 #' @param threshold Minimum number of reads for a TSS to be considered
 #' @param samples The samples to call TSRs for
 #' @param max_distance The maximum distance to cluster TSSs
 #'
+#' @details
+#' This function clusters TSSs into Transcription Start Regions (TSRs).
+#'
+#' TSSs are clustered if their score is greater than or equal to
+#'   'threshold' and are less than or equal to 'max_distance'
+#'   from eachother.
+#'
+#' @return tsr explorer object with TSRs
+#'
+#' @examples
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
+#' TSSs <- readRDS(TSSs)
+#' tsre_exp <- tsr_explorer(TSSs)
+#' tsre_exp <- format_counts(tsre_exp, data_type = "tss")
+#' tsre-exp <- tss_clustering(tsre_exp)
+#'
 #' @rdname tss_clustering-function
 #' @export
 
 tss_clustering <- function(
-	experiment, samples = "all", threshold = 1, max_distance = 25
+	experiment,
+	samples = "all",
+	threshold = 1,
+	max_distance = 25
 ) {
+
+	## Check inputs.
+	if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsr explorer object")
+
+	if (!is(samples, "character")) stop("samples must be a character")
+
+        if (
+                !is.na(threshold) && !is(threshold, "numeric") ||
+                threshold %% 1 != 0 || threshold < 1
+        ) {
+                stop("threshold must be a positive integer greater than or equal to 1")
+        }
+
+	if (
+		!is(max_distance, "numeric") || max_distance %% 1 != 0 ||
+		max_distance < 5
+	) {
+		stop("max_distance must be a positive integer greater than or equal to 5")
+	}
 
 	## Retrive samples.
 	select_samples <- extract_counts(experiment, "tss", samples)
