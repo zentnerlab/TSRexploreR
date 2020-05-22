@@ -9,10 +9,10 @@
 #' @importFrom magrittr %>%
 #' @importFrom forcats fct_inorder
 #'
-#' @param experiment tsrexplorer object after TMM normalization.
-#' @param data_type Whether TSSs, TSRs, or feature counts should be analyzed.
-#' @param samples Vector of sample names to analyze.
-#' @param groups Vector of groups in correct factor notation.
+#' @param experiment tsrexplorer object with TMM-normalized counts
+#' @param data_type Whether TSSs, TSRs, or feature counts should be analyzed
+#' @param samples Vector of sample names to analyze
+#' @param groups Vector of groups in correct factor notation
 #'
 #' @return DGEList object with fitted model
 #'
@@ -34,10 +34,10 @@ fit_edger_model <- function(
 	## Filter out features with low counts.
 	sample_data <- sample_data[filterByExpr(assay(sample_data, "counts")), ]
 
-	## Setting sample design.
+	## Set sample design.
 	sample_design <- model.matrix(~ 0 + design[["groups"]])
 
-	## Create DE fitted object.
+	## Create DE model.
 	fitted_model <- assay(sample_data, "counts") %>%
 		DGEList(group = design[["groups"]]) %>%
 		calcNormFactors %>%
@@ -62,9 +62,9 @@ fit_edger_model <- function(
 	return(experiment)
 }
 
-#' Find Differential Expression
+#' AnalyzeDifferential Expression
 #'
-#' Find differential TSSs, TSRs, or features from edgeR model.
+#' Find differential TSSs, TSRs, or features from edgeR model
 #'
 #' @import tibble
 #' @importFrom edgeR glmQLFTest
@@ -74,8 +74,8 @@ fit_edger_model <- function(
 #' @importFrom purrr map_dbl
 #'
 #' @param experiment tsrexplorer object with edgeR differential expression model from fit_edger_model
-#' @param data_type Whether the input was made from TSSs, TSRs, or features
-#' @param compare_groups Vector of length two of the two groups to find differential TSRs
+#' @param data_type Whether the input was generated from TSSs, TSRs, or features
+#' @param compare_groups Vector of length two of the two groups from which to find differential TSRs
 #' @param fdr_cutoff FDR cutoff
 #' @param log2fc_cutoff Log2 fold change cutoff
 #'
@@ -123,7 +123,7 @@ differential_expression <- function(
 			return(return_value)
 		})
 
-	## Differential expression
+	## Differential expression analysis.
 	diff_expression <- glmQLFTest(edger_model, contrast = comparison_contrast)
 	diff_expression <- as.data.table(diff_expression$table, keep.rownames = "FHASH")
 
@@ -149,7 +149,7 @@ differential_expression <- function(
 	diff_expression <- as.data.table(diff_expression)
 	
 
-	## Add differential expression data back to object.
+	## Add differential expression data back to tsrexplorer object.
 	if (data_type == "tss") {
 		experiment@diff_features$TSSs$results[[comparison_name]] <- diff_expression
 	} else if (data_type == "tsr") {
@@ -170,7 +170,7 @@ differential_expression <- function(
 #' @param experiment tsrexplorer object
 #' @param data_type Either 'tss', 'tsr', 'tss_features', or 'tsr_features'
 #' @param de_comparisons The name of the DE comparison
-#' @param de_type A single value or combination of 'up, 'unchanged', and/or 'down'
+#' @param de_type A single value or combination of 'up, 'unchanged', and/or 'down' (qq a list?)
 #'
 #' @rdname de_table-function
 #' @export

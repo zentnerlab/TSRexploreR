@@ -2,7 +2,7 @@
 #' Dimensionality Reduction.
 #'
 #' @description
-#' Dimension reduction plot using PCA or UMAP.
+#' Dimensionality reduction plot using PCA or UMAP.
 #'
 #' @importFrom uwot umap
 #'
@@ -14,8 +14,8 @@
 #' @param ... Additional arguments passed to geom_point
 #'
 #' @details
-#' This function will generate a dimension reduction plot.
-#' These help to visualize the relative similairty or difference of samples
+#' This function will generate a dimensionality reduction plot.
+#' These help to visualize the relative similarity of samples
 #'   based on the most variables features.
 #'
 #' 'method' lets you choose between the more traditional PCA plot or newer
@@ -24,8 +24,8 @@
 #' If a UMAP plot is chosen, there are two parameters available
 #'   for tweaking the results.
 #' 'n_neighbors' will find the specified number of nearest neighbor points,
-#'   and 'min_dist' specifies the minimum distance two points are allowed to be
-#'   in space when plotting.
+#'   and 'min_dist' specifies the minimum distance allowed between two points 
+#'   in the UMAP plot. 
 #'
 #' @examples
 #' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")

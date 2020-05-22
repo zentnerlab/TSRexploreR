@@ -3,9 +3,9 @@
 #' Merge replicates or selected samples.
 #'
 #' @param experiment tsrexplorer object
-#' @param data_type Either 'tss' or 'tsr'
-#' @param merge_replicates If 'TRUE' replicate groups will be merged
-#' @param threshold Filter out TSSs or TSRs below this threshold before merging
+#' @param data_type Whether to merge TSSs or TSRs
+#' @param merge_replicates If 'TRUE', replicate groups will be merged
+#' @param threshold Filter out TSSs or TSRs below this raw count threshold before merging
 #' @param sample_list If merge_replicates is set to 'FALSE',
 #' specify what samples to merge in list format.
 #'
@@ -17,7 +17,7 @@ merge_samples <- function(
 	merge_replicates = FALSE, sample_list = NA
 ) {
 	
-	## Prepare what samples will be merged.
+	## Prepare list of samples to be merged.
 	if (merge_replicates) {
 		data_column <- ifelse(data_type == "tss", "tss_name", "tsr_name")
 
@@ -101,8 +101,8 @@ merge_samples <- function(
 #' @importFrom purrr imap
 #'
 #' @param experiment tsrexplorer object
-#' @param use_sample_sheet Whether to associate TSSs with their matching TSR in the sample sheet
-#' @param sample_list If 'use_sample_sheet' is FALSE, provide list with TSR as name and vector of TSSs to associate with it.
+#' @param use_sample_sheet Whether to use a sample sheet as a key for association of TSS and TSR samples
+#' @param sample_list If 'use_sample_sheet' is FALSE, provide a list with TSR and TSS sample names
 #'
 #' @examples
 #' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
@@ -116,22 +116,25 @@ merge_samples <- function(
 #' ))
 #'
 #' @details
-#' tsr explorer provides many options for the import and merging of TSSs and TSRs.
+#' TSRexploreR provides many options for the import and merging of TSSs and TSRs.
 #' Because of this, TSS samples must be associated with TSR samples after TSR import,
 #'   TSR merging, or TSS clustering using this function.
-#' This adds an extra workflow step, but provides more flexibility for analysis of results.
-#' Each TSS within the sample will be linked to the TSR of the specified sample
-#'   with overlapping genomic coordinates.
-#' TSSs without an overlapping TSR will not be associated to any TSR.
+#' This adds an extra workflow step, but provides more analytical flexibility (qq meaning what?).
+#' Each TSS with genomic coordinates overlapping those of a TSR in the specified TSR sample
+#'   will be linked to that TSR.
+#' TSSs not overlapping a TSR in the specified sample will not be associated with any TSR.
 #'
-#' TSS samples can be associated with TSR samples using a list or sample sheet format.
+#' TSS samples can be associated with TSR samples using a list or sample sheet.
 #' 'sample_list' should be a named list of character vectors, with the names being the TSR
-#'   sample name, and the character vector as the TSS samples(s) that should be associated with
-#'   that TSR sample.
-#' If 'use_sample_sheet' is set to true, a previously added sample sheet will be used to group
+#'   sample names and the character vectors as the TSS samples(s) that should be associated with
+#'   each TSR sample.
+#' If 'use_sample_sheet' is set to true, a previously added sample sheet will be used to associate
 #'   TSR samples with TSS samples.
-#' The sample sheet can be added to the tsr explorer object using the 'add_sample_sheet' function.
+#' The sample sheet can be added to the tsrexplorer object using the 'add_sample_sheet' function.
 #' It should have 3 columns: 'replicate_id', 'tss_name', and 'tsr_name'.
+#'
+#'#' @seealso
+#' \code{\link{add_sample_sheet}} to add a sample sheet to the tsrexplorer object.
 #'
 #' @rdname associate_with_tsr-function
 #' @export
@@ -143,9 +146,9 @@ associate_with_tsr <- function(
 ) {
 
 	## Check inputs.
-	if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsr explorer object")
+	if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsrexplorer object")
 
-	if (!is(use_sample_sheet, "logical")) stop("'use_sample_sheet' must be logical")
+	if (!is(use_sample_sheet, "logical")) stop("use_sample_sheet must be logical")
 
 	if (
 		(!use_sample_sheet & is.na(sample_list)) |
@@ -159,7 +162,7 @@ associate_with_tsr <- function(
 		is.null(names(sample_list))
 	)
 	{
-		stop("'sample_list' must be a named list")
+		stop("sample_list must be a named list")
 	}
 
 	## Grab sample sheet if being used.
@@ -187,7 +190,7 @@ associate_with_tsr <- function(
 		tsr_gr <- tsr_gr[, .(seqnames, start, end, strand, TSR_FID, TSR_FHASH)]
 		tsr_gr <- makeGRangesFromDataFrame(tsr_gr, keep.extra.columns = TRUE)
 
-		# Annotate TSS to overlapping TSR.
+		# Associate TSSs with the TSR they overlap.
 		overlapping <- as.data.table(findOverlapPairs(tss_gr, tsr_gr))
 		setnames(
 			overlapping,
@@ -200,7 +203,7 @@ associate_with_tsr <- function(
 		)
 		overlapping <- overlapping[, .(seqnames, start, end, strand, TSR_FID, TSR_FHASH, sample)]
 
-		# Prepare tsr_set to merge into overalpping tss.
+		# Prepare tsr_set to merge into overlapping TSSs (this is confusing qq).
 		tsr_clean <- copy(tsr_set)
 		tsr_clean[, tsr_coords := str_c(seqnames, start, end, strand, sep = ":")]
 		setnames(
@@ -208,13 +211,13 @@ associate_with_tsr <- function(
 		)
 		tsr_clean[, c("seqnames", "start", "end", "strand") := NULL]
 
-		# Merge overlapping back into TSS.
+		# Merge overlapping back into TSS (qq ditto - is this adding TSR IDs to TSSs?).
 		key_ids <- c("sample", "seqnames", "start", "end", "strand")
 		setkeyv(overlapping, key_ids)
 		setkeyv(tss_set, key_ids)
 		tss_set <- merge(tss_set, overlapping, all.x = TRUE)
 
-		# Merge TSRs into TSSs.
+		# Merge TSRs into TSSs (qq or is that what this is doing?).
 		setkeyv(tsr_clean, c("TSR_FID", "TSR_FHASH"))
 		setkeyv(tss_set, c("TSR_FID", "TSR_FHASH"))
 		merged_set <- merge(tss_set, tsr_clean, all.x = TRUE)
@@ -230,7 +233,7 @@ associate_with_tsr <- function(
 			})
 	})
 
-	## Add TSSs back to tsrexplorer object.
+	## Add TSSs back to the tsrexplorer object.
 	associated_TSSs <- purrr::reduce(associated_TSSs, c)
 	
 	experiment@counts$TSSs$raw <- associated_TSSs

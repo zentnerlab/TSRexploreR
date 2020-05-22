@@ -2,13 +2,13 @@
 #' Format Counts
 #'
 #' @description
-#' Format counts for TSSs or TSRs for further analysis. 
+#' Format TSS or TSR counts for further analysis. 
 #'
 #' @importFrom stringr str_c str_to_lower
 #'
 #' @param experiment tsrexplorer object
-#' @param data_type 'tss' or 'tsr'
-#' @param samples character vector of sample names
+#' @param data_type Whether to format TSS or TSR counts 
+#' @param samples Character vector of sample names
 #'
 #' @details
 #' When TSSs or TSRs are first loaded into the tsrexplorer object
@@ -40,16 +40,16 @@ format_counts <- function(experiment, data_type = c("tss", "tsr"), samples = "al
 	
 	if (!is(samples, "character")) stop("samples must be a character vector")
 
-	## Grab appropriate samples and generate raw count matrices.
+	## Get selected samples and generate raw count matrices.
 	if (data_type == "tss") {
 
-		## Grab selected_samples.
+		## Get selected samples.
 		select_samples <- tss_experiment(experiment)
 		if (!all(samples == "all")) select_samples <- select_samples[samples]
 
 	} else if (data_type == "tsr") {
 
-		## Grab selected samples.
+		## Get selected samples.
 		select_samples <- tsr_experiment(experiment)
 		if (!all(samples == "all")) select_samples <- select_samples[samples]
 
@@ -68,7 +68,7 @@ format_counts <- function(experiment, data_type = c("tss", "tsr"), samples = "al
 		})
 	}
 
-	## Place counts in proper object slot.
+	## Place counts in proper tsrexplorer object slot.
 	if (data_type == "tss") {
 		experiment@counts$TSSs$raw <- c(experiment@counts$TSSs$raw, raw_counts)
 	} else if (data_type == "tsr") {
@@ -80,7 +80,7 @@ format_counts <- function(experiment, data_type = c("tss", "tsr"), samples = "al
 
 #' Feature Counts
 #'
-#' Add feature counts
+#' Add feature counts.
 #'
 #' @param experiment tsrexplorer object
 #' @param data_type Either 'tss' or 'tsr'
@@ -149,18 +149,17 @@ count_features <- function(experiment, data_type = c("tss", "tsr")) {
 #'
 #' @param experiment tsrexplorer object
 #' @param data_type Either 'tss', 'tsr', 'tss_features', or 'tsr_features'
-#' @param samples The samples to turn into a count matrix
+#' @param samples Character vector of samples to turn into a count matrix
 #'
 #' @details
 #' In order to compare samples, a matrix must first be generated with
 #'   genomic positions as rows and samples as columns.
 #'
-#' For TSSs the genomic position is simply the one base coordinate that
-#'   the TSS is on.
+#' For each TSS, the genomic position is simply its single base position
 #' However, for TSRs, overlapping TSRs between samples are first merged
-#'   to generate consensus TSRs for the samples.
+#'   to generate consensus TSRs for all considered samples.
 #'
-#' @return tsr explorer object with added count matrices
+#' @return tsrexplorer object with added count matrices
 #'
 #' @examples
 #' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
@@ -203,10 +202,10 @@ count_matrix <- function(
 		})
 	}
 
-	## Turn into matrix.
+	## Generate count matrix.
 	if (data_type == "tss") {
 
-		## Merge overlapping TSSs
+		## Merge overlapping TSSs.
 		select_samples <- rbindlist(select_samples, idcol = "sample")
 		select_samples <- dcast(
 			select_samples,
@@ -216,17 +215,17 @@ count_matrix <- function(
 
 	} else if (data_type == "tsr") {
 
-                ## Merge overlapping TSRs to get consensus.
+                ## Merge overlapping TSRs.
                 tsr_consensus <- select_samples %>%
                         map(makeGRangesFromDataFrame) %>%
-			purrr::reduce(c) %>%
+	                  		purrr::reduce(c) %>%
                         GenomicRanges::reduce(ignore.strand = FALSE)
 
                 ## Create raw count matrix.
                 raw_matrix <- select_samples %>%
                         map(
                                 ~ makeGRangesFromDataFrame(., keep.extra.columns = TRUE) %>%
-				findOverlapPairs(query = tsr_consensus, subject = .) %>%
+				                          findOverlapPairs(query = tsr_consensus, subject = .) %>%
                                 as.data.table
                         ) %>%
                         rbindlist(idcol = "sample")
@@ -253,11 +252,12 @@ count_matrix <- function(
 
 
 	} else if (data_type %in% c("tss_features", "tsr_features")) {
-		## Get annotation type.
+		
+	  ## Get annotation type.
 		anno_type <- experiment@settings$annotation[["feature_type"]]
 		anno_type <- ifelse(anno_type == "gene", "geneId", "transcriptId")
 
-		## Change feature counts to matrix
+		## Change feature counts to matrix.
 		select_samples <- rbindlist(select_samples, idcol = "sample")
 		select_samples <- dcast(
 			select_samples,
@@ -269,6 +269,7 @@ count_matrix <- function(
 
 	## Create SummarizedExperiments.
 	if (data_type %in% c("tss", "tsr")) {
+	  
 		## Prepare data for RangedSummarizedExperiment
 		row_ranges <- makeGRangesFromDataFrame(select_samples)
 
@@ -287,7 +288,8 @@ count_matrix <- function(
 			colData = col_data
 		)
 	} else if (data_type %in% c("tss_features", "tsr_features")) {
-		## Prepare data for SummarizedExperiment.
+		
+	  ## Prepare data for SummarizedExperiment.
 		row_data <- select_samples[, 1]
 		
 		select_samples[, eval(anno_type) := NULL]
@@ -319,8 +321,3 @@ count_matrix <- function(
 
 	return(experiment)	
 }
-
-
-
-
-

@@ -2,20 +2,20 @@
 #' Genes/Transcripts Detected
 #'
 #' @description
-#' Get the number of genes or transcripts detected
+#' Get the number of genes or transcripts with an associated unique TSS or TSR
 #'
 #' @importFrom purrr walk
 #'
 #' @param experiment tsrexplorer object with annotated TSSs or TSRs
-#' @param samples Either 'all' or vector of sample names
+#' @param samples Either 'all' or a vector of sample names
 #' @param data_type Whether TSSs or TSRs should be analyzed
-#' @param threshold The number of reads required in a TSS or TSR to avoid filtering
+#' @param threshold The number of raw reads required for a TSS or TSR to be considered
 #' @param dominant Whether to consider only the dominant TSS or TSR
 #' @param condition_data Apply conditions to data (supports filtering and quantiles/grouping)
 #'
 #' @details
-#' This function will return either the number of genes or transcripts detected
-#'   depending on what feature type was used during annotation.
+#' This function will return either the number of genes or transcripts with
+#'  an associated unique TSS or TSR.
 #' Information on whether the feature has a promoter-proximal TSS or TSR is included
 #'   in the output for plotting purposes.
 #'

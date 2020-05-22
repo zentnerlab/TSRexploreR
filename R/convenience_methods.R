@@ -1,11 +1,11 @@
 
 #' Add TSSs
 #'
-#' Convenience function to add TSSs to tsrexplorer object
+#' Convenience function to add TSSs to a tsrexplorer object.
 #'
 #' @include tsrexplorer.R
 #'
-#' @param tsrexplorer_object tsr_explorer object
+#' @param tsrexplorer_object tsrexplorer object
 #'
 #' @rdname tss_experiment-generic
 #'
@@ -30,11 +30,11 @@ setMethod("tss_experiment<-", signature(tsrexplorer_object = "tsr_explorer"),
 
 #' Add TSRs
 #'
-#' Convenience function to add TSRs to tsrexplorer object
+#' Convenience function to add TSRs to a tsrexplorer object.
 #'
 #' @include tsrexplorer.R
 #'
-#' @param tsrexplorer_object tsr_explorer object
+#' @param tsrexplorer_object tsrexplorer object
 #'
 #' @rdname tsr_experiment-generic
 #'
@@ -69,8 +69,8 @@ setMethod("tsr_experiment<-", signature(tsrexplorer_object = "tsr_explorer"),
 #' @importFrom dplyr bind_cols rename
 #'
 #' @param experiment tsrexplorer object
-#' @param data_type whether to extract from the 'tss' or 'tsr' sets
-#' @param samples names of samples to extract
+#' @param data_type Whether to extract TSS or TSR counts
+#' @param samples Names of samples from which to extract counts
 #' @param use_cpm Whether CPM values should be returned
 #'
 #' @rdname extract_counts-function
@@ -78,7 +78,7 @@ setMethod("tsr_experiment<-", signature(tsrexplorer_object = "tsr_explorer"),
 
 extract_counts <- function(experiment, data_type, samples, use_cpm = FALSE) {
 
-	## Extract appropraite samples from TSSs or TSRs.
+	## Extract appropriate TSS or TSR samples.
 	if (data_type == "tss") {
 		if (all(samples == "all")) samples <- names(experiment@counts$TSSs$raw)
 		selected_samples <- experiment@counts$TSSs$raw[samples]
@@ -93,7 +93,7 @@ extract_counts <- function(experiment, data_type, samples, use_cpm = FALSE) {
 		selected_samples <- experiment@counts$TSR_features$raw[samples]
 	}
 
-	## Want to return copies so you don't ovewrite the tsrexplorer object copies on accident.
+	## Return counts as copies so you don't unintentionally overwrite the tsrexplorer object values.
 	return_samples <- map(selected_samples, copy)
 
 	## Return CPM score if requested.
@@ -112,13 +112,13 @@ extract_counts <- function(experiment, data_type, samples, use_cpm = FALSE) {
 
 #' Extract Count Matrices
 #'
-#' Extract the normalized count matrices.
+#' Extract normalized count matrices.
 #'
 #' @import tibble
 #'
 #' @param experiment tsrexplorer object
 #' @param data_type Whether to extract 'tss', 'tsr', 'tss_features', or 'tsr_features'
-#' @param samples Sampels to extract
+#' @param samples Samples to extract
 #'
 #' @rdname extract_matrix-function
 #' @export
@@ -143,7 +143,7 @@ extract_matrix <- function(experiment, data_type, samples) {
 
 #' Extract Differential Gene Sets
 #'
-#' Extract the differential expression results.
+#' Extract differential expression analysis results.
 #'
 #' @param experiment tsrexplorer object
 #' @param data_type Either 'tss', 'tsr', 'tss_features', or 'tsr_features'

@@ -1,7 +1,7 @@
 
 #' Sample Sheet
 #'
-#' Add sample sheet to tsrexplorer object
+#' Add a sample sheet to a tsrexplorer object.
 #'
 #' @param experiment tsrexplorer object
 #' @param sample_sheet Sample sheet as tab delimited file or data.frame
@@ -12,7 +12,7 @@
 
 add_sample_sheet <- function(experiment, sample_sheet) {
 
-	## Import sample sheet if file.
+	## Import sample sheet if it is a file.
 	if (is(sample_sheet, "character")) {
 		sample_sheet <- fread(sample_sheet, sep = "\t", header = TRUE)
 	}
@@ -28,7 +28,7 @@ add_sample_sheet <- function(experiment, sample_sheet) {
 
 #' Feature Groups
 #'
-#' Add gene/transcript group info to tsrexplorer object
+#' Add gene/transcript group info to a tsrexplorer object.
 #'
 #' @param experiment tsrexplorer object
 #' @param group_sheet Group sheet as tab delimited file or data.frame
@@ -40,7 +40,7 @@ add_sample_sheet <- function(experiment, sample_sheet) {
 
 add_feature_group <- function(experiment, group_sheet, feature_type) {
 	
-	## Import group sheet if file.
+	## Import group sheet if it is a file.
 	if (is(group_sheet, "character")) {
 		group_sheet <- read.delim(
 			group_sheet, sep = "\t", header = TRUE,

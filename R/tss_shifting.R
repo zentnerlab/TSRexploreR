@@ -4,10 +4,10 @@
 #' Calculate TSS shifting statistics
 #'
 #' @param experiment tsrexplorer object
-#' @param compare_samples Vector of sample names of the two TSRs to compare
-#' @param min_distance TSRs below this distance will be merged into regions
-#' @param min_threshold Minimum number of reads required at each region for both TSRs
-#' @param n_resamples Number of resamples for permutation test of shifting scores
+#' @param compare_samples Vector of names of the two TSR samples to compare
+#' @param min_distance TSRs less than this distance apart will be merged
+#' @param min_threshold Minimum number of raw counts required in each TSR for both TSR samples
+#' @param n_resamples Number of resamplings for permutation test
 #'
 #' @rdname tss_shift-function
 #' @export
@@ -17,7 +17,7 @@ tss_shift <- function(
 	n_resamples = 1000L
 ){
 	
-	## Grab samples to be compared.
+	## Get samples to be compared.
 	select_samples <- extract_counts(experiment, "tss", compare_samples)
 
 	## Get consensus TSRs.
@@ -40,7 +40,7 @@ tss_shift <- function(
 	]
 	consensus_tsrs <- makeGRangesFromDataFrame(consensus_tsrs, keep.extra.columns = TRUE)
 
-	## Assign consensus TSR to TSSs.
+	## Associate consensus TSRs with TSSs.
 	tss_data <- rbindlist(select_samples, idcol = "sample")[,
 		.(sample, seqnames, start, end, strand, score)
 	]
@@ -62,7 +62,7 @@ tss_shift <- function(
 		new = c("sample", "seqnames", "start", "end", "strand", "score", "FHASH")
 	)
 
-	## Filter out TSRs that don't have TSSs in both samples.
+	## Filter out TSRs without TSSs in both samples.
 	overlap[, count := uniqueN(sample), by = FHASH]
 	overlap <- overlap[count == 2, .(sample, seqnames, start, end, strand, score, FHASH)]
 
@@ -81,7 +81,7 @@ tss_shift <- function(
 	setnames(shifts, "fhash", "FHASH")
 	shifts[, FDR := p.adjust(pval, "fdr")]
 
-	## Merging data back into
+	## Merge data back into the tsrexplorer object.
 	shift_results <- as.data.table(consensus_tsrs)
 	shift_results <- merge(shift_results, shifts, by = "FHASH")
 
@@ -94,19 +94,19 @@ tss_shift <- function(
 
 #' Shifting Score
 #'
-#' Calculating shifting score and p-value.
+#' Calculate shifting scores and associated permutation test p-values.
 #'
 #' @importFrom Rcpp sourceCpp
 #'
 #' @param fhash fhash of set
-#' @param sample_indicator The column with the two sample names
+#' @param sample_indicator The column with the names of the samples to be compared (where is the column from qq)
 #' @param distances bin positions
 #' @param scores bin scores
-#' @param calc_pvalue Should p-value be returned for comparison
-#' @param nresamp number of resamples
-#' @param baseline_level control smaple
-#' @param nthresh both samples must have at least this number of reads
-#' @param check_sort Check that the input is sorted properly
+#' @param calc_pvalue Whether p-values should be returned for comparisons
+#' @param nresamp Number of resamplings for the permutation test
+#' @param baseline_level Control smaple
+#' @param nthresh Both samples must have at least this number of reads in each TSR
+#' @param check_sort Check that the input is sorted properly (by fhash? qq)
 #'
 #' @rdname ShiftScores-function
 #' @export
@@ -119,8 +119,8 @@ ShiftScores <- function(
   dat = data.frame(fhash, sample_indicator, distances, scores)
   if(check_sort) dat = dplyr::arrange(dat, fhash, sample_indicator, distances)
   
-  # Assumes fhash is consequtive, no regrouping necessary
-  # Assumes there are only two samples
+  # Assumes fhash is consecutive, no regrouping necessary.
+  # Assumes there are only two samples.
   dat = dplyr::mutate(
     dat, sample_indicator = as.integer(sample_indicator==baseline_level)
   )
