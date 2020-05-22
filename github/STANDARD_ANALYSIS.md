@@ -164,7 +164,7 @@ with the UTR length being the furthest TSS detected from the start codon.
 This would then result in average plots that are expected to be centered and slightly downstream from the annotated TSS center.
 
 ```
-p <- plot_average(exp, data_type = "tss", threshold = 3, ncol = 3) +
+p <- plot_density(exp, data_type = "tss", threshold = 3, ncol = 3) +
 	ggplot2::theme(text = element_text(size = 4))
 
 ggsave("tss_average_plot.png", plot = p, device = "png", type = "cairo", height = 1, width = 2)
@@ -396,7 +396,7 @@ Average plots are a convenient way to summarize the average distribution of TSRs
 or annotated TSSs.
 
 ```
-p <- plot_average(exp, data_type = "tsr", ncol = 3) +
+p <- plot_density(exp, data_type = "tsr", ncol = 3) +
         ggplot2::theme(text = element_text(size = 4))
 
 ggsave("tsr_average_plot.png", plot = p, device = "png", type = "cairo", height = 1, width = 2)

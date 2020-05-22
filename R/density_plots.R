@@ -67,10 +67,10 @@
 #' \code{\link{annotate_features}} to annotate the TSSs or TSRs.
 #'   \code{\link{mark_dominant}} to identify dominant TSSs or TSRs.
 #'
-#' @rdname plot_average-function
+#' @rdname plot_density-function
 #' @export
 
-plot_average <- function(
+plot_density <- function(
         experiment,
         data_type = c("tss", "tsr"),
         samples = "all",
