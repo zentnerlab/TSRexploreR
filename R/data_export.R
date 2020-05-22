@@ -21,6 +21,19 @@ tss_export <- function(
 	diff_tss = FALSE
 ) {
 
+	## Input checks.
+	if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsr explorer object")
+
+	if (!is(samples, "character")) stop("samples must be a character")
+
+	if (!is(file_type, "character") || length(file_type) > 1) stop("file_type must be 'bedgraph' or 'table'")
+	file_type <- str_to_lower(file_type)
+	if (!file_type %in% c("bedgraph", "table")) stop("file_type must be 'bedgraph' or 'table'")
+
+	if (!is.na(out_dir) && !is(out_dir, "character")) stop("out_dir must be NA or a character")
+
+	if (!is(diff_tss, "logical")) stop("diff_tss must be TRUE or FALSE")
+
 	## Retrieve samples.
 	if (!diff_tss) {
 		if (all(samples == "all")) samples <- names(experiment@counts$TSSs$raw)
@@ -84,6 +97,19 @@ tsr_export <- function(
 	out_dir = NA,
 	diff_tsr = FALSE
 ) {
+
+	## Check inputs.
+        if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsr explorer object")
+
+        if (!is(samples, "character")) stop("samples must be a character")
+
+        if (!is(file_type, "character") || length(file_type) > 1) stop("file_type must be 'bed' or 'table'")
+        file_type <- str_to_lower(file_type)
+        if (!file_type %in% c("bed", "table")) stop("file_type must be 'bed' or 'table'")
+
+        if (!is.na(out_dir) && !is(out_dir, "character")) stop("out_dir must be NA or a character")
+
+	if (!is(diff_tsr, "logical")) stop("diff_tsr must be TRUE or FALSE")
 
 	## Retrieve samples.
 	if (!diff_tsr) {
