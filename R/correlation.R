@@ -118,7 +118,7 @@ find_correlation <- function(
 #' tsre_exp <- tsr_explorer(TSSs)
 #' tsre_exp <- format_counts(tsre_exp, data_type = "tss")
 #' tsre_exp <- count_matrix(tsre_exp, data_type = "tss")
-#' tsre_exp <- tmm_normalize(exp, data_type = "tss")
+#' tsre_exp <- tmm_normalize(tsre_exp, data_type = "tss")
 #' plot_correlation(tsre_exp, data_type = "tss")
 #'
 #' @seealso \code{\link{count_matrix}} to generate the count matrices.
@@ -248,7 +248,6 @@ plot_correlation <- function(
 		)
 	} else if (correlation_plot == "hierarchical") {
 		corr_matrix <- pre_transformed %>%
-			column_to_rownames("position") %>%
 			cor(method = correlation_metric)
 
 		p <- Heatmap(

@@ -66,7 +66,7 @@ TSSs <- readRDS(TSSs)
 tsre_exp <- tsr_explorer(TSSs)
 tsre_exp <- format_counts(tsre_exp, data_type = "tss")
 tsre_exp <- count_matrix(tsre_exp, data_type = "tss")
-tsre_exp <- tmm_normalize(exp, data_type = "tss")
+tsre_exp <- tmm_normalize(tsre_exp, data_type = "tss")
 plot_correlation(tsre_exp, data_type = "tss")
 
 }
