@@ -2,10 +2,10 @@
 #'
 #' @slot experiment Named lists containing GRanges of TSSs and/or TSRs
 #' @slot counts Named lists of TMM and CPM normalized TSSs and/or TSRs
-#' @slot correlation Named lists of correlation values between TSS and/or TSR sets
+#' @slot correlation Named lists of correlation values for TSS and/or TSR sets
 #' @slot diff_features Differential features
 #' @slot settings Storage location for arguments used in various functions
-#' @slot meta_data Storage for meta_data
+#' @slot meta_data Storage for meta_data (what metadata? qq)
 #'
 #' @rdname tsr_explorer-class
 #'
@@ -34,9 +34,9 @@ setClass(
 #' TSRexplorer constructor function.
 #'
 #' @description
-#' This function generates a new tsr_explorer object for
+#' This function generates a new tsrexplorer object for
 #' detailed analysis of transcription start sites (TSSs)
-#' and TSS clusters, referred to as transcription
+#' and TSS clusters, referred to here as transcription
 #' start regions (TSRs).
 #'
 #' @import methods

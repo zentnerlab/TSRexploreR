@@ -1,8 +1,8 @@
 
-#' Average Plots
+#' Density Plots
 #'
 #' @description
-#' Generate average plots of TSSs or TSRs
+#' Generate density plots of TSSs or TSRs
 #'
 #' @import tibble
 #' @import data.table
@@ -10,28 +10,29 @@
 #' @importFrom magrittr %>% extract
 #' @importFrom purrr pmap
 #'
-#' @param experiment tsr_explorer object with annotated TSSs
-#' @param samples Either 'all' to plot all samples, or a vector of sample names
-#' @param data_type Make average plot for TSS or TSR data
-#' @param consider_score Should the TSS or TSR score be considered, or just the unique location.
+#' @param experiment tsrexplorer object with annotated TSSs
+#' @param samples Either 'all' to plot all samples or a vector of sample names
+#' @param data_type Whether to plot TSS or TSR density
+#' @param consider_score Whether the score of each TSS or TSR score be considered
+#'   in addition to its unique location.
 #' @param upstream Bases upstream of plot center
 #' @param downstream Bases downstream of plot center
-#' @param threshold threshold value for TSSs
-#' @param ncol Number of columns to use when plotting data when quantiles not set
-#' @param use_cpm Whether to use the CPM normalized or raw counts
+#' @param threshold Raw count threshold value for TSSs
+#' @param ncol Number of columns to use for plotting data when quantiles not set
+#' @param use_cpm Whether to use CPM normalized or raw counts if score is considered
 #' @param dominant Consider only dominant TSS or TSR
 #' @param data_conditions Data conditioning filters
 #' @param ... Arguments passed to geom_density
 #'
 #' @details
-#' This plotting function generates an average plot of TSS or TSR signal
+#' This plotting function generates a density plot of TSS or TSR signal
 #'   relative to annotated TSSs.
 #' The plot is returned as a ggplot2 object.
 #'
 #' By default only the TSS or TSR position is considered, effectively giving every
 #'   TSS or TSR a score of 1.
-#' If 'consider_score' is set to TRUE, the score of the TSS or TSR will be considered when
-#'   making the average plot, which gives more weight to stronger TSSs or TSRs.
+#' If 'consider_score' is set to TRUE, the score of each TSS or TSR will be considered when
+#'   making the plot, giving more weight to stronger TSSs or TSRs.
 #'
 #' The region around the annotated TSS used for plotting is controlled by
 #'   'upstream' and 'downstream', which should be positive integers.
@@ -39,17 +40,16 @@
 #' A set of functions to control data structure for plotting are included.
 #' 'use_cpm' will use the CPM normalized scores, which only matters if
 #'   'consider_score' is TRUE.
-#' 'threshold' will define the minimum number of reads a TSS or TSR
+#' 'threshold' defines the minimum number of raw counts a TSS or TSR
 #'  must have to be considered.
 #' 'dominant' specifies whether only the dominant TSS or TSR is considered 
 #'   from the 'mark_dominant' function.
-#' For TSSs this can be either dominant per TSR or gene, and for TSRs
-#'   it is just the dominant TSR per gene.
+#' For TSSs this can be either dominant TSS per TSR or gene, and for TSRs
+#'   it is the dominant TSR per gene.
 #' 'data_conditions' allows for the advanced filtering, ordering, and grouping
 #'   of data.
 #'   
-#'
-#' @return ggplot2 object of average plot
+#' @return ggplot2 object of density plot
 #'
 #' @examples
 #' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
@@ -65,6 +65,7 @@
 #'
 #' @seealso
 #' \code{\link{annotate_features}} to annotate the TSSs or TSRs.
+#'   \code{\link{mark_dominant}} to identify dominant TSSs or TSRs.
 #'
 #' @rdname plot_average-function
 #' @export
@@ -112,7 +113,7 @@ plot_average <- function(
                 !is.na(threshold) && !is(threshold, "numeric") ||
                 threshold %% 1 != 0 || threshold < 1
         ) {
-                stop("threshold must be a positive integer greater than or equal to 1")
+                stop("threshold must be a positive integer")
         }
 
 	if (!is(ncol, "numeric") || ncol %% 1 != 0 || ncol < 1) {
@@ -148,7 +149,7 @@ plot_average <- function(
                 sample_data <- do.call(group_data, c(list(signal_data = sample_data), data_conditions))
         }
 
-        ## Update data if score is also considered instead of just unique position.
+        ## Update data if score is to be considered in addition to unique position.
         sample_data <- rbindlist(sample_data, idcol = "sample")
         if (consider_score) sample_data <- sample_data[rep(seq_len(.N), score)]
 
@@ -157,7 +158,7 @@ plot_average <- function(
 		sample_data[, samples := factor(samples, levels = samples)]
 	}
 
-        ## Plot averages.
+        ## Plot densities.
         groupings <- any(names(data_conditions) %in% c("quantile_by", "grouping"))
 
         p <- ggplot(sample_data, aes(distanceToTSS)) +

@@ -24,7 +24,7 @@ setGeneric(
 	signature = "object"
 )
 
-#' Bedgraph/bigwig files (sample sheet saved as file)
+#' Bedgraph/bigwig files (sample sheet saved as file) qq sample sheet specifications?
 #'
 #' @param delim Delimiter for sample_sheet file
 #' @param col_names Logical, whether the sample_sheet file has a header (TRUE) or not (FALSE)
@@ -143,7 +143,7 @@ setMethod("tss_import", signature(object = "CAGEexp"),
 
 	} else if (data_type == "tsr") {
 		
-		## Grab TSR counts from CAGEexp object.
+		## Get TSR counts from CAGEexp object.
 		counts <- tagClusters(object) %>%
 			map(as.data.table)
 
@@ -173,7 +173,7 @@ setMethod("tss_import", signature(object = "CAGEexp"),
 #' @importFrom magrittr %>%
 #'
 #' @param object Object with TSRs to import into tsrexplorer
-#' @param tsrexplorer_obj tsrexplorer object to add the TSRs to
+#' @param tsrexplorer_obj tsrexplorer object to which to add TSRs
 #' @param ... Additional arguments for classes
 #'
 #' @rdname tsr_import-generic

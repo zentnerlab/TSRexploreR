@@ -1,7 +1,7 @@
 
 #' TSR Metrics
 #'
-#' Calculate TSR Metrics
+#' Calculate TSR Metrics.
 #'
 #' @param experiment tsrexplorer object
 #'
@@ -10,7 +10,7 @@
 
 tsr_metrics <- function(experiment) {
 
-	## Grab samples from tsrexplorer object.
+	## Get samples from tsrexplorer object.
 	select_samples <- experiment %>%
 		extract_counts("tss", "all") %>%
 		bind_rows(.id = "sample")
@@ -86,7 +86,7 @@ tsr_metrics <- function(experiment) {
 
 #' Shape Index
 #'
-#' Calculate shape index
+#' Calculate shape index.
 #'
 #' @param tss_table data.table of TSSs
 #'
@@ -104,7 +104,7 @@ shape_index <- function(tss_table) {
                 .(shape_index = 2 + sum(shape_index)), by = .(sample, TSR_FID)
         ]
 
-        ## Classify based on shape index.
+        ## Classify TSRs based on shape index.
         si_results[, shape_class := ifelse(shape_index < -1, "broad", "peaked")]
 	
 	## Return results.
@@ -113,7 +113,7 @@ shape_index <- function(tss_table) {
 
 #' Peak Concentration
 #'
-#' Calculate peak concentration
+#' Calculate peak concentration.
 #'
 #' @param tss_table data.table of TSSs
 #'
@@ -135,7 +135,7 @@ peak_concentration <- function(tss_table) {
 
 #' Peak Balance
 #'
-#' Calculate peak balance
+#' Calculate peak balance.
 #'
 #' @param tss_table data.table of TSSs
 #'
@@ -144,7 +144,7 @@ peak_concentration <- function(tss_table) {
 
 peak_balance <- function(tss_table) {
 
-	## Get TSS Position relative to TSR midpoints.
+	## Get TSS position relative to TSR midpoints.
 	tss_position <- tss_table[
 		!is.na(TSR_FID) & score > 1,
 		.(score, tsr_score, tss_pos = ifelse(
@@ -168,7 +168,7 @@ peak_balance <- function(tss_table) {
 
 #' Interquartile Range
 #'
-#' Find the IQR for a TSR.
+#' Calculate IQR.
 #'
 #' @param tss_table data.table of TSSs
 #'
@@ -177,7 +177,7 @@ peak_balance <- function(tss_table) {
 
 iq_range <- function(tss_table) {
 	
-	## Get TSS Position relative to TSR midpoints.
+	## Get TSS positions relative to TSR midpoints.
         tss_position <- tss_table[
                 !is.na(TSR_FID) & score > 1,
                 .(score, seqnames, start, strand, tss_pos = ifelse(
@@ -188,7 +188,7 @@ iq_range <- function(tss_table) {
                 by = .(sample, TSR_FID)
         ]
 
-	## Find the IRQ.
+	## Calculate IQR.
 	tss_position <- tss_position[order(sample, TSR_FID, tss_pos)]
 
 	tss_position[,
@@ -210,14 +210,14 @@ iq_range <- function(tss_table) {
 	]
 	iqr_results <- unique(iqr_results)
 
-	## Return the IQR results.
+	## Return IQR results.
 	return(copy(iqr_results))
 
 }
 
 #' ECDF Function
 #'
-#' Return ECDF values
+#' Return ECDF values.
 #'
 #' @param tss_vector Vector of values to compute ECDF values
 #'

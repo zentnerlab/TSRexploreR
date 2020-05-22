@@ -4,14 +4,14 @@
 #' CPM normalize the TSS, TSR, and/or feature counts.
 #'
 #' @param experiment tsrexplorer object
-#' @param data_type 'tss', 'tsr', 'tss_features', 'tsr_features'
+#' @param data_type 'tss', 'tsr', 'tss_features', or 'tsr_features'
 #'
 #' @details
-#' Counts Per Million (CPM) normalization allows for slightly better
-#'   comparison between samples for various downstream analysis and plots.
-#' For more quantitative comparison TMM normalization is recommended.
+#' Counts Per Million (CPM) is an approach for read number normalization, 
+#'   allowing comparison between samples for various downstream analyses and plots.
+#' For more quantitative comparisons, TMM normalization is recommended (this should be fleshed out more qq)
 #'
-#' @return tsrexplorer object with added CPM counts column.
+#' @return tsrexplorer object with CPM values.
 #'
 #' @examples
 #' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
@@ -29,7 +29,7 @@ cpm_normalize <- function(
 ) {
 
 	## Check inputs.
-	if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsr explorer object")
+	if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsrexplorer object")
 
 	if (!is(data_type, "character") || length(data_type) > 1) {
 		stop("data_type must be a character")
@@ -39,7 +39,7 @@ cpm_normalize <- function(
 		stop("data_type must be 'tss', 'tsr', 'tss_features', or 'tsr_features'")
 	}
 
-	## Grab appropriate samples.
+	## Get selected samples.
 	if (data_type == "tss") {
 		select_samples <- experiment@counts$TSSs$raw
 	} else if (data_type == "tsr") {
@@ -57,7 +57,7 @@ cpm_normalize <- function(
 			return(x)
 		})
 
-	## Add data back to object.
+	## Add CPM-normalized counts back to tsrexplorer object.
 	if (data_type == "tss") {
 		experiment@counts$TSSs$raw <- cpm_counts
 	} else if (data_type == "tsr") {
@@ -80,22 +80,23 @@ cpm_normalize <- function(
 #' @importFrom SummarizedExperiment assay "assay<-"
 #'
 #' @param experiment tsrexplorer object
-#' @param data_type Whether TSSs, TSRs, RNA-seq & five-prime feature counts should be normalized
-#' @param threshold Filter out positions missing at least 'n_samples' number of samples with reads greater than or equal to threshold
-#' @param n_samples Filter out positions missing at least n_samples number of samples with reads greater than or equal to 'threshold'
+#' @param data_type Whether TSSs, TSRs, or RNA-seq & 5' feature counts should be normalized
+#' @param threshold Consider only features with at least this number of raw counts
+#' @param n_samples Filter out positions without features meeting the the selected threshold
+#'   in this number of samples
 #' @param samples Vector with names of samples to include in the normalization
 #'
 #' @details
-#' The TMM normalization method employed by edgeR is designed to reduce the influence of
-#'   library size for inter-sample comparison.
+#' The TMM normalization method, employed by edgeR, is designed to reduce the influence of
+#'   library size on inter-sample comparisons.
 #'
-#' For TMM normalization it is recommended to remove features with none or few reads as
+#' For TMM normalization, it is recommended to remove features with few or no reads as
 #'   these may bias the final results.
-#' To facilitate this filtering two arguments are provided, 'threshold' and 'n_samples'.
-#' Features must have grater than or equal to 'threshold' number of reads in at least
+#' To facilitate this filtering, two arguments are provided, 'threshold' and 'n_samples'.
+#' Features must have greater than or equal to 'threshold' number of raw counts in at least
 #'   'n_samples' number of samples to be retained.
 #'
-#' @return tsr explorer object with tmm normalized count matrices
+#' @return tsrexplorer object with tmm normalized count matrices
 #'
 #' @examples
 #' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
@@ -142,10 +143,10 @@ tmm_normalize <- function(
 		stop("threshold and n_samples must be greater than or equal to 1")
 	}
 
-	## Select proper slot of data.
+	## Get selected samples.
 	select_samples <- extract_matrix(experiment, data_type, samples)
 
-	##  Filter the counts.
+	## Filter counts.
 	sample_matrix <- as.data.table(assay(select_samples, "counts"))
 	sample_matrix[, match := rowSums((.SD >= threshold)) >= n_samples]
 	keep_ids <- which(sample_matrix[, match])
@@ -162,7 +163,7 @@ tmm_normalize <- function(
 	## Create filtered and TMM normalized RangedSummarizedExperiment.
 	assay(select_samples, "tmm") <- tmm_counts
 
-	## Return the TMM normalized counts.
+	## Add TMM-normalized counts to tsrexplorer object.
 	if (data_type == "tss") {
 		experiment@counts$TSSs$matrix <- select_samples
 	} else if (data_type == "tsr") {

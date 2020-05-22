@@ -5,11 +5,11 @@
 #' @importFrom dplyr dense_rank ntile desc
 #'
 #' @param signal_data TSS or TSR data
-#' @param quantile_by Continuous metric to calculate quantiles
+#' @param quantile_by Continuous metric to calculate quantiles (qq??)
 #' @param n_quantiles Number of quantiles to calculate for continuous metric
 #' @param quantile_samples Samples to use when setting quantiles
 #' @param quantile_group Group these features and quantile based on aggregate mean of feature
-#' @param quantile_direction Quantile in 'descending' or 'ascending' order of values
+#' @param quantile_direction Order quantiles in 'descending' or 'ascending' order of values
 #' @param order_by Metric to order data by
 #' @param order_group Features wil be aggregated by this group before ordering
 #' @param order_direction Whether the values should be ordered in
@@ -31,7 +31,7 @@ group_data <- function(
         grouping = NA
 ) {
 	
-        ## First filter the data if requested.  
+        ## Filter the data if required  
         if (!is.na(filters)) {
                 signal_data <- map(signal_data, function(x) {
                         x <- subset(x, eval(parse(text = filters)))
@@ -39,7 +39,7 @@ group_data <- function(
                 })
         }
 
-        ## Next order the data for plotting if requested.
+        ##Order the data for plotting if required.
         if (!is.na(order_by)) {
 		if (is.na(order_group)) order_group <- "FHASH"
 
@@ -79,7 +79,7 @@ group_data <- function(
                 })
         }
 
-	## Quantile the metric if requested.
+	## Quantile the metric if required.
 	if (!is.na(quantile_by)) {
 		if (is.na(quantile_group)) quantile_group <- "FHASH"
 	
@@ -119,7 +119,7 @@ group_data <- function(
 		})
 	}
 
-	## If not using quantiles split by a categorical value.
+	## If not using quantiles, split by a categorical value.
 	if (!is.na(grouping) && is.na(quantile_by)) {
 		signal_data <- map(signal_data, function(x) {
 			x <- x[!is.na(x[[grouping]])]
@@ -136,18 +136,18 @@ group_data <- function(
 
 #' Preliminary Filter
 #'
-#' Preliminary filter of data
+#' Preliminary filtering of data
 #'
 #' @param signal_data TSS or TSR data
 #' @param dominant Whether to retain dominant TSS/TSR
-#' @param threshold Wheher to apply a threshold to the scores
+#' @param threshold Raw count threshold for a TSS or TSR to be considered
 #'
 #' @rdname preliminary_filter-function
 #' @export
 
 preliminary_filter <- function(signal_data, dominant, threshold) {
 	
-	## Retain only dominant features if requested.
+	## Retain only dominant features if required.
 	if (dominant) {
 		signal_data <- map(signal_data, function(x) {
 			x <- x[(dominant)]
@@ -155,7 +155,7 @@ preliminary_filter <- function(signal_data, dominant, threshold) {
 		})
 	}
 
-	## Apply a threshold to score if requested.
+	## Apply a threshold to score if required.
 	if (!is.na(threshold)) {
 		signal_data <- map(signal_data, function(x) {
 			x <- x[score >= threshold]
@@ -163,6 +163,6 @@ preliminary_filter <- function(signal_data, dominant, threshold) {
 		})
 	}
 
-	## Return singal data.
+	## Return signal data.
 	return(signal_data)
 }

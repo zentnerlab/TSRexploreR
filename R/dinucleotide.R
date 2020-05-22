@@ -9,28 +9,28 @@
 #' @importFrom dplyr bind_cols
 #'
 #' @param experiment tsrexplorer object with TSS GRanges
-#' @param samples Either 'all' or vector of sample names to analyze
+#' @param samples Either 'all' to plot all samples or a vector of sample names
 #' @param genome_assembly fasta file of genome assembly
-#' @param threshold TSS read threshold
-#' @param dominant Consider only dominant
-#' @param data_conditions Condition the data (filtering and quantile/grouping available)
+#' @param threshold Raw TSS count threshold
+#' @param dominant Consider only dominant TSSs
+#' @param data_conditions Condition the data
 #'
 #' @details
-#' It has been shown in many organisms that a particular base preference exists in the
-#'   +1 and -1 bases (corresponding to the TSS and upstream adjacent base respectively).
-#' This function returns the dinucleotide frequencies surrounding each TSS.
+#' It has been shown in many organisms that particular base preferences exist at the
+#'  -1 and +1 positions, where +1 is the TSS and -1 is the position immediately upstream.
+#' This function returns the dinucleotide frequencies at each TSS.
 #'
 #' 'genome_assembly' must be a valid genome assembly in either fasta or BSgenome format.
 #' fasta formatted genome assemblies should have the file extension '.fasta' or '.fa'.
 #' BSgenome assemblies are precompiled Bioconductor libraries for common organisms.
 #'
 #' A set of arguments to control data structure for plotting are included.
-#' 'threshold' will define the minimum number of reads a TSS or TSR
+#' 'threshold' will define the minimum number of raw counts a TSS or TSR
 #'  must have to be considered.
-#' 'dominant' specifies whether only the dominant TSS or TSR is considered 
+#' 'dominant' specifies whether only the dominant TSS should be considered 
 #'   from the 'mark_dominant' function.
 #' For TSSs this can be either dominant per TSR or gene, and for TSRs
-#'   it is just the dominant TSR per gene.
+#'   it is just the dominant TSR per gene. (qq should this just be TSSs?)
 #' 'data_conditions' allows for the advanced filtering, ordering, and grouping
 #'   of data.
 #'
@@ -78,7 +78,7 @@ dinucleotide_frequencies <- function(
                 !is.na(threshold) && !is(threshold, "numeric") ||
                 threshold %% 1 != 0 || threshold < 1
         ) {
-                stop("threshold must be a positive integer greater than or equal to 1")
+                stop("threshold must be a positive integer")
         }
 
 	if (!is(dominant, "logical")) stop("dominant must be logical")
@@ -87,10 +87,10 @@ dinucleotide_frequencies <- function(
 		stop("data_conditions must be a list of values")
 	}
 
-	## Loading genome assembly.
+	## Load genome assembly.
 	fasta_assembly <- FaFile(genome_assembly)
 
-	## Getting appropriate samples.
+	## Get appropriate samples.
 	select_samples <- extract_counts(experiment, "tss", samples)
 
 	## Preliminary filtering of data.
@@ -157,13 +157,12 @@ dinucleotide_frequencies <- function(
 #' Plot results from dinucleotide analysis
 #'
 #' @param dinucleotide_frequencies tibble from dinucleotide_frequencies analysis
-#' @param ncol Number of columns to plot if not quantile plot
+#' @param ncol Number of columns to plot if quantiles are not specified
 #' @param ... Arguments passed to geom_col
 #'
 #' @details
-#' This plotting function returns a ggplot2 barplot of the +1 and -1 base
-#'   frequencies (corresponding to the TSS and adjacent upstream base respectively)
-#'   surrounding TSSs.
+#' This plotting function returns a ggplot2 barplot of -1 and +1 dinucleotide frequencies, 
+#'   where +1 is the TSS and -1 is the position immediately upstream.
 #' The results of the 'dinucleotide_frequencies' function are used as input.
 #'
 #' @return ggplot2 object of dinucleotide frequencies plot
@@ -198,13 +197,13 @@ plot_dinucleotide_frequencies <- function(
 		stop("ncol must be a positive integer")
 	}
 
-	## Pull out some info from the DataFrame.
+	## Pull out some info from the dataframe.
 	groupings <- metadata(dinucleotide_frequencies)$groupings
 
-	## Convert DataFrame to data.table.
+	## Convert dataframe to data.table.
 	freqs <- as.data.table(dinucleotide_frequencies)
 	
-	## Set factor order for dinucleotide.
+	## Set factor order for dinucleotides.
 	if (!groupings) {
 		freqs <- freqs[,
 			.(sample, count, freqs, mean_freqs = mean(freqs)),

@@ -2,7 +2,7 @@
 #' Annotate Data
 #'
 #' @description
-#' Use ChIPseeker package to annotate TSSs or TSRs.
+#' Use the ChIPseeker package to annotate TSSs or TSRs relative to known genes or transcripts.
 #'
 #' @import tibble
 #' @importFrom magrittr %>%
@@ -11,21 +11,21 @@
 #' @importFrom GenomicRanges GRanges makeGRangesFromDataFrame
 #' @importFrom stringr str_detect
 #'
-#' @param experiment tsrexplorer object with TSS Granges
-#' @param annotation_data Either path and file name of annotation file, or TxDb object of annotation
+#' @param experiment tsrexplorer object with TSS GRanges
+#' @param annotation_data Path to annotation file or loaded TxDb object
 #' @param data_type Whether to annotate TSSs or TSRs
-#' @param feature_type Annotate on gene or transcript level
-#' @param upstream Bases upstream of TSS
-#' @param downstream Bases downstream of TSS
+#' @param feature_type Annotate at the gene or transcript level
+#' @param upstream Bases upstream of TSS for 'promoter' annotation
+#' @param downstream Bases downstream of TSS for 'promoter' annotation
 #'
 #' @details
 #' This function attempts to assign TSSs or TSRs to the nearest genomic feature.
 #' Genomic annotation data can be provided as either a 'GTF' or 'GFF' file,
 #'   or as a TxDb package from bioconductor.
 #'
-#' 'feature_type' will let you assign as gene or transcript level.
-#' Furthermore, the promoter region can be defined using
-#'   'upstream' and 'downstream' which are relative to the TSSs
+#' 'feature_type' allows to you link TSSs or TSRs to genes or transcripts.
+#' Furthermore, the size of the promoter region can be defined using
+#'   'upstream' and 'downstream', which are relative to the TSSs
 #'   defined in your annotation data.
 #'
 #' @return tsrexplorer object with annotated features
@@ -54,7 +54,7 @@ annotate_features <- function(
 ) {
 
 	## Check inputs.
-	if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsr explorer object")
+	if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsrexplorer object")
 
 	if (!is(annotation_data, "character") & !is(annotation_data, "TxDb")) {
 		stop("annotation_data must be an annotation file or TxDb object")
@@ -67,11 +67,11 @@ annotate_features <- function(
         if (!data_type %in% c("tss", "tsr")) stop("data_type must be 'tss' or 'tsr'")
 
 	if (!is(feature_type, "character") || length(feature_type) > 1) {
-		stop("feature_type must be a either 'gene' or 'transcript'")
+		stop("feature_type must be 'gene' or 'transcript'")
 	}
 	feature_type <- str_to_lower(feature_type)
 	if (!feature_type %in% c("gene", "transcript")) {
-		stop("feature_type must be either 'gene' or 'transcript'")
+		stop("feature_type must be 'gene' or 'transcript'")
 	}
 
 	if (!is(upstream, "numeric") | !is(downstream, "numeric")) {
@@ -128,7 +128,7 @@ annotate_features <- function(
 			return(annotated)
 		})
 
-	## Place annotated features back into tsrexplorer object.
+	## Place annotated features back into the tsrexplorer object.
 	if (data_type == "tss") {
 		experiment@counts$TSSs$raw <- counts_annotated
 	} else if (data_type == "tsr") {
@@ -139,7 +139,7 @@ annotate_features <- function(
 		experiment@diff_features$TSRs$results <- counts_annotated
 	}
 
-	## Save annotation settings to tsrexplorer object.
+	## Save annotation settings to the tsrexplorer object.
 	anno_settings <- data.table(
 		"feature_type" = feature_type,
 		"upstream" = upstream,

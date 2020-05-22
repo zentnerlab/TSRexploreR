@@ -11,11 +11,11 @@
 #' @importFrom Biostrings getSeq DNAStringSet
 #'
 #' @param experiment tsrexplorer object with TSS GRanges
-#' @param samples Either "all" or names of samples to analyze
+#' @param samples Either "all" or a vector of names of samples to analyze
 #' @param genome_assembly Genome assembly in fasta format or bioconductor BSgenome
-#' @param threshold Keep only TSSs with threshold number of reads or more
-#' @param distance Bases to add on each side of TSS
-#' @param dominant Whether only dominant should be considered
+#' @param threshold Keep only TSSs with at least this number of raw counts
+#' @param distance Bases to add on each side of eacg TSS
+#' @param dominant Whether to only consider dominant TSSs
 #' @param data_conditions Condition the data (filter, quantile, and grouping available)
 #'
 #' @details
@@ -26,8 +26,8 @@
 #' fasta formatted genome assemblies should have the file extension '.fasta' or '.fa'.
 #' BSgenome assemblies are precompiled Bioconductor libraries for common organisms.
 #'
-#' 'distance' controls the length extending upstream and downstream of the TSS
-#'   in which the sequence will be retrieved.
+#' 'distance' controls the length upstream and downstream of the TSS
+#'   from which the sequence will be retrieved.
 #'
 #' A set of functions to control data structure for plotting are included.
 #' 'threshold' will define the minimum number of reads a TSS or TSR
@@ -104,13 +104,13 @@ tss_sequences <- function(
 		genome_assembly <- genome_assembly
 	}
 
-	## Pull selected samples.
+	## Get selected samples.
 	select_samples <- extract_counts(experiment, "tss", samples)
 
 	## Preliminary filtering of data.
 	select_samples <- preliminary_filter(select_samples, dominant, threshold)
 
-	## Add conditions to data.
+	## Condition the data.
 	if (!is.na(data_conditions)) {
 		select_samples <- do.call(group_data, c(list(signal_data = select_samples), data_conditions))
 	}
@@ -133,7 +133,7 @@ tss_sequences <- function(
 		select_samples[, sample := factor(sample, levels = samples)]
 	}
 	
-	## Generate return DataFrame
+	## Generate and return DataFrame.
 	groupings <- any(names(data_conditions) %in% c("quantile_by", "grouping"))
 	
 	seqs <- DataFrame(seqs)
@@ -148,15 +148,15 @@ tss_sequences <- function(
 #' Generate Sequence Logo
 #'
 #' @description
-#' Create a sequence logo for the sequences around TSSs
+#' Create a sequence logo for the sequences around TSSs.
 #'
 #' @import ggseqlogo
 #' @importFrom Biostrings consensusMatrix
 #' @importFrom cowplot plot_grid
 #'
-#' @param tss_sequences Sequences surrounding TSS generated with tss_sequences
+#' @param tss_sequences Sequences surrounding TSSs generated with tss_sequences
 #' @param ncol Number of columns to plot if quantiles is not set
-#' @param font_size Font size plots
+#' @param font_size Font size for plots
 #'
 #' @details
 #' This plotting function uses the ggseqlogo library to make sequence logos

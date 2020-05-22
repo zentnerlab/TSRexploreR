@@ -1,26 +1,24 @@
 
 #' Threshold Exploration
 #'
-#' Explore various naive thresholds.
+#' Explore raw read count thresholds thresholds.
 #'
 #' @importFrom purrr map_df
 #'
-#' @param experiment tsrexplorer object with TSSs
-#' @param samples Either 'all' or the names of the samples to analyze
-#' @param max_threshold Threshold from 1 to max_threshold will be explored
+#' @param experiment tsrexplorer object with annotated TSSs
+#' @param samples Either "all" or a vector of names of samples to analyze
+#' @param max_threshold Thresholds from 1 to max_threshold will be explored
 #'
 #' @details
 #' All TSS mapping technologies have some degree of spurious background reads.
-#' tsr_explorer allows for basic thresholding of these background reads by requiring
+#' tsr_explorer allows for basic thresholding of data by requiring
 #'   a minimum number of reads for a TSS to be considered.
 #'
-#' An easy way to pick a threshold with the threshold plot generated
+#' An easy way to pick a threshold is with the threshold plot generated
 #'   by 'plot_exploration_threshold'.
-#' This plot shows the proportion of promoter-proximal TSS positions when
-#'   various naive threshold values are tested.
-#' 'max_threshold' defines the maximum threshold value tested from 1 to that value.
-#' A recommended final value will likely result in a promoter-proximal fraction above .80 to .85
-#'   and without sacrificing the ability to detect too many unique genes or transcripts.
+#' This plot shows the proportion TSS positions that are promoter-proximal when
+#'   various threshold values are tested.
+#' 'max_threshold' defines the maximum threshold value that will be analyzed.
 #'
 #' @return data.frame containing information for each threshold and sample
 #'
@@ -56,15 +54,15 @@ explore_thresholds <- function(
 
 	if (!is(samples, "character")) stop("samples must be a character vector")
 
-	## Grab settings information.
+	## Get settings information.
 	feature_type <- experiment@settings$annotation[["feature_type"]]
 	feature_type <- ifelse(feature_type == "transcript", "transcriptId", "geneId")
 
-	## Pull out appropriate samples.
+	## Get appropriate samples.
 	select_samples <- extract_counts(experiment, "tss", samples)
 	select_samples <- rbindlist(select_samples, idcol = "sample")
 
-	## Grab information needed for thresholding plot.
+	## Get information needed for threshold plot.
 	summarized_data <- map_df(seq_len(max_threshold), function(x) {
 		filtered <- select_samples[score >= x]
 		filtered[,
@@ -114,24 +112,14 @@ explore_thresholds <- function(
 #' @import ggplot2
 #'
 #' @param threshold_data Tibble of threshold exploration data from explore_thresholds
-#' @param ncol Number of columns to plot data
+#' @param ncol Number of columns in which to plot data
 #' @param point_size The size of the points on the plot
 #' @param ... Arguments passed to geom_point
 #'
 #' @details
-#' All TSS mapping technologies have some degree of spurious background reads.
-#' tsr_explorer allows for basic thresholding of these background reads by requiring
-#'   a minimum number of reads for a TSS to be considered.
-#'
-#' An easy way to pick a threshold with the threshold plot generated
-#'   by 'plot_exploration_threshold'.
-#' This plot shows the proportion of promoter-proximal TSS positions when
-#'   various naive threshold values are tested.
-#' The 'max_threshold' value in the 'explore_thresholds' function defined the maximum threshold
-#'   value tested from 1 to that value.
-#' A recommended final naive threshold value will likely result in a promoter-proximal
-#'   fraction above .80 to .85 and without sacrificing the ability to detect too
-#'   many unique genes or transcripts.
+#' We have found that a threshold of 3 often provides an appropriate balance between
+#'   a high promoter-proximal fraction (>= 0.8) and the number of unique genes or
+#'   transcripts with at least one unique TSS.
 #'
 #' @return ggplot2 object containing the threshold exploration plot
 #'

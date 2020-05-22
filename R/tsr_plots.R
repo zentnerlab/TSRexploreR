@@ -1,7 +1,7 @@
 
-#' Plot TSR Stats
+#' Plot TSR Metrics
 #'
-#' Plot selected TSR stats
+#' Plot selected TSR metrics.
 #'
 #' @import tibble
 #' @import ggplot2
@@ -9,19 +9,19 @@
 #' @importFrom tidyr gather
 #' @importFrom forcats fct_inorder
 #'
-#' @param experiment tsrexplorer object with TSR granges
-#' @param tsr_metrics Names of metrics in tsrexplorer TSR granges to plot
-#' @param plot_type Output either a 'violin', 'jitter', 'box', or "boxjitter" plot (default violin)
+#' @param experiment tsrexplorer object with TSR GRanges
+#' @param tsr_metrics Names of metrics in tsrexplorer TSR GRanges to plot
+#' @param plot_type Output either a 'violin', 'jitter', 'box', or "boxjitter" plot (default: violin)
 #' @param samples Either 'all' or a vector of sample names to analyze
-#' @param log2_transform Whether the metric should be log2 transformed prior to plotting
-#' @param ncol Number of columns to plot data
-#' @param use_cpm Whether to use the CPM normalized or raw counts
+#' @param log2_transform Whether the metric should be log2 + 1 transformed prior to plotting
+#' @param ncol Number of columns to use when plotting multiple samples
+#' @param use_cpm Whether to use the CPM-normalized counts
 #' @param dominant Whether to only consider dominant TSRs
-#' @param threshold Filter TSRs under this count threshold
+#' @param threshold Keep only TSRs with at least this number of raw counts
 #' @param data_conditions Condition the data (filter and quantile/group available)
 #' @param ... Arguments passed to ggplot2 plotting functions
 #'
-#' @return ggplot2 object with tsr metrix plotted
+#' @return ggplot2 object with TSR matrix plotted
 #'
 #' @rdname plot_tsr_metric-function
 #'
@@ -41,7 +41,7 @@ plot_tsr_metric <- function(
 	...
 ) {
 
-	## Grab data.
+	## Get data.
 	selected_data <- extract_counts(experiment, "tsr", samples, use_cpm)
 
 	## Preliminary filtering of data.
@@ -63,7 +63,7 @@ plot_tsr_metric <- function(
 		selected_data[, sample := factor(sample, levels = samples)]
 	}
 
-	## Log2+1 transform data if requested
+	## Log2 + 1 transform data if required.
 	if (log2_transform) {
 		selected_data[,
 			(tsr_metrics) := lapply(.SD, function(x) log2(x + 1)),
@@ -91,7 +91,7 @@ plot_tsr_metric <- function(
 		)
 	}
 
-	## Make density plot of metric.
+	## Make plot of selected TSR metric(s).
 	p <- ggplot(selected_data, aes(x = sample, y = value))
 
 	if (plot_type == "violin") {

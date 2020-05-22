@@ -4,10 +4,10 @@
 #' Export TSSs to table or bedgraph
 #'
 #' @param experiment tsrexplorer object
-#' @param samples Samples to export
+#' @param samples Names of samples to export (is this one of those ones where it could also be 'all'?)
 #' @param file_type either 'bedgraph' or 'table'
 #' @param out_dir Output directory for files
-#' @param diff_tss Whether to pull out the differential TSSs
+#' @param diff_tss Whether to pull out the differential TSSs (qq????)
 #'
 #' @rdname tss_export-function
 #'
@@ -68,10 +68,10 @@ tss_export <- function(
 #' Export TSRs to table or BED
 #'
 #' @param experiment tsrexplorer object
-#' @param samples Samples to export
+#' @param samples Samples to export ('all' as well? qq)
 #' @param file_type either 'bed' or 'table'
 #' @param out_dir Output directory for files
-#' @param diff_tsr Whether to pull out the diff TSRs
+#' @param diff_tsr Whether to pull out the differential TSRs (qq again, this is a bit unclear)
 #'
 #' @rdname tsr_export-function
 #'

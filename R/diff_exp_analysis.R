@@ -1,6 +1,6 @@
 #' DE MA Plot
 #'
-#' Generate MA plot for differential TSRs or Genes (RNA-seq)
+#' Generate MA plot for differential TSRs or Genes (RNA-seq) - confused. I see the MA-plot code but no volcano.
 #'
 #' @import tibble
 #' @import ggplot2
