@@ -125,6 +125,12 @@ plot_tsr_metric <- function(
 		)
 	}
 
+        ## Order samples if required.
+        if (!all(samples == "all")) {
+                selected_data[, sample := factor(sample, levels = samples)]
+        }
+
+
 	## Make plot of selected TSR metric(s).
 	p <- ggplot(selected_data, aes(x = sample, y = value))
 
