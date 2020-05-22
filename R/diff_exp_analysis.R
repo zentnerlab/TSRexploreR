@@ -21,8 +21,27 @@
 plot_ma <- function(
 	experiment,
 	data_type = c("tss", "tsr", "tss_features", "tsr_features"),
-	de_comparisons = "all", ncol = 1, ...
+	de_comparisons = "all",
+	ncol = 1,
+	...
 ){
+
+	## Input checks.
+	if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsr explorer object")
+
+        if (!is(data_type, "character") || length(data_type) > 1) {
+                stop("data_type must be a character")
+        }
+        data_type <- str_to_lower(data_type)
+        if (!data_type %in% c("tss", "tsr", "tss_features", "tsr_features")) {
+                stop("data_type must be 'tss', 'tsr', 'tss_features', or 'tsr_features'")
+        }
+
+	if (!is(de_comparisons, "character")) stop("de_comparisons must be 'all' or character vector")
+
+        if (!is(ncol, "numeric") || ncol %% 1 != 0 || ncol < 1) {
+                stop("ncol must be a positive integer")
+        }
 
 	## Get differential expression tables.
 	de_samples <- extract_de(experiment, data_type, de_comparisons)
@@ -57,9 +76,23 @@ plot_ma <- function(
 #' @export
 
 export_for_enrichment <- function(
-	experiment, data_type = c("tss", "tsr", "tss_features", "tsr_features"),
+	experiment,
+	data_type = c("tss", "tsr", "tss_features", "tsr_features"),
 	de_comparisons = "all" 
 ) {
+	## Input checks.
+        if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsr explorer object")
+
+        if (!is(data_type, "character") || length(data_type) > 1) {
+                stop("data_type must be a character")
+        }
+        data_type <- str_to_lower(data_type)
+        if (!data_type %in% c("tss", "tsr", "tss_features", "tsr_features")) {
+                stop("data_type must be 'tss', 'tsr', 'tss_features', or 'tsr_features'")
+        }
+
+        if (!is(de_comparisons, "character")) stop("de_comparisons must be 'all' or character vector")
+
 	## Get DE comparisons.
 	de_data <- extract_de(experiment, data_type, de_comparisons) %>%
 		rbindlist
@@ -84,9 +117,25 @@ export_for_enrichment <- function(
 #' @export
 
 plot_num_de <- function(
-	experiment, data_type = c("tss", "tsr", "tss_features", "tsr_features"),
-	de_comparisons = "all", ...
+	experiment,
+	data_type = c("tss", "tsr", "tss_features", "tsr_features"),
+	de_comparisons = "all",
+	...
 ) {
+	## Input checks.
+        if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsr explorer object")
+
+        if (!is(data_type, "character") || length(data_type) > 1) {
+                stop("data_type must be a character")
+        }
+        data_type <- str_to_lower(data_type)
+        if (!data_type %in% c("tss", "tsr", "tss_features", "tsr_features")) {
+                stop("data_type must be 'tss', 'tsr', 'tss_features', or 'tsr_features'")
+        }
+
+        if (!is(de_comparisons, "character")) stop("de_comparisons must be 'all' or character vector")
+
+
 	## Get appropriate samples.
 	de_samples <- experiment %>%
 		extract_de(data_type, de_comparisons) %>%
