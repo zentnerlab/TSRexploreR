@@ -14,7 +14,7 @@
 #' @param feature_name Name of gene or transcript to plot
 #' @param feature_type Either 'gene' or 'transcript'
 #' @param samples Names of samples to plot.
-#' Append sample names with 'TSS:' or 'TSR:' for TSS and TSR tracks respectively.
+#'   Append sample names with 'TSS:' or 'TSR:' for TSS and TSR tracks respectively.
 #' @param threshold TSSs and TSRs below threshold are excluded from plotting
 #' @param upstream bases upstream to extend gene or promoter track
 #' @param downstream bases downstream to extend gene or promoter track
@@ -29,11 +29,69 @@
 #' @export
 
 gene_tracks <- function(
-	experiment, genome_annotation, feature_name, feature_type = "gene",
-	samples = "all", threshold = 1, upstream = 250, downstream = 250,
-	promoter_only = FALSE, use_cpm = FALSE, tss_colors = "black",
-	tsr_colors = "black", axis_scale = 0.25, ymax = NA
+	experiment,
+	genome_annotation,
+	feature_name,
+	feature_type = "gene",
+	samples = "all",
+	threshold = 1,
+	upstream = 250,
+	downstream = 250,
+	promoter_only = FALSE,
+	use_cpm = FALSE,
+	tss_colors = "black",
+	tsr_colors = "black",
+	axis_scale = 0.25,
+	ymax = NA
 ) {
+
+	## Input checks.
+	if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsr explorer object")
+
+	if (!is(genome_annotation, "character") & !is(genome_annotation, "TxDb")) {
+		stop("genome_annotation must be a file path or TxDb object")
+	}
+
+	if (!is(feature_name, "character") || length(feature_name) > 1) stop("feature_name must be a character")
+
+	if (!is(feature_type, "character") || length(feature_type) > 1) {
+		stop("feature_type must be either 'gene' or 'transcript'")
+	}
+	feature_type <- str_to_lower(feature_type)
+	if (!feature_type %in% c("gene", "transcript")) stop("feature_type must be either 'gene' or 'transcript'")
+
+	if (!is(samples, "character")) stop("samples must be a character")
+	if (!all(str_detect(sample, "^TS[RS]:"))) stop("sample names must be prefixed with 'TSS:' or 'TSR:'")
+
+        if (
+                !is.na(threshold) && !is(threshold, "numeric") ||
+                threshold %% 1 != 0 || threshold < 1
+        ) {
+                stop("threshold must be a positive integer")
+        }
+
+        if (!is(upstream, "numeric") | !is(downstream, "numeric")) {
+                stop("upstream and downstream must be positive integers")
+        }
+        if (upstream %% 1 != 0 | downstream %% 1 != 0) {
+                stop("upstream and downstream must be positive integers")
+        }
+        if (upstream < 0 | downstream < 0) stop("upstream and downstream must be positive integers")
+
+	if (!is(promoter_only, "logical")) stop("promoter_only must be TRUE or FALSE")
+
+	if (!is(use_cpm, "logical")) stop("use_cpm must be TRUE or FALSE")
+
+	if (!is(tss_colors, "character")) stop("tss_colors must be a character vector")
+	if (!is(tsr_colors, "character")) stop("tsr_colors must be a character vector")
+
+	if (!is(axis_scale, "numeric") || length(axis_scale) > 1 || axis_scale <= 0) {
+		stop("axis_scale must be a positive number")
+	}
+
+	if (!is.na(ymax) && !is(ymax, "numeric") || length(ymax) > 1 || ymax <= 0) {
+		stop("ymax must be a positive number")
+	}
 	
 	## Prepare genome annotation.
 	if (is(genome_annotation, "character")) {
