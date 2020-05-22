@@ -10,7 +10,10 @@
 #' @rdname add_sample_sheet-function
 #' @export
 
-add_sample_sheet <- function(experiment, sample_sheet) {
+add_sample_sheet <- function(
+	experiment,
+	sample_sheet
+) {
 
 	## Input checks.
 	if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsr explorer object")

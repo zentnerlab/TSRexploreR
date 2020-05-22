@@ -28,13 +28,18 @@
 #' @rdname format_counts-function
 #' @export
 
-format_counts <- function(experiment, data_type = c("tss", "tsr"), samples = "all") {
+format_counts <- function(
+	experiment,
+	data_type = c("tss", "tsr"),
+	samples = "all"
+) {
 
 	## Check inputs.
 	if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsr explorer object")
 
-	if (!is(data_type, "character")) stop("data_type must be a character")
-	if (length(data_type) > 1) stop("data_type must be a character")
+	if (!is(data_type, "character") || length(data_type) > 1) {
+		stop("data_type must be a 'tss' or 'tsr'")
+	}
 	data_type <- str_to_lower(data_type)
 	if (!data_type %in% c("tss", "tsr")) stop("data_type must be 'tss' or 'tsr'")
 	
