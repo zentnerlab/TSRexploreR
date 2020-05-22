@@ -8,13 +8,13 @@ fit_edger_model(experiment, data_type = c("tss", "tsr", "tss_features",
   "tsr_features"), samples, groups)
 }
 \arguments{
-\item{experiment}{tsrexplorer object after TMM normalization.}
+\item{experiment}{tsrexplorer object with TMM-normalized counts}
 
-\item{data_type}{Whether TSSs, TSRs, or feature counts should be analyzed.}
+\item{data_type}{Whether TSSs, TSRs, or feature counts should be analyzed}
 
-\item{samples}{Vector of sample names to analyze.}
+\item{samples}{Vector of sample names to analyze}
 
-\item{groups}{Vector of groups in correct factor notation.}
+\item{groups}{Vector of groups in correct factor notation}
 }
 \value{
 DGEList object with fitted model

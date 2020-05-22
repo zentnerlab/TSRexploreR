@@ -10,5 +10,5 @@ peak_concentration(tss_table)
 \item{tss_table}{data.table of TSSs}
 }
 \description{
-Calculate peak concentration
+Calculate peak concentration.
 }

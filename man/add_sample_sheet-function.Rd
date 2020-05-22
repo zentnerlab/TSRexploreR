@@ -13,5 +13,5 @@ add_sample_sheet(experiment, sample_sheet)
 with columns: 'replicate_id', 'tss_name', 'tsr_name', and optionally 'group_id'}
 }
 \description{
-Add sample sheet to tsrexplorer object
+Add a sample sheet to a tsrexplorer object.
 }

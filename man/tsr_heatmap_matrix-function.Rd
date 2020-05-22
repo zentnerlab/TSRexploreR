@@ -11,22 +11,22 @@ tsr_heatmap_matrix(experiment, samples = "all", upstream = 1000,
 \arguments{
 \item{experiment}{tsrexplorer object with annotated TSRs}
 
-\item{samples}{Either 'all' or names of samples to analyze}
+\item{samples}{Either 'all' or a vector of names of samples to analyze}
 
 \item{upstream}{Bases upstream to consider}
 
 \item{downstream}{bases downstream to consider}
 
-\item{threshold}{Reads required per TSR}
+\item{threshold}{Raw count threshold value}
 
-\item{use_cpm}{Whether to use CPM normalized or raw counts}
+\item{use_cpm}{Whether to use CPM-normalized counts}
 
-\item{dominant}{Whether dominant only should be considered}
+\item{dominant}{Whether to only consider dominant TSRs}
 
-\item{data_conditions}{Conditions to place on data}
+\item{data_conditions}{Condition the data (filter and quantile/group available)}
 }
 \value{
-matrix of counts for each gene/transcript and position
+Matrix of counts for each gene/transcript and position
 }
 \description{
 Generate count matrix to make TSR heatmap

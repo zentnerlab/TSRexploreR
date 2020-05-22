@@ -10,5 +10,5 @@ peak_balance(tss_table)
 \item{tss_table}{data.table of TSSs}
 }
 \description{
-Calculate peak balance
+Calculate peak balance.
 }

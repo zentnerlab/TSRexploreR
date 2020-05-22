@@ -10,11 +10,11 @@ merge_samples(experiment, data_type = c("tss", "tsr"), threshold = NA,
 \arguments{
 \item{experiment}{tsrexplorer object}
 
-\item{data_type}{Either 'tss' or 'tsr'}
+\item{data_type}{Whether to merge TSSs or TSRs}
 
-\item{threshold}{Filter out TSSs or TSRs below this threshold before merging}
+\item{threshold}{Filter out TSSs or TSRs below this raw count threshold before merging}
 
-\item{merge_replicates}{If 'TRUE' replicate groups will be merged}
+\item{merge_replicates}{If 'TRUE', replicate groups will be merged}
 
 \item{sample_list}{If merge_replicates is set to 'FALSE',
 specify what samples to merge in list format.}

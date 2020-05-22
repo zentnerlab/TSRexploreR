@@ -10,5 +10,5 @@ iq_range(tss_table)
 \item{tss_table}{data.table of TSSs}
 }
 \description{
-Find the IQR for a TSR.
+Calculate IQR.
 }

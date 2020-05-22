@@ -10,13 +10,13 @@ tss_export(experiment, samples = "all", file_type = "bedgraph",
 \arguments{
 \item{experiment}{tsrexplorer object}
 
-\item{samples}{Samples to export}
+\item{samples}{Names of samples to export (is this one of those ones where it could also be 'all'?)}
 
 \item{file_type}{either 'bedgraph' or 'table'}
 
 \item{out_dir}{Output directory for files}
 
-\item{diff_tss}{Whether to pull out the differential TSSs}
+\item{diff_tss}{Whether to pull out the differential TSSs (qq????)}
 }
 \description{
 Export TSSs to table or bedgraph

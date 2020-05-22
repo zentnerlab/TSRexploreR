@@ -10,30 +10,33 @@ associate_with_tsr(experiment, sample_list = NA,
 \arguments{
 \item{experiment}{tsrexplorer object}
 
-\item{sample_list}{If 'use_sample_sheet' is FALSE, provide list with TSR as name and vector of TSSs to associate with it.}
+\item{sample_list}{If 'use_sample_sheet' is FALSE, provide a list with TSR and TSS sample names}
 
-\item{use_sample_sheet}{Whether to associate TSSs with their matching TSR in the sample sheet}
+\item{use_sample_sheet}{Whether to use a sample sheet as a key for association of TSS and TSR samples}
 }
 \description{
 Associate TSSs with TSRs
 }
 \details{
-tsr explorer provides many options for the import and merging of TSSs and TSRs.
+TSRexploreR provides many options for the import and merging of TSSs and TSRs.
 Because of this, TSS samples must be associated with TSR samples after TSR import,
   TSR merging, or TSS clustering using this function.
-This adds an extra workflow step, but provides more flexibility for analysis of results.
-Each TSS within the sample will be linked to the TSR of the specified sample
-  with overlapping genomic coordinates.
-TSSs without an overlapping TSR will not be associated to any TSR.
+This adds an extra workflow step, but provides more analytical flexibility (qq meaning what?).
+Each TSS with genomic coordinates overlapping those of a TSR in the specified TSR sample
+  will be linked to that TSR.
+TSSs not overlapping a TSR in the specified sample will not be associated with any TSR.
 
-TSS samples can be associated with TSR samples using a list or sample sheet format.
+TSS samples can be associated with TSR samples using a list or sample sheet.
 'sample_list' should be a named list of character vectors, with the names being the TSR
-  sample name, and the character vector as the TSS samples(s) that should be associated with
-  that TSR sample.
-If 'use_sample_sheet' is set to true, a previously added sample sheet will be used to group
+  sample names and the character vectors as the TSS samples(s) that should be associated with
+  each TSR sample.
+If 'use_sample_sheet' is set to true, a previously added sample sheet will be used to associate
   TSR samples with TSS samples.
-The sample sheet can be added to the tsr explorer object using the 'add_sample_sheet' function.
+The sample sheet can be added to the tsrexplorer object using the 'add_sample_sheet' function.
 It should have 3 columns: 'replicate_id', 'tss_name', and 'tsr_name'.
+
+#' @seealso
+\code{\link{add_sample_sheet}} to add a sample sheet to the tsrexplorer object.
 }
 \examples{
 TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")

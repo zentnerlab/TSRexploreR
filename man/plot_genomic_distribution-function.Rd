@@ -7,7 +7,7 @@
 plot_genomic_distribution(genomic_distribution)
 }
 \arguments{
-\item{genomic_distribution}{DataFrame of TSS or TSR genomic distributions from tsr_genomic_distribution}
+\item{genomic_distribution}{Dataframe of TSS or TSR genomic distributions from tsr_genomic_distribution}
 }
 \value{
 ggplot2 object with TSS or TSR genomic distribution plot
@@ -36,6 +36,6 @@ plot_genomic_distribution(genomic_dist)
 
 }
 \seealso{
-\code{\link{annotate_features}} to annotate the TSSs or TSRs to genomic features.
+\code{\link{annotate_features}} to annotate TSSs or TSRs to genomic features.
   \code{\link{genomic_distribution}} to prepare the annotated features for plotting.
 }

@@ -15,5 +15,5 @@ with column 'feature', and other named columns containing feature groups}
 \item{feature_type}{either 'gene' or 'transcript'}
 }
 \description{
-Add gene/transcript group info to tsrexplorer object
+Add gene/transcript group info to a tsrexplorer object.
 }

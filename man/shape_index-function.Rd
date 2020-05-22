@@ -10,5 +10,5 @@ shape_index(tss_table)
 \item{tss_table}{data.table of TSSs}
 }
 \description{
-Calculate shape index
+Calculate shape index.
 }

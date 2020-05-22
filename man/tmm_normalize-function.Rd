@@ -10,28 +10,29 @@ tmm_normalize(experiment, data_type = c("tss", "tsr", "tss_features",
 \arguments{
 \item{experiment}{tsrexplorer object}
 
-\item{data_type}{Whether TSSs, TSRs, RNA-seq & five-prime feature counts should be normalized}
+\item{data_type}{Whether TSSs, TSRs, or RNA-seq & 5' feature counts should be normalized}
 
 \item{samples}{Vector with names of samples to include in the normalization}
 
-\item{threshold}{Filter out positions missing at least 'n_samples' number of samples with reads greater than or equal to threshold}
+\item{threshold}{Consider only features with at least this number of raw counts}
 
-\item{n_samples}{Filter out positions missing at least n_samples number of samples with reads greater than or equal to 'threshold'}
+\item{n_samples}{Filter out positions without features meeting the the selected threshold
+in this number of samples}
 }
 \value{
-tsr explorer object with tmm normalized count matrices
+tsrexplorer object with tmm normalized count matrices
 }
 \description{
 Using edgeR to TMM normalize TSSs or TSRs.
 }
 \details{
-The TMM normalization method employed by edgeR is designed to reduce the influence of
-  library size for inter-sample comparison.
+The TMM normalization method, employed by edgeR, is designed to reduce the influence of
+  library size on inter-sample comparisons.
 
-For TMM normalization it is recommended to remove features with none or few reads as
+For TMM normalization, it is recommended to remove features with few or no reads as
   these may bias the final results.
-To facilitate this filtering two arguments are provided, 'threshold' and 'n_samples'.
-Features must have grater than or equal to 'threshold' number of reads in at least
+To facilitate this filtering, two arguments are provided, 'threshold' and 'n_samples'.
+Features must have greater than or equal to 'threshold' number of raw counts in at least
   'n_samples' number of samples to be retained.
 }
 \examples{

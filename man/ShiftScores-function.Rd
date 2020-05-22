@@ -12,22 +12,22 @@ ShiftScores(fhash, sample_indicator, distances, scores,
 \arguments{
 \item{fhash}{fhash of set}
 
-\item{sample_indicator}{The column with the two sample names}
+\item{sample_indicator}{The column with the names of the samples to be compared (where is the column from qq)}
 
 \item{distances}{bin positions}
 
 \item{scores}{bin scores}
 
-\item{calc_pvalue}{Should p-value be returned for comparison}
+\item{calc_pvalue}{Whether p-values should be returned for comparisons}
 
-\item{nresamp}{number of resamples}
+\item{nresamp}{Number of resamplings for the permutation test}
 
-\item{baseline_level}{control smaple}
+\item{baseline_level}{Control smaple}
 
-\item{nthresh}{both samples must have at least this number of reads}
+\item{nthresh}{Both samples must have at least this number of reads in each TSR}
 
-\item{check_sort}{Check that the input is sorted properly}
+\item{check_sort}{Check that the input is sorted properly (by fhash? qq)}
 }
 \description{
-Calculating shifting score and p-value.
+Calculate shifting scores and associated permutation test p-values.
 }

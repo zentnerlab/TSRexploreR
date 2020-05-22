@@ -9,9 +9,9 @@ extract_counts(experiment, data_type, samples, use_cpm = FALSE)
 \arguments{
 \item{experiment}{tsrexplorer object}
 
-\item{data_type}{whether to extract from the 'tss' or 'tsr' sets}
+\item{data_type}{Whether to extract TSS or TSR counts}
 
-\item{samples}{names of samples to extract}
+\item{samples}{Names of samples from which to extract counts}
 
 \item{use_cpm}{Whether CPM values should be returned}
 }

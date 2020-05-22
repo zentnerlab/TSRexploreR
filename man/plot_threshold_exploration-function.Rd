@@ -10,7 +10,7 @@ plot_threshold_exploration(threshold_data, ncol = 1, point_size = 1,
 \arguments{
 \item{threshold_data}{Tibble of threshold exploration data from explore_thresholds}
 
-\item{ncol}{Number of columns to plot data}
+\item{ncol}{Number of columns in which to plot data}
 
 \item{point_size}{The size of the points on the plot}
 
@@ -23,19 +23,9 @@ ggplot2 object containing the threshold exploration plot
 Make a plot to explore threshold values.
 }
 \details{
-All TSS mapping technologies have some degree of spurious background reads.
-tsr_explorer allows for basic thresholding of these background reads by requiring
-  a minimum number of reads for a TSS to be considered.
-
-An easy way to pick a threshold with the threshold plot generated
-  by 'plot_exploration_threshold'.
-This plot shows the proportion of promoter-proximal TSS positions when
-  various naive threshold values are tested.
-The 'max_threshold' value in the 'explore_thresholds' function defined the maximum threshold
-  value tested from 1 to that value.
-A recommended final naive threshold value will likely result in a promoter-proximal
-  fraction above .80 to .85 and without sacrificing the ability to detect too
-  many unique genes or transcripts.
+We have found that a threshold of 3 often provides an appropriate balance between
+  a high promoter-proximal fraction (>= 0.8) and the number of unique genes or
+  transcripts with at least one unique TSS.
 }
 \examples{
 TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")

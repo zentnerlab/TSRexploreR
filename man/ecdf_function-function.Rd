@@ -10,5 +10,5 @@ ecdf_function(tss_vector)
 \item{tss_vector}{Vector of values to compute ECDF values}
 }
 \description{
-Return ECDF values
+Return ECDF values.
 }

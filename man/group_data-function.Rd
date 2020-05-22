@@ -24,7 +24,7 @@ group_data(signal_data, filters = NA, order_by = NA,
 
 \item{order_group}{Features wil be aggregated by this group before ordering}
 
-\item{quantile_by}{Continuous metric to calculate quantiles}
+\item{quantile_by}{Continuous metric to calculate quantiles (qq??)}
 
 \item{n_quantiles}{Number of quantiles to calculate for continuous metric}
 
@@ -32,7 +32,7 @@ group_data(signal_data, filters = NA, order_by = NA,
 
 \item{quantile_group}{Group these features and quantile based on aggregate mean of feature}
 
-\item{quantile_direction}{Quantile in 'descending' or 'ascending' order of values}
+\item{quantile_direction}{Order quantiles in 'descending' or 'ascending' order of values}
 
 \item{grouping}{If quantiles not set split data by categorical variable}
 }

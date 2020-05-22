@@ -7,30 +7,28 @@
 explore_thresholds(experiment, max_threshold = 50, samples = "all")
 }
 \arguments{
-\item{experiment}{tsrexplorer object with TSSs}
+\item{experiment}{tsrexplorer object with annotated TSSs}
 
-\item{max_threshold}{Threshold from 1 to max_threshold will be explored}
+\item{max_threshold}{Thresholds from 1 to max_threshold will be explored}
 
-\item{samples}{Either 'all' or the names of the samples to analyze}
+\item{samples}{Either "all" or a vector of names of samples to analyze}
 }
 \value{
 data.frame containing information for each threshold and sample
 }
 \description{
-Explore various naive thresholds.
+Explore raw read count thresholds thresholds.
 }
 \details{
 All TSS mapping technologies have some degree of spurious background reads.
-tsr_explorer allows for basic thresholding of these background reads by requiring
+tsr_explorer allows for basic thresholding of data by requiring
   a minimum number of reads for a TSS to be considered.
 
-An easy way to pick a threshold with the threshold plot generated
+An easy way to pick a threshold is with the threshold plot generated
   by 'plot_exploration_threshold'.
-This plot shows the proportion of promoter-proximal TSS positions when
-  various naive threshold values are tested.
-'max_threshold' defines the maximum threshold value tested from 1 to that value.
-A recommended final value will likely result in a promoter-proximal fraction above .80 to .85
-  and without sacrificing the ability to detect too many unique genes or transcripts.
+This plot shows the proportion TSS positions that are promoter-proximal when
+  various threshold values are tested.
+'max_threshold' defines the maximum threshold value that will be analyzed.
 }
 \examples{
 TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")

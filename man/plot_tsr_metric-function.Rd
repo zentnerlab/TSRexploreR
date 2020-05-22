@@ -2,7 +2,7 @@
 % Please edit documentation in R/tsr_plots.R
 \name{plot_tsr_metric}
 \alias{plot_tsr_metric}
-\title{Plot TSR Stats}
+\title{Plot TSR Metrics}
 \usage{
 plot_tsr_metric(experiment, tsr_metrics, plot_type = "violin",
   samples = "all", log2_transform = FALSE, ncol = 1,
@@ -10,31 +10,31 @@ plot_tsr_metric(experiment, tsr_metrics, plot_type = "violin",
   data_conditions = NA, ...)
 }
 \arguments{
-\item{experiment}{tsrexplorer object with TSR granges}
+\item{experiment}{tsrexplorer object with TSR GRanges}
 
-\item{tsr_metrics}{Names of metrics in tsrexplorer TSR granges to plot}
+\item{tsr_metrics}{Names of metrics in tsrexplorer TSR GRanges to plot}
 
-\item{plot_type}{Output either a 'violin', 'jitter', 'box', or "boxjitter" plot (default violin)}
+\item{plot_type}{Output either a 'violin', 'jitter', 'box', or "boxjitter" plot (default: violin)}
 
 \item{samples}{Either 'all' or a vector of sample names to analyze}
 
-\item{log2_transform}{Whether the metric should be log2 transformed prior to plotting}
+\item{log2_transform}{Whether the metric should be log2 + 1 transformed prior to plotting}
 
-\item{ncol}{Number of columns to plot data}
+\item{ncol}{Number of columns to use when plotting multiple samples}
 
-\item{use_cpm}{Whether to use the CPM normalized or raw counts}
+\item{use_cpm}{Whether to use the CPM-normalized counts}
 
 \item{dominant}{Whether to only consider dominant TSRs}
 
-\item{threshold}{Filter TSRs under this count threshold}
+\item{threshold}{Keep only TSRs with at least this number of raw counts}
 
 \item{data_conditions}{Condition the data (filter and quantile/group available)}
 
 \item{...}{Arguments passed to ggplot2 plotting functions}
 }
 \value{
-ggplot2 object with tsr metrix plotted
+ggplot2 object with TSR matrix plotted
 }
 \description{
-Plot selected TSR stats
+Plot selected TSR metrics.
 }

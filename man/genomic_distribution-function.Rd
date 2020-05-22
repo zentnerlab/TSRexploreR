@@ -13,13 +13,13 @@ genomic_distribution(experiment, data_type = c("tss", "tsr"),
 
 \item{data_type}{Whether to get distribution of TSSs or TSRs}
 
-\item{samples}{Either "all" or vector of sample names}
+\item{samples}{Either "all" or a vector of sample names}
 
-\item{threshold}{Filter out TSSs or TSRs under a certain read count number}
+\item{threshold}{Raw count threshold for a TSS or TSR to be considered}
 
-\item{dominant}{Should dominant TSS per 'gene' or 'tsr' only be considered}
+\item{dominant}{Whether only the dominant TSS per gene or TSR should be considered}
 
-\item{data_conditions}{List of group options (filtering and quantiles/grouping available)}
+\item{data_conditions}{Apply conditions to data (supports filtering and quantiles/grouping)}
 }
 \value{
 DataFrame with TSS or TSR genomic distribution stats
@@ -29,15 +29,15 @@ Get genomic distribution of TSSs and TSRs
 }
 \details{
 This function summarizes the distribution of TSSs or TSRs relative
-  to the features they are annotated to.
-Genomic features include exons, introns, intergenic, downstream and promoter regions.
+  to annotated genomic features (exons, introns, intergenic, 
+  downstream and promoter regions.)
 The promoter region is user defined when annotating the TSSs or TSRs.
 
 A set of functions to control data structure for plotting are included.
-'threshold' will define the minimum number of reads a TSS or TSR
+'threshold' defines the minimum number of raw counts a TSS or TSR
  must have to be considered.
 'dominant' specifies whether only the dominant TSS or TSR is considered 
-  from the 'mark_dominant' function.
+  (annotated by the 'mark_dominant' function).
 For TSSs this can be either dominant per TSR or gene, and for TSRs
   it is just the dominant TSR per gene.
 'data_conditions' allows for the advanced filtering, ordering, and grouping
@@ -57,6 +57,6 @@ genomic_dist <- genomic_distribution(tsre_exp, data_type = "tss")
 
 }
 \seealso{
-\code{\link{annotate_features}} to annotate the TSSs or TSRs.
+\code{\link{annotate_features}} to annotate TSSs or TSRs.
   \code{\link{plot_genomic_distribution}} to plot the genomic distribution.
 }

@@ -11,8 +11,8 @@ preliminary_filter(signal_data, dominant, threshold)
 
 \item{dominant}{Whether to retain dominant TSS/TSR}
 
-\item{threshold}{Wheher to apply a threshold to the scores}
+\item{threshold}{Raw count threshold for a TSS or TSR to be considered}
 }
 \description{
-Preliminary filter of data
+Preliminary filtering of data
 }

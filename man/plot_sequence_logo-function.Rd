@@ -7,17 +7,17 @@
 plot_sequence_logo(tss_sequences, ncol = 1, font_size = 6)
 }
 \arguments{
-\item{tss_sequences}{Sequences surrounding TSS generated with tss_sequences}
+\item{tss_sequences}{Sequences surrounding TSSs generated with tss_sequences}
 
 \item{ncol}{Number of columns to plot if quantiles is not set}
 
-\item{font_size}{Font size plots}
+\item{font_size}{Font size for plots}
 }
 \value{
 ggplot2 object with sequence logo
 }
 \description{
-Create a sequence logo for the sequences around TSSs
+Create a sequence logo for the sequences around TSSs.
 }
 \details{
 This plotting function uses the ggseqlogo library to make sequence logos

@@ -2,7 +2,7 @@
 % Please edit documentation in R/average_plots.R
 \name{plot_average}
 \alias{plot_average}
-\title{Average Plots}
+\title{Density Plots}
 \usage{
 plot_average(experiment, data_type = c("tss", "tsr"), samples = "all",
   consider_score = FALSE, upstream = 1000, downstream = 1000,
@@ -10,23 +10,24 @@ plot_average(experiment, data_type = c("tss", "tsr"), samples = "all",
   data_conditions = NA, ...)
 }
 \arguments{
-\item{experiment}{tsr_explorer object with annotated TSSs}
+\item{experiment}{tsrexplorer object with annotated TSSs}
 
-\item{data_type}{Make average plot for TSS or TSR data}
+\item{data_type}{Whether to plot TSS or TSR density}
 
-\item{samples}{Either 'all' to plot all samples, or a vector of sample names}
+\item{samples}{Either 'all' to plot all samples or a vector of sample names}
 
-\item{consider_score}{Should the TSS or TSR score be considered, or just the unique location.}
+\item{consider_score}{Whether the score of each TSS or TSR score be considered
+in addition to its unique location.}
 
 \item{upstream}{Bases upstream of plot center}
 
 \item{downstream}{Bases downstream of plot center}
 
-\item{threshold}{threshold value for TSSs}
+\item{threshold}{Raw count threshold value for TSSs}
 
-\item{ncol}{Number of columns to use when plotting data when quantiles not set}
+\item{ncol}{Number of columns to use for plotting data when quantiles not set}
 
-\item{use_cpm}{Whether to use the CPM normalized or raw counts}
+\item{use_cpm}{Whether to use CPM normalized or raw counts if score is considered}
 
 \item{dominant}{Consider only dominant TSS or TSR}
 
@@ -35,20 +36,20 @@ plot_average(experiment, data_type = c("tss", "tsr"), samples = "all",
 \item{...}{Arguments passed to geom_density}
 }
 \value{
-ggplot2 object of average plot
+ggplot2 object of density plot
 }
 \description{
-Generate average plots of TSSs or TSRs
+Generate density plots of TSSs or TSRs
 }
 \details{
-This plotting function generates an average plot of TSS or TSR signal
+This plotting function generates a density plot of TSS or TSR signal
   relative to annotated TSSs.
 The plot is returned as a ggplot2 object.
 
 By default only the TSS or TSR position is considered, effectively giving every
   TSS or TSR a score of 1.
-If 'consider_score' is set to TRUE, the score of the TSS or TSR will be considered when
-  making the average plot, which gives more weight to stronger TSSs or TSRs.
+If 'consider_score' is set to TRUE, the score of each TSS or TSR will be considered when
+  making the plot, giving more weight to stronger TSSs or TSRs.
 
 The region around the annotated TSS used for plotting is controlled by
   'upstream' and 'downstream', which should be positive integers.
@@ -56,12 +57,12 @@ The region around the annotated TSS used for plotting is controlled by
 A set of functions to control data structure for plotting are included.
 'use_cpm' will use the CPM normalized scores, which only matters if
   'consider_score' is TRUE.
-'threshold' will define the minimum number of reads a TSS or TSR
+'threshold' defines the minimum number of raw counts a TSS or TSR
  must have to be considered.
 'dominant' specifies whether only the dominant TSS or TSR is considered 
   from the 'mark_dominant' function.
-For TSSs this can be either dominant per TSR or gene, and for TSRs
-  it is just the dominant TSR per gene.
+For TSSs this can be either dominant TSS per TSR or gene, and for TSRs
+  it is the dominant TSR per gene.
 'data_conditions' allows for the advanced filtering, ordering, and grouping
   of data.
 }
@@ -80,4 +81,5 @@ plot_average(tsre_exp, data_type = "tss")
 }
 \seealso{
 \code{\link{annotate_features}} to annotate the TSSs or TSRs.
+  \code{\link{mark_dominant}} to identify dominant TSSs or TSRs.
 }

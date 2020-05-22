@@ -10,13 +10,13 @@ tss_shift(experiment, compare_samples, min_distance = 100,
 \arguments{
 \item{experiment}{tsrexplorer object}
 
-\item{compare_samples}{Vector of sample names of the two TSRs to compare}
+\item{compare_samples}{Vector of names of the two TSR samples to compare}
 
-\item{min_distance}{TSRs below this distance will be merged into regions}
+\item{min_distance}{TSRs less than this distance apart will be merged}
 
-\item{min_threshold}{Minimum number of reads required at each region for both TSRs}
+\item{min_threshold}{Minimum number of raw counts required in each TSR for both TSR samples}
 
-\item{n_resamples}{Number of resamples for permutation test of shifting scores}
+\item{n_resamples}{Number of resamplings for permutation test}
 }
 \description{
 Calculate TSS shifting statistics

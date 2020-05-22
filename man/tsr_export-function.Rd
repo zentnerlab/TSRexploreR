@@ -10,13 +10,13 @@ tsr_export(experiment, samples = "all", file_type = "bed",
 \arguments{
 \item{experiment}{tsrexplorer object}
 
-\item{samples}{Samples to export}
+\item{samples}{Samples to export ('all' as well? qq)}
 
 \item{file_type}{either 'bed' or 'table'}
 
 \item{out_dir}{Output directory for files}
 
-\item{diff_tsr}{Whether to pull out the diff TSRs}
+\item{diff_tsr}{Whether to pull out the differential TSRs (qq again, this is a bit unclear)}
 }
 \description{
 Export TSRs to table or BED

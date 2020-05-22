@@ -11,11 +11,11 @@ plot_heatmap(heatmap_matrix, max_value = 5, ncol = 1,
 \arguments{
 \item{heatmap_matrix}{TSS or TSR heatmap matrix from tss_heatmap_matrix ot tsr_heatmap_matrix}
 
-\item{max_value}{Max log2 value to truncate heatmap color}
+\item{max_value}{Max log2 (+ 1? qq) value at which to truncate heatmap color}
 
-\item{ncol}{Number of columns when plotting multiple samples}
+\item{ncol}{Number of columns to use when plotting multiple samples}
 
-\item{background_color}{The color of heatmap background}
+\item{background_color}{The color of the heatmap background (is this the 0 value? qq)}
 
 \item{low_color}{The low value gradient color}
 

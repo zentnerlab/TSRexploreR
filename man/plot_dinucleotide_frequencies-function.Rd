@@ -9,7 +9,7 @@ plot_dinucleotide_frequencies(dinucleotide_frequencies, ncol = 1, ...)
 \arguments{
 \item{dinucleotide_frequencies}{tibble from dinucleotide_frequencies analysis}
 
-\item{ncol}{Number of columns to plot if not quantile plot}
+\item{ncol}{Number of columns to plot if quantiles are not specified}
 
 \item{...}{Arguments passed to geom_col}
 }
@@ -20,9 +20,8 @@ ggplot2 object of dinucleotide frequencies plot
 Plot results from dinucleotide analysis
 }
 \details{
-This plotting function returns a ggplot2 barplot of the +1 and -1 base
-  frequencies (corresponding to the TSS and adjacent upstream base respectively)
-  surrounding TSSs.
+This plotting function returns a ggplot2 barplot of -1 and +1 dinucleotide frequencies, 
+  where +1 is the TSS and -1 is the position immediately upstream.
 The results of the 'dinucleotide_frequencies' function are used as input.
 }
 \examples{

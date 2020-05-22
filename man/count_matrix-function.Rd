@@ -12,10 +12,10 @@ count_matrix(experiment, data_type = c("tss", "tsr", "tss_features",
 
 \item{data_type}{Either 'tss', 'tsr', 'tss_features', or 'tsr_features'}
 
-\item{samples}{The samples to turn into a count matrix}
+\item{samples}{Character vector of samples to turn into a count matrix}
 }
 \value{
-tsr explorer object with added count matrices
+tsrexplorer object with added count matrices
 }
 \description{
 Generate count matrices for correlation analysis.
@@ -24,10 +24,9 @@ Generate count matrices for correlation analysis.
 In order to compare samples, a matrix must first be generated with
   genomic positions as rows and samples as columns.
 
-For TSSs the genomic position is simply the one base coordinate that
-  the TSS is on.
+For each TSS, the genomic position is simply its single base position
 However, for TSRs, overlapping TSRs between samples are first merged
-  to generate consensus TSRs for the samples.
+  to generate consensus TSRs for all considered samples.
 }
 \examples{
 TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")

@@ -10,5 +10,5 @@ tsr_metrics(experiment)
 \item{experiment}{tsrexplorer object}
 }
 \description{
-Calculate TSR Metrics
+Calculate TSR Metrics.
 }

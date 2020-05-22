@@ -2,7 +2,7 @@
 % Please edit documentation in R/diff_expression.R
 \name{differential_expression}
 \alias{differential_expression}
-\title{Find Differential Expression}
+\title{AnalyzeDifferential Expression}
 \usage{
 differential_expression(experiment, data_type = c("tss", "tsr",
   "tss_features", "tsr_features"), compare_groups, fdr_cutoff = 0.05,
@@ -11,9 +11,9 @@ differential_expression(experiment, data_type = c("tss", "tsr",
 \arguments{
 \item{experiment}{tsrexplorer object with edgeR differential expression model from fit_edger_model}
 
-\item{data_type}{Whether the input was made from TSSs, TSRs, or features}
+\item{data_type}{Whether the input was generated from TSSs, TSRs, or features}
 
-\item{compare_groups}{Vector of length two of the two groups to find differential TSRs}
+\item{compare_groups}{Vector of length two of the two groups from which to find differential TSRs}
 
 \item{fdr_cutoff}{FDR cutoff}
 
@@ -23,5 +23,5 @@ differential_expression(experiment, data_type = c("tss", "tsr",
 tibble of differential TSRs
 }
 \description{
-Find differential TSSs, TSRs, or features from edgeR model.
+Find differential TSSs, TSRs, or features from edgeR model
 }

@@ -15,7 +15,7 @@ de_table(experiment, data_type = c("tss", "tsr", "tss_features",
 
 \item{de_comparisons}{The name of the DE comparison}
 
-\item{de_type}{A single value or combination of 'up, 'unchanged', and/or 'down'}
+\item{de_type}{A single value or combination of 'up, 'unchanged', and/or 'down' (qq a list?)}
 }
 \description{
 Output a table with differential features

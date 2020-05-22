@@ -12,13 +12,13 @@ dinucleotide_frequencies(experiment, genome_assembly, samples = "all",
 
 \item{genome_assembly}{fasta file of genome assembly}
 
-\item{samples}{Either 'all' or vector of sample names to analyze}
+\item{samples}{Either 'all' to plot all samples or a vector of sample names}
 
-\item{threshold}{TSS read threshold}
+\item{threshold}{Raw TSS count threshold}
 
-\item{dominant}{Consider only dominant}
+\item{dominant}{Consider only dominant TSSs}
 
-\item{data_conditions}{Condition the data (filtering and quantile/grouping available)}
+\item{data_conditions}{Condition the data}
 }
 \value{
 DataFrame with dinucleotide frequencies
@@ -27,21 +27,21 @@ DataFrame with dinucleotide frequencies
 Analysis of -1 and +1 dinucleotide frequencies.
 }
 \details{
-It has been shown in many organisms that a particular base preference exists in the
-  +1 and -1 bases (corresponding to the TSS and upstream adjacent base respectively).
-This function returns the dinucleotide frequencies surrounding each TSS.
+It has been shown in many organisms that particular base preferences exist at the
+ -1 and +1 positions, where +1 is the TSS and -1 is the position immediately upstream.
+This function returns the dinucleotide frequencies at each TSS.
 
 'genome_assembly' must be a valid genome assembly in either fasta or BSgenome format.
 fasta formatted genome assemblies should have the file extension '.fasta' or '.fa'.
 BSgenome assemblies are precompiled Bioconductor libraries for common organisms.
 
 A set of arguments to control data structure for plotting are included.
-'threshold' will define the minimum number of reads a TSS or TSR
+'threshold' will define the minimum number of raw counts a TSS or TSR
  must have to be considered.
-'dominant' specifies whether only the dominant TSS or TSR is considered 
+'dominant' specifies whether only the dominant TSS should be considered 
   from the 'mark_dominant' function.
 For TSSs this can be either dominant per TSR or gene, and for TSRs
-  it is just the dominant TSR per gene.
+  it is just the dominant TSR per gene. (qq should this just be TSSs?)
 'data_conditions' allows for the advanced filtering, ordering, and grouping
   of data.
 }

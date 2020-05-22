@@ -10,18 +10,18 @@ cpm_normalize(experiment, data_type = c("tss", "tsr", "tss_features",
 \arguments{
 \item{experiment}{tsrexplorer object}
 
-\item{data_type}{'tss', 'tsr', 'tss_features', 'tsr_features'}
+\item{data_type}{'tss', 'tsr', 'tss_features', or 'tsr_features'}
 }
 \value{
-tsrexplorer object with added CPM counts column.
+tsrexplorer object with CPM values.
 }
 \description{
 CPM normalize the TSS, TSR, and/or feature counts.
 }
 \details{
-Counts Per Million (CPM) normalization allows for slightly better
-  comparison between samples for various downstream analysis and plots.
-For more quantitative comparison TMM normalization is recommended.
+Counts Per Million (CPM) is an approach for read number normalization, 
+  allowing comparison between samples for various downstream analyses and plots.
+For more quantitative comparisons, TMM normalization is recommended (this should be fleshed out more qq)
 }
 \examples{
 TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")

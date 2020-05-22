@@ -9,16 +9,16 @@ format_counts(experiment, data_type = c("tss", "tsr"), samples = "all")
 \arguments{
 \item{experiment}{tsrexplorer object}
 
-\item{data_type}{'tss' or 'tsr'}
+\item{data_type}{Whether to format TSS or TSR counts}
 
-\item{samples}{character vector of sample names}
+\item{samples}{Character vector of sample names}
 }
 \value{
 tsrexplorer object with properly formatted features
    in data.table format.
 }
 \description{
-Format counts for TSSs or TSRs for further analysis.
+Format TSS or TSR counts for further analysis.
 }
 \details{
 When TSSs or TSRs are first loaded into the tsrexplorer object

@@ -11,8 +11,8 @@ tss_experiment(tsrexplorer_object)
 \S4method{tss_experiment}{tsr_explorer}(tsrexplorer_object)
 }
 \arguments{
-\item{tsrexplorer_object}{tsr_explorer object}
+\item{tsrexplorer_object}{tsrexplorer object}
 }
 \description{
-Convenience function to add TSSs to tsrexplorer object
+Convenience function to add TSSs to a tsrexplorer object.
 }

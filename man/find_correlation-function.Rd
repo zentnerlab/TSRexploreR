@@ -8,17 +8,17 @@ find_correlation(experiment, data_type = c("tss", "tsr", "features"),
   samples = "all", correlation_metric = "pearson")
 }
 \arguments{
-\item{experiment}{tsrexplorer object with TMM normalized counts}
+\item{experiment}{tsrexplorer object with TMM-normalized counts}
 
-\item{data_type}{Whether to make scatter plots from TSS, TSR, or RNA-seq & five-prime data}
+\item{data_type}{Whether to make scatter plots from TSS, TSR, or RNA-seq & 5' data}
 
 \item{samples}{Either 'all' or the names of the samples to plot}
 
-\item{correlation_metric}{Use either spearman or pearson correlation}
+\item{correlation_metric}{Whether to use Spearman or Pearson correlation}
 }
 \value{
-correlation matrix
+Correlation matrix
 }
 \description{
-Calculate a correlation matrix for sample concordance of TSSs or TSRs
+Calculate a correlation matrix to assess between-sample concordance of TSSs or TSRs
 }

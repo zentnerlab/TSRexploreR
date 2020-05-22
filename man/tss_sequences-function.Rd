@@ -11,15 +11,15 @@ tss_sequences(experiment, samples = "all", genome_assembly,
 \arguments{
 \item{experiment}{tsrexplorer object with TSS GRanges}
 
-\item{samples}{Either "all" or names of samples to analyze}
+\item{samples}{Either "all" or a vector of names of samples to analyze}
 
 \item{genome_assembly}{Genome assembly in fasta format or bioconductor BSgenome}
 
-\item{threshold}{Keep only TSSs with threshold number of reads or more}
+\item{threshold}{Keep only TSSs with at least this number of raw counts}
 
-\item{distance}{Bases to add on each side of TSS}
+\item{distance}{Bases to add on each side of eacg TSS}
 
-\item{dominant}{Whether only dominant should be considered}
+\item{dominant}{Whether to only consider dominant TSSs}
 
 \item{data_conditions}{Condition the data (filter, quantile, and grouping available)}
 }
@@ -37,8 +37,8 @@ This function will retrieve the genomic sequence surrounding TSSs for later use 
 fasta formatted genome assemblies should have the file extension '.fasta' or '.fa'.
 BSgenome assemblies are precompiled Bioconductor libraries for common organisms.
 
-'distance' controls the length extending upstream and downstream of the TSS
-  in which the sequence will be retrieved.
+'distance' controls the length upstream and downstream of the TSS
+  from which the sequence will be retrieved.
 
 A set of functions to control data structure for plotting are included.
 'threshold' will define the minimum number of reads a TSS or TSR

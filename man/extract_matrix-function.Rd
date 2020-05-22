@@ -11,8 +11,8 @@ extract_matrix(experiment, data_type, samples)
 
 \item{data_type}{Whether to extract 'tss', 'tsr', 'tss_features', or 'tsr_features'}
 
-\item{samples}{Sampels to extract}
+\item{samples}{Samples to extract}
 }
 \description{
-Extract the normalized count matrices.
+Extract normalized count matrices.
 }

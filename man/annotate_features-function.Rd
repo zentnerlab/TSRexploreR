@@ -9,32 +9,32 @@ annotate_features(experiment, annotation_data, data_type = c("tss",
   upstream = 1000, downstream = 100)
 }
 \arguments{
-\item{experiment}{tsrexplorer object with TSS Granges}
+\item{experiment}{tsrexplorer object with TSS GRanges}
 
-\item{annotation_data}{Either path and file name of annotation file, or TxDb object of annotation}
+\item{annotation_data}{Path to annotation file or loaded TxDb object}
 
 \item{data_type}{Whether to annotate TSSs or TSRs}
 
-\item{feature_type}{Annotate on gene or transcript level}
+\item{feature_type}{Annotate at the gene or transcript level}
 
-\item{upstream}{Bases upstream of TSS}
+\item{upstream}{Bases upstream of TSS for 'promoter' annotation}
 
-\item{downstream}{Bases downstream of TSS}
+\item{downstream}{Bases downstream of TSS for 'promoter' annotation}
 }
 \value{
 tsrexplorer object with annotated features
 }
 \description{
-Use ChIPseeker package to annotate TSSs or TSRs.
+Use the ChIPseeker package to annotate TSSs or TSRs relative to known genes or transcripts.
 }
 \details{
 This function attempts to assign TSSs or TSRs to the nearest genomic feature.
 Genomic annotation data can be provided as either a 'GTF' or 'GFF' file,
   or as a TxDb package from bioconductor.
 
-'feature_type' will let you assign as gene or transcript level.
-Furthermore, the promoter region can be defined using
-  'upstream' and 'downstream' which are relative to the TSSs
+'feature_type' allows to you link TSSs or TSRs to genes or transcripts.
+Furthermore, the size of the promoter region can be defined using
+  'upstream' and 'downstream', which are relative to the TSSs
   defined in your annotation data.
 }
 \examples{

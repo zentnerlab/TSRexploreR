@@ -10,24 +10,24 @@ tss_clustering(experiment, samples = "all", threshold = 1,
 \arguments{
 \item{experiment}{tsrexplorer object}
 
-\item{samples}{The samples to call TSRs for}
+\item{samples}{Samples for which TSSs should be clustered}
 
-\item{threshold}{Minimum number of reads for a TSS to be considered}
+\item{threshold}{Consider only TSSs with at least this number of raw counts}
 
-\item{max_distance}{The maximum distance to cluster TSSs}
+\item{max_distance}{Maximum distance between TSSs that can be clustered}
 }
 \value{
-tsr explorer object with TSRs
+tsrexplorer object with TSRs
 }
 \description{
-Basic distance and threshold based clustering of TSSs.
+Basic distance and threshold-based clustering of TSSs.
 }
 \details{
 This function clusters TSSs into Transcription Start Regions (TSRs).
 
 TSSs are clustered if their score is greater than or equal to
   'threshold' and are less than or equal to 'max_distance'
-  from eachother.
+  from each other.
 }
 \examples{
 TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")

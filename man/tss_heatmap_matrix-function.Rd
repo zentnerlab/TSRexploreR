@@ -11,17 +11,17 @@ tss_heatmap_matrix(experiment, samples = "all", upstream = 1000,
 \arguments{
 \item{experiment}{tsrexplorer object with annotated TSSs}
 
-\item{samples}{Either 'all' or name of samples to analyze}
+\item{samples}{Either 'all' or a vector of sample names to analyze}
 
-\item{upstream}{Bases upstream to consider}
+\item{upstream}{Bases upstream of plot center}
 
-\item{downstream}{bases downstream to consider}
+\item{downstream}{Bases downstream of plot center}
 
-\item{threshold}{Reads required per TSS}
+\item{threshold}{Raw count threshold value}
 
-\item{use_cpm}{Whether to use the CPM normalized values or not}
+\item{use_cpm}{Whether to use CPM-normalized counts}
 
-\item{dominant}{Consider only dominant}
+\item{dominant}{Whether to only consider dominant TSSs}
 
 \item{data_conditions}{Condition the data (filter, order, and quantile/group available)}
 }
@@ -29,7 +29,7 @@ tss_heatmap_matrix(experiment, samples = "all", upstream = 1000,
 DataFrame of counts for each gene/transcript and position
 }
 \description{
-Generate count matrix to make TSS heatmap
+Generate count matrix to make TSS heatmap.
 }
 \details{
 This function makes a count matrix for each gene or transcript with detected features

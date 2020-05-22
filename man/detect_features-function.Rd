@@ -10,11 +10,11 @@ detect_features(experiment, samples = "all", data_type = c("tss",
 \arguments{
 \item{experiment}{tsrexplorer object with annotated TSSs or TSRs}
 
-\item{samples}{Either 'all' or vector of sample names}
+\item{samples}{Either 'all' or a vector of sample names}
 
 \item{data_type}{Whether TSSs or TSRs should be analyzed}
 
-\item{threshold}{The number of reads required in a TSS or TSR to avoid filtering}
+\item{threshold}{The number of raw reads required for a TSS or TSR to be considered}
 
 \item{dominant}{Whether to consider only the dominant TSS or TSR}
 
@@ -24,11 +24,11 @@ detect_features(experiment, samples = "all", data_type = c("tss",
 DataFrame of detected feature numbers.
 }
 \description{
-Get the number of genes or transcripts detected
+Get the number of genes or transcripts with an associated unique TSS or TSR
 }
 \details{
-This function will return either the number of genes or transcripts detected
-  depending on what feature type was used during annotation.
+This function will return either the number of genes or transcripts with
+ an associated unique TSS or TSR.
 Information on whether the feature has a promoter-proximal TSS or TSR is included
   in the output for plotting purposes.
 

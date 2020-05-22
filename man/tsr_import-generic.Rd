@@ -14,7 +14,7 @@ tsr_import(tsrexplorer_obj, object, ...)
 \S4method{tsr_import}{data.frame}(tsrexplorer_obj, object)
 }
 \arguments{
-\item{tsrexplorer_obj}{tsrexplorer object to add the TSRs to}
+\item{tsrexplorer_obj}{tsrexplorer object to which to add TSRs}
 
 \item{object}{Object with TSRs to import into tsrexplorer}
 

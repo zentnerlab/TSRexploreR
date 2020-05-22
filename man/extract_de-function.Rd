@@ -14,5 +14,5 @@ extract_de(experiment, data_type, de_comparisons = "all")
 \item{de_comparisons}{The comparison sets to extract}
 }
 \description{
-Extract the differential expression results.
+Extract differential expression analysis results.
 }

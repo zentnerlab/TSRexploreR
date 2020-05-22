@@ -17,9 +17,9 @@ tsr_explorer(TSSs = NA, TSRs = NA)
 A tsrexplorer object containing TSSs and/or TSRs
 }
 \description{
-This function generates a new tsr_explorer object for
+This function generates a new tsrexplorer object for
 detailed analysis of transcription start sites (TSSs)
-and TSS clusters, referred to as transcription
+and TSS clusters, referred to here as transcription
 start regions (TSRs).
 }
 \section{Slots}{
@@ -29,13 +29,13 @@ start regions (TSRs).
 
 \item{\code{counts}}{Named lists of TMM and CPM normalized TSSs and/or TSRs}
 
-\item{\code{correlation}}{Named lists of correlation values between TSS and/or TSR sets}
+\item{\code{correlation}}{Named lists of correlation values for TSS and/or TSR sets}
 
 \item{\code{diff_features}}{Differential features}
 
 \item{\code{settings}}{Storage location for arguments used in various functions}
 
-\item{\code{meta_data}}{Storage for meta_data}
+\item{\code{meta_data}}{Storage for meta_data (what metadata? qq)}
 }}
 
 \examples{
