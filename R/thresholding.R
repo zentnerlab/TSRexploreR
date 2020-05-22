@@ -48,9 +48,12 @@ explore_thresholds <- function(
 	## Check inputs.
 	if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsr explorer object")
 
-	if (!is(max_threshold, "numeric")) stop("max_threshold must be a positive integer")
-	if (max_threshold %% 1 != 0) stop("max_threshold must be a positive integer")
-	if (max_threshold < 5) stop("max_threshold must be greater than or equal to 5")
+	if (
+		!is(max_threshold, "numeric") || length(max_threshold) > 1 ||
+		max_threshold %% 1 != 0 || max_threshold < 5
+	) {
+		stop("max_threshold must be a positive integer greater than or equal to 5")
+	}
 
 	if (!is(samples, "character")) stop("samples must be a character vector")
 
