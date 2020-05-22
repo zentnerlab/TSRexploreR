@@ -2,7 +2,7 @@
 % Please edit documentation in R/diff_expression.R
 \name{differential_expression}
 \alias{differential_expression}
-\title{AnalyzeDifferential Expression}
+\title{Analyze Differential Expression}
 \usage{
 differential_expression(experiment, data_type = c("tss", "tsr",
   "tss_features", "tsr_features"), compare_groups, fdr_cutoff = 0.05,

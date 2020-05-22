@@ -21,9 +21,30 @@
 #' @export
 
 fit_edger_model <- function(
-	experiment, data_type = c("tss", "tsr", "tss_features", "tsr_features"),
-	samples, groups
+	experiment,
+	data_type = c("tss", "tsr", "tss_features", "tsr_features"),
+	samples,
+	groups
 ) {
+	## Input checks.
+	if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsr explorer object")
+
+        if (!is(data_type, "character") || length(data_type) > 1) {
+                stop("data_type must be a character")
+        }
+        data_type <- str_to_lower(data_type)
+        if (!data_type %in% c("tss", "tsr", "tss_features", "tsr_features")) {
+                stop("data_type must be 'tss', 'tsr', 'tss_features', or 'tsr_features'")
+        }
+
+	if (!is(samples, "character") || length(samples) < 6) {
+		stop("samples should be a character vector with at least 6 sample names")
+	}
+
+	if (!is(groups, "character") || length(groups) < 6 || length(groups) != length(samples)) {
+		stop("groups must be a character vector of the same length as 'samples'")
+	}
+
 	## Design table.
 	design <- data.table("samples" = samples, "groups" = groups)
 	design[, groups := fct_inorder(as.character(groups))]
@@ -62,7 +83,7 @@ fit_edger_model <- function(
 	return(experiment)
 }
 
-#' AnalyzeDifferential Expression
+#' Analyze Differential Expression
 #'
 #' Find differential TSSs, TSRs, or features from edgeR model
 #'
@@ -86,8 +107,38 @@ fit_edger_model <- function(
 #' @export
 
 differential_expression <- function(
-	experiment, data_type = c("tss", "tsr", "tss_features", "tsr_features"),
-	compare_groups, fdr_cutoff = 0.05, log2fc_cutoff = 1) {
+	experiment,
+	data_type = c("tss", "tsr", "tss_features", "tsr_features"),
+	compare_groups,
+	fdr_cutoff = 0.05,
+	log2fc_cutoff = 1
+) {
+
+	## Input checks.
+	if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsr explorer object")
+
+        if (!is(data_type, "character") || length(data_type) > 1) {
+                stop("data_type must be a character")
+        }
+        data_type <- str_to_lower(data_type)
+        if (!data_type %in% c("tss", "tsr", "tss_features", "tsr_features")) {
+                stop("data_type must be 'tss', 'tsr', 'tss_features', or 'tsr_features'")
+        }
+
+	if (!is(compare_groups, "character") || length(compare_groups) != 2) {
+		stop("compare_groups must be a character vector of length 2")
+	}
+
+	if (
+		!is(fdr_cutoff, "numeric") || length(fdr_cutoff) > 1 ||
+		fdr_cutoff < 0 || fdr_cutoff > 1
+	) {
+		stop("fdr_cutoff must be a positive number between 0 and 1 inclusive")
+	}
+
+	if (!is(log2fc_cutoff, "numeric") || length(log2fc_cutoff) > 1 || log2fc_cutoff < 0) {
+		stop("log2fc_cutoff must be a positive number")
+	}
 	
 	## Grab appropriate model.
 	if (data_type == "tss") {
@@ -176,9 +227,30 @@ differential_expression <- function(
 #' @export
 
 de_table <- function(
-	experiment, data_type = c("tss", "tsr", "tss_features", "tsr_features"),
-	de_comparisons = "all", de_type = c("up", "unchanged", "down")
+	experiment,
+	data_type = c("tss", "tsr", "tss_features", "tsr_features"),
+	de_comparisons = "all",
+	de_type = c("up", "unchanged", "down")
 ) {
+	## Input checks.
+	if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsr explorer object")
+
+        if (!is(data_type, "character") || length(data_type) > 1) {
+                stop("data_type must be a character")
+        }
+        data_type <- str_to_lower(data_type)
+        if (!data_type %in% c("tss", "tsr", "tss_features", "tsr_features")) {
+                stop("data_type must be 'tss', 'tsr', 'tss_features', or 'tsr_features'")
+        }
+
+	if (!is(de_comparisons, "character")) stop("de_comparisons must be 'all' or character vector")
+
+	if(!is(de_type, "character")) stop("de_type must be any of 'up', 'unchanged', and/or 'down'")
+	de_type <- str_to_lower(de_type)
+	if(!all(de_type %in% c("up", "unchanged", "down"))) {
+		stop("de_type must be any of 'up', 'unchanged', and/or 'down'")
+	}
+
 	## Grab tables.
 	de_tables <- experiment %>%
 		extract_de(data_type, de_comparisons) %>%
