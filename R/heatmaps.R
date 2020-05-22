@@ -383,6 +383,11 @@ tsr_heatmap_matrix <- function(
 	}
 	annotated_tsr[, distanceToTSS := factor(distanceToTSS, levels = seq(-upstream, downstream, 1))]
 
+        ## Order samples if required.
+        if (!all(samples == "all")) {
+                annotated_tsr[, sample := factor(sample, levels = samples)]
+        }
+
 	## Return DataFrame
 	tsr_df <- DataFrame(annotated_tsr)
 	metadata(tsr_df)$threshold <- threshold
