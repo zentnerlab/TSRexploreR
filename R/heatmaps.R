@@ -293,10 +293,41 @@ plot_heatmap <- function(
 #' @export
 
 tsr_heatmap_matrix <- function(
-	experiment, samples = "all", upstream = 1000,
-	downstream = 1000, threshold = NA, use_cpm = FALSE,
-	dominant = FALSE, data_conditions = list(order_by = "score")
+	experiment,
+	samples = "all",
+	upstream = 1000,
+	downstream = 1000,
+	threshold = NA,
+	use_cpm = FALSE,
+	dominant = FALSE,
+	data_conditions = list(order_by = "score")
 ) {
+
+	## Check inputs.
+	if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsrexplorer object")
+
+	if (!is(samples, "character")) stop("samples must be a character")
+
+        if (!is(upstream, "numeric") | !is(downstream, "numeric")) {
+                stop("upstream and downstream must be positive integers")
+        }
+        if (upstream %% 1 != 0 | downstream %% 1 != 0) {
+                stop("upstream and downstream must be positive integers")
+        }
+        if (upstream < 0 | downstream < 0) stop("upstream and downstream must be positive integers")
+
+        if (
+                !is.na(threshold) && !is(threshold, "numeric") ||
+                threshold %% 1 != 0 || threshold < 1
+        ) {
+                stop("threshold must be a positive integer")
+        }
+
+	if (!is(dominant, "logical")) stop("dominant must be TRUE or FALSE")
+
+	if (!is(use_cpm, "logical")) stop("use_cpm must be TRUE or FALSE")
+
+	if (!is.na(data_conditions) && !is(data_conditions, "list")) stop("data_conditions must in list form")
 	
 	## Get requested samples.
 	annotated_tsr <- extract_counts(experiment, "tsr", samples, use_cpm)
