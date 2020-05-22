@@ -47,8 +47,13 @@ plot_ma <- function(
 	de_samples <- extract_de(experiment, data_type, de_comparisons)
 
 	## Prepare DE data for plotting.
-	de_samples <- rbindlist(de_samples)
+	de_samples <- rbindlist(de_samples, idcol = "sample")
 	de_samples[, DE := factor(DE, levels = c("up", "unchanged", "down"))]
+
+	## Set sample order if required.
+	if (!all(de_comparisons == "all")) {
+		de_samples[, sample := factor(sample, levels = de_comparisons)]
+	}
 
 	## MA plot of differential expression
 	p <- ggplot(de_samples, aes(x = logCPM, y = log2FC, color = DE)) +
@@ -139,11 +144,16 @@ plot_num_de <- function(
 	## Get appropriate samples.
 	de_samples <- experiment %>%
 		extract_de(data_type, de_comparisons) %>%
-		rbindlist
+		rbindlist(idcol = "sample")
 
 	## prepare data for plotting.
 	de_data <- de_samples[, .(count = .N), by = .(sample, DE)]
 	de_data[, DE := factor(DE, levels = c("up", "unchanged", "down"))]
+
+        ## Set sample order if required.
+        if (!all(de_comparisons == "all")) {
+                de_samples[, sample := factor(sample, levels = de_comparisons)]
+        }
 
 	## Plot data.
 	p <- ggplot(de_data, aes(x = sample, y = count, fill = DE)) +
