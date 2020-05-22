@@ -12,6 +12,13 @@
 
 add_sample_sheet <- function(experiment, sample_sheet) {
 
+	## Input checks.
+	if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsr explorer object")
+
+	if (!is(sample_sheet, "character") & !is(sample_sheet, "data.frame")) {
+		stop("sample_sheet must be a file path or data.frame")
+	}
+
 	## Import sample sheet if it is a file.
 	if (is(sample_sheet, "character")) {
 		sample_sheet <- fread(sample_sheet, sep = "\t", header = TRUE)
