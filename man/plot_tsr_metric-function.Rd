@@ -14,7 +14,7 @@ plot_tsr_metric(experiment, tsr_metrics, plot_type = "violin",
 
 \item{tsr_metrics}{Names of metrics in tsrexplorer TSR GRanges to plot}
 
-\item{plot_type}{Output either a 'violin', 'jitter', 'box', or "boxjitter" plot (default: violin)}
+\item{plot_type}{Output either a 'violin', 'jitter', 'box', or 'boxjitter' plot (default: violin)}
 
 \item{samples}{Either 'all' or a vector of sample names to analyze}
 
