@@ -48,7 +48,35 @@ plot_reduction <- function(
 	min_dist = 0.1,
 	...
 ) {
-	
+
+	## Input checks.
+	if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsrexplorer object")
+
+        if (!is(data_type, "character") || length(data_type) > 1) {
+                stop("data_type must be a character")
+        }
+        data_type <- str_to_lower(data_type)
+        if (!data_type %in% c("tss", "tsr", "tss_features", "tsr_features")) {
+		stop("data_type must be 'tss', 'tsr', 'tss_features', or 'tsr_features'")
+	}
+
+	if (!is(method, "character") || length(method) > 1) stop("method must be 'umap' or 'pca'")
+	method <- str_to_lower(method)
+	if (!method %in% c("umap", "pca")) stop("method must be 'umap' or 'pca'")
+
+	if (
+		!is(n_neighbors, "numeric") || length(n_neighbors) > 1 ||
+		n_neighbors %% 1 != 0 || n_neighbors < 2
+	) {
+		stop("n_neighbors must be a positive integer greater than or equal to 2")
+	}
+
+	if (
+		!is(min_dist, "numeric") || length(min_dist) > 1 || min_dist < 0
+	){
+		stop("min_dist must be a number greater than or equal to 0")
+	}
+
 	## Grab TMM counts.
 	tmm_counts <- extract_matrix(experiment, data_type, "all")
 
