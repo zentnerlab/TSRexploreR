@@ -64,8 +64,8 @@ gene_tracks <- function(
 	if (!all(str_detect(sample, "^TS[RS]:"))) stop("sample names must be prefixed with 'TSS:' or 'TSR:'")
 
         if (
-                !is.na(threshold) && !is(threshold, "numeric") ||
-                threshold %% 1 != 0 || threshold < 1
+                !is.na(threshold) && (!is(threshold, "numeric") ||
+                threshold %% 1 != 0 || threshold < 1)
         ) {
                 stop("threshold must be a positive integer")
         }
@@ -89,7 +89,7 @@ gene_tracks <- function(
 		stop("axis_scale must be a positive number")
 	}
 
-	if (!is.na(ymax) && !is(ymax, "numeric") || length(ymax) > 1 || ymax <= 0) {
+	if (!is.na(ymax) && (!is(ymax, "numeric") || length(ymax) > 1 || ymax <= 0)) {
 		stop("ymax must be a positive number")
 	}
 	

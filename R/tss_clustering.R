@@ -43,8 +43,8 @@ tss_clustering <- function(
 	if (!is(samples, "character")) stop("samples must be a character")
 
         if (
-                !is.na(threshold) && !is(threshold, "numeric") ||
-                threshold %% 1 != 0 || threshold < 1
+                !is.na(threshold) && (!is(threshold, "numeric") ||
+                threshold %% 1 != 0 || threshold < 1)
         ) {
                 stop("threshold must be a positive integer")
         }

@@ -93,7 +93,7 @@ tss_sequences <- function(
 
 	if (!is(dominant, "logical")) stop("dominant must be logical")
 
-	if (!is.na(data_conditions) && !is(data_conditions, "list")) {
+	if (all(!is.na(data_conditions)) && !is(data_conditions, "list")) {
 		stop("data_conditions must be a list of values")
 	}
 
@@ -111,7 +111,7 @@ tss_sequences <- function(
 	select_samples <- preliminary_filter(select_samples, dominant, threshold)
 
 	## Condition the data.
-	if (!is.na(data_conditions)) {
+	if (all(!is.na(data_conditions))) {
 		select_samples <- do.call(group_data, c(list(signal_data = select_samples), data_conditions))
 	}
 

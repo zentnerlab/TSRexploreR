@@ -71,15 +71,15 @@ detect_features <- function(
         if (!data_type %in% c("tss", "tsr")) stop("data_type must be 'tss' or 'tsr'")
 
         if (
-                !is.na(threshold) && !is(threshold, "numeric") ||
-                threshold %% 1 != 0 || threshold < 1
+                !is.na(threshold) && (!is(threshold, "numeric") ||
+                threshold %% 1 != 0 || threshold < 1)
         ) {
                 stop("threshold must be a positive integer greater than or equal to 1")
         }
 
 	if (!is(dominant, "logical")) stop("dominant must be logical")
 
-	if (!is.na(condition_data) && !is(condition_data, "list")) {
+	if (all(!is.na(condition_data)) && !is(condition_data, "list")) {
 		stop("condition_data must be a list of values")
 	}
 	
@@ -92,7 +92,7 @@ detect_features <- function(
 	}
 
 	## Apply data conditioning if set.
-	if (!is.na(condition_data)) {
+	if (all(!is.na(condition_data))) {
 		sample_data <- do.call(group_data, c(list(signal_data = sample_data), condition_data))
 	}
 

@@ -110,8 +110,8 @@ plot_density <- function(
         if (upstream < 0 | downstream < 0) stop("upstream and downstream must be positive integers")
 
 	if (
-                !is.na(threshold) && !is(threshold, "numeric") ||
-                threshold %% 1 != 0 || threshold < 1
+                !is.na(threshold) && (!is(threshold, "numeric") ||
+                threshold %% 1 != 0 || threshold < 1)
         ) {
                 stop("threshold must be a positive integer")
         }
@@ -120,7 +120,7 @@ plot_density <- function(
 		stop("ncol must be a positive integer")
 	}
 
-	if (!is.na(data_conditions) && !is(data_conditions, "list")) {
+	if (all(!is.na(data_conditions)) && !is(data_conditions, "list")) {
 		stop("data_conditions should be a list of values")
 	}
 
@@ -145,7 +145,7 @@ plot_density <- function(
         })
 
         ## Condition data.
-        if (!is.na(data_conditions)) {
+        if (all(!is.na(data_conditions))) {
                 sample_data <- do.call(group_data, c(list(signal_data = sample_data), data_conditions))
         }
 

@@ -75,15 +75,15 @@ dinucleotide_frequencies <- function(
 	if (!is(samples, "character")) stop("samples must be a character")
 
         if (
-                !is.na(threshold) && !is(threshold, "numeric") ||
-                threshold %% 1 != 0 || threshold < 1
+                !is.na(threshold) && (!is(threshold, "numeric") ||
+                threshold %% 1 != 0 || threshold < 1)
         ) {
                 stop("threshold must be a positive integer")
         }
 
 	if (!is(dominant, "logical")) stop("dominant must be logical")
 
-	if (!is.na(data_conditions) && !is(data_conditions, "list")) {
+	if (all(!is.na(data_conditions)) && !is(data_conditions, "list")) {
 		stop("data_conditions must be a list of values")
 	}
 
@@ -97,7 +97,7 @@ dinucleotide_frequencies <- function(
 	select_samples <- preliminary_filter(select_samples, dominant, threshold)
 
 	## Apply conditions to data.
-	if (!is.na(data_conditions)) {
+	if (all(!is.na(data_conditions))) {
 		select_samples <- do.call(group_data, c(list(signal_data = select_samples), data_conditions))
 	}
 

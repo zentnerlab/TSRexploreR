@@ -72,15 +72,15 @@ genomic_distribution <- function(
 	if (!is(samples, "character")) stop("samples must be a character")
 
 	if (
-		!is.na(threshold) && !is(threshold, "numeric") ||
-		threshold %% 1 != 0 || threshold < 1
+		!is.na(threshold) && (!is(threshold, "numeric") ||
+		threshold %% 1 != 0 || threshold < 1)
 	) {
 		stop("threshold must be a positive integer")
 	}
 		
 	if (!is.logical(dominant)) stop("dominant must be logical")
 
-	if (!is.na(data_conditions) && !is(data_conditions, "list")) stop("data_conditions must in list form")
+	if (all(!is.na(data_conditions)) && !is(data_conditions, "list")) stop("data_conditions must in list form")
 
 	## Extract samples.
 	selected_samples <- extract_counts(experiment, data_type, samples)
@@ -99,7 +99,7 @@ genomic_distribution <- function(
 
 
 	## Apply advanced grouping.
-	if (!is.na(data_conditions)) {
+	if (all(!is.na(data_conditions))) {
 		selected_samples <- do.call(group_data, c(list(signal_data = selected_samples), data_conditions))
 	}
 

@@ -67,13 +67,13 @@ plot_tsr_metric <- function(
 	if (!is(dominant, "logical")) stop("dominant must be TRUE or FALSE")
 
         if (
-                !is.na(threshold) && !is(threshold, "numeric") ||
-                threshold %% 1 != 0 || threshold < 1
+                !is.na(threshold) && (!is(threshold, "numeric") ||
+                threshold %% 1 != 0 || threshold < 1)
         ) {
                 stop("threshold must be a positive integer")
         }
 
-	if (!is.na(data_conditions) && !is(data_conditions, "list")) stop("data_conditions must in list form")
+	if (all(!is.na(data_conditions)) && !is(data_conditions, "list")) stop("data_conditions must in list form")
 
 	## Get data.
 	selected_data <- extract_counts(experiment, "tsr", samples, use_cpm)
@@ -82,7 +82,7 @@ plot_tsr_metric <- function(
 	selected_data <- preliminary_filter(selected_data, dominant, threshold)
 	
 	## Condition the data.
-	if (!is.na(data_conditions)) {
+	if (all(!is.na(data_conditions))) {
 		selected_data <- do.call(group_data, c(list(signal_data = selected_data), data_conditions))
 	}
 

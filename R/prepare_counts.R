@@ -223,7 +223,7 @@ count_matrix <- function(
                 ## Merge overlapping TSRs.
                 tsr_consensus <- select_samples %>%
                         map(makeGRangesFromDataFrame) %>%
-	                  		purrr::reduce(c) %>%
+	                purrr::reduce(c) %>%
                         GenomicRanges::reduce(ignore.strand = FALSE)
 
                 ## Create raw count matrix.

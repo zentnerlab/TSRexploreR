@@ -86,8 +86,8 @@ tss_heatmap_matrix <- function(
         if (upstream < 0 | downstream < 0) stop("upstream and downstream must be positive integers")
 
         if (
-                !is.na(threshold) && !is(threshold, "numeric") ||
-                threshold %% 1 != 0 || threshold < 1
+                !is.na(threshold) && (!is(threshold, "numeric") ||
+                threshold %% 1 != 0 || threshold < 1)
         ) {
                 stop("threshold must be a positive integer")
         }
@@ -96,7 +96,7 @@ tss_heatmap_matrix <- function(
 		stop("use_cpm and/or dominant must be logical")
 	}
 
-	if (!is.na(data_conditions) && !is(data_conditions, "list")) {
+	if (all(!is.na(data_conditions)) && !is(data_conditions, "list")) {
 		stop("data_conditions must be a list of values")
 	}
 
@@ -113,7 +113,7 @@ tss_heatmap_matrix <- function(
                 })
 
         ## Apply conditions to data.
-        if (!is.na(data_conditions)) {
+        if (all(!is.na(data_conditions))) {
                 annotated_tss <- do.call(group_data, c(list(signal_data = annotated_tss), data_conditions))
         }
 
@@ -319,8 +319,8 @@ tsr_heatmap_matrix <- function(
         if (upstream < 0 | downstream < 0) stop("upstream and downstream must be positive integers")
 
         if (
-                !is.na(threshold) && !is(threshold, "numeric") ||
-                threshold %% 1 != 0 || threshold < 1
+                !is.na(threshold) && (!is(threshold, "numeric") ||
+                threshold %% 1 != 0 || threshold < 1)
         ) {
                 stop("threshold must be a positive integer")
         }
@@ -329,7 +329,7 @@ tsr_heatmap_matrix <- function(
 
 	if (!is(use_cpm, "logical")) stop("use_cpm must be TRUE or FALSE")
 
-	if (!is.na(data_conditions) && !is(data_conditions, "list")) stop("data_conditions must in list form")
+	if (all(!is.na(data_conditions)) && !is(data_conditions, "list")) stop("data_conditions must in list form")
 	
 	## Get requested samples.
 	annotated_tsr <- extract_counts(experiment, "tsr", samples, use_cpm)
@@ -350,7 +350,7 @@ tsr_heatmap_matrix <- function(
 	})
 
 	## Apply conditions to data.
-	if (!is.na(data_conditions)) {
+	if (all(!is.na(data_conditions))) {
 		annotated_tsr <- do.call(group_data, c(list(signal_data = annotated_tsr), data_conditions))
 	}
 
@@ -380,7 +380,7 @@ tsr_heatmap_matrix <- function(
 	]
 
         ## Format for plotting.
-	if(any(names(annotated_tss) == "plot_order")) {
+	if(any(names(annotated_tsr) == "plot_order")) {
 		annotated_tsr[, feature := fct_reorder(factor(feature), plot_order)]
 	}
 	annotated_tsr[, distanceToTSS := factor(distanceToTSS, levels = seq(-upstream, downstream, 1))]

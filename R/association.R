@@ -159,8 +159,8 @@ associate_with_tsr <- function(
 	}
 
 	if (
-		!use_sample_sheet && !is(sample_list, "list") ||
-		is.null(names(sample_list))
+		!use_sample_sheet && (!is(sample_list, "list") ||
+		is.null(names(sample_list)))
 	)
 	{
 		stop("sample_list must be a named list")
@@ -178,13 +178,13 @@ associate_with_tsr <- function(
 
 		# Make GRanges of TSSs.
 		tss_set <- extract_counts(experiment, "tss", tss_names) %>%
-			rbindlist(id = "sample")
+			rbindlist(idcol = "sample")
 		
 		tss_gr <- makeGRangesFromDataFrame(tss_set, keep.extra.columns = TRUE)
 
 		# Make GRanges of TSRs.
 		tsr_set <- extract_counts(experiment, "tsr", tsr_name) %>%
-			rbindlist(id = "tsr_sample")
+			rbindlist(idcol = "tsr_sample")
 		
 		tsr_gr <- tsr_set
 		setnames(tsr_gr, old = c("FID", "FHASH"), new = c("TSR_FID", "TSR_FHASH"))
@@ -204,21 +204,24 @@ associate_with_tsr <- function(
 		)
 		overlapping <- overlapping[, .(seqnames, start, end, strand, TSR_FID, TSR_FHASH, sample)]
 
-		# Prepare tsr_set to merge into overlapping TSSs (this is confusing qq).
+		# Get the score and width for the TSRs.
 		tsr_clean <- copy(tsr_set)
-		tsr_clean[, tsr_coords := str_c(seqnames, start, end, strand, sep = ":")]
+		tsr_clean[,
+			tsr_coords := str_c(seqnames, start, end, strand, sep = ":"),
+			by = seq_len(nrow(tsr_clean))
+		]
 		setnames(
 			tsr_clean, old = c("score", "width"), new = c("tsr_score", "tsr_width")
 		)
 		tsr_clean[, c("seqnames", "start", "end", "strand") := NULL]
 
-		# Merge overlapping back into TSS (qq ditto - is this adding TSR IDs to TSSs?).
+		# Merge TSR info back into TSSs.
 		key_ids <- c("sample", "seqnames", "start", "end", "strand")
 		setkeyv(overlapping, key_ids)
 		setkeyv(tss_set, key_ids)
 		tss_set <- merge(tss_set, overlapping, all.x = TRUE)
 
-		# Merge TSRs into TSSs (qq or is that what this is doing?).
+		# Merge TSR widths and scores.
 		setkeyv(tsr_clean, c("TSR_FID", "TSR_FHASH"))
 		setkeyv(tss_set, c("TSR_FID", "TSR_FHASH"))
 		merged_set <- merge(tss_set, tsr_clean, all.x = TRUE)

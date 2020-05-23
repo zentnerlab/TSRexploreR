@@ -153,15 +153,15 @@ ggsave("tss_feature_plot.png", plot = p, device = "png", type = "cairo", height 
 
 ![tss_feature_plot](../inst/images/tss_feature_plot.png)
 
-### Average Plots
+### Density Plots
 
-Another useful plot type for TSSs are average plots centered around annotated TSSs.
+Another useful plot type for TSSs are density plots centered around annotated TSSs.
 The current yeast genome annotation does not contain any information on 5' or 3' UTRs,
-thus the average plot is centered on annotated start codons.
-Because of this one would expect the average plot to be slightly upstream of the start codon center point.
+thus the density plot is centered on annotated start codons.
+Because of this one would expect the density plot to be slightly upstream of the start codon center point.
 Most other organisms have UTRs in their genome annotation,
 with the UTR length being the furthest TSS detected from the start codon.
-This would then result in average plots that are expected to be centered and slightly downstream from the annotated TSS center.
+This would then result in density plots that are expected to be centered and slightly downstream from the annotated TSS center.
 
 ```
 p <- plot_density(exp, data_type = "tss", threshold = 3, ncol = 3) +
@@ -282,7 +282,7 @@ However, the TSSs could easilly be associated with merged or consensus TSRs.
 ```
 exp <- associate_with_tsr(
 	exp, use_sample_sheet = FALSE,
-	sample_list <- list(
+	sample_list = list(
 		"S288C_WT_1" = "S288C_WT_1",
 		"S288C_WT_2" = "S288C_WT_2",
 		"S288C_WT_3" = "S288C_WT_3"
@@ -390,9 +390,9 @@ ggsave("tsr_feature_plot.png", plot = p, device = "png", type = "cairo", height 
 
 ![tsr_feature_plot](../inst/images/tsr_feature_plot.png)
 
-### Average Plots
+### Density Plots
 
-Average plots are a convenient way to summarize the average distribution of TSRs relative to start codons
+Density plots are a convenient way to summarize the density of TSRs relative to start codons
 or annotated TSSs.
 
 ```

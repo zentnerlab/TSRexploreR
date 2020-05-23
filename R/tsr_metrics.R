@@ -16,7 +16,7 @@ tsr_metrics <- function(experiment) {
 	## Get samples from tsrexplorer object.
 	select_samples <- experiment %>%
 		extract_counts("tss", "all") %>%
-		bind_rows(.id = "sample")
+		rbindlist(idcol = "sample")
 
 	keys <- c("sample", "TSR_FID")
 	setkeyv(select_samples, keys)
@@ -48,7 +48,7 @@ tsr_metrics <- function(experiment) {
 	
 	select_TSRs <- experiment %>%
 		extract_counts("tsr", tsr_names) %>%
-		bind_rows(.id = "tsr_sample")
+		rbindlist(idcol = "tsr_sample")
 	setnames(select_TSRs, old = c("FID", "FHASH"), new = c("TSR_FID", "TSR_FHASH"))
 
 	tsr_metrics <- select_samples[
@@ -68,7 +68,7 @@ tsr_metrics <- function(experiment) {
 	select_TSRs <- split(select_TSRs, select_TSRs$tsr_sample)
 	walk(select_TSRs, function(x) {
 		x[, tsr_sample := NULL]
-		setnames(x, old = "TSR_FID", new = "FID")
+		setnames(x, old = c("TSR_FID", "TSR_FHASH"), new = c("FID", "FHASH"))
 		x <- makeGRangesFromDataFrame(x, keep.extra.columns = TRUE)
 		x <- as.data.table(x)
 		return(x)
