@@ -51,4 +51,6 @@ tsr_export(tsre_exp)
 }
 \seealso{
 \code{\link{tss_export}} to export TSSs.
+\code{\link{tss_import}} to import TSSs.
+\code{\link{tsr_import}} to import TSRs.
 }

@@ -11,7 +11,7 @@
 \usage{
 tss_import(tsrexplorer_obj, object, ...)
 
-\S4method{tss_import}{character}(tsrexplorer_obj, object, delim = "\\t",
+\S4method{tss_import}{character}(tsrexplorer_obj, object, sep = "\\t",
   col_names = TRUE)
 
 \S4method{tss_import}{data.frame}(tsrexplorer_obj, object)
@@ -25,7 +25,7 @@ tss_import(tsrexplorer_obj, object, ...)
 
 \item{...}{Additional arguments for classes}
 
-\item{delim}{Delimiter for sample_sheet file}
+\item{sep}{Delimiter for sample_sheet file}
 
 \item{col_names}{Logical, whether the sample_sheet file has a header (TRUE) or not (FALSE)}
 
@@ -33,6 +33,30 @@ tss_import(tsrexplorer_obj, object, ...)
 
 \item{tsrexplorer}{tsrexplorer object}
 }
+\value{
+tsr explorer object with imported TSSs
+}
 \description{
-Convenience function to import TSSs.
+Function to import TSSs from various sources.
+}
+\details{
+TSRexploreR can import TSSs from various sources.
+Currently bedgraphs, bigwigs, and TSRchitect tssObjects are supported.
+
+To import bedgraphs or bigwigs, a sample sheet must first be created.
+The sample sheet can be a data.frame or tabular file.
+It should have three columns: sample_name, file_1, and file_2.
+sample_name specifies the sample name that will be added for that TSS in the
+  tsr explorer object.
+file_1 and file_2 should be the path to the two bedgraphs or bigwigs,
+  which are usually separated by strand.
+
+To import TSSs directly from a TSRchitect tssObject,
+  the TSRchitect workflow must first be run up to the
+  'processTSS' step.
+}
+\seealso{
+\code{\link{tsr_import}} to import TSRs.
+\code{\link{tss_export}} to export TSSs.
+\code{\link{tsr_export}} to export TSRs.
 }

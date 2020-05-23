@@ -20,6 +20,30 @@ tsr_import(tsrexplorer_obj, object, ...)
 
 \item{...}{Additional arguments for classes}
 }
+\value{
+tsr explorer object with added TSRs.
+}
 \description{
-Convenience function to import TSRs.
+Function to import TSRs from various sources.
+}
+\details{
+TSRexploreR can import TSRs from various sources.
+Currently beds and TSRchitect tssObjects are supported.
+
+To import beds, a sample sheet must first be created.
+The sample sheet can be a data.frame or tabular file.
+It should have three columns: sample_name, file_1, and file_2.
+sample_name specifies the sample name that will be added for that TSR in the
+  tsr explorer object.
+file_1 should be the path to the bed file,
+  and file_2 can be left blank or filled with NA values.
+
+To import TSRs directly from a TSRchitect tssObject,
+  the TSRchitect workflow must first be run up to the
+  'determineTSR' step.
+}
+\seealso{
+\code{\link{tss_import}} to import TSSs.
+\code{\link{tss_export}} to export TSSs.
+\code{\link{tsr_export}} to export TSRs.
 }

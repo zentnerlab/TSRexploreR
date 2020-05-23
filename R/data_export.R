@@ -37,6 +37,8 @@
 #'
 #' @seealso
 #' \code{\link{tsr_export}} to export TSRs.
+#' \code{\link{tss_import}} to import TSSs.
+#' \code{\link{tsr_import}} to import TSRs.
 #'
 #' @rdname tss_export-function
 #' @export
@@ -143,6 +145,8 @@ tss_export <- function(
 #'
 #' @seealso
 #' \code{\link{tss_export}} to export TSSs.
+#' \code{\link{tss_import}} to import TSSs.
+#' \code{\link{tsr_import}} to import TSRs.
 #'
 #' @rdname tsr_export-function
 #' @export
