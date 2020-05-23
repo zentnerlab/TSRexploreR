@@ -19,8 +19,13 @@ plot_ma(experiment, data_type = c("tss", "tsr", "tss_features",
 \item{...}{Arguments passed to geom_point}
 }
 \value{
-ggplot2 object of differential TSRs volcano plot.
+ggplot2 object of MA plot.
 }
 \description{
 Generate MA plot for differential TSRs or Genes (RNA-seq) - confused. I see the MA-plot code but no volcano.
+}
+\details{
+This function generates an MA plot of the results from
+  differential analysis of TSSs, TSRs, or features.
+It is returned as a ggplot2 object.
 }

@@ -1,10 +1,7 @@
 #' DE MA Plot
 #'
+#' @description
 #' Generate MA plot for differential TSRs or Genes (RNA-seq) - confused. I see the MA-plot code but no volcano.
-#'
-#' @import tibble
-#' @import ggplot2
-#' @importFrom dplyr case_when mutate
 #'
 #' @param experiment tsrexplorer object
 #' @param de_comparisons Which differential expression comparisons to plot
@@ -12,10 +9,14 @@
 #' @param ncol Number of columns for the facets
 #' @param ... Arguments passed to geom_point
 #'
-#' @return ggplot2 object of differential TSRs volcano plot.
+#' @details
+#' This function generates an MA plot of the results from
+#'   differential analysis of TSSs, TSRs, or features.
+#' It is returned as a ggplot2 object.
 #'
-#' @rdname plot_volcano-function
+#' @return ggplot2 object of MA plot.
 #'
+#' @rdname plot_ma-function
 #' @export
 
 plot_ma <- function(
