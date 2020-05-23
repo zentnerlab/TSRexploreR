@@ -85,15 +85,52 @@ format_counts <- function(
 
 #' Feature Counts
 #'
-#' Add feature counts.
+#' Count the number of reads associated with genes or transcripts
+#'   based on the aggregate score of TSSs or TSRs annotated to them.
+#'
+#' @importFrom purrr discard
 #'
 #' @param experiment tsrexplorer object
 #' @param data_type Either 'tss' or 'tsr'
 #'
+#' @details
+#' The 'count_features' function counts the total score of TSSs or TSRs associated
+#'   with a gene or transcript.
+#' This allows for an RNA-seq like analysis of gene expression using TSS mapping data.
+#'
+#' @examples
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
+#' TSSs <- readRDS(TSSs)
+#' tsre_exp <- tsr_explorer(TSSs)
+#' tsre_exp <- format_counts(tsre_exp, data_type = "tss")
+#' annotation <- system.file("extdata", "S288C_Annotation.gtf", package = "tsrexplorer")
+#' tsre_exp <- annotate_features(
+#'   tsre_exp, annotation_data = annotation,
+#'   data_type = "tss", feature_type = "transcript"
+#' )
+#' tsre_exp <- count_features(tsre_exp, data_type = "tss")
+#'
+#' @return RNA-seq like count matrix added to tsr explorer object.
+#'
+#' @seealso
+#' \code{\link{annotate_features}} to first annotate the TSSs or TSRs.
+#'
 #' @rdname count_features-function
 #' @export
 
-count_features <- function(experiment, data_type = c("tss", "tsr")) {
+count_features <- function(
+	experiment,
+	data_type = c("tss", "tsr")
+) {
+
+	## Check inputs.
+	if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsr explorer object")
+
+	if (!is(data_type, "character") || length(data_type) > 1) {
+		stop("data_type must be either 'tss' or 'tsr'")
+	}
+	data_type <- str_to_lower(data_type)
+	if (!data_type %in% c("tss", "tsr")) stop("data_type must be either 'tss' or 'tsr'")	
 	
 	## Get information on whether annotation was by gene or transcript.
 	anno_type <- ifelse(

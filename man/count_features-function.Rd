@@ -11,6 +11,31 @@ count_features(experiment, data_type = c("tss", "tsr"))
 
 \item{data_type}{Either 'tss' or 'tsr'}
 }
+\value{
+RNA-seq like count matrix added to tsr explorer object.
+}
 \description{
-Add feature counts.
+Count the number of reads associated with genes or transcripts
+  based on the aggregate score of TSSs or TSRs annotated to them.
+}
+\details{
+The 'count_features' function counts the total score of TSSs or TSRs associated
+  with a gene or transcript.
+This allows for an RNA-seq like analysis of gene expression using TSS mapping data.
+}
+\examples{
+TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
+TSSs <- readRDS(TSSs)
+tsre_exp <- tsr_explorer(TSSs)
+tsre_exp <- format_counts(tsre_exp, data_type = "tss")
+annotation <- system.file("extdata", "S288C_Annotation.gtf", package = "tsrexplorer")
+tsre_exp <- annotate_features(
+  tsre_exp, annotation_data = annotation,
+  data_type = "tss", feature_type = "transcript"
+)
+tsre_exp <- count_features(tsre_exp, data_type = "tss")
+
+}
+\seealso{
+\code{\link{annotate_features}} to first annotate the TSSs or TSRs.
 }
