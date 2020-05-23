@@ -35,6 +35,9 @@
 #'
 #' @return Either bedgraphs split by strand, or a tabular file.
 #'
+#' @seealso
+#' \code{\link{tsr_export}} to export TSRs.
+#'
 #' @rdname tss_export-function
 #' @export
 
@@ -137,6 +140,9 @@ tss_export <- function(
 #' tsr_export(tsre_exp)
 #'
 #' @return Either bed files, or a tabular file.
+#'
+#' @seealso
+#' \code{\link{tss_export}} to export TSSs.
 #'
 #' @rdname tsr_export-function
 #' @export

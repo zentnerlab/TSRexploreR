@@ -49,3 +49,6 @@ tsre_exp <- format_counts(tsre_exp, data_type = "tss")
 tss_export(tsre_exp)
 
 }
+\seealso{
+\code{\link{tsr_export}} to export TSRs.
+}

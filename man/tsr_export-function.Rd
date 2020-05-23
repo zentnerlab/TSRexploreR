@@ -49,3 +49,6 @@ tsre_exp <- tss_clustering(tsre_exp)
 tsr_export(tsre_exp)
 
 }
+\seealso{
+\code{\link{tss_export}} to export TSSs.
+}
