@@ -1,16 +1,41 @@
 
 #' Export TSSs
 #'
-#' Export TSSs to table or bedgraph
+#' @description
+#' Export TSSs to tables or bedgraphs
 #'
 #' @param experiment tsrexplorer object
-#' @param samples Names of samples to export (is this one of those ones where it could also be 'all'?)
+#' @param samples Either 'all', or names of samples to export
 #' @param file_type either 'bedgraph' or 'table'
 #' @param out_dir Output directory for files
-#' @param diff_tss Whether to pull out the differential TSSs (qq????)
+#' @param diff_tss If TRUE will output differential TSSs
+#' @param sep Delimiter for table output
+#'
+#' @details
+#' This function will save TSSs as bedgraphs, or a tab delimited file.
+#'
+#' 'file_type' controls what the TSSs will be output as.
+#' 'bedgraph' will result in each sample being saved as two bedgraph files,
+#'   one for each strand.
+#' 'table' will output a file with the delimiter specified by the 'sep' argument.
+#' The resulting table will have all columns added to the TSSs data
+#'   in the tsr explorer object, such as various metrics.
+#'
+#' The directory to output the files can be set with 'out_dir'.
+#'   A value of NA will save the files to the working directory by default.
+#'
+#' If 'diff_tss' is TRUE, only differential TSSs will be output.
+#'
+#' @examples
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
+#' TSSs <- readRDS(TSSs)
+#' tsre_exp <- tsr_explorer(TSSs)
+#' tsre_exp <- format_counts(tsre_exp, data_type = "tss")
+#' tss_export(tsre_exp)
+#'
+#' @return Either bedgraphs split by strand, or a tabular file.
 #'
 #' @rdname tss_export-function
-#'
 #' @export
 
 tss_export <- function(
@@ -18,7 +43,8 @@ tss_export <- function(
 	samples = "all",
 	file_type = "bedgraph",
 	out_dir = NA,
-	diff_tss = FALSE
+	diff_tss = FALSE,
+	sep = "\t"
 ) {
 
 	## Input checks.
@@ -69,7 +95,7 @@ tss_export <- function(
 				str_c(y, "_TSSs.tsv")
 			)
 			fwrite(
-				x, export_file, sep = "\t", col.names = TRUE,
+				x, export_file, sep = sep, col.names = TRUE,
 				row.names = FALSE, quote = FALSE
 			)
 		})
@@ -78,6 +104,7 @@ tss_export <- function(
 
 #' Export TSRs
 #'
+#' @description
 #' Export TSRs to table or BED
 #'
 #' @param experiment tsrexplorer object
@@ -85,9 +112,33 @@ tss_export <- function(
 #' @param file_type either 'bed' or 'table'
 #' @param out_dir Output directory for files
 #' @param diff_tsr Whether to pull out the differential TSRs (qq again, this is a bit unclear)
+#' @param sep Delimiter for table output
+#'
+#' @details
+#' This function will save TSRs as beds, or a tab delimited file.
+#'
+#' 'file_type' controls what the TSRs will be output as.
+#' 'bed' will result in each sample being saved as a file.
+#' 'table' will output a file with the delimiter specified by the 'sep' argument.
+#' The resulting table will have all columns added to the TSRs data
+#'   in the tsr explorer object, such as various metrics.
+#'
+#' The directory to output the files can be set with 'out_dir'.
+#'   A value of NA will save the files to the working directory by default.
+#'
+#' If 'diff_tsr' is TRUE, only differential TSRs will be output.
+#'
+#' @examples
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
+#' TSSs <- readRDS(TSSs)
+#' tsre_exp <- tsr_explorer(TSSs)
+#' tsre_exp <- format_counts(tsre_exp, data_type = "tss")
+#' tsre_exp <- tss_clustering(tsre_exp)
+#' tsr_export(tsre_exp)
+#'
+#' @return Either bed files, or a tabular file.
 #'
 #' @rdname tsr_export-function
-#'
 #' @export
 
 tsr_export <- function(
@@ -95,7 +146,8 @@ tsr_export <- function(
 	samples = "all",
 	file_type = "bed",
 	out_dir = NA,
-	diff_tsr = FALSE
+	diff_tsr = FALSE,
+	sep = "\t"
 ) {
 
 	## Check inputs.
@@ -140,7 +192,7 @@ tsr_export <- function(
 			)
 
 			fwrite(
-				x, export_file, sep = "\t", col.names = TRUE,
+				x, export_file, sep = sep, col.names = TRUE,
 				row.names = FALSE, quote = FALSE
 			)
 		})

@@ -5,7 +5,7 @@
 \title{Export TSRs}
 \usage{
 tsr_export(experiment, samples = "all", file_type = "bed",
-  out_dir = NA, diff_tsr = FALSE)
+  out_dir = NA, diff_tsr = FALSE, sep = "\\t")
 }
 \arguments{
 \item{experiment}{tsrexplorer object}
@@ -17,7 +17,35 @@ tsr_export(experiment, samples = "all", file_type = "bed",
 \item{out_dir}{Output directory for files}
 
 \item{diff_tsr}{Whether to pull out the differential TSRs (qq again, this is a bit unclear)}
+
+\item{sep}{Delimiter for table output}
+}
+\value{
+Either bed files, or a tabular file.
 }
 \description{
 Export TSRs to table or BED
+}
+\details{
+This function will save TSRs as beds, or a tab delimited file.
+
+'file_type' controls what the TSRs will be output as.
+'bed' will result in each sample being saved as a file.
+'table' will output a file with the delimiter specified by the 'sep' argument.
+The resulting table will have all columns added to the TSRs data
+  in the tsr explorer object, such as various metrics.
+
+The directory to output the files can be set with 'out_dir'.
+  A value of NA will save the files to the working directory by default.
+
+If 'diff_tsr' is TRUE, only differential TSRs will be output.
+}
+\examples{
+TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
+TSSs <- readRDS(TSSs)
+tsre_exp <- tsr_explorer(TSSs)
+tsre_exp <- format_counts(tsre_exp, data_type = "tss")
+tsre_exp <- tss_clustering(tsre_exp)
+tsr_export(tsre_exp)
+
 }

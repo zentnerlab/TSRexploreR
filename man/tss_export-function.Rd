@@ -5,19 +5,47 @@
 \title{Export TSSs}
 \usage{
 tss_export(experiment, samples = "all", file_type = "bedgraph",
-  out_dir = NA, diff_tss = FALSE)
+  out_dir = NA, diff_tss = FALSE, sep = "\\t")
 }
 \arguments{
 \item{experiment}{tsrexplorer object}
 
-\item{samples}{Names of samples to export (is this one of those ones where it could also be 'all'?)}
+\item{samples}{Either 'all', or names of samples to export}
 
 \item{file_type}{either 'bedgraph' or 'table'}
 
 \item{out_dir}{Output directory for files}
 
-\item{diff_tss}{Whether to pull out the differential TSSs (qq????)}
+\item{diff_tss}{If TRUE will output differential TSSs}
+
+\item{sep}{Delimiter for table output}
+}
+\value{
+Either bedgraphs split by strand, or a tabular file.
 }
 \description{
-Export TSSs to table or bedgraph
+Export TSSs to tables or bedgraphs
+}
+\details{
+This function will save TSSs as bedgraphs, or a tab delimited file.
+
+'file_type' controls what the TSSs will be output as.
+'bedgraph' will result in each sample being saved as two bedgraph files,
+  one for each strand.
+'table' will output a file with the delimiter specified by the 'sep' argument.
+The resulting table will have all columns added to the TSSs data
+  in the tsr explorer object, such as various metrics.
+
+The directory to output the files can be set with 'out_dir'.
+  A value of NA will save the files to the working directory by default.
+
+If 'diff_tss' is TRUE, only differential TSSs will be output.
+}
+\examples{
+TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
+TSSs <- readRDS(TSSs)
+tsre_exp <- tsr_explorer(TSSs)
+tsre_exp <- format_counts(tsre_exp, data_type = "tss")
+tss_export(tsre_exp)
+
 }
