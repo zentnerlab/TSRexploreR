@@ -120,7 +120,7 @@ plot_density <- function(
 		stop("ncol must be a positive integer")
 	}
 
-	if (is.na(data.conditions) && !is(data_conditions, "list")) {
+	if (!is.na(data_conditions) && !is(data_conditions, "list")) {
 		stop("data_conditions should be a list of values")
 	}
 

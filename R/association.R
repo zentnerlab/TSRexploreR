@@ -99,6 +99,7 @@ merge_samples <- function(
 #' Associate TSSs with TSRs
 #'
 #' @importFrom purrr imap
+#' @importFrom IRanges findOverlapPairs
 #'
 #' @param experiment tsrexplorer object
 #' @param use_sample_sheet Whether to use a sample sheet as a key for association of TSS and TSR samples
@@ -151,8 +152,8 @@ associate_with_tsr <- function(
 	if (!is(use_sample_sheet, "logical")) stop("use_sample_sheet must be logical")
 
 	if (
-		(!use_sample_sheet & is.na(sample_list)) |
-		(use_sample_sheet & !is.na(sample_list))
+		(!use_sample_sheet && all(is.na(sample_list))) |
+		(use_sample_sheet && all(!is.na(sample_list)))
 	) {
 		stop("a sample list or sample sheet must be specified")
 	}

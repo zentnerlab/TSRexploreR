@@ -4,6 +4,8 @@
 #' @description
 #' Basic distance and threshold-based clustering of TSSs.
 #'
+#' @importFrom S4Vectors mcols
+#'
 #' @param experiment tsrexplorer object
 #' @param threshold Consider only TSSs with at least this number of raw counts
 #' @param samples Samples for which TSSs should be clustered
@@ -101,7 +103,7 @@ tss_clustering <- function(
 		x <- as.data.table(x)
 		x[, FID := seq_len(nrow(x))]
 		x[,
-			FHASH := digest(str_c(seqnames, start, end, strand, collapse = "")),
+			FHASH := str_c(seqnames, start, end, strand, sep = ":"),
 			by = seq_len(nrow(x))
 		]
 		return(x)
