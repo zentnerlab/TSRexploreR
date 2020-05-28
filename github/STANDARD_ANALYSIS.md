@@ -225,7 +225,7 @@ ggsave("tss_dinucleotide_frequencies.png", plot = p, device = "png", type = "cai
 
 ## Clustering TSSs
 
-Initiation is rarely heterogeneous. It is generally the case that a gene will have multiple TSSs clustered into a TSR, and so analyzing TSRs versus individual TSSs will provide more realistic information on initiation. Moreover, TSR shape features have been shown to correlate with distinct gene classes.
+Initiation is rarely homogenous. It is generally the case that a gene will have multiple TSSs clustered into a TSR, and so analyzing TSRs versus individual TSSs will provide more realistic information on initiation. Moreover, TSR shape features have been shown to correlate with distinct gene classes.
 
 ### Distance Clustering
 
