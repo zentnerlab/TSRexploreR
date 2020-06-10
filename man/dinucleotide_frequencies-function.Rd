@@ -4,8 +4,14 @@
 \alias{dinucleotide_frequencies}
 \title{Dinucleotide Analysis}
 \usage{
-dinucleotide_frequencies(experiment, genome_assembly, samples = "all",
-  threshold = 1, dominant = FALSE, data_conditions = NA)
+dinucleotide_frequencies(
+  experiment,
+  genome_assembly,
+  samples = "all",
+  threshold = 1,
+  dominant = FALSE,
+  data_conditions = NA
+)
 }
 \arguments{
 \item{experiment}{tsrexplorer object with TSS GRanges}

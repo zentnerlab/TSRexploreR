@@ -12,6 +12,7 @@ r-ggseqlogo \
 r-ggally \
 r-cowplot \
 r-uwot \
+r-rcpp \
 bioconductor-genomicranges \
 bioconductor-genomicfeatures \
 bioconductor-biostrings \

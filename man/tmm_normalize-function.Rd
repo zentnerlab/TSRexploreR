@@ -4,8 +4,13 @@
 \alias{tmm_normalize}
 \title{TMM Normalize TSSs or TSRs}
 \usage{
-tmm_normalize(experiment, data_type = c("tss", "tsr", "tss_features",
-  "tsr_features"), samples = "all", threshold = 1, n_samples = 1)
+tmm_normalize(
+  experiment,
+  data_type = c("tss", "tsr", "tss_features", "tsr_features"),
+  samples = "all",
+  threshold = 1,
+  n_samples = 1
+)
 }
 \arguments{
 \item{experiment}{tsrexplorer object}

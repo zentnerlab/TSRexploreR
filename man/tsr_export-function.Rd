@@ -4,8 +4,14 @@
 \alias{tsr_export}
 \title{Export TSRs}
 \usage{
-tsr_export(experiment, samples = "all", file_type = "bed",
-  out_dir = NA, diff_tsr = FALSE, sep = "\\t")
+tsr_export(
+  experiment,
+  samples = "all",
+  file_type = "bed",
+  out_dir = NA,
+  diff_tsr = FALSE,
+  sep = "\\t"
+)
 }
 \arguments{
 \item{experiment}{tsrexplorer object}

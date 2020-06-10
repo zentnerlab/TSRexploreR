@@ -4,9 +4,15 @@
 \alias{plot_heatmap}
 \title{Plot Heatmap}
 \usage{
-plot_heatmap(heatmap_matrix, max_value = 5, ncol = 1,
-  background_color = "#F0F0F0", low_color = "#56B1F7",
-  high_color = "#132B43", ...)
+plot_heatmap(
+  heatmap_matrix,
+  max_value = 5,
+  ncol = 1,
+  background_color = "#F0F0F0",
+  low_color = "#56B1F7",
+  high_color = "#132B43",
+  ...
+)
 }
 \arguments{
 \item{heatmap_matrix}{TSS or TSR heatmap matrix from tss_heatmap_matrix ot tsr_heatmap_matrix}

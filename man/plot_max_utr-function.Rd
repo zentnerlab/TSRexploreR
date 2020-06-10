@@ -4,8 +4,14 @@
 \alias{plot_max_utr}
 \title{Plot Max UTR Length}
 \usage{
-plot_max_utr(max_utr, upstream = 1000, downstream = 100, ncol = 1,
-  consider_score = FALSE, ...)
+plot_max_utr(
+  max_utr,
+  upstream = 1000,
+  downstream = 100,
+  ncol = 1,
+  consider_score = FALSE,
+  ...
+)
 }
 \arguments{
 \item{max_utr}{tibble of max UTRs output by max_utr}

@@ -4,9 +4,16 @@
 \alias{tsr_heatmap_matrix}
 \title{TSR Heatmap Count Matrix}
 \usage{
-tsr_heatmap_matrix(experiment, samples = "all", upstream = 1000,
-  downstream = 1000, threshold = NA, use_cpm = FALSE,
-  dominant = FALSE, data_conditions = list(order_by = "score"))
+tsr_heatmap_matrix(
+  experiment,
+  samples = "all",
+  upstream = 1000,
+  downstream = 1000,
+  threshold = NA,
+  use_cpm = FALSE,
+  dominant = FALSE,
+  data_conditions = list(order_by = "score")
+)
 }
 \arguments{
 \item{experiment}{tsrexplorer object with annotated TSRs}

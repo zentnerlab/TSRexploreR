@@ -4,8 +4,12 @@
 \alias{plot_num_de}
 \title{Plot DE Numbers}
 \usage{
-plot_num_de(experiment, data_type = c("tss", "tsr", "tss_features",
-  "tsr_features"), de_comparisons = "all", ...)
+plot_num_de(
+  experiment,
+  data_type = c("tss", "tsr", "tss_features", "tsr_features"),
+  de_comparisons = "all",
+  ...
+)
 }
 \arguments{
 \item{experiment}{tsrexplorer object}

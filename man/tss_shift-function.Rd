@@ -4,8 +4,13 @@
 \alias{tss_shift}
 \title{TSS Shifting}
 \usage{
-tss_shift(experiment, compare_samples, min_distance = 100,
-  min_threshold = 10, n_resamples = 1000L)
+tss_shift(
+  experiment,
+  compare_samples,
+  min_distance = 100,
+  min_threshold = 10,
+  n_resamples = 1000L
+)
 }
 \arguments{
 \item{experiment}{tsrexplorer object}

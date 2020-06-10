@@ -4,10 +4,17 @@
 \alias{ShiftScores}
 \title{Shifting Score}
 \usage{
-ShiftScores(fhash, sample_indicator, distances, scores,
-  calc_pvalue = TRUE, nresamp = 100L,
-  baseline_level = sample_indicator[1], nthresh = 2,
-  check_sort = TRUE)
+ShiftScores(
+  fhash,
+  sample_indicator,
+  distances,
+  scores,
+  calc_pvalue = TRUE,
+  nresamp = 100L,
+  baseline_level = sample_indicator[1],
+  nthresh = 2,
+  check_sort = TRUE
+)
 }
 \arguments{
 \item{fhash}{fhash of set}

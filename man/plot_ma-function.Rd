@@ -4,8 +4,13 @@
 \alias{plot_ma}
 \title{DE MA Plot}
 \usage{
-plot_ma(experiment, data_type = c("tss", "tsr", "tss_features",
-  "tsr_features"), de_comparisons = "all", ncol = 1, ...)
+plot_ma(
+  experiment,
+  data_type = c("tss", "tsr", "tss_features", "tsr_features"),
+  de_comparisons = "all",
+  ncol = 1,
+  ...
+)
 }
 \arguments{
 \item{experiment}{tsrexplorer object}

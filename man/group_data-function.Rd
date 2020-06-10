@@ -4,11 +4,20 @@
 \alias{group_data}
 \title{Data Conditionals}
 \usage{
-group_data(signal_data, filters = NA, order_by = NA,
-  order_direction = "descending", order_samples = NA,
-  order_group = NA, quantile_by = NA, n_quantiles = NA,
-  quantile_samples = NA, quantile_group = NA,
-  quantile_direction = "descending", grouping = NA)
+group_data(
+  signal_data,
+  filters = NA,
+  order_by = NA,
+  order_direction = "descending",
+  order_samples = NA,
+  order_group = NA,
+  quantile_by = NA,
+  n_quantiles = NA,
+  quantile_samples = NA,
+  quantile_group = NA,
+  quantile_direction = "descending",
+  grouping = NA
+)
 }
 \arguments{
 \item{signal_data}{TSS or TSR data}

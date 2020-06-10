@@ -53,7 +53,7 @@
 detect_features <- function(
 	experiment,
 	samples = "all",
-	data_type = c("tss", "tsr"),
+	data_type = c("tss", "tsr", "tss_features", "tsr_features"),
 	threshold = NA,
 	dominant = FALSE,
 	condition_data = NA
@@ -65,10 +65,12 @@ detect_features <- function(
 	if (!is(samples, "character")) stop("samples must be a character vecotor")
 
         if (!is(data_type, "character") || length(data_type) > 1) {
-		stop("data_type must be either 'tss' or 'tsr'")
+		stop("data_type must be either 'tss', 'tsr', 'tss_features', or 'tsr_features'")
 	}
         data_type <- str_to_lower(data_type)
-        if (!data_type %in% c("tss", "tsr")) stop("data_type must be 'tss' or 'tsr'")
+        if (!data_type %in% c("tss", "tsr", "tss_features", "tsr_features")) {
+		stop("data_type must be 'tss', 'tsr', 'tss_features', or 'tsr_features'")
+	}
 
         if (
                 !is.na(threshold) && (!is(threshold, "numeric") ||
@@ -87,12 +89,19 @@ detect_features <- function(
 	sample_data <- extract_counts(experiment, data_type, samples)
 
 	## Initial sample processing.
-	if (dominant | !is.na(threshold)) {
+	if (data_type %in% c("tss", "tsr") && (dominant | !is.na(threshold))) {
 		sample_data <- preliminary_filter(sample_data, dominant, threshold)
 	}
 
+	if (data_type %in% c("tss_features", "tsr_features")) {
+		sample_data <- map(sample_data, function(x) {
+			x <- x[score >= threshold]
+			return(x)
+		})
+	}
+	
 	## Apply data conditioning if set.
-	if (all(!is.na(condition_data))) {
+	if (data_type %in% c("tss", "tsr") && all(!is.na(condition_data))) {
 		sample_data <- do.call(group_data, c(list(signal_data = sample_data), condition_data))
 	}
 
@@ -108,25 +117,30 @@ detect_features <- function(
 	})
 
 	## Get feature counts.
-	groupings <- any(names(condition_data) %in% c("quantile_by", "grouping"))
+	groupings <- data_type %in% c("tss", "tsr") &&
+		any(names(condition_data) %in% c("quantile_by", "grouping"))
 	sample_data <- rbindlist(sample_data, idcol = "sample")
-	
-	if (groupings) {
-		sample_data <- sample_data[,
-			.(grouping, promoter = any(simple_annotations == "Promoter")),
-			by = .(sample, feature)
-		][,
-			.(with_promoter = sum(promoter), without_promoter = .N - sum(promoter), total = .N),
-			by = .(sample, grouping)
-		]
-	} else {
-		sample_data <- sample_data[,
-			.(promoter = any(simple_annotations == "Promoter")),
-			by = .(sample, feature)
-		][,
-			.(with_promoter = sum(promoter), without_promoter = .N - sum(promoter), total = .N),
-			by = sample
-		]
+
+	if (data_type %in% c("tss", "tsr")) {
+		if (groupings) {
+			sample_data <- sample_data[,
+				.(grouping, promoter = any(simple_annotations == "Promoter")),
+				by = .(sample, feature)
+			][,
+				.(with_promoter = sum(promoter), without_promoter = .N - sum(promoter), total = .N),
+				by = .(sample, grouping)
+			]
+		} else {
+			sample_data <- sample_data[,
+				.(promoter = any(simple_annotations == "Promoter")),
+				by = .(sample, feature)
+			][,
+				.(with_promoter = sum(promoter), without_promoter = .N - sum(promoter), total = .N),
+				by = sample
+			]
+		}
+	} else if (data_type %in% c("tss_features", "tsr_features")) {
+		sample_data <- sample_data[, .(count = uniqueN(feature)), by = sample]
 	}
 
 	## Order samples if required.
@@ -139,9 +153,11 @@ detect_features <- function(
 
 	metadata(detected_features)$threshold <- threshold
 	metadata(detected_features)$data_type <- data_type
-	metadata(detected_features)$dominant <- dominant
-	metadata(detected_features)$groupings <- groupings
 	metadata(detected_features)$feature_type <- experiment@settings$annotation[, feature_type]
+	if (data_type %in% c("tss", "tsr")) {
+		metadata(detected_features)$dominant <- dominant
+		metadata(detected_features)$groupings <- groupings
+	}
 
 	return(detected_features)
 }
@@ -192,32 +208,53 @@ plot_detected_features <- function(
 	if (!is(detected_features, "DataFrame")) stop("detected_features must be a DataFrame")
 	
 	## Get some info from DataFrame.
-	feature_type <- str_to_title(metadata(detected_features)$feature_type)	
-	grouping_status <- metadata(detected_features)$groupings
+	data_type <- metadata(detected_features)$data_type
+	feature_type <- str_to_title(metadata(detected_features)$feature_type)
+	if (data_type %in% c("tss", "tsr")) {
+		grouping_status <- metadata(detected_features)$groupings
+	}
 
 	## Prepare data for plotting.
 	plot_data <- as.data.table(detected_features)
-	plot_data[, total := NULL]	
-	plot_data <- melt(plot_data,
-		measure.vars = c("with_promoter", "without_promoter"),
-		variable.name = "count_type",
-		value.name = "feature_count"
-	)
+
+	if (data_type %in% c("tss", "tsr")) {
+		plot_data[, total := NULL]	
+		plot_data <- melt(plot_data,
+			measure.vars = c("with_promoter", "without_promoter"),
+			variable.name = "count_type",
+			value.name = "feature_count"
+		)
+		plot_data[, count_type := fct_rev(factor(count_type))]
+	}
 
 	## Plot data.
-	p <- ggplot(plot_data, aes(x = sample, y = feature_count, fill = fct_rev(factor(count_type)))) +
-		geom_col(position = "stack", ...) +
-		theme_bw() +
-		scale_fill_viridis_d(name = "Feature Type", direction = -1) +
-		ylim(c(0, NA)) +
-		ylab(str_c(feature_type, "Count", sep = " ")) +
-		xlab("Sample") +
-		theme(
-			axis.text.x = element_text(angle = 45, hjust = 1)
-		)
+	if (data_type %in% c("tss", "tsr")) {
+		p <- ggplot(plot_data, aes(x = sample, y = feature_count, fill = count_type)) +
+			geom_col(position = "stack", ...) +
+			theme_bw() +
+			scale_fill_viridis_d(name = "Feature Type", direction = -1) +
+			ylim(c(0, NA)) +
+			ylab(str_c(feature_type, "Count", sep = " ")) +
+			xlab("Sample") +
+			theme(
+				axis.text.x = element_text(angle = 45, hjust = 1)
+			)
 
-	if (grouping_status) {
-		p <- p + facet_grid(fct_rev(factor(grouping)) ~ .)
+		if (grouping_status) {
+			p <- p + facet_grid(fct_rev(factor(grouping)) ~ .)
+		}
+	} else if (data_type %in% c("tss_features", "tsr_features")) {
+		p <- ggplot(plot_data, aes(x = sample, y = count, fill = sample)) +
+			geom_col(...) +
+			theme_bw() +
+			scale_fill_viridis_d() +
+			ylim(c(0, NA)) +
+			ylab(str_c(feature_type, "Count", sep = " ")) +
+			xlab("Sample") +
+			theme(
+				axis.text.x = element_text(angle = 45, hjust = 1),
+				legend.position = "none"
+			)
 	}
 		
 	return(p)

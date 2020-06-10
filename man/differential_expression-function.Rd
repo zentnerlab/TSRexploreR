@@ -4,9 +4,13 @@
 \alias{differential_expression}
 \title{Analyze Differential Expression}
 \usage{
-differential_expression(experiment, data_type = c("tss", "tsr",
-  "tss_features", "tsr_features"), compare_groups, fdr_cutoff = 0.05,
-  log2fc_cutoff = 1)
+differential_expression(
+  experiment,
+  data_type = c("tss", "tsr", "tss_features", "tsr_features"),
+  compare_groups,
+  fdr_cutoff = 0.05,
+  log2fc_cutoff = 1
+)
 }
 \arguments{
 \item{experiment}{tsrexplorer object with edgeR differential expression model from fit_edger_model}

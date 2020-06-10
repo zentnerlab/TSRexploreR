@@ -4,8 +4,11 @@
 \alias{export_for_enrichment}
 \title{Export to clusterProfiler}
 \usage{
-export_for_enrichment(experiment, data_type = c("tss", "tsr",
-  "tss_features", "tsr_features"), de_comparisons = "all")
+export_for_enrichment(
+  experiment,
+  data_type = c("tss", "tsr", "tss_features", "tsr_features"),
+  de_comparisons = "all"
+)
 }
 \arguments{
 \item{experiment}{tsrexplorer object}

@@ -4,8 +4,7 @@
 \alias{plot_threshold_exploration}
 \title{Plot Threshold Exploration}
 \usage{
-plot_threshold_exploration(threshold_data, ncol = 1, point_size = 1,
-  ...)
+plot_threshold_exploration(threshold_data, ncol = 1, point_size = 1, ...)
 }
 \arguments{
 \item{threshold_data}{Tibble of threshold exploration data from explore_thresholds}

@@ -4,9 +4,15 @@
 \alias{max_utr}
 \title{Max UTR Length}
 \usage{
-max_utr(experiment, samples = "all", threshold = 1,
-  max_upstream = 1000, max_downstream = 100,
-  feature_type = c("geneId", "transcriptId"), quantiles = NA)
+max_utr(
+  experiment,
+  samples = "all",
+  threshold = 1,
+  max_upstream = 1000,
+  max_downstream = 100,
+  feature_type = c("geneId", "transcriptId"),
+  quantiles = NA
+)
 }
 \arguments{
 \item{experiment}{tsrexplorer object with annotated TSSs}

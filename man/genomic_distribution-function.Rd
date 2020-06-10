@@ -4,9 +4,14 @@
 \alias{genomic_distribution}
 \title{Genomic Distribution}
 \usage{
-genomic_distribution(experiment, data_type = c("tss", "tsr"),
-  samples = "all", threshold = NA, dominant = FALSE,
-  data_conditions = NA)
+genomic_distribution(
+  experiment,
+  data_type = c("tss", "tsr"),
+  samples = "all",
+  threshold = NA,
+  dominant = FALSE,
+  data_conditions = NA
+)
 }
 \arguments{
 \item{experiment}{tsrexplorer object with annotated TSRs}

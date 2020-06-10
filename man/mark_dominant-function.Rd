@@ -4,8 +4,12 @@
 \alias{mark_dominant}
 \title{Mark Dominant}
 \usage{
-mark_dominant(experiment, data_type = c("tss", "tsr"), threshold = 1,
-  mark_per = "default")
+mark_dominant(
+  experiment,
+  data_type = c("tss", "tsr"),
+  threshold = 1,
+  mark_per = "default"
+)
 }
 \arguments{
 \item{experiment}{tsrexplorer object with annotated TSSs/TSRs}

@@ -4,8 +4,11 @@
 \alias{add_feature_counts}
 \title{Add Feature Counts}
 \usage{
-add_feature_counts(experiment, rnaseq_feature_counts,
-  five_prime_feature_counts)
+add_feature_counts(
+  experiment,
+  rnaseq_feature_counts,
+  five_prime_feature_counts
+)
 }
 \arguments{
 \item{experiment}{tsrexplorer object}

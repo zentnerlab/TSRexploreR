@@ -4,8 +4,13 @@
 \alias{merge_samples}
 \title{Merge Samples}
 \usage{
-merge_samples(experiment, data_type = c("tss", "tsr"), threshold = NA,
-  merge_replicates = FALSE, sample_list = NA)
+merge_samples(
+  experiment,
+  data_type = c("tss", "tsr"),
+  threshold = NA,
+  merge_replicates = FALSE,
+  sample_list = NA
+)
 }
 \arguments{
 \item{experiment}{tsrexplorer object}

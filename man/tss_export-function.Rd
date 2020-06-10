@@ -4,8 +4,14 @@
 \alias{tss_export}
 \title{Export TSSs}
 \usage{
-tss_export(experiment, samples = "all", file_type = "bedgraph",
-  out_dir = NA, diff_tss = FALSE, sep = "\\t")
+tss_export(
+  experiment,
+  samples = "all",
+  file_type = "bedgraph",
+  out_dir = NA,
+  diff_tss = FALSE,
+  sep = "\\t"
+)
 }
 \arguments{
 \item{experiment}{tsrexplorer object}

@@ -4,10 +4,20 @@
 \alias{plot_density}
 \title{Density Plots}
 \usage{
-plot_density(experiment, data_type = c("tss", "tsr"), samples = "all",
-  consider_score = FALSE, upstream = 1000, downstream = 1000,
-  threshold = 1, ncol = 1, use_cpm = FALSE, dominant = FALSE,
-  data_conditions = NA, ...)
+plot_density(
+  experiment,
+  data_type = c("tss", "tsr"),
+  samples = "all",
+  consider_score = FALSE,
+  upstream = 1000,
+  downstream = 1000,
+  threshold = 1,
+  ncol = 1,
+  use_cpm = FALSE,
+  dominant = FALSE,
+  data_conditions = NA,
+  ...
+)
 }
 \arguments{
 \item{experiment}{tsrexplorer object with annotated TSSs}

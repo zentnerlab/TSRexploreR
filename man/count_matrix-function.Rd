@@ -4,8 +4,11 @@
 \alias{count_matrix}
 \title{Count Matrix}
 \usage{
-count_matrix(experiment, data_type = c("tss", "tsr", "tss_features",
-  "tsr_features"), samples = "all")
+count_matrix(
+  experiment,
+  data_type = c("tss", "tsr", "tss_features", "tsr_features"),
+  samples = "all"
+)
 }
 \arguments{
 \item{experiment}{tsrexplorer object}

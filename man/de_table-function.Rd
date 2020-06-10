@@ -4,9 +4,12 @@
 \alias{de_table}
 \title{DE Table}
 \usage{
-de_table(experiment, data_type = c("tss", "tsr", "tss_features",
-  "tsr_features"), de_comparisons = "all", de_type = c("up",
-  "unchanged", "down"))
+de_table(
+  experiment,
+  data_type = c("tss", "tsr", "tss_features", "tsr_features"),
+  de_comparisons = "all",
+  de_type = c("up", "unchanged", "down")
+)
 }
 \arguments{
 \item{experiment}{tsrexplorer object}

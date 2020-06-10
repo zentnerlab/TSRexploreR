@@ -159,6 +159,7 @@ tmm_normalize <- function(
 		DGEList %>%
 		calcNormFactors %>%
 		cpm
+	rownames(tmm_counts) <- NULL
 
 	## Create filtered and TMM normalized RangedSummarizedExperiment.
 	assay(select_samples, "tmm") <- tmm_counts

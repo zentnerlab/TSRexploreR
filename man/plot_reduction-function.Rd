@@ -4,9 +4,14 @@
 \alias{plot_reduction}
 \title{Dimensionality Reduction.}
 \usage{
-plot_reduction(experiment, data_type = c("tss", "tsr", "tss_features",
-  "tsr_features"), method = "umap", n_neighbors = 2, min_dist = 0.1,
-  ...)
+plot_reduction(
+  experiment,
+  data_type = c("tss", "tsr", "tss_features", "tsr_features"),
+  method = "umap",
+  n_neighbors = 2,
+  min_dist = 0.1,
+  ...
+)
 }
 \arguments{
 \item{experiment}{tsrexplorer object}

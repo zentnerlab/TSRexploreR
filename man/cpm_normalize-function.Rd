@@ -4,8 +4,10 @@
 \alias{cpm_normalize}
 \title{CPM Normalize Counts}
 \usage{
-cpm_normalize(experiment, data_type = c("tss", "tsr", "tss_features",
-  "tsr_features"))
+cpm_normalize(
+  experiment,
+  data_type = c("tss", "tsr", "tss_features", "tsr_features")
+)
 }
 \arguments{
 \item{experiment}{tsrexplorer object}

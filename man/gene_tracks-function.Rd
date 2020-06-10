@@ -4,11 +4,22 @@
 \alias{gene_tracks}
 \title{Gene Tracks by Gene}
 \usage{
-gene_tracks(experiment, genome_annotation, feature_name,
-  feature_type = "gene", samples = "all", threshold = 1,
-  upstream = 250, downstream = 250, promoter_only = FALSE,
-  use_cpm = FALSE, tss_colors = "black", tsr_colors = "black",
-  axis_scale = 0.25, ymax = NA)
+gene_tracks(
+  experiment,
+  genome_annotation,
+  feature_name,
+  feature_type = "gene",
+  samples = "all",
+  threshold = 1,
+  upstream = 250,
+  downstream = 250,
+  promoter_only = FALSE,
+  use_cpm = FALSE,
+  tss_colors = "black",
+  tsr_colors = "black",
+  axis_scale = 0.25,
+  ymax = NA
+)
 }
 \arguments{
 \item{experiment}{tsrexplorer object}

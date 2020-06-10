@@ -4,6 +4,7 @@
 #' @description
 #' Format TSS or TSR counts for further analysis. 
 #'
+#' @import data.table
 #' @importFrom stringr str_c str_to_lower
 #'
 #' @param experiment tsrexplorer object

@@ -4,8 +4,7 @@
 \alias{associate_with_tsr}
 \title{Associate TSSs}
 \usage{
-associate_with_tsr(experiment, sample_list = NA,
-  use_sample_sheet = FALSE)
+associate_with_tsr(experiment, sample_list = NA, use_sample_sheet = FALSE)
 }
 \arguments{
 \item{experiment}{tsrexplorer object}

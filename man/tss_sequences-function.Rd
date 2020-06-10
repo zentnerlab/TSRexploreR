@@ -4,9 +4,15 @@
 \alias{tss_sequences}
 \title{Retrieve Sequences Near TSSs}
 \usage{
-tss_sequences(experiment, samples = "all", genome_assembly,
-  threshold = 1, distance = 10, dominant = FALSE,
-  data_conditions = list(order_by = "score"))
+tss_sequences(
+  experiment,
+  samples = "all",
+  genome_assembly,
+  threshold = 1,
+  distance = 10,
+  dominant = FALSE,
+  data_conditions = list(order_by = "score")
+)
 }
 \arguments{
 \item{experiment}{tsrexplorer object with TSS GRanges}

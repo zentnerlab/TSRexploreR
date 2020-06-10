@@ -4,8 +4,12 @@
 \alias{find_correlation}
 \title{Generate Correlation Matrix}
 \usage{
-find_correlation(experiment, data_type = c("tss", "tsr", "features"),
-  samples = "all", correlation_metric = "pearson")
+find_correlation(
+  experiment,
+  data_type = c("tss", "tsr", "features"),
+  samples = "all",
+  correlation_metric = "pearson"
+)
 }
 \arguments{
 \item{experiment}{tsrexplorer object with TMM-normalized counts}

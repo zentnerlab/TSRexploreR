@@ -4,10 +4,19 @@
 \alias{plot_tsr_metric}
 \title{Plot TSR Metrics}
 \usage{
-plot_tsr_metric(experiment, tsr_metrics, plot_type = "violin",
-  samples = "all", log2_transform = FALSE, ncol = 1,
-  use_cpm = FALSE, dominant = FALSE, threshold = NA,
-  data_conditions = NA, ...)
+plot_tsr_metric(
+  experiment,
+  tsr_metrics,
+  plot_type = "violin",
+  samples = "all",
+  log2_transform = FALSE,
+  ncol = 1,
+  use_cpm = FALSE,
+  dominant = FALSE,
+  threshold = NA,
+  data_conditions = NA,
+  ...
+)
 }
 \arguments{
 \item{experiment}{tsrexplorer object with TSR GRanges}

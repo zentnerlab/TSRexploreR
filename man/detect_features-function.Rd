@@ -4,8 +4,14 @@
 \alias{detect_features}
 \title{Genes/Transcripts Detected}
 \usage{
-detect_features(experiment, samples = "all", data_type = c("tss",
-  "tsr"), threshold = NA, dominant = FALSE, condition_data = NA)
+detect_features(
+  experiment,
+  samples = "all",
+  data_type = c("tss", "tsr", "tss_features", "tsr_features"),
+  threshold = NA,
+  dominant = FALSE,
+  condition_data = NA
+)
 }
 \arguments{
 \item{experiment}{tsrexplorer object with annotated TSSs or TSRs}
