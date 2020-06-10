@@ -36,11 +36,8 @@ Imports:
     ChIPseeker,
     edgeR,
     GGally,
-    TSRchitect,
-    CAGEr,
     S4Vectors,
     SummarizedExperiment,
-    digest,
     uwot,
     Gviz,
     IRanges,
@@ -50,7 +47,9 @@ Imports:
 Depends:
     R (>= 3.5.0)
 Suggests:
-    clusterProfiler
+    clusterProfiler,
+    TSRchitect,
+    CAGEr
 RoxygenNote: 6.1.1
 Collate: 
     'RcppExports.R'
