@@ -5,14 +5,12 @@
 #'
 #' @import tibble
 #' @importFrom edgeR DGEList filterByExpr calcNormFactors cpm estimateDisp glmQLFit
-#' @importFrom dplyr select_at rename
-#' @importFrom magrittr %>%
 #' @importFrom forcats fct_inorder
 #'
 #' @param experiment tsrexplorer object with TMM-normalized counts
 #' @param data_type Whether TSSs, TSRs, or feature counts should be analyzed
 #' @param samples Vector of sample names to analyze
-#' @param groups Vector of groups in correct factor notation
+#' @param groups Character vector of groups
 #'
 #' @return DGEList object with fitted model
 #'
@@ -50,13 +48,16 @@ fit_edger_model <- function(
 	design[, groups := fct_inorder(as.character(groups))]
 
 	## Grab data from appropriate slot.
-	sample_data <- extract_matrix(experiment, data_type, design[["samples"]])
-
-	## Filter out features with low counts.
-	sample_data <- sample_data[filterByExpr(assay(sample_data, "counts")), ]
+	sample_data <- extract_matrix(experiment, data_type, samples)
 
 	## Set sample design.
 	sample_design <- model.matrix(~ 0 + design[["groups"]])
+
+        ## Filter out features with low counts.
+        sample_data <- sample_data[filterByExpr(
+		assay(sample_data, "counts"), design = sample_design,
+		group = design[["group"]]
+	), ]
 
 	## Create DE model.
 	fitted_model <- assay(sample_data, "counts") %>%
@@ -87,11 +88,9 @@ fit_edger_model <- function(
 #'
 #' Find differential TSSs, TSRs, or features from edgeR model
 #'
-#' @import tibble
+#' @importFrom SummarizedExperiment rowData
 #' @importFrom edgeR glmQLFTest
-#' @importFrom dplyr pull mutate
-#' @importFrom tidyr separate
-#' @importFrom magrittr %>%
+#' @importFrom dplyr pull
 #' @importFrom purrr map_dbl
 #'
 #' @param experiment tsrexplorer object with edgeR differential expression model from fit_edger_model
@@ -187,18 +186,21 @@ differential_expression <- function(
 		log2FC >= log2fc_cutoff & FDR <= fdr_cutoff ~ "up",
 		log2FC <= -log2fc_cutoff & FDR <= fdr_cutoff ~ "down",
 		TRUE ~ "unchanged"
-	)]
+	)][]
 
 	## Merge in the annotation information from the original matrix.
-	original <- as.data.table(original_ranges)
-	original[, FHASH := names(original_ranges)]
-
 	comparison_name <- str_c(compare_groups[1], "_vs_", compare_groups[2])
-	diff_expression <- merge(diff_expression, original, by = "FHASH")
 
-	diff_expression <- sort(makeGRangesFromDataFrame(diff_expression, keep.extra.columns = TRUE))
-	diff_expression <- as.data.table(diff_expression)
-	
+	if (data_type %in% c("tss", "tsr")) {
+		original <- as.data.table(original_ranges)
+		original[, FHASH := names(original_ranges)]
+
+		diff_expression <- merge(diff_expression, original, by = "FHASH")
+		diff_expression <- sort(makeGRangesFromDataFrame(diff_expression, keep.extra.columns = TRUE))
+		diff_expression <- as.data.table(diff_expression)
+	} else if (data_type %in% c("tss_features", "tsr_features")) {
+		setnames(diff_expression, old = 1, new = "feature")[]
+	}
 
 	## Add differential expression data back to tsrexplorer object.
 	if (data_type == "tss") {

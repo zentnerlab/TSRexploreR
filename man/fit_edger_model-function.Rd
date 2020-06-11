@@ -18,7 +18,7 @@ fit_edger_model(
 
 \item{samples}{Vector of sample names to analyze}
 
-\item{groups}{Vector of groups in correct factor notation}
+\item{groups}{Character vector of groups}
 }
 \value{
 DGEList object with fitted model

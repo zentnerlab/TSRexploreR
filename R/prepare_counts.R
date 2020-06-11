@@ -332,11 +332,12 @@ count_matrix <- function(
 		)
 	} else if (data_type %in% c("tss_features", "tsr_features")) {
 		
-	  ## Prepare data for SummarizedExperiment.
+	 	 ## Prepare data for SummarizedExperiment.
 		row_data <- select_samples[, 1]
 		
 		select_samples[, eval(anno_type) := NULL]
 		select_samples <- as.matrix(select_samples)
+		rownames(select_samples) <- row_data[[1]]
 
 		col_data <- DataFrame(
 			samples = colnames(select_samples),

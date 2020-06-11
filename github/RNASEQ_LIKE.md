@@ -60,3 +60,32 @@ ggsave("tss_features_feature_plot.png", plot = p, device = "png", type = "cairo"
 ```
 
 ![tss_features_feature_plot](../inst/images/tss_features_feature_plot.png)
+
+Dimension reduction.
+
+```
+p <- plot_reduction(exp, data_type = "tss_features", size = 0.5) +
+        ggplot2::theme(text = element_text(size = 3), legend.key.size = unit(0.2, "cm"))
+
+ggsave("diff_tss_features_reduction.png", plot = p, device = "png", type = "cairo", height = 1.25, width = 2)
+```
+
+![diff_tss_features_reduction](../inst/images/diff_tss_features_reduction.png)
+
+Differential Expression.
+
+```
+exp <- fit_edger_model(
+	exp, data_type = "tss_features",
+	samples = c(
+		sprintf("S288C_WT_%s", seq_len(3)),
+		sprintf("S288C_D_%s", seq_len(3))
+	),
+	groups = c(rep("Untreated", 3), rep("Diamide", 3))
+)
+
+exp <- differential_expression(
+	exp, data_type = "tss_features",
+	compare_groups = c("Untreated", "Diamide")
+)
+```
