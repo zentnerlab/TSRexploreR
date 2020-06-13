@@ -124,13 +124,13 @@ library("clusterProfiler")
 library("org.Sc.sgd.db")
 
 go_enrichment <- compareCluster(
-        geneId ~ sample + DE,
+        feature ~ sample + DE,
         data = enrichment_data,
         fun = "enrichGO",
         OrgDb = "org.Sc.sgd.db",
         pAdjustMethod = "fdr",
         ont = "BP",
-        keyType = "SYMBOL"
+        keyType = "ENSEMBL"
 )
 
 p <- dotplot(go_enrichment, font.size = 4) +
