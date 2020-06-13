@@ -89,3 +89,29 @@ exp <- differential_expression(
 	compare_groups = c("Untreated", "Diamide")
 )
 ```
+
+MA plots.
+
+```
+p <- plot_de_validation(
+	exp, data_type = "tss_features", de_comparisons = "Untreated_vs_Diamide",
+	size = 0.25, stroke = 0.25
+) +
+        ggplot2::theme(text = element_text(size = 3), legend.key.size = unit(0.2, "cm"))
+
+ggsave("diff_tss_features_ma.png", plot = p, device = "png", type = "cairo", height = 1.5, width = 2)
+```
+
+![diff_tss_features_ma](../inst/images/diff_tss_features_ma.png)
+
+Number of differentially expressed genes.
+
+```
+p <- plot_num_de(exp, data_type = "tss_features", de_comparisons = "Untreated_vs_Diamide") +
+        ggplot2::theme(text = element_text(size = 3), legend.key.size = unit(0.3, "cm"))
+
+ggsave("tss_features_num_de.png", plot = p, device = "png", type = "cairo", height = 1.5, width = 1.25)
+```
+
+![tss_features_num_de](../inst/images/tss_features_num_de.png)
+

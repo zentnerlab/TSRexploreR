@@ -1,11 +1,12 @@
-#' DE MA Plot
+#' DE MA or Volcano Plot
 #'
 #' @description
-#' Generate MA plot for differential TSRs or Genes (RNA-seq) - confused. I see the MA-plot code but no volcano.
+#' Generate MA or VOlcano plot for differential TSRs or Genes (RNA-seq) - confused. I see the MA-plot code but no volcano.
 #'
 #' @param experiment tsrexplorer object
 #' @param de_comparisons Which differential expression comparisons to plot
 #' @param data_type Either 'tss', 'tsr', 'tss_features', or 'tsr_features'
+#' @param plot_type Either 'ma' or 'volcano'
 #' @param ncol Number of columns for the facets
 #' @param ... Arguments passed to geom_point
 #'
@@ -16,13 +17,14 @@
 #'
 #' @return ggplot2 object of MA plot.
 #'
-#' @rdname plot_ma-function
+#' @rdname plot_de_validation-function
 #' @export
 
-plot_ma <- function(
+plot_de_validation <- function(
 	experiment,
 	data_type = c("tss", "tsr", "tss_features", "tsr_features"),
 	de_comparisons = "all",
+	plot_type = "ma",
 	ncol = 1,
 	...
 ){
@@ -40,6 +42,12 @@ plot_ma <- function(
 
 	if (!is(de_comparisons, "character")) stop("de_comparisons must be 'all' or character vector")
 
+	if (!is(plot_type, "character") || length(plot_type ) > 1) {
+		stop("plot_type must be 'ma' or 'volcano'")
+	}
+	plot_type <- str_to_lower(plot_type)
+	if (!plot_type %in% c("ma", "volcano")) stop("plot_type must be 'ma' or 'volcano'")
+
         if (!is(ncol, "numeric") || ncol %% 1 != 0 || ncol < 1) {
                 stop("ncol must be a positive integer")
         }
@@ -48,7 +56,7 @@ plot_ma <- function(
 	de_samples <- extract_de(experiment, data_type, de_comparisons)
 
 	## Prepare DE data for plotting.
-	de_samples <- rbindlist(de_samples, idcol = "sample")
+	de_samples <- rbindlist(de_samples)
 	de_samples[, DE := factor(DE, levels = c("up", "unchanged", "down"))]
 
 	## Set sample order if required.
@@ -56,12 +64,21 @@ plot_ma <- function(
 		de_samples[, sample := factor(sample, levels = de_comparisons)]
 	}
 
-	## MA plot of differential expression
-	p <- ggplot(de_samples, aes(x = logCPM, y = log2FC, color = DE)) +
-		geom_point(...) +
-		theme_bw() +
-		scale_color_viridis_d() +
-		facet_wrap(~ sample, ncol = ncol, scales = "free")
+	## MA plot of differential expression.
+	if (plot_type == "ma") {
+		p <- ggplot(de_samples, aes(x = logCPM, y = log2FC, color = DE)) +
+			geom_point(...) +
+			theme_bw() +
+			scale_color_viridis_d() +
+			facet_wrap(~ sample, ncol = ncol, scales = "free")
+	## Volcano plot of differential expression.
+	} else if (plot_type == "volcano") {
+		p <- ggplot(de_samples, aes(x = log2FC, y = -log10(FDR))) +
+			geom_point(...) +
+			theme_bw() +
+			scale_color_viridis_d() +
+			facet_wrap(~ sample, ncol = ncol, scales = "free")
+	}
 
 	return(p)
 }
@@ -71,7 +88,6 @@ plot_ma <- function(
 #' Export DEGs for use in clusterProfiler term enrichment.
 #'
 #' @import tibble
-#' @importFrom dplyr select mutate case_when filter
 #' 
 #' @param experiment tsrexplorer object
 #' @param data_type Either 'tss', 'tsr', 'tss_features', or 'tsr_features'
@@ -143,9 +159,8 @@ plot_num_de <- function(
 
 
 	## Get appropriate samples.
-	de_samples <- experiment %>%
-		extract_de(data_type, de_comparisons) %>%
-		rbindlist(idcol = "sample")
+	de_samples <- extract_de(experiment, data_type, de_comparisons)
+	de_samples <- rbindlist(de_samples)
 
 	## prepare data for plotting.
 	de_data <- de_samples[, .(count = .N), by = .(sample, DE)]
