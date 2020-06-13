@@ -116,11 +116,12 @@ export_for_enrichment <- function(
         if (!is(de_comparisons, "character")) stop("de_comparisons must be 'all' or character vector")
 
 	## Get DE comparisons.
-	de_data <- extract_de(experiment, data_type, de_comparisons) %>%
-		rbindlist
+	de_data <- extract_de(experiment, data_type, de_comparisons)
+	de_data <- rbindlist(de_data)
+
 	de_data <- de_data[
 		DE %in% c("up", "down"),
-		.(sample, FHASH, geneId, log2FC, FDR, DE)
+		.(sample, feature, log2FC, FDR, DE)
 	]
 	
 	return(de_data)

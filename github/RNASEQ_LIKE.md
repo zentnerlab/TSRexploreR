@@ -19,7 +19,7 @@ Annotate the TSSs to the nearest transcript.
 annotation <- system.file("extdata", "S288C_Annotation.gtf", package = "tsrexplorer")
 exp <- annotate_features(
         exp, annotation_data = annotation,
-        data_type = "tss", feature_type = "transcript"
+        data_type = "tss", feature_type = "gene"
 )
 ```
 
@@ -115,3 +115,33 @@ ggsave("tss_features_num_de.png", plot = p, device = "png", type = "cairo", heig
 
 ![tss_features_num_de](../inst/images/tss_features_num_de.png)
 
+GO enrichment.
+
+```
+enrichment_data <- export_for_enrichment(exp, data_type = "tss_features")
+
+library("clusterProfiler")
+library("org.Sc.sgd.db")
+
+go_enrichment <- compareCluster(
+        geneId ~ sample + DE,
+        data = enrichment_data,
+        fun = "enrichGO",
+        OrgDb = "org.Sc.sgd.db",
+        pAdjustMethod = "fdr",
+        ont = "BP",
+        keyType = "SYMBOL"
+)
+
+p <- dotplot(go_enrichment, font.size = 4) +
+        scale_color_viridis_c() +
+        theme(
+                text = element_text(size = 4),
+                axis.text.x = element_text(angle = 45, hjust = 1),
+                legend.key.size = unit(0.3, "cm")
+        )
+
+ggsave("tss_features_enrichment.png", plot = p, device = "png", type = "cairo", height = 3, width = 3)
+```
+
+![tss_features_enrichment](../inst/images/tss_features_enrichment.png)

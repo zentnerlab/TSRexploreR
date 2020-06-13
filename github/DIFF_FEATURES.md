@@ -138,7 +138,7 @@ exp <- annotate_features(
 MA plots provide a good overview of the distribution of differentially expressed genes relative to average gene expression.
 
 ```
-p <- plot_ma(exp, data_type = "tsr", de_comparisons = "Untreated_vs_Diamide", size = 0.25, stroke = 0.25) +
+p <- plot_de_validation(exp, data_type = "tsr", de_comparisons = "Untreated_vs_Diamide", size = 0.25, stroke = 0.25) +
 	ggplot2::theme(text = element_text(size = 3), legend.key.size = unit(0.2, "cm"))
 
 ggsave("diff_tsr_ma.png", plot = p, device = "png", type = "cairo", height = 1.5, width = 2)
@@ -164,7 +164,7 @@ The preferred tool for enrichment analysis in R is the clusterProfiler library.
 tsrexplorer provides a convenient function to export DE features to a format ready for analysis with clusterProfiler.
 
 ```
-enrichment_data <- export_for_enrichment(experiment, data_type = "tsr")
+enrichment_data <- export_for_enrichment(exp, data_type = "tsr")
 
 library("clusterProfiler")
 library("org.Sc.sgd.db")
