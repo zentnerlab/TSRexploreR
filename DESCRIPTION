@@ -51,7 +51,7 @@ Suggests:
     TSRchitect,
     CAGEr,
     org.Sc.sgd.db
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1
 Collate: 
     'RcppExports.R'
     'annotate.R'

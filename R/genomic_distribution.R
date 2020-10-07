@@ -50,94 +50,93 @@
 #' @export 
 
 genomic_distribution <- function(
-	experiment,
-	data_type = c("tss", "tsr"),
-	samples = "all",
-	threshold = NA,
-	dominant = FALSE,
-	data_conditions = NA
+  experiment,
+  data_type = c("tss", "tsr"),
+  samples = "all",
+  threshold = NA,
+  dominant = FALSE,
+  data_conditions = NA
 ) {
 
-	## Check inputs.
-	if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsrexplorer object")
+  ## Check inputs.
+  if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsrexplorer object")
 
-	if (!is(data_type, "character") || length(data_type) > 1) {
-        	stop("data_type must be either 'tss' or 'tsr'")
-	}
-        data_type <- str_to_lower(data_type)
-        if (!data_type %in% c("tss", "tsr")) {
-                stop("data_type must be either 'tss' or 'tsr'")
-        }
+  if (!is(data_type, "character") || length(data_type) > 1) {
+    stop("data_type must be either 'tss' or 'tsr'")
+  }
+  data_type <- str_to_lower(data_type)
+  if (!data_type %in% c("tss", "tsr")) {
+    stop("data_type must be either 'tss' or 'tsr'")
+  }
 
-	if (!is(samples, "character")) stop("samples must be a character")
+  if (!is(samples, "character")) stop("samples must be a character")
 
-	if (
-		!is.na(threshold) && (!is(threshold, "numeric") ||
-		threshold %% 1 != 0 || threshold < 1)
-	) {
-		stop("threshold must be a positive integer")
-	}
-		
-	if (!is.logical(dominant)) stop("dominant must be logical")
+  if (
+    !is.na(threshold) && (!is(threshold, "numeric") ||
+    threshold %% 1 != 0 || threshold < 1)
+  ) {
+    stop("threshold must be a positive integer")
+  }
+    
+  if (!is.logical(dominant)) stop("dominant must be logical")
 
-	if (all(!is.na(data_conditions)) && !is(data_conditions, "list")) stop("data_conditions must in list form")
+  if (all(!is.na(data_conditions)) && !is(data_conditions, "list")) stop("data_conditions must in list form")
 
-	## Extract samples.
-	selected_samples <- extract_counts(experiment, data_type, samples)
+  ## Extract samples.
+  selected_samples <- extract_counts(experiment, data_type, samples)
 
-	## Preliminary sample preparation.
-	if (dominant | !is.na(threshold)) {
-		selected_samples <- preliminary_filter(selected_samples, dominant, threshold)
-	}
+  ## Preliminary sample preparation.
+  if (dominant | !is.na(threshold)) {
+    selected_samples <- preliminary_filter(selected_samples, dominant, threshold)
+  }
 
-	walk(selected_samples, function(x) {
-        	x[, simple_annotations := factor(
-                        simple_annotations,
-                        levels = c("Promoter", "Exon", "Intron", "Downstream", "Intergenic")
-                )]
-	})
+  walk(selected_samples, function(x) {
+    x[, simple_annotations := factor(
+      simple_annotations,
+      levels = c("Promoter", "Exon", "Intron", "Downstream", "Intergenic")
+    )]
+  })
 
+  ## Apply advanced grouping.
+  if (all(!is.na(data_conditions))) {
+    selected_samples <- do.call(group_data, c(list(signal_data = selected_samples), data_conditions))
+  }
 
-	## Apply advanced grouping.
-	if (all(!is.na(data_conditions))) {
-		selected_samples <- do.call(group_data, c(list(signal_data = selected_samples), data_conditions))
-	}
+  ## Prepare data to be plotted later.
+  selected_samples <- rbindlist(selected_samples, idcol = "samples")
+  groupings <- any(names(data_conditions) %in% c("quantile_by", "grouping"))
 
-	## Prepare data to be plotted later.
-	selected_samples <- rbindlist(selected_samples, idcol = "samples")
-	groupings <- any(names(data_conditions) %in% c("quantile_by", "grouping"))
+  if (groupings) {
+    genomic_distribution <- selected_samples[,
+      .(count = .N),
+      by = .(samples, simple_annotations, grouping)
+    ][,
+      .(simple_annotations, count, fraction = count / sum(count)),
+      by = .(samples, grouping)
+    ]
+  } else {
+    genomic_distribution <- selected_samples[,
+      .(count = .N),
+      by = .(samples, simple_annotations)
+    ][,
+      .(simple_annotations, count, fraction = count / sum(count)),
+      by = samples
+    ]
+  }
 
-	if (groupings) {
-		genomic_distribution <- selected_samples[,
-			.(count = .N),
-			by = .(samples, simple_annotations, grouping)
-		][,
-			.(simple_annotations, count, fraction = count / sum(count)),
-			by = .(samples, grouping)
-		]
-	} else {
-		genomic_distribution <- selected_samples[,
-			.(count = .N),
-			by = .(samples, simple_annotations)
-		][,
-			.(simple_annotations, count, fraction = count / sum(count)),
-			by = samples
-		]
-	}
+  ## Order samples if required.
+  if (!all(samples == "all")) {
+    genomic_distribution[, samples := factor(samples, levels = samples)]
+  }
 
-	## Order samples if required.
-	if (!all(samples == "all")) {
-		genomic_distribution[, samples := factor(samples, levels = samples)]
-	}
+  ## Prepare dataframe to return.
+  dist_exp <- DataFrame(genomic_distribution)
 
-	## Prepare dataframe to return.
-	dist_exp <- DataFrame(genomic_distribution)
+  ## Add quantile information to summarized experiment.
+  metadata(dist_exp)$groupings <- groupings
+  metadata(dist_exp)$dominant <- dominant
 
-	## Add quantile information to summarized experiment.
-	metadata(dist_exp)$groupings <- groupings
-	metadata(dist_exp)$dominant <- dominant
-
-	return(dist_exp)
+  return(dist_exp)
 }
 
 #' Plot Genomic Distribution
@@ -178,28 +177,28 @@ genomic_distribution <- function(
 #' @export 
 
 plot_genomic_distribution <- function(
-	genomic_distribution
+  genomic_distribution
 ) {
 
-	## Check inputs.
-	if (!is(genomic_distribution, "DataFrame")) stop("genomic distribution must be a DataFrame")
-	
-	## Pull out information from DataFrame.
-	genomic_dist <- as_tibble(genomic_distribution, .name_repair = "unique")
+  ## Check inputs.
+  if (!is(genomic_distribution, "DataFrame")) stop("genomic distribution must be a DataFrame")
+  
+  ## Pull out information from DataFrame.
+  genomic_dist <- as_tibble(genomic_distribution, .name_repair = "unique")
 
-	## Plot the genomic distribution.
-	p <- ggplot(genomic_dist, aes(x = samples, y = count, fill = fct_rev(simple_annotations))) +
-		geom_col(position = "fill") +
-		scale_fill_viridis_d(direction = -1, name="Annotation") +
-		coord_flip() +
-		ylab("Fraction") +
-		theme_bw() +
-		theme(
-			axis.title.y = element_blank(),
-			panel.grid = element_blank()
-		)
+  ## Plot the genomic distribution.
+  p <- ggplot(genomic_dist, aes(x = .data$samples, y = .data$count, fill = fct_rev(.data$simple_annotations))) +
+    geom_col(position = "fill") +
+    scale_fill_viridis_d(direction = -1, name="Annotation") +
+    coord_flip() +
+    ylab("Fraction") +
+    theme_bw() +
+    theme(
+      axis.title.y = element_blank(),
+      panel.grid = element_blank()
+    )
 
-	if (metadata(genomic_distribution)$groupings) p <- p + facet_grid(fct_rev(factor(grouping)) ~ .)
+  if (metadata(genomic_distribution)$groupings) p <- p + facet_grid(fct_rev(factor(grouping)) ~ .)
 
-	return(p)
+  return(p)
 }

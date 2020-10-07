@@ -57,92 +57,92 @@
 #' @export
 
 tss_sequences <- function(
-	experiment,
-	samples = "all",
-	genome_assembly,
-	threshold = 1,
-	distance = 10,
-	dominant = FALSE,
-	data_conditions = list(order_by = "score")
+  experiment,
+  samples = "all",
+  genome_assembly,
+  threshold = 1,
+  distance = 10,
+  dominant = FALSE,
+  data_conditions = list(order_by = "score")
 ) {
 
-	## Check inputs.
-	if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsrexplorer object")
+  ## Check inputs.
+  if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsrexplorer object")
 
-	if (!is(samples, "character")) stop("samples must be a character")
+  if (!is(samples, "character")) stop("samples must be a character")
 
-	if (!is(genome_assembly, "character") & !is(genome_assembly, "BSgenome")) {
-		stop("genome assembly must be a fasta file or BSgenome package")
-	}
-	if (is(genome_assembly, "character")) {
-		extension <- file_ext(genome_assembly)
-		if (!extension %in% c("fasta", "fa")) {
-			stop("genome_assembly file extension must be '.fa' or '.fasta'")
-		}
-	}
+  if (!is(genome_assembly, "character") & !is(genome_assembly, "BSgenome")) {
+    stop("genome assembly must be a fasta file or BSgenome package")
+  }
+  if (is(genome_assembly, "character")) {
+    extension <- file_ext(genome_assembly)
+    if (!extension %in% c("fasta", "fa")) {
+      stop("genome_assembly file extension must be '.fa' or '.fasta'")
+    }
+  }
 
-	if (!is(threshold, "numeric") | !is(distance, "numeric")) {
-		stop("threshold and/or distance must be positive integers")
-	}
-	if (threshold %% 1 != 0 | distance %% 1 != 0) {
-		stop("threshold and/or distance must be positive integers")
-	}
-	if (threshold < 1 | distance < 1) {
-		stop("threshold and/or distance must be positive integers")
-	}
+  if (!is(threshold, "numeric") | !is(distance, "numeric")) {
+    stop("threshold and/or distance must be positive integers")
+  }
+  if (threshold %% 1 != 0 | distance %% 1 != 0) {
+    stop("threshold and/or distance must be positive integers")
+  }
+  if (threshold < 1 | distance < 1) {
+    stop("threshold and/or distance must be positive integers")
+  }
 
-	if (!is(dominant, "logical")) stop("dominant must be logical")
+  if (!is(dominant, "logical")) stop("dominant must be logical")
 
-	if (all(!is.na(data_conditions)) && !is(data_conditions, "list")) {
-		stop("data_conditions must be a list of values")
-	}
+  if (all(!is.na(data_conditions)) && !is(data_conditions, "list")) {
+    stop("data_conditions must be a list of values")
+  }
 
-	## Open genome assembly.
-	if (is(genome_assembly, "character")) {
-		genome_assembly <- FaFile(genome_assembly)
-	} else if (is(genome_assembly, "BSgenome")) {
-		genome_assembly <- genome_assembly
-	}
+  ## Open genome assembly.
+  if (is(genome_assembly, "character")) {
+    genome_assembly <- FaFile(genome_assembly)
+  } else if (is(genome_assembly, "BSgenome")) {
+    genome_assembly <- genome_assembly
+  }
 
-	## Get selected samples.
-	select_samples <- extract_counts(experiment, "tss", samples)
+  ## Get selected samples.
+  select_samples <- extract_counts(experiment, "tss", samples)
 
-	## Preliminary filtering of data.
-	select_samples <- preliminary_filter(select_samples, dominant, threshold)
+  ## Preliminary filtering of data.
+  select_samples <- preliminary_filter(select_samples, dominant, threshold)
 
-	## Condition the data.
-	if (all(!is.na(data_conditions))) {
-		select_samples <- do.call(group_data, c(list(signal_data = select_samples), data_conditions))
-	}
+  ## Condition the data.
+  if (all(!is.na(data_conditions))) {
+    select_samples <- do.call(group_data, c(list(signal_data = select_samples), data_conditions))
+  }
 
-	## Expand ranges.
-	select_samples <- rbindlist(select_samples, idcol = "sample")
-	select_samples[, c("start", "end", "tss") := list(start - distance, end + distance, start)]
+  ## Expand ranges.
+  select_samples <- rbindlist(select_samples, idcol = "sample")
+  select_samples[, c("start", "end", "tss") := list(start - distance, end + distance, start)]
 
-	## Get sequences.
-	seqs <- select_samples %>%
-		makeGRangesFromDataFrame(keep.extra.columns = TRUE) %>%
-		getSeq(genome_assembly, .) %>%
-		as.data.table %>%
-		bind_cols(select_samples, .)
-			
-	setnames(seqs, old = "x", new = "sequence")
+  ## Get sequences.
+  seqs <- select_samples %>%
+    makeGRangesFromDataFrame(keep.extra.columns = TRUE) %>%
+    getSeq(genome_assembly, .) %>%
+    as.data.table %>%
+    bind_cols(select_samples, .)
+      
+  setnames(seqs, old = "x", new = "sequence")
 
-	## Order samples if required.
-	if (!all(samples == "all")) {
-		select_samples[, sample := factor(sample, levels = samples)]
-	}
-	
-	## Generate and return DataFrame.
-	groupings <- any(names(data_conditions) %in% c("quantile_by", "grouping"))
-	
-	seqs <- DataFrame(seqs)
-	metadata(seqs)$groupings <- groupings
-	metadata(seqs)$threshold <- threshold
-	metadata(seqs)$distance <- distance
-	metadata(seqs)$dominant <- dominant
+  ## Order samples if required.
+  if (!all(samples == "all")) {
+    select_samples[, sample := factor(sample, levels = samples)]
+  }
+  
+  ## Generate and return DataFrame.
+  groupings <- any(names(data_conditions) %in% c("quantile_by", "grouping"))
+  
+  seqs <- DataFrame(seqs)
+  metadata(seqs)$groupings <- groupings
+  metadata(seqs)$threshold <- threshold
+  metadata(seqs)$distance <- distance
+  metadata(seqs)$dominant <- dominant
 
-	return(seqs)
+  return(seqs)
 }
 
 #' Generate Sequence Logo
@@ -185,72 +185,72 @@ tss_sequences <- function(
 #' @export
 
 plot_sequence_logo <- function(
-	tss_sequences,
-	ncol = 1,
-	font_size = 6
+  tss_sequences,
+  ncol = 1,
+  font_size = 6
 ) {
 
-	## Check inputs.
-	if (!is(tss_sequences, "DataFrame")) stop("tss_sequences must be a DataFrame")
+  ## Check inputs.
+  if (!is(tss_sequences, "DataFrame")) stop("tss_sequences must be a DataFrame")
 
-	if (!is(ncol, "numeric") || ncol %% 1 != 0 || ncol < 1) {
-		stop("ncol must be a positive integer")
-	}
+  if (!is(ncol, "numeric") || ncol %% 1 != 0 || ncol < 1) {
+    stop("ncol must be a positive integer")
+  }
 
-	if (!is(font_size, "numeric") || !font_size > 0) {
-		stop("font_size must be a positive number")
-	}
+  if (!is(font_size, "numeric") || !font_size > 0) {
+    stop("font_size must be a positive number")
+  }
 
-	## Get some info used to pull sequencs.
-	distance <- metadata(tss_sequences)$distance
-	groupings <- metadata(tss_sequences)$groupings
+  ## Get some info used to pull sequencs.
+  distance <- metadata(tss_sequences)$distance
+  groupings <- metadata(tss_sequences)$groupings
 
-	## Grab sequences from input.
-	if (!groupings) {
-		sequences <- tss_sequences %>%
-			as.data.table %>%
-			split(.$sample) %>%
-			map(function(x) {x[["sequence"]]})
-	} else {
-		sequences <- tss_sequences %>%
-			as.data.table %>%
-			split(.$grouping) %>%
-			map(function(x) {
-				split(x, x$sample) %>%
-				map(function(y) {y[["sequence"]]})
-			})
-	}
+  ## Grab sequences from input.
+  if (!groupings) {
+    sequences <- tss_sequences %>%
+      as.data.table %>%
+      split(.$sample) %>%
+      map(function(x) {x[["sequence"]]})
+  } else {
+    sequences <- tss_sequences %>%
+      as.data.table %>%
+      split(.$grouping) %>%
+      map(function(x) {
+        split(x, x$sample) %>%
+        map(function(y) {y[["sequence"]]})
+      })
+  }
 
-	## Create viridis color scheme for bases.
-	viridis_bases <- make_col_scheme(
-		chars = c("A", "C", "G", "T"),
-		groups = c("A", "C", "G", "T"),
-		cols = c("#431352", "#34698c", "#44b57b", "#fde540")
-	)
+  ## Create viridis color scheme for bases.
+  viridis_bases <- make_col_scheme(
+    chars = c("A", "C", "G", "T"),
+    groups = c("A", "C", "G", "T"),
+    cols = c("#431352", "#34698c", "#44b57b", "#fde540")
+  )
 
-	## Make sequence logo.
-	if (!groupings) {
-		p <- ggseqlogo(sequences, ncol = ncol) +
-			theme(text = element_text(size = font_size)) #+
-			#scale_x_continuous(
-			#	breaks = c(1, distance, distance + 1, (distance * 2) + 1),
-			#	labels = c(-distance, -1, +1, distance + 1)
-			#)
-	} else {
-		p <- rev(sequences) %>%
-			map(function(x) {
-				ggseqlogo(x, ncol = ncol) +
-					theme(text = element_text(size = font_size)) #+
-					#scale_x_continuous(
-					#	breaks = c(1, distance, distance + 1, (distance * 2) + 1),
-					#	labels = c(-distance, -1, +1, distance + 1)
-					#)
-			})
+  ## Make sequence logo.
+  if (!groupings) {
+    p <- ggseqlogo(sequences, ncol = ncol) +
+      theme(text = element_text(size = font_size)) #+
+      #scale_x_continuous(
+      # breaks = c(1, distance, distance + 1, (distance * 2) + 1),
+      # labels = c(-distance, -1, +1, distance + 1)
+      #)
+  } else {
+    p <- rev(sequences) %>%
+      map(function(x) {
+        ggseqlogo(x, ncol = ncol) +
+          theme(text = element_text(size = font_size)) #+
+          #scale_x_continuous(
+          # breaks = c(1, distance, distance + 1, (distance * 2) + 1),
+          # labels = c(-distance, -1, +1, distance + 1)
+          #)
+      })
 
-		p <- plot_grid(plotlist = p, labels = rev(names(sequences)), ncol = 1)
-	}
+    p <- plot_grid(plotlist = p, labels = rev(names(sequences)), ncol = 1)
+  }
 
-	return(p)
+  return(p)
 }
 
 #' Plot Sequence Colormap
@@ -302,94 +302,94 @@ plot_sequence_logo <- function(
 #' @export
 
 plot_sequence_colormap <- function(
-	tss_sequences,
-	ncol = 1,
-	base_colors = c(
-		"A" = "#109649",
-		"C" = "#255C99",
-		"G" = "#F7B32C",
-		"T" = "#D62839"
-	),
-	text_size = 6,
-	...
+  tss_sequences,
+  ncol = 1,
+  base_colors = c(
+    "A" = "#109649",
+    "C" = "#255C99",
+    "G" = "#F7B32C",
+    "T" = "#D62839"
+  ),
+  text_size = 6,
+  ...
 ) {
-	## Check inputs.
-	if (!is(tss_sequences, "DataFrame")) stop("tss_sequences must be a DataFrame")
+  ## Check inputs.
+  if (!is(tss_sequences, "DataFrame")) stop("tss_sequences must be a DataFrame")
 
         if (!is(ncol, "numeric") || ncol %% 1 != 0 || ncol < 1) {
-		stop("ncol must be a positive integer")
-	}
+    stop("ncol must be a positive integer")
+  }
 
         if (!is(text_size, "numeric") || !text_size > 0) {
-		stop("font_size must be a positive number")
-	}
+    stop("font_size must be a positive number")
+  }
 
-	if (
-		!is(base_colors, "character") || length(base_colors) < 4 ||
-		is.null(names(base_colors)) ||
-		!all(str_to_lower(names(base_colors)) %in% c("a", "t", "g", "c"))
-	) {
-		stop("base_colors must be a named character vector")
-	}
+  if (
+    !is(base_colors, "character") || length(base_colors) < 4 ||
+    is.null(names(base_colors)) ||
+    !all(str_to_lower(names(base_colors)) %in% c("a", "t", "g", "c"))
+  ) {
+    stop("base_colors must be a named character vector")
+  }
 
-	## Grab some information out of DataFrame.
-	distance <- metadata(tss_sequences)$distance
-	groupings <- metadata(tss_sequences)$groupings
+  ## Grab some information out of DataFrame.
+  distance <- metadata(tss_sequences)$distance
+  groupings <- metadata(tss_sequences)$groupings
 
-	## Start preparing data for plotting.
-	seq_data <- as.data.table(tss_sequences)
-	seq_data[, width := nchar(sequence)]
+  ## Start preparing data for plotting.
+  seq_data <- as.data.table(tss_sequences)
+  seq_data[, width := nchar(sequence)]
 
-	## Split sequences into columns
-	split_seqs <- seq_data[, as.data.table(str_split(sequence, "", simplify = TRUE))]
-	setnames(
-		split_seqs,
-		old = seq(1, (distance * 2) + 1),
-		new = as.character(c(seq(-distance, -1), seq(1, distance + 1)))
-	)
-	seq_data <- bind_cols(seq_data, split_seqs)
+  ## Split sequences into columns
+  split_seqs <- seq_data[, as.data.table(str_split(sequence, "", simplify = TRUE))]
+  setnames(
+    split_seqs,
+    old = seq(1, (distance * 2) + 1),
+    new = as.character(c(seq(-distance, -1), seq(1, distance + 1)))
+  )
+  seq_data <- bind_cols(seq_data, split_seqs)
 
-	## Get order of TSSs for plotting.
-	seq_data[, FHASH := fct_reorder(factor(FHASH), plot_order)]
+  ## Get order of TSSs for plotting.
+  seq_data[, FHASH := fct_reorder(factor(FHASH), plot_order)]
 
-	## Format data for plotting.
-	long_data <- seq_data %>%
-		melt(
-			measure.vars = as.character(c(seq(-distance, -1), seq(1, distance + 1))),
-			variable.name = "position", value.name = "base"
-		)
+  ## Format data for plotting.
+  long_data <- seq_data %>%
+    melt(
+      measure.vars = as.character(c(seq(-distance, -1), seq(1, distance + 1))),
+      variable.name = "position", value.name = "base"
+    )
 
-	long_data[,
-		c("position", "base") := list(
-			position = as.numeric(position),
-			base = factor(base, levels = c("A", "C", "G", "T"))
-		)
-	]
-		
-	## Plot sequence colormap
-	p <- ggplot(long_data, aes(x = position, y = FHASH)) +
-		geom_tile(aes(fill = base, color = base)) +
-		scale_fill_manual(values = base_colors) +
-		scale_color_manual(values = base_colors) +
-		theme_minimal() +
-		theme(
-			axis.title.y = element_blank(),
-			axis.text.y = element_blank(),
-			legend.title = element_blank(),
-			axis.title.x = element_text(margin = margin(t = 15)),
-			panel.grid = element_blank(),
-			text = element_text(size = text_size)
-		) +
-		scale_x_continuous(
-			breaks = c(1, distance, distance + 1, (distance * 2) + 1),
-			labels = c(-distance, -1, 1, distance + 1)
-		)
+  long_data[,
+    c("position", "base") := list(
+      position = as.numeric(position),
+      base = factor(base, levels = c("A", "C", "G", "T"))
+    )
+  ]
+    
+  ## Plot sequence colormap
+  p <- ggplot(long_data, aes(x = .data$position, y = .data$FHASH)) +
+    geom_tile(aes(fill = .data$base, color = .data$base)) +
+    scale_fill_manual(values = base_colors) +
+    scale_color_manual(values = base_colors) +
+    theme_minimal() +
+    theme(
+      axis.title.y = element_blank(),
+      axis.text.y = element_blank(),
+      legend.title = element_blank(),
+      axis.title.x = element_text(margin = margin(t = 15)),
+      panel.grid = element_blank(),
+      text = element_text(size = text_size)
+    ) +
+    scale_x_continuous(
+      breaks = c(1, distance, distance + 1, (distance * 2) + 1),
+      labels = c(-distance, -1, 1, distance + 1)
+    )
 
-	if (!groupings) {
-		p <- p + facet_wrap(. ~ sample, scales = "free", ncol = ncol)
-	} else {
-		p <- p + facet_wrap(grouping ~ sample, scales = "free", ncol = ncol)
-	}
+  if (!groupings) {
+    p <- p + facet_wrap(. ~ sample, scales = "free", ncol = ncol)
+  } else {
+    p <- p + facet_wrap(grouping ~ sample, scales = "free", ncol = ncol)
+  }
 
-	return(p)
+  return(p)
 }

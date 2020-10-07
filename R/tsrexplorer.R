@@ -12,23 +12,23 @@
 #' @export
 
 setClass(
-	"tsr_explorer",
-	representation(
-		experiment = "list",
-		counts = "list",
-		correlation = "list",
-		diff_features = "list",
-		settings = "list",
-		meta_data = "list"
-	),
-	prototype(
-		experiment = list(),
-		counts = list(),
-		correlation = list(),
-		diff_features = list(),
-		settings = list(),
-		meta_data = list()
-	)
+  "tsr_explorer",
+  representation(
+    experiment = "list",
+    counts = "list",
+    correlation = "list",
+    diff_features = "list",
+    settings = "list",
+    meta_data = "list"
+  ),
+  prototype(
+    experiment = list(),
+    counts = list(),
+    correlation = list(),
+    diff_features = list(),
+    settings = list(),
+    meta_data = list()
+  )
 )
 
 #' TSRexplorer constructor function.
@@ -59,18 +59,18 @@ setClass(
 
 tsr_explorer <- function(TSSs = NA, TSRs = NA) {
 
-		tsr_obj <- new(
-			"tsr_explorer",
-			experiment = list("TSSs" = TSSs, "TSRs" = TSRs),
-			diff_features = list(
-				"TSSs" = list(results = list()),
-				"TSRs" = list(results = list())
-			),
-			counts = list(
-				"TSSs" = list(raw = list()),
-				"TSRs" = list(raw = list())
-			)
-		)
+    tsr_obj <- new(
+      "tsr_explorer",
+      experiment = list("TSSs" = TSSs, "TSRs" = TSRs),
+      diff_features = list(
+        "TSSs" = list(results = list()),
+        "TSRs" = list(results = list())
+      ),
+      counts = list(
+        "TSSs" = list(raw = list()),
+        "TSRs" = list(raw = list())
+      )
+    )
 
-		return(tsr_obj)
+    return(tsr_obj)
 }

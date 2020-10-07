@@ -47,81 +47,81 @@
 #' @export
 
 mark_dominant <- function(
-	experiment,
-	data_type = c("tss", "tsr"),
-	threshold = 1,
-	mark_per = "default"
+  experiment,
+  data_type = c("tss", "tsr"),
+  threshold = 1,
+  mark_per = "default"
 ) {
 
-	## Check inputs.
-	if (!is(experiment, "tsr_explorer")) stop("'experiment' must be a tsr explorer object")
+  ## Check inputs.
+  if (!is(experiment, "tsr_explorer")) stop("'experiment' must be a tsr explorer object")
 
-        if (!is(data_type, "character") || length(data_type) > 1) {
-                stop("data_type must be either 'tss' or 'tsr'")
-        }
-        data_type <- str_to_lower(data_type)
-        if (!data_type %in% c("tss", "tsr")) {
-                stop("data_type must be either 'tss' or 'tsr'")
-        }
+  if (!is(data_type, "character") || length(data_type) > 1) {
+    stop("data_type must be either 'tss' or 'tsr'")
+  }
+  data_type <- str_to_lower(data_type)
+  if (!data_type %in% c("tss", "tsr")) {
+    stop("data_type must be either 'tss' or 'tsr'")
+  }
 
-        if (
-                !is.na(threshold) && !is(threshold, "numeric") ||
-                threshold %% 1 != 0 || threshold < 1
-        ) {
-                stop("threshold must be a positive integer greater than or equal to 1")
-        }
+  if (
+    !is.na(threshold) && !is(threshold, "numeric") ||
+    threshold %% 1 != 0 || threshold < 1
+  ) {
+    stop("threshold must be a positive integer greater than or equal to 1")
+  }
 
-	if (!is(mark_per, "character")) stop("'mark_per' must be either 'default' or 'gene'")
-	mark_per <- str_to_lower(mark_per)
-	if (!mark_per %in% c("default", "gene")) {
-		stop("'mark_per' must be either 'default' or 'gene'")
-	}
-	
-	## Select samples.
-	select_samples <- extract_counts(experiment, data_type, "all")
+  if (!is(mark_per, "character")) stop("'mark_per' must be either 'default' or 'gene'")
+  mark_per <- str_to_lower(mark_per)
+  if (!mark_per %in% c("default", "gene")) {
+    stop("'mark_per' must be either 'default' or 'gene'")
+  }
+  
+  ## Select samples.
+  select_samples <- extract_counts(experiment, data_type, "all")
 
-	## Mark dominant TSS/TSR per gene if requested.
-	if (data_type == "tsr" | (data_type == "tss" & mark_per == "gene")) {
-		dominant <- map(select_samples, function(x) {
-			x[,
-				dominant := (
-					score == max(score) &
-					!simple_annotations %in% c("Downstream", "Intergenic") &
-					score >= threshold
-				),
-				by = eval(ifelse(
-					experiment@settings$annotation[, feature_type] == "transcript",
-					"transcriptId", "geneId"
-				))
-			]
+  ## Mark dominant TSS/TSR per gene if requested.
+  if (data_type == "tsr" | (data_type == "tss" & mark_per == "gene")) {
+    dominant <- map(select_samples, function(x) {
+      x[,
+        dominant := (
+          score == max(score) &
+          !simple_annotations %in% c("Downstream", "Intergenic") &
+          score >= threshold
+        ),
+        by = eval(ifelse(
+          experiment@settings$annotation[, feature_type] == "transcript",
+          "transcriptId", "geneId"
+        ))
+      ]
 
-			return(x)
-		})
-	
-	## Mark the dominant TSS per TSR if requested.
-	} else if (data_type == "tss" & mark_per == "default") {
-		dominant <- map(select_samples, function(x) {
-			x[,
-				dominant := (
-					!is.na(score) &
-					score == max(score) &
-					score >= threshold
-				),
-				by = TSR_FID
-			]
+      return(x)
+    })
+  
+  ## Mark the dominant TSS per TSR if requested.
+  } else if (data_type == "tss" & mark_per == "default") {
+    dominant <- map(select_samples, function(x) {
+      x[,
+        dominant := (
+          !is.na(score) &
+          score == max(score) &
+          score >= threshold
+        ),
+        by = TSR_FID
+      ]
 
-			return(x)
-		})
-	}
+      return(x)
+    })
+  }
 
-	## Return dominant TSS/TSR.
-	if (data_type == "tss") {
-		experiment@counts$TSSs$raw <- dominant
-	} else if (data_type == "tsr") {
-		experiment@counts$TSRs$raw <- dominant
-	}
+  ## Return dominant TSS/TSR.
+  if (data_type == "tss") {
+    experiment@counts$TSSs$raw <- dominant
+  } else if (data_type == "tsr") {
+    experiment@counts$TSRs$raw <- dominant
+  }
 
-	return(experiment)
+  return(experiment)
 }
 
 #' Max UTR Length
@@ -143,48 +143,48 @@ mark_dominant <- function(
 #' @export
 
 max_utr <- function(
-	experiment,
-	samples = "all",
-	threshold = 1,
-	max_upstream = 1000,
-	max_downstream = 100,
-	feature_type = c("geneId", "transcriptId"),
-	quantiles = NA
+  experiment,
+  samples = "all",
+  threshold = 1,
+  max_upstream = 1000,
+  max_downstream = 100,
+  feature_type = c("geneId", "transcriptId"),
+  quantiles = NA
 ) {
-	## Grab selected samples.
-	max_utr <- experiment %>%
-		extract_counts("tss", samples) %>%
-		bind_rows(.id = "sample") %>%
-		as.data.table
+  ## Grab selected samples.
+  max_utr <- experiment %>%
+    extract_counts("tss", samples) %>%
+    bind_rows(.id = "sample") %>%
+    as.data.table
 
-	setnames(max_utr, old = feature_type, new = "feature")
+  setnames(max_utr, old = feature_type, new = "feature")
 
-	## Filter data.
-	max_utr <- max_utr[
-		score >= threshold &
-		dplyr::between(distanceToTSS, -max_upstream, max_downstream),
-		.(sample, distanceToTSS, feature, score)
-	]
+  ## Filter data.
+  max_utr <- max_utr[
+    score >= threshold &
+    dplyr::between(distanceToTSS, -max_upstream, max_downstream),
+    .(sample, distanceToTSS, feature, score)
+  ]
 
-	## Get TSS with minimum distance to start codon.
-	max_utr <- max_utr[,
-		.SD[which.min(distanceToTSS)],
-		by = .(sample, feature)
-	]
+  ## Get TSS with minimum distance to start codon.
+  max_utr <- max_utr[,
+    .SD[which.min(distanceToTSS)],
+    by = .(sample, feature)
+  ]
 
-	## Add quantiles if requested.
-	if (!is.na(quantiles)) {
-		max_utr[, ntile := ntile(score, quantiles), by = sample]
-	}
+  ## Add quantiles if requested.
+  if (!is.na(quantiles)) {
+    max_utr[, ntile := ntile(score, quantiles), by = sample]
+  }
 
-	## Return DataFrame.
-	max_utr <- DataFrame(max_utr)
-	metadata(max_utr)$quantiles <- quantiles
-	metadata(max_utr)$max_upstream <- max_upstream
-	metadata(max_utr)$max_downstream <- max_downstream
-	metadata(max_utr)$threshold <- threshold
+  ## Return DataFrame.
+  max_utr <- DataFrame(max_utr)
+  metadata(max_utr)$quantiles <- quantiles
+  metadata(max_utr)$max_upstream <- max_upstream
+  metadata(max_utr)$max_downstream <- max_downstream
+  metadata(max_utr)$threshold <- threshold
 
-	return(max_utr)
+  return(max_utr)
 }
 
 #' Plot Max UTR Length
@@ -209,41 +209,41 @@ max_utr <- function(
 #' @export
 
 plot_max_utr <- function(
-	max_utr, upstream = 1000, downstream = 100,
-	ncol = 1, consider_score = FALSE, ...
+  max_utr, upstream = 1000, downstream = 100,
+  ncol = 1, consider_score = FALSE, ...
 ) {
 
-	## Grab some info from DataFrame.
-	quantiles <- metadata(max_utr)$quantiles
+  ## Grab some info from DataFrame.
+  quantiles <- metadata(max_utr)$quantiles
 
-	## Prepare data for plotting.
-	utr_plot <- as.data.table(max_utr)
-	
-	if (!is.na(quantiles)) {
-		utr_plot[, ntile := fct_rev(factor(ntile))]
-	}
+  ## Prepare data for plotting.
+  utr_plot <- as.data.table(max_utr)
+  
+  if (!is.na(quantiles)) {
+    utr_plot[, ntile := fct_rev(factor(ntile))]
+  }
 
-	## Format data if score should be considered.
-	if (consider_score) {
-		utr_plot <- utr_plot[rep(seq_length(.N), score)]
-	}
+  ## Format data if score should be considered.
+  if (consider_score) {
+    utr_plot <- utr_plot[rep(seq_length(.N), score)]
+  }
 
-	## Plot max UTR length detected.
-	p <- ggplot(utr_plot, aes(x = distanceToTSS)) +
-		geom_density(fill = "#431352", color = "#431352")+#, ...) +
-		xlim(-upstream, downstream) +
-		theme_bw() +
-		labs(
-			x = "Max UTR Length",
-			y = "Density"
-		) +
-		geom_vline(xintercept = 0, lty = 2)
+  ## Plot max UTR length detected.
+  p <- ggplot(utr_plot, aes(x = .data$distanceToTSS)) +
+    geom_density(fill = "#431352", color = "#431352")+#, ...) +
+    xlim(-upstream, downstream) +
+    theme_bw() +
+    labs(
+      x = "Max UTR Length",
+      y = "Density"
+    ) +
+    geom_vline(xintercept = 0, lty = 2)
 
-	if (!is.na(quantiles)) {
-		p <- p + facet_grid(ntile ~ sample)
-	} else {
-		p <- p + facet_wrap(~ sample, ncol = ncol)
-	}
+  if (!is.na(quantiles)) {
+    p <- p + facet_grid(ntile ~ sample)
+  } else {
+    p <- p + facet_wrap(~ sample, ncol = ncol)
+  }
 
-	return(p)
+  return(p)
 }

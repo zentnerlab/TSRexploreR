@@ -19,69 +19,69 @@
 #' @export
 
 fit_edger_model <- function(
-	experiment,
-	data_type = c("tss", "tsr", "tss_features", "tsr_features"),
-	samples,
-	groups
+  experiment,
+  data_type = c("tss", "tsr", "tss_features", "tsr_features"),
+  samples,
+  groups
 ) {
-	## Input checks.
-	if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsr explorer object")
+  ## Input checks.
+  if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsr explorer object")
 
-        if (!is(data_type, "character") || length(data_type) > 1) {
-                stop("data_type must be a character")
-        }
-        data_type <- str_to_lower(data_type)
-        if (!data_type %in% c("tss", "tsr", "tss_features", "tsr_features")) {
-                stop("data_type must be 'tss', 'tsr', 'tss_features', or 'tsr_features'")
-        }
+  if (!is(data_type, "character") || length(data_type) > 1) {
+    stop("data_type must be a character")
+  }
+  data_type <- str_to_lower(data_type)
+  if (!data_type %in% c("tss", "tsr", "tss_features", "tsr_features")) {
+    stop("data_type must be 'tss', 'tsr', 'tss_features', or 'tsr_features'")
+  }
 
-	if (!is(samples, "character") || length(samples) < 6) {
-		stop("samples should be a character vector with at least 6 sample names")
-	}
+  if (!is(samples, "character") || length(samples) < 6) {
+    stop("samples should be a character vector with at least 6 sample names")
+  }
 
-	if (!is(groups, "character") || length(groups) < 6 || length(groups) != length(samples)) {
-		stop("groups must be a character vector of the same length as 'samples'")
-	}
+  if (!is(groups, "character") || length(groups) < 6 || length(groups) != length(samples)) {
+    stop("groups must be a character vector of the same length as 'samples'")
+  }
 
-	## Design table.
-	design <- data.table("samples" = samples, "groups" = groups)
-	design[, groups := fct_inorder(as.character(groups))]
+  ## Design table.
+  design <- data.table("samples" = samples, "groups" = groups)
+  design[, groups := fct_inorder(as.character(groups))]
 
-	## Grab data from appropriate slot.
-	sample_data <- extract_matrix(experiment, data_type, samples)
+  ## Grab data from appropriate slot.
+  sample_data <- extract_matrix(experiment, data_type, samples)
 
-	## Set sample design.
-	sample_design <- model.matrix(~ 0 + design[["groups"]])
+  ## Set sample design.
+  sample_design <- model.matrix(~ 0 + design[["groups"]])
 
-        ## Filter out features with low counts.
-        sample_data <- sample_data[filterByExpr(
-		assay(sample_data, "counts"), design = sample_design,
-		group = design[["group"]]
-	), ]
+  ## Filter out features with low counts.
+  sample_data <- sample_data[filterByExpr(
+    assay(sample_data, "counts"), design = sample_design,
+    group = design[["group"]]
+  ), ]
 
-	## Create DE model.
-	fitted_model <- assay(sample_data, "counts") %>%
-		DGEList(group = design[["groups"]]) %>%
-		calcNormFactors %>%
-		estimateDisp(design = sample_design) %>%
-		glmQLFit(design = sample_design)
+  ## Create DE model.
+  fitted_model <- assay(sample_data, "counts") %>%
+    DGEList(group = design[["groups"]]) %>%
+    calcNormFactors %>%
+    estimateDisp(design = sample_design) %>%
+    glmQLFit(design = sample_design)
 
-	## Store model in tsrexplorer object.
-	if (data_type == "tss") {
-		experiment@diff_features$TSSs$model <- fitted_model
-		experiment@diff_features$TSSs$design <- design
-	} else if (data_type == "tsr") {
-		experiment@diff_features$TSRs$model <- fitted_model
-		experiment@diff_features$TSRs$design <- design
-	} else if (data_type == "tss_features") {
-		experiment@diff_features$TSS_features$model <- fitted_model
-		experiment@diff_features$TSS_features$design <- design
-	} else if (data_type == "tsr_features") {
-		experiment@diff_features$TSR_features$model <- fitted_model
-		experiment@diff_features$TSR_features$design <- design
-	}
+  ## Store model in tsrexplorer object.
+  if (data_type == "tss") {
+    experiment@diff_features$TSSs$model <- fitted_model
+    experiment@diff_features$TSSs$design <- design
+  } else if (data_type == "tsr") {
+    experiment@diff_features$TSRs$model <- fitted_model
+    experiment@diff_features$TSRs$design <- design
+  } else if (data_type == "tss_features") {
+    experiment@diff_features$TSS_features$model <- fitted_model
+    experiment@diff_features$TSS_features$design <- design
+  } else if (data_type == "tsr_features") {
+    experiment@diff_features$TSR_features$model <- fitted_model
+    experiment@diff_features$TSR_features$design <- design
+  }
 
-	return(experiment)
+  return(experiment)
 }
 
 #' Analyze Differential Expression
@@ -106,114 +106,114 @@ fit_edger_model <- function(
 #' @export
 
 differential_expression <- function(
-	experiment,
-	data_type = c("tss", "tsr", "tss_features", "tsr_features"),
-	compare_groups,
-	fdr_cutoff = 0.05,
-	log2fc_cutoff = 1
+  experiment,
+  data_type = c("tss", "tsr", "tss_features", "tsr_features"),
+  compare_groups,
+  fdr_cutoff = 0.05,
+  log2fc_cutoff = 1
 ) {
 
-	## Input checks.
-	if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsr explorer object")
+  ## Input checks.
+  if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsr explorer object")
 
-        if (!is(data_type, "character") || length(data_type) > 1) {
-                stop("data_type must be a character")
-        }
-        data_type <- str_to_lower(data_type)
-        if (!data_type %in% c("tss", "tsr", "tss_features", "tsr_features")) {
-                stop("data_type must be 'tss', 'tsr', 'tss_features', or 'tsr_features'")
-        }
+  if (!is(data_type, "character") || length(data_type) > 1) {
+    stop("data_type must be a character")
+  }
+  data_type <- str_to_lower(data_type)
+  if (!data_type %in% c("tss", "tsr", "tss_features", "tsr_features")) {
+    stop("data_type must be 'tss', 'tsr', 'tss_features', or 'tsr_features'")
+  }
 
-	if (!is(compare_groups, "character") || length(compare_groups) != 2) {
-		stop("compare_groups must be a character vector of length 2")
-	}
+  if (!is(compare_groups, "character") || length(compare_groups) != 2) {
+    stop("compare_groups must be a character vector of length 2")
+  }
 
-	if (
-		!is(fdr_cutoff, "numeric") || length(fdr_cutoff) > 1 ||
-		fdr_cutoff < 0 || fdr_cutoff > 1
-	) {
-		stop("fdr_cutoff must be a positive number between 0 and 1 inclusive")
-	}
+  if (
+    !is(fdr_cutoff, "numeric") || length(fdr_cutoff) > 1 ||
+    fdr_cutoff < 0 || fdr_cutoff > 1
+  ) {
+    stop("fdr_cutoff must be a positive number between 0 and 1 inclusive")
+  }
 
-	if (!is(log2fc_cutoff, "numeric") || length(log2fc_cutoff) > 1 || log2fc_cutoff < 0) {
-		stop("log2fc_cutoff must be a positive number")
-	}
-	
-	## Grab appropriate model.
-	if (data_type == "tss") {
-		edger_model <- experiment@diff_features$TSSs$model
-		edger_design <- experiment@diff_features$TSSs$design
-		original_ranges <- rowRanges(experiment@counts$TSSs$matrix)
-	} else if (data_type == "tsr") {
-		edger_model <- experiment@diff_features$TSRs$model
-		edger_design <- experiment@diff_features$TSRs$design
-		original_ranges <- rowRanges(experiment@counts$TSRs$matrix)
-	} else if (data_type == "tss_features") {
-		edger_model <- experiment@diff_features$TSS_features$model
-		edger_design <- experiment@diff_features$TSS_features$design
-	} else if (data_type == "tsr_features") {
-		edger_model <- experiment@diff_features$TSR_features$model
-		edger_design <- experiment@diff_features$TSR_features$design
-	}
+  if (!is(log2fc_cutoff, "numeric") || length(log2fc_cutoff) > 1 || log2fc_cutoff < 0) {
+    stop("log2fc_cutoff must be a positive number")
+  }
+  
+  ## Grab appropriate model.
+  if (data_type == "tss") {
+    edger_model <- experiment@diff_features$TSSs$model
+    edger_design <- experiment@diff_features$TSSs$design
+    original_ranges <- rowRanges(experiment@counts$TSSs$matrix)
+  } else if (data_type == "tsr") {
+    edger_model <- experiment@diff_features$TSRs$model
+    edger_design <- experiment@diff_features$TSRs$design
+    original_ranges <- rowRanges(experiment@counts$TSRs$matrix)
+  } else if (data_type == "tss_features") {
+    edger_model <- experiment@diff_features$TSS_features$model
+    edger_design <- experiment@diff_features$TSS_features$design
+  } else if (data_type == "tsr_features") {
+    edger_model <- experiment@diff_features$TSR_features$model
+    edger_design <- experiment@diff_features$TSR_features$design
+  }
 
-	## Set up contrasts.
-	comparison_levels <- edger_design %>%
-		pull(groups) %>%
-		levels
+  ## Set up contrasts.
+  comparison_levels <- edger_design %>%
+    pull(groups) %>%
+    levels
 
-	comparison_contrast <- comparison_levels %>%
-		map_dbl(function(x) {
-			if (x == compare_groups[1]) {
-				return_value <- -1
-			} else if (x == compare_groups[2]) {
-				return_value <- 1
-			} else {
-				return_value <- 0
-			}
-			return(return_value)
-		})
+  comparison_contrast <- comparison_levels %>%
+    map_dbl(function(x) {
+      if (x == compare_groups[1]) {
+        return_value <- -1
+      } else if (x == compare_groups[2]) {
+        return_value <- 1
+      } else {
+        return_value <- 0
+      }
+      return(return_value)
+    })
 
-	## Differential expression analysis.
-	diff_expression <- glmQLFTest(edger_model, contrast = comparison_contrast)
-	diff_expression <- as.data.table(diff_expression$table, keep.rownames = "FHASH")
+  ## Differential expression analysis.
+  diff_expression <- glmQLFTest(edger_model, contrast = comparison_contrast)
+  diff_expression <- as.data.table(diff_expression$table, keep.rownames = "FHASH")
 
-	setnames(diff_expression, old = "logFC", new = "log2FC")
+  setnames(diff_expression, old = "logFC", new = "log2FC")
 
-	comparison_name <- str_c(compare_groups[1], "_vs_", compare_groups[2])
-	diff_expression[, c("FDR", "sample") := list(
-		p.adjust(PValue, "fdr"), comparison_name
-	)][, DE := case_when(
-		log2FC >= log2fc_cutoff & FDR <= fdr_cutoff ~ "up",
-		log2FC <= -log2fc_cutoff & FDR <= fdr_cutoff ~ "down",
-		TRUE ~ "unchanged"
-	)][]
+  comparison_name <- str_c(compare_groups[1], "_vs_", compare_groups[2])
+  diff_expression[, c("FDR", "sample") := list(
+    p.adjust(PValue, "fdr"), comparison_name
+  )][, DE := case_when(
+    log2FC >= log2fc_cutoff & FDR <= fdr_cutoff ~ "up",
+    log2FC <= -log2fc_cutoff & FDR <= fdr_cutoff ~ "down",
+    TRUE ~ "unchanged"
+  )][]
 
-	## Merge in the annotation information from the original matrix.
-	comparison_name <- str_c(compare_groups[1], "_vs_", compare_groups[2])
+  ## Merge in the annotation information from the original matrix.
+  comparison_name <- str_c(compare_groups[1], "_vs_", compare_groups[2])
 
-	if (data_type %in% c("tss", "tsr")) {
-		original <- as.data.table(original_ranges)
-		original[, FHASH := names(original_ranges)]
+  if (data_type %in% c("tss", "tsr")) {
+    original <- as.data.table(original_ranges)
+    original[, FHASH := names(original_ranges)]
 
-		diff_expression <- merge(diff_expression, original, by = "FHASH")
-		diff_expression <- sort(makeGRangesFromDataFrame(diff_expression, keep.extra.columns = TRUE))
-		diff_expression <- as.data.table(diff_expression)
-	} else if (data_type %in% c("tss_features", "tsr_features")) {
-		setnames(diff_expression, old = 1, new = "feature")[]
-	}
+    diff_expression <- merge(diff_expression, original, by = "FHASH")
+    diff_expression <- sort(makeGRangesFromDataFrame(diff_expression, keep.extra.columns = TRUE))
+    diff_expression <- as.data.table(diff_expression)
+  } else if (data_type %in% c("tss_features", "tsr_features")) {
+    setnames(diff_expression, old = 1, new = "feature")[]
+  }
 
-	## Add differential expression data back to tsrexplorer object.
-	if (data_type == "tss") {
-		experiment@diff_features$TSSs$results[[comparison_name]] <- diff_expression
-	} else if (data_type == "tsr") {
-		experiment@diff_features$TSRs$results[[comparison_name]] <- diff_expression
-	} else if (data_type == "tss_features") {
-		experiment@diff_features$TSS_features$results[[comparison_name]] <- diff_expression
-	} else if (data_type == "tsr_features") {
-		experiment@diff_features$TSR_features[[comparison_name]] <- diff_expression
-	}
+  ## Add differential expression data back to tsrexplorer object.
+  if (data_type == "tss") {
+    experiment@diff_features$TSSs$results[[comparison_name]] <- diff_expression
+  } else if (data_type == "tsr") {
+    experiment@diff_features$TSRs$results[[comparison_name]] <- diff_expression
+  } else if (data_type == "tss_features") {
+    experiment@diff_features$TSS_features$results[[comparison_name]] <- diff_expression
+  } else if (data_type == "tsr_features") {
+    experiment@diff_features$TSR_features[[comparison_name]] <- diff_expression
+  }
 
-	return(experiment)
+  return(experiment)
 }
 
 #' DE Table
@@ -229,38 +229,38 @@ differential_expression <- function(
 #' @export
 
 de_table <- function(
-	experiment,
-	data_type = c("tss", "tsr", "tss_features", "tsr_features"),
-	de_comparisons = "all",
-	de_type = c("up", "unchanged", "down")
+  experiment,
+  data_type = c("tss", "tsr", "tss_features", "tsr_features"),
+  de_comparisons = "all",
+  de_type = c("up", "unchanged", "down")
 ) {
-	## Input checks.
-	if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsr explorer object")
+  ## Input checks.
+  if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsr explorer object")
 
-        if (!is(data_type, "character") || length(data_type) > 1) {
-                stop("data_type must be a character")
-        }
-        data_type <- str_to_lower(data_type)
-        if (!data_type %in% c("tss", "tsr", "tss_features", "tsr_features")) {
-                stop("data_type must be 'tss', 'tsr', 'tss_features', or 'tsr_features'")
-        }
+  if (!is(data_type, "character") || length(data_type) > 1) {
+    stop("data_type must be a character")
+  }
+  data_type <- str_to_lower(data_type)
+  if (!data_type %in% c("tss", "tsr", "tss_features", "tsr_features")) {
+    stop("data_type must be 'tss', 'tsr', 'tss_features', or 'tsr_features'")
+  }
 
-	if (!is(de_comparisons, "character")) stop("de_comparisons must be 'all' or character vector")
+  if (!is(de_comparisons, "character")) stop("de_comparisons must be 'all' or character vector")
 
-	if(!is(de_type, "character")) stop("de_type must be any of 'up', 'unchanged', and/or 'down'")
-	de_type <- str_to_lower(de_type)
-	if(!all(de_type %in% c("up", "unchanged", "down"))) {
-		stop("de_type must be any of 'up', 'unchanged', and/or 'down'")
-	}
+  if(!is(de_type, "character")) stop("de_type must be any of 'up', 'unchanged', and/or 'down'")
+  de_type <- str_to_lower(de_type)
+  if(!all(de_type %in% c("up", "unchanged", "down"))) {
+    stop("de_type must be any of 'up', 'unchanged', and/or 'down'")
+  }
 
-	## Grab tables.
-	de_tables <- experiment %>%
-		extract_de(data_type, de_comparisons) %>%
-		bind_rows
+  ## Grab tables.
+  de_tables <- experiment %>%
+    extract_de(data_type, de_comparisons) %>%
+    bind_rows
 
-	## Filter tables.
-	de_tables <- de_tables[DE %in% de_type]
+  ## Filter tables.
+  de_tables <- de_tables[DE %in% de_type]
 
-	## Return tables.
-	return(de_tables)
+  ## Return tables.
+  return(de_tables)
 }

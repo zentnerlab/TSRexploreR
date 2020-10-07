@@ -62,93 +62,93 @@
 #' @export
 
 tss_heatmap_matrix <- function(
-        experiment,
-	samples = "all",
-	upstream = 1000,
-	downstream = 1000,
-        threshold = NA,
-	use_cpm = FALSE,
-	dominant = FALSE,
-        data_conditions = list(order_by = "score")
+  experiment,
+  samples = "all",
+  upstream = 1000,
+  downstream = 1000,
+  threshold = NA,
+  use_cpm = FALSE,
+  dominant = FALSE,
+  data_conditions = list(order_by = "score")
 ) {
 
-	## Check inputs.
-	if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsr explorer object")
+  ## Check inputs.
+  if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsr explorer object")
 
-	if (!is(samples, "character")) stop("samples must be a character vector")
+  if (!is(samples, "character")) stop("samples must be a character vector")
 
-        if (!is(upstream, "numeric") | !is(downstream, "numeric")) {
-                stop("upstream and downstream must be positive integers")
-        }
-        if (upstream %% 1 != 0 | downstream %% 1 != 0) {
-                stop("upstream and downstream must be positive integers")
-        }
-        if (upstream < 0 | downstream < 0) stop("upstream and downstream must be positive integers")
+  if (!is(upstream, "numeric") | !is(downstream, "numeric")) {
+    stop("upstream and downstream must be positive integers")
+  }
+  if (upstream %% 1 != 0 | downstream %% 1 != 0) {
+    stop("upstream and downstream must be positive integers")
+  }
+  if (upstream < 0 | downstream < 0) stop("upstream and downstream must be positive integers")
 
-        if (
-                !is.na(threshold) && (!is(threshold, "numeric") ||
-                threshold %% 1 != 0 || threshold < 1)
-        ) {
-                stop("threshold must be a positive integer")
-        }
+  if (
+    !is.na(threshold) && (!is(threshold, "numeric") ||
+    threshold %% 1 != 0 || threshold < 1)
+  ) {
+    stop("threshold must be a positive integer")
+  }
 
-	if (!is(use_cpm, "logical") | !is(dominant, "logical")) {
-		stop("use_cpm and/or dominant must be logical")
-	}
+  if (!is(use_cpm, "logical") | !is(dominant, "logical")) {
+    stop("use_cpm and/or dominant must be logical")
+  }
 
-	if (all(!is.na(data_conditions)) && !is(data_conditions, "list")) {
-		stop("data_conditions must be a list of values")
-	}
+  if (all(!is.na(data_conditions)) && !is(data_conditions, "list")) {
+    stop("data_conditions must be a list of values")
+  }
 
-        ## Get requested samples.
-        annotated_tss <- extract_counts(experiment, "tss", samples, use_cpm)
+  ## Get requested samples.
+  annotated_tss <- extract_counts(experiment, "tss", samples, use_cpm)
 
-        ## Preliminary filtering of data.
-        annotated_tss <- preliminary_filter(annotated_tss, dominant, threshold)
+  ## Preliminary filtering of data.
+  annotated_tss <- preliminary_filter(annotated_tss, dominant, threshold)
         
-        annotated_tss <- annotated_tss %>%
-                map(function(x) {
-                        x <- x[dplyr::between(distanceToTSS, -upstream, downstream)]
-                        return(x)
-                })
+  annotated_tss <- annotated_tss %>%
+    map(function(x) {
+      x <- x[dplyr::between(distanceToTSS, -upstream, downstream)]
+      return(x)
+    })
 
-        ## Apply conditions to data.
-        if (all(!is.na(data_conditions))) {
-                annotated_tss <- do.call(group_data, c(list(signal_data = annotated_tss), data_conditions))
-        }
+  ## Apply conditions to data.
+  if (all(!is.na(data_conditions))) {
+    annotated_tss <- do.call(group_data, c(list(signal_data = annotated_tss), data_conditions))
+  }
 
-        ## Rename feature column.
-        annotated_tss <- rbindlist(annotated_tss, idcol = "sample")
-        setnames(annotated_tss,
-                old = ifelse(
-                        experiment@settings$annotation[, feature_type] == "transcript",
-                        "transcriptId", "geneId"
-                ),
-                new = "feature"
-        )
+  ## Rename feature column.
+  annotated_tss <- rbindlist(annotated_tss, idcol = "sample")
+  setnames(annotated_tss,
+    old = ifelse(
+      experiment@settings$annotation[, feature_type] == "transcript",
+      "transcriptId", "geneId"
+    ),
+    new = "feature"
+  )
 
-	## Format for plotting.
-	groupings <- any(names(data_conditions) %in% c("quantile_by", "grouping"))
+  ## Format for plotting.
+  groupings <- any(names(data_conditions) %in% c("quantile_by", "grouping"))
 
-	if(any(names(annotated_tss) == "plot_order")) {
-                annotated_tss[, feature := fct_reorder(factor(feature), plot_order)]
-        }
-        annotated_tss[, distanceToTSS := factor(distanceToTSS, levels = seq(-upstream, downstream, 1))]
+  if(any(names(annotated_tss) == "plot_order")) {
+    annotated_tss[, feature := fct_reorder(factor(feature), plot_order)]
+  }
+  annotated_tss[, distanceToTSS := factor(distanceToTSS, levels = seq(-upstream, downstream, 1))]
 
-	## Order samples if required.
-	if (!all(samples == "all")) {
-		annotated_tss[, sample := factor(sample, levels = samples)]
-	}
+  ## Order samples if required.
+  if (!all(samples == "all")) {
+    annotated_tss[, sample := factor(sample, levels = samples)]
+  }
 
-	## Return a DataFrame
-	tss_df <- DataFrame(annotated_tss)
-	metadata(tss_df)$threshold <- threshold
-	metadata(tss_df)$groupings <- groupings
-	metadata(tss_df)$use_cpm <- use_cpm
-	metadata(tss_df)$dominant <- dominant
-	metadata(tss_df)$promoter <- c(upstream, downstream)
+  ## Return a DataFrame
+  tss_df <- DataFrame(annotated_tss)
+  metadata(tss_df)$threshold <- threshold
+  metadata(tss_df)$groupings <- groupings
+  metadata(tss_df)$use_cpm <- use_cpm
+  metadata(tss_df)$dominant <- dominant
+  metadata(tss_df)$promoter <- c(upstream, downstream)
 
-	return(tss_df)
+  return(tss_df)
 }
 
 #' Plot Heatmap
@@ -196,71 +196,71 @@ tss_heatmap_matrix <- function(
 #' @export
 
 plot_heatmap <- function(
-	heatmap_matrix, max_value = 5, ncol = 1, 
-	background_color = "#F0F0F0",
-	low_color = "#56B1F7",
-	high_color = "#132B43",
-	...
+  heatmap_matrix, max_value = 5, ncol = 1, 
+  background_color = "#F0F0F0",
+  low_color = "#56B1F7",
+  high_color = "#132B43",
+  ...
 ) {
 
-	## Check inputs.
-	if (!is(heatmap_matrix, "DataFrame")) stop("heatmap_matrix must be a DataFrame")
+  ## Check inputs.
+  if (!is(heatmap_matrix, "DataFrame")) stop("heatmap_matrix must be a DataFrame")
 
-	if (!is(max_value, "numeric") | !is(ncol, "numeric")) {
-		stop("max_value and/or ncol must be positive integers")
-	}
-	if (max_value < 1 | ncol < 1) stop("max_value and/or ncol must be positive integers")
-	if (max_value %% 1 != 0 | ncol %% 1 != 0) {
-		stop("max_value and/or ncol must be positive integers")
-	}
+  if (!is(max_value, "numeric") | !is(ncol, "numeric")) {
+    stop("max_value and/or ncol must be positive integers")
+  }
+  if (max_value < 1 | ncol < 1) stop("max_value and/or ncol must be positive integers")
+  if (max_value %% 1 != 0 | ncol %% 1 != 0) {
+    stop("max_value and/or ncol must be positive integers")
+  }
 
-	if (!is(background_color, "character") | !is(low_color, "character") | !is(high_color, "character")) {
-		stop("background_color, low_color, and high_color must be characters")
-	}
+  if (!is(background_color, "character") | !is(low_color, "character") | !is(high_color, "character")) {
+    stop("background_color, low_color, and high_color must be characters")
+  }
 
-	## Extract some info from the heatmap matrix.
-	upstream <- metadata(heatmap_matrix)$promoter[1]
-	downstream <- metadata(heatmap_matrix)$promoter[2]
-	groupings <- metadata(heatmap_matrix)$groupings
+  ## Extract some info from the heatmap matrix.
+  upstream <- metadata(heatmap_matrix)$promoter[1]
+  downstream <- metadata(heatmap_matrix)$promoter[2]
+  groupings <- metadata(heatmap_matrix)$groupings
 
-	## Convert to data.table, log2 transform scores, and then truncate values above 'max_value'.
-	heatmap_mat <- as.data.table(heatmap_matrix)
-	heatmap_mat[, score := ifelse(log2(score) > max_value, max_value, log2(score))]
+  ## Convert to data.table, log2 transform scores, and then truncate values above 'max_value'.
+  heatmap_mat <- as.data.table(heatmap_matrix)
+  heatmap_mat[, score := ifelse(log2(score) > max_value, max_value, log2(score))]
 
-        ## Plot heatmap.
-        p <- ggplot(heatmap_mat, aes(x = distanceToTSS, y = feature, fill = log2(score))) +
-                geom_tile() +
-                geom_vline(xintercept = upstream, color = "black", linetype = "dashed", size = 0.1) +
-                theme_minimal() +
-                scale_x_discrete(
-                        breaks = seq(-upstream, downstream, 1) %>% keep(~ (./100) %% 1 == 0),
-                        labels = seq(-upstream, downstream, 1) %>% keep(~ (./100) %% 1 == 0)
-                ) +
-		scale_fill_continuous(
-			limits = c(0, max_value),
-			breaks = seq(0, max_value, 1),
-			labels = c(seq(0, max_value - 1, 1), paste0(">=", max_value)),
-			name = "Log2(Score)",
-			low = low_color,
-			high = high_color
-		) +
-                theme(
-                        axis.text.x = element_text(angle = 45, hjust = 1),
-                        panel.spacing = unit(1.5, "lines"),
-                        axis.text.y = element_blank(),
-                        axis.ticks.y = element_blank(),
-                        panel.grid = element_blank(),
-                        panel.background = element_rect(fill = background_color, color = "black")
-                ) +
-		labs(x = "Position", y = "Feature")
+  ## Plot heatmap.
+  p <- ggplot(heatmap_mat, aes(x = .data$distanceToTSS, y = .data$feature, fill = log2(.data$score))) +
+    geom_tile() +
+    geom_vline(xintercept = upstream, color = "black", linetype = "dashed", size = 0.1) +
+    theme_minimal() +
+    scale_x_discrete(
+      breaks = seq(-upstream, downstream, 1) %>% keep(~ (./100) %% 1 == 0),
+      labels = seq(-upstream, downstream, 1) %>% keep(~ (./100) %% 1 == 0)
+    ) +
+    scale_fill_continuous(
+      limits = c(0, max_value),
+      breaks = seq(0, max_value, 1),
+      labels = c(seq(0, max_value - 1, 1), paste0(">=", max_value)),
+      name = "Log2(Score)",
+      low = low_color,
+      high = high_color
+    ) +
+    theme(
+      axis.text.x = element_text(angle = 45, hjust = 1),
+      panel.spacing = unit(1.5, "lines"),
+      axis.text.y = element_blank(),
+      axis.ticks.y = element_blank(),
+      panel.grid = element_blank(),
+      panel.background = element_rect(fill = background_color, color = "black")
+    ) +
+    labs(x = "Position", y = "Feature")
 
-	if (metadata(heatmap_matrix)$groupings) {
-		p <- p + facet_wrap(grouping ~ sample, scales = "free")
-	} else {
-		p <- p + facet_wrap(. ~ sample, ncol = ncol)
-	}
+  if (metadata(heatmap_matrix)$groupings) {
+    p <- p + facet_wrap(grouping ~ sample, scales = "free")
+  } else {
+    p <- p + facet_wrap(. ~ sample, ncol = ncol)
+  }
 
-	return(p)
+  return(p)
 }
 
 #' TSR Heatmap Count Matrix
@@ -295,107 +295,107 @@ plot_heatmap <- function(
 #' @export
 
 tsr_heatmap_matrix <- function(
-	experiment,
-	samples = "all",
-	upstream = 1000,
-	downstream = 1000,
-	threshold = NA,
-	use_cpm = FALSE,
-	dominant = FALSE,
-	data_conditions = list(order_by = "score")
+  experiment,
+  samples = "all",
+  upstream = 1000,
+  downstream = 1000,
+  threshold = NA,
+  use_cpm = FALSE,
+  dominant = FALSE,
+  data_conditions = list(order_by = "score")
 ) {
 
-	## Check inputs.
-	if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsrexplorer object")
+  ## Check inputs.
+  if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsrexplorer object")
 
-	if (!is(samples, "character")) stop("samples must be a character")
+  if (!is(samples, "character")) stop("samples must be a character")
 
-        if (!is(upstream, "numeric") | !is(downstream, "numeric")) {
-                stop("upstream and downstream must be positive integers")
-        }
-        if (upstream %% 1 != 0 | downstream %% 1 != 0) {
-                stop("upstream and downstream must be positive integers")
-        }
-        if (upstream < 0 | downstream < 0) stop("upstream and downstream must be positive integers")
+  if (!is(upstream, "numeric") | !is(downstream, "numeric")) {
+    stop("upstream and downstream must be positive integers")
+  }
+  if (upstream %% 1 != 0 | downstream %% 1 != 0) {
+    stop("upstream and downstream must be positive integers")
+  }
+  if (upstream < 0 | downstream < 0) stop("upstream and downstream must be positive integers")
 
-        if (
-                !is.na(threshold) && (!is(threshold, "numeric") ||
-                threshold %% 1 != 0 || threshold < 1)
-        ) {
-                stop("threshold must be a positive integer")
-        }
+  if (
+    !is.na(threshold) && (!is(threshold, "numeric") ||
+    threshold %% 1 != 0 || threshold < 1)
+  ) {
+    stop("threshold must be a positive integer")
+  }
 
-	if (!is(dominant, "logical")) stop("dominant must be TRUE or FALSE")
+  if (!is(dominant, "logical")) stop("dominant must be TRUE or FALSE")
 
-	if (!is(use_cpm, "logical")) stop("use_cpm must be TRUE or FALSE")
+  if (!is(use_cpm, "logical")) stop("use_cpm must be TRUE or FALSE")
 
-	if (all(!is.na(data_conditions)) && !is(data_conditions, "list")) stop("data_conditions must in list form")
-	
-	## Get requested samples.
-	annotated_tsr <- extract_counts(experiment, "tsr", samples, use_cpm)
+  if (all(!is.na(data_conditions)) && !is(data_conditions, "list")) stop("data_conditions must in list form")
+  
+  ## Get requested samples.
+  annotated_tsr <- extract_counts(experiment, "tsr", samples, use_cpm)
 
-	## Preliminary filtering of data.
-	if (!is.na(threshold) | dominant) {
-		anntotated_tsr <- preliminary_filter(annotated_tsr, dominant, threshold)
-	}
+  ## Preliminary filtering of data.
+  if (!is.na(threshold) | dominant) {
+    anntotated_tsr <- preliminary_filter(annotated_tsr, dominant, threshold)
+  }
 
-	walk(annotated_tsr, function(x) {
-		setnames(x,
-			old = ifelse(
-				experiment@settings$annotation[, feature_type] == "transcript",
-				"transcriptId", "geneId"
-			),
-			new = "feature"
-		)
-	})
+  walk(annotated_tsr, function(x) {
+    setnames(x,
+      old = ifelse(
+        experiment@settings$annotation[, feature_type] == "transcript",
+        "transcriptId", "geneId"
+      ),
+      new = "feature"
+    )
+  })
 
-	## Apply conditions to data.
-	if (all(!is.na(data_conditions))) {
-		annotated_tsr <- do.call(group_data, c(list(signal_data = annotated_tsr), data_conditions))
-	}
+  ## Apply conditions to data.
+  if (all(!is.na(data_conditions))) {
+    annotated_tsr <- do.call(group_data, c(list(signal_data = annotated_tsr), data_conditions))
+  }
 
-	## Prepare data for plotting.
-	annotated_tsr <- rbindlist(annotated_tsr, idcol = "sample")
-	annotated_tsr[,
-		c("startDist", "endDist", "tsr_id") := list(
-			ifelse(strand == "+", start - geneStart, -(end - geneEnd)),
-			ifelse(strand == "+", end - geneStart, -(start - geneEnd)),
-			seq_len(.N)
-		)
-	]
+  ## Prepare data for plotting.
+  annotated_tsr <- rbindlist(annotated_tsr, idcol = "sample")
+  annotated_tsr[,
+    c("startDist", "endDist", "tsr_id") := list(
+      ifelse(strand == "+", start - geneStart, -(end - geneEnd)),
+      ifelse(strand == "+", end - geneStart, -(start - geneEnd)),
+      seq_len(.N)
+    )
+  ]
 
-        ## Put TSR score for entire range of TSR (put it where? qq).
-        new_ranges <- annotated_tsr[,
-		.(sample, seqnames, start, end, strand,
-		distanceToTSS = seq(as.numeric(startDist), as.numeric(endDist), 1)),
+  ## Put TSR score for entire range of TSR (put it where? qq).
+  new_ranges <- annotated_tsr[,
+    .(sample, seqnames, start, end, strand,
+    distanceToTSS = seq(as.numeric(startDist), as.numeric(endDist), 1)),
                 by = tsr_id
-        ]
-	new_ranges[, tsr_id := NULL]
-	setkeyv(new_ranges, c("sample", "seqnames", "start", "end", "strand"))
+  ]
+  new_ranges[, tsr_id := NULL]
+  setkeyv(new_ranges, c("sample", "seqnames", "start", "end", "strand"))
 
-	annotated_tsr[, distanceToTSS := NULL]
-	setkeyv(annotated_tsr, c("sample", "seqnames", "start", "end", "strand"))
-	annotated_tsr <- merge(new_ranges, annotated_tsr, all.x = TRUE)[
-		dplyr::between(distanceToTSS, -upstream, downstream)
-	]
+  annotated_tsr[, distanceToTSS := NULL]
+  setkeyv(annotated_tsr, c("sample", "seqnames", "start", "end", "strand"))
+  annotated_tsr <- merge(new_ranges, annotated_tsr, all.x = TRUE)[
+    dplyr::between(distanceToTSS, -upstream, downstream)
+  ]
 
-        ## Format for plotting.
-	if(any(names(annotated_tsr) == "plot_order")) {
-		annotated_tsr[, feature := fct_reorder(factor(feature), plot_order)]
-	}
-	annotated_tsr[, distanceToTSS := factor(distanceToTSS, levels = seq(-upstream, downstream, 1))]
+  ## Format for plotting.
+  if(any(names(annotated_tsr) == "plot_order")) {
+    annotated_tsr[, feature := fct_reorder(factor(feature), plot_order)]
+  }
+  annotated_tsr[, distanceToTSS := factor(distanceToTSS, levels = seq(-upstream, downstream, 1))]
 
-        ## Order samples if required.
-        if (!all(samples == "all")) {
-                annotated_tsr[, sample := factor(sample, levels = samples)]
-        }
+  ## Order samples if required.
+  if (!all(samples == "all")) {
+    annotated_tsr[, sample := factor(sample, levels = samples)]
+  }
 
-	## Return DataFrame
-	tsr_df <- DataFrame(annotated_tsr)
-	metadata(tsr_df)$threshold <- threshold
-	metadata(tsr_df)$groupings <- any(names(data_conditions) == "grouping")
-	metadata(tsr_df)$use_cpm <- use_cpm
-	metadata(tsr_df)$promoter <- c(upstream, downstream)
+  ## Return DataFrame
+  tsr_df <- DataFrame(annotated_tsr)
+  metadata(tsr_df)$threshold <- threshold
+  metadata(tsr_df)$groupings <- any(names(data_conditions) == "grouping")
+  metadata(tsr_df)$use_cpm <- use_cpm
+  metadata(tsr_df)$promoter <- c(upstream, downstream)
 
-	return(tsr_df)
+  return(tsr_df)
 }

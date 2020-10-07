@@ -11,29 +11,29 @@
 #' @export
 
 add_sample_sheet <- function(
-	experiment,
-	sample_sheet
+  experiment,
+  sample_sheet
 ) {
 
-	## Input checks.
-	if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsr explorer object")
+  ## Input checks.
+  if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsr explorer object")
 
-	if (!is(sample_sheet, "character") & !is(sample_sheet, "data.frame")) {
-		stop("sample_sheet must be a file path or data.frame")
-	}
+  if (!is(sample_sheet, "character") & !is(sample_sheet, "data.frame")) {
+    stop("sample_sheet must be a file path or data.frame")
+  }
 
-	## Import sample sheet if it is a file.
-	if (is(sample_sheet, "character")) {
-		sample_sheet <- fread(sample_sheet, sep = "\t", header = TRUE)
-	}
+  ## Import sample sheet if it is a file.
+  if (is(sample_sheet, "character")) {
+    sample_sheet <- fread(sample_sheet, sep = "\t", header = TRUE)
+  }
 
-	## Convert sample sheet to data.table
-	sample_sheet <- as.data.table(sample_sheet)
-	
-	## Add sample sheet to tsrexplorer object.
-	experiment@meta_data$sample_sheet <- sample_sheet
+  ## Convert sample sheet to data.table
+  sample_sheet <- as.data.table(sample_sheet)
+  
+  ## Add sample sheet to tsrexplorer object.
+  experiment@meta_data$sample_sheet <- sample_sheet
 
-	return(experiment)
+  return(experiment)
 }
 
 #' Feature Groups
@@ -49,20 +49,20 @@ add_sample_sheet <- function(
 #' @export
 
 add_feature_group <- function(experiment, group_sheet, feature_type) {
-	
-	## Import group sheet if it is a file.
-	if (is(group_sheet, "character")) {
-		group_sheet <- read.delim(
-			group_sheet, sep = "\t", header = TRUE,
-			stringsAsFactors = FALSE
-		)
-	}
+  
+  ## Import group sheet if it is a file.
+  if (is(group_sheet, "character")) {
+    group_sheet <- read.delim(
+      group_sheet, sep = "\t", header = TRUE,
+      stringsAsFactors = FALSE
+    )
+  }
 
-	## Convert group sheet to data.table
-	group_sheet <- as.data.table(group_sheet)
+  ## Convert group sheet to data.table
+  group_sheet <- as.data.table(group_sheet)
 
-	## Add group sheet to tsrexplorer object.
-	experiment@meta_data$group_sheet <- group_sheet
-	
-	return(experiment)
+  ## Add group sheet to tsrexplorer object.
+  experiment@meta_data$group_sheet <- group_sheet
+  
+  return(experiment)
 }

@@ -75,116 +75,116 @@
 #' @export
 
 group_data <- function(
-        signal_data, filters = NA,
-        order_by = NA, order_direction = "descending",
-        order_samples = NA, order_group = NA,
-        quantile_by = NA, n_quantiles = NA,
-	quantile_samples = NA, quantile_group = NA,
-	quantile_direction = "descending",
-        grouping = NA
+  signal_data, filters = NA,
+  order_by = NA, order_direction = "descending",
+  order_samples = NA, order_group = NA,
+  quantile_by = NA, n_quantiles = NA,
+  quantile_samples = NA, quantile_group = NA,
+  quantile_direction = "descending",
+  grouping = NA
 ) {
-	
-        ## Filter the data if required  
-        if (!is.na(filters)) {
-                signal_data <- map(signal_data, function(x) {
-                        x <- subset(x, eval(parse(text = filters)))
-                        return(x)
-                })
-        }
+  
+  ## Filter the data if required  
+  if (!is.na(filters)) {
+    signal_data <- map(signal_data, function(x) {
+      x <- subset(x, eval(parse(text = filters)))
+      return(x)
+    })
+  }
 
-        ##Order the data for plotting if required.
-        if (!is.na(order_by)) {
-		if (is.na(order_group)) order_group <- "FHASH"
+  ## Order the data for plotting if required.
+  if (!is.na(order_by)) {
+    if (is.na(order_group)) order_group <- "FHASH"
 
-                order_dataset <- rbindlist(signal_data, idcol = "sample")[,
-                        c("sample", ..order_by, ..order_group)
-                ]
+    order_dataset <- rbindlist(signal_data, idcol = "sample")[,
+      c("sample", ..order_by, ..order_group)
+    ]
 
-                order_dataset <- dcast(
-                        order_dataset, as.formula(str_c("sample ~ ", order_group)),
-                        value.var = order_by, fun.aggregate = mean,
-                        fill = ifelse(order_direction == "descending", -Inf, Inf)
-                )
+    order_dataset <- dcast(
+      order_dataset, as.formula(str_c("sample ~ ", order_group)),
+      value.var = order_by, fun.aggregate = mean,
+      fill = ifelse(order_direction == "descending", -Inf, Inf)
+    )
 
-                order_dataset <- melt(
-                        order_dataset, id.vars = "sample",
-                        variable.name = order_group, value.name = order_by
-                )
+    order_dataset <- melt(
+      order_dataset, id.vars = "sample",
+      variable.name = order_group, value.name = order_by
+    )
 
-                if (!is.na(order_samples)) {
-                        order_dataset <- order_dataset[sample %in% order_samples]
-                }
+    if (!is.na(order_samples)) {
+      order_dataset <- order_dataset[sample %in% order_samples]
+    }
 
-                order_dataset <- order_dataset[, .(order_by = mean(get(order_by))), by = order_group]
-                setnames(order_dataset, old = "order_by", new = order_by)
+    order_dataset <- order_dataset[, .(order_by = mean(get(order_by))), by = order_group]
+    setnames(order_dataset, old = "order_by", new = order_by)
 
-                if (order_direction == "ascending") {
-                        order_dataset[, plot_order := dense_rank(desc(order_dataset[[order_by]]))]
-                } else if (order_direction == "descending") {
-                        order_dataset[, plot_order := dense_rank(order_dataset[[order_by]])]
-                }
+    if (order_direction == "ascending") {
+      order_dataset[, plot_order := dense_rank(desc(order_dataset[[order_by]]))]
+    } else if (order_direction == "descending") {
+      order_dataset[, plot_order := dense_rank(order_dataset[[order_by]])]
+    }
 
-                order_dataset[, c(order_by) := NULL]
+    order_dataset[, c(order_by) := NULL]
 
-                signal_data <- map(signal_data, function(x) {
-                        x <- merge(x, order_dataset, by = order_group, all.x = TRUE)
-                        return(x)
-                })
-        }
+    signal_data <- map(signal_data, function(x) {
+        x <- merge(x, order_dataset, by = order_group, all.x = TRUE)
+        return(x)
+      })
+  }
 
-	## Quantile the metric if required.
-	if (!is.na(quantile_by)) {
-		if (is.na(quantile_group)) quantile_group <- "FHASH"
-	
-		quantile_dataset <- rbindlist(signal_data, idcol = "sample")[,
-			c("sample", ..quantile_by, ..quantile_group)
-		]
+  ## Quantile the metric if required.
+  if (!is.na(quantile_by)) {
+    if (is.na(quantile_group)) quantile_group <- "FHASH"
+  
+    quantile_dataset <- rbindlist(signal_data, idcol = "sample")[,
+      c("sample", ..quantile_by, ..quantile_group)
+    ]
 
-		quantile_dataset <- dcast(
-			quantile_dataset, as.formula(str_c("sample ~ ", quantile_group)),
-			value.var = quantile_by, fun.aggregate = mean,
-			fill = ifelse(quantile_direction == "descending", -Inf, Inf)
-		)
+    quantile_dataset <- dcast(
+      quantile_dataset, as.formula(str_c("sample ~ ", quantile_group)),
+      value.var = quantile_by, fun.aggregate = mean,
+      fill = ifelse(quantile_direction == "descending", -Inf, Inf)
+    )
 
-		quantile_dataset <- melt(
-			quantile_dataset, id.vars = "sample",
-			variable.name = quantile_group, value.name = quantile_by
-		)
+    quantile_dataset <- melt(
+      quantile_dataset, id.vars = "sample",
+      variable.name = quantile_group, value.name = quantile_by
+    )
 
-		if (!is.na(quantile_samples)) {
-			quantile_dataset <- quantile_dataset[sample %in% quantile_samples]
-		}
+    if (!is.na(quantile_samples)) {
+      quantile_dataset <- quantile_dataset[sample %in% quantile_samples]
+    }
 
-		quantile_dataset <- quantile_dataset[, .(quantile_by = mean(get(quantile_by))), by = quantile_group]
-		setnames(quantile_dataset, old = "quantile_by", new = quantile_by)
-		
-		if (quantile_direction == "ascending") {
-			quantile_dataset[, grouping := ntile(desc(quantile_dataset[[quantile_by]]), n_quantiles)]
-		} else if (quantile_direction == "descending") {
-			quantile_dataset[, grouping := ntile(quantile_dataset[[quantile_by]], n_quantiles)]
-		}
+    quantile_dataset <- quantile_dataset[, .(quantile_by = mean(get(quantile_by))), by = quantile_group]
+    setnames(quantile_dataset, old = "quantile_by", new = quantile_by)
+    
+    if (quantile_direction == "ascending") {
+      quantile_dataset[, grouping := ntile(desc(quantile_dataset[[quantile_by]]), n_quantiles)]
+    } else if (quantile_direction == "descending") {
+      quantile_dataset[, grouping := ntile(quantile_dataset[[quantile_by]], n_quantiles)]
+    }
 
-		quantile_dataset[, c(quantile_by) := NULL]
+    quantile_dataset[, c(quantile_by) := NULL]
 
-		signal_data <- map(signal_data, function(x) {
-			x <- merge(x, quantile_dataset, by = quantile_group, all.x = TRUE)
-			return(x)
-		})
-	}
+    signal_data <- map(signal_data, function(x) {
+      x <- merge(x, quantile_dataset, by = quantile_group, all.x = TRUE)
+      return(x)
+    })
+  }
 
-	## If not using quantiles, split by a categorical value.
-	if (!is.na(grouping) && is.na(quantile_by)) {
-		signal_data <- map(signal_data, function(x) {
-			x <- x[!is.na(x[[grouping]])]
+  ## If not using quantiles, split by a categorical value.
+  if (!is.na(grouping) && is.na(quantile_by)) {
+    signal_data <- map(signal_data, function(x) {
+      x <- x[!is.na(x[[grouping]])]
 
-			x[, grouping := x[[grouping]]]
+      x[, grouping := x[[grouping]]]
 
-			return(x)
-		})
-	}
+      return(x)
+    })
+  }
 
-	## Return the signal data.
-	return(signal_data)
+  ## Return the signal data.
+  return(signal_data)
 }
 
 #' Preliminary Filter
@@ -199,23 +199,23 @@ group_data <- function(
 #' @export
 
 preliminary_filter <- function(signal_data, dominant, threshold) {
-	
-	## Retain only dominant features if required.
-	if (dominant) {
-		signal_data <- map(signal_data, function(x) {
-			x <- x[(dominant)]
-			return(x)
-		})
-	}
+  
+  ## Retain only dominant features if required.
+  if (dominant) {
+    signal_data <- map(signal_data, function(x) {
+      x <- x[(dominant)]
+      return(x)
+    })
+  }
 
-	## Apply a threshold to score if required.
-	if (!is.na(threshold)) {
-		signal_data <- map(signal_data, function(x) {
-			x <- x[score >= threshold]
-			return(x)
-		})
-	}
+  ## Apply a threshold to score if required.
+  if (!is.na(threshold)) {
+    signal_data <- map(signal_data, function(x) {
+      x <- x[score >= threshold]
+      return(x)
+    })
+  }
 
-	## Return signal data.
-	return(signal_data)
+  ## Return signal data.
+  return(signal_data)
 }

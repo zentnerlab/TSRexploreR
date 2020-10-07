@@ -41,73 +41,73 @@
 #' @export
 
 plot_reduction <- function(
-	experiment,
-	data_type = c("tss", "tsr", "tss_features", "tsr_features"),
-	method = "umap",
-	n_neighbors = 2,
-	min_dist = 0.1,
-	...
+  experiment,
+  data_type = c("tss", "tsr", "tss_features", "tsr_features"),
+  method = "umap",
+  n_neighbors = 2,
+  min_dist = 0.1,
+  ...
 ) {
 
-	## Input checks.
-	if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsrexplorer object")
+  ## Input checks.
+  if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsrexplorer object")
 
-        if (!is(data_type, "character") || length(data_type) > 1) {
-                stop("data_type must be a character")
-        }
-        data_type <- str_to_lower(data_type)
-        if (!data_type %in% c("tss", "tsr", "tss_features", "tsr_features")) {
-		stop("data_type must be 'tss', 'tsr', 'tss_features', or 'tsr_features'")
-	}
+  if (!is(data_type, "character") || length(data_type) > 1) {
+    stop("data_type must be a character")
+  }
+    data_type <- str_to_lower(data_type)
+  if (!data_type %in% c("tss", "tsr", "tss_features", "tsr_features")) {
+    stop("data_type must be 'tss', 'tsr', 'tss_features', or 'tsr_features'")
+  }
 
-	if (!is(method, "character") || length(method) > 1) stop("method must be 'umap' or 'pca'")
-	method <- str_to_lower(method)
-	if (!method %in% c("umap", "pca")) stop("method must be 'umap' or 'pca'")
+  if (!is(method, "character") || length(method) > 1) stop("method must be 'umap' or 'pca'")
+  method <- str_to_lower(method)
+  if (!method %in% c("umap", "pca")) stop("method must be 'umap' or 'pca'")
 
-	if (
-		!is(n_neighbors, "numeric") || length(n_neighbors) > 1 ||
-		n_neighbors %% 1 != 0 || n_neighbors < 2
-	) {
-		stop("n_neighbors must be a positive integer greater than or equal to 2")
-	}
+  if (
+    !is(n_neighbors, "numeric") || length(n_neighbors) > 1 ||
+    n_neighbors %% 1 != 0 || n_neighbors < 2
+  ) {
+    stop("n_neighbors must be a positive integer greater than or equal to 2")
+  }
 
-	if (
-		!is(min_dist, "numeric") || length(min_dist) > 1 || min_dist < 0
-	){
-		stop("min_dist must be a number greater than or equal to 0")
-	}
+  if (
+    !is(min_dist, "numeric") || length(min_dist) > 1 || min_dist < 0
+  ){
+    stop("min_dist must be a number greater than or equal to 0")
+  }
 
-	## Grab TMM counts.
-	tmm_counts <- extract_matrix(experiment, data_type, "all")
+  ## Grab TMM counts.
+  tmm_counts <- extract_matrix(experiment, data_type, "all")
 
-	## Filter out counts with too little expression.
-	keep_index <- tmm_counts %>%
-		assay("counts") %>%
-		filterByExpr
+  ## Filter out counts with too little expression.
+  keep_index <- tmm_counts %>%
+    assay("counts") %>%
+    filterByExpr
 
-	tmm_counts <- tmm_counts[keep_index, ]
+  tmm_counts <- tmm_counts[keep_index, ]
 
-	## Prepare data for umap.
-	tmm_counts <- tmm_counts %>%
-		assay("tmm") %>%
-		t %>%
-		as.data.frame %>%
-		rownames_to_column("sample") %>%
-		as.data.table
+  ## Prepare data for umap.
+  tmm_counts <- tmm_counts %>%
+    assay("tmm") %>%
+    t %>%
+    as.data.frame %>%
+    rownames_to_column("sample") %>%
+    as.data.table
 
-	## UMAP dimensionality reduction.
-	umap_results <- tmm_counts %>%
-		umap(n_neighbors = n_neighbors, min_dist = min_dist)
-	
-	umap_results <- as.data.table(umap_results)
-	setnames(umap_results, old = c("V1", "V2"), new = c("UMAP_1", "UMAP_2"))
-	umap_results[, sample := tmm_counts[["sample"]]]
+  ## UMAP dimensionality reduction.
+  umap_results <- tmm_counts %>%
+    umap(n_neighbors = n_neighbors, min_dist = min_dist)
+  
+  umap_results <- as.data.table(umap_results)
+  setnames(umap_results, old = c("V1", "V2"), new = c("UMAP_1", "UMAP_2"))
+  umap_results[, sample := tmm_counts[["sample"]]]
 
-	## Plot UMAP.
-	p <- ggplot(umap_results, aes(x = UMAP_1, y = UMAP_2, color = sample)) +
-		geom_point(...) +
-		theme_bw() +
-		scale_color_viridis_d()
+  ## Plot UMAP.
+  p <- ggplot(umap_results, aes(x = .data$UMAP_1, y = .data$UMAP_2, color = .data$sample)) +
+    geom_point(...) +
+    theme_bw() +
+    scale_color_viridis_d()
 
-	return(p)
+  return(p)
 }

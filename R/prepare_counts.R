@@ -30,58 +30,58 @@
 #' @export
 
 format_counts <- function(
-	experiment,
-	data_type = c("tss", "tsr"),
-	samples = "all"
+  experiment,
+  data_type = c("tss", "tsr"),
+  samples = "all"
 ) {
 
-	## Check inputs.
-	if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsr explorer object")
+  ## Check inputs.
+  if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsr explorer object")
 
-	if (!is(data_type, "character") || length(data_type) > 1) {
-		stop("data_type must be a 'tss' or 'tsr'")
-	}
-	data_type <- str_to_lower(data_type)
-	if (!data_type %in% c("tss", "tsr")) stop("data_type must be 'tss' or 'tsr'")
-	
-	if (!is(samples, "character")) stop("samples must be a character vector")
+  if (!is(data_type, "character") || length(data_type) > 1) {
+    stop("data_type must be a 'tss' or 'tsr'")
+  }
+  data_type <- str_to_lower(data_type)
+  if (!data_type %in% c("tss", "tsr")) stop("data_type must be 'tss' or 'tsr'")
+  
+  if (!is(samples, "character")) stop("samples must be a character vector")
 
-	## Get selected samples and generate raw count matrices.
-	if (data_type == "tss") {
+  ## Get selected samples and generate raw count matrices.
+  if (data_type == "tss") {
 
-		## Get selected samples.
-		select_samples <- tss_experiment(experiment)
-		if (!all(samples == "all")) select_samples <- select_samples[samples]
+    ## Get selected samples.
+    select_samples <- tss_experiment(experiment)
+    if (!all(samples == "all")) select_samples <- select_samples[samples]
 
-	} else if (data_type == "tsr") {
+  } else if (data_type == "tsr") {
 
-		## Get selected samples.
-		select_samples <- tsr_experiment(experiment)
-		if (!all(samples == "all")) select_samples <- select_samples[samples]
+    ## Get selected samples.
+    select_samples <- tsr_experiment(experiment)
+    if (!all(samples == "all")) select_samples <- select_samples[samples]
 
-	}
+  }
 
-	## Turn counts into data.table
-	if (data_type %in% c("tss", "tsr")) {
-		raw_counts <- map(select_samples, function(x) {
-			x <- as.data.table(x)
-			x[, FID := seq_len(nrow(x))]
-			x[,
-				FHASH := str_c(seqnames, start, end, strand, sep = ":"),
-				by = seq_len(nrow(x))
-			]
-			return(x)
-		})
-	}
+  ## Turn counts into data.table
+  if (data_type %in% c("tss", "tsr")) {
+    raw_counts <- map(select_samples, function(x) {
+      x <- as.data.table(x)
+      x[, FID := seq_len(nrow(x))]
+      x[,
+        FHASH := str_c(seqnames, start, end, strand, sep = ":"),
+        by = seq_len(nrow(x))
+      ]
+      return(x)
+    })
+  }
 
-	## Place counts in proper tsrexplorer object slot.
-	if (data_type == "tss") {
-		experiment@counts$TSSs$raw <- c(experiment@counts$TSSs$raw, raw_counts)
-	} else if (data_type == "tsr") {
-		experiment@counts$TSRs$raw <- c(experiment@counts$TSRs$raw, raw_counts)
-	}
+  ## Place counts in proper tsrexplorer object slot.
+  if (data_type == "tss") {
+    experiment@counts$TSSs$raw <- c(experiment@counts$TSSs$raw, raw_counts)
+  } else if (data_type == "tsr") {
+    experiment@counts$TSRs$raw <- c(experiment@counts$TSRs$raw, raw_counts)
+  }
 
-	return(experiment)
+  return(experiment)
 }
 
 #' Feature Counts
@@ -120,67 +120,67 @@ format_counts <- function(
 #' @export
 
 count_features <- function(
-	experiment,
-	data_type = c("tss", "tsr")
+  experiment,
+  data_type = c("tss", "tsr")
 ) {
 
-	## Check inputs.
-	if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsr explorer object")
+  ## Check inputs.
+  if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsr explorer object")
 
-	if (!is(data_type, "character") || length(data_type) > 1) {
-		stop("data_type must be either 'tss' or 'tsr'")
-	}
-	data_type <- str_to_lower(data_type)
-	if (!data_type %in% c("tss", "tsr")) stop("data_type must be either 'tss' or 'tsr'")	
-	
-	## Get information on whether annotation was by gene or transcript.
-	anno_type <- ifelse(
-		experiment@settings$annotation[, feature_type] == "transcript",
-		"transcriptId", "geneId"
-	)
+  if (!is(data_type, "character") || length(data_type) > 1) {
+    stop("data_type must be either 'tss' or 'tsr'")
+  }
+  data_type <- str_to_lower(data_type)
+  if (!data_type %in% c("tss", "tsr")) stop("data_type must be either 'tss' or 'tsr'")  
+  
+  ## Get information on whether annotation was by gene or transcript.
+  anno_type <- ifelse(
+    experiment@settings$annotation[, feature_type] == "transcript",
+    "transcriptId", "geneId"
+  )
 
-	## Extract appropriate counts.
-	sample_data <- extract_counts(experiment, data_type, "all")
+  ## Extract appropriate counts.
+  sample_data <- extract_counts(experiment, data_type, "all")
 
-	## Get feature counts.
-	sample_data <- sample_data %>%
-		map(function(x) {
-			feature_scores <- x[
-				!simple_annotations %in% c("Downstream", "Intergenic"),
-				.(feature_score = sum(score)),
-				by = eval(anno_type)
-			]
+  ## Get feature counts.
+  sample_data <- sample_data %>%
+    map(function(x) {
+      feature_scores <- x[
+        !simple_annotations %in% c("Downstream", "Intergenic"),
+        .(feature_score = sum(score)),
+        by = eval(anno_type)
+      ]
 
-			setkeyv(x, anno_type)
-			setkeyv(feature_scores, anno_type)
-			x <- merge(x, feature_scores, all.x = TRUE)
-			setcolorder(x, c(discard(colnames(x), ~ . == anno_type), anno_type))
-			
-			return(x)
-		})
+      setkeyv(x, anno_type)
+      setkeyv(feature_scores, anno_type)
+      x <- merge(x, feature_scores, all.x = TRUE)
+      setcolorder(x, c(discard(colnames(x), ~ . == anno_type), anno_type))
+      
+      return(x)
+    })
 
-	## Get feature counts per sample.
-	counts <- sample_data %>%
-                map(function(x) {
-                        setnames(x, old = anno_type, new = "feature")
-                        x <- unique(x[, .(feature, feature_score)])
-                        x[, feature_score := ifelse(is.na(feature_score), 0, feature_score)]
-                        return(x)
-                })
+  ## Get feature counts per sample.
+  counts <- sample_data %>%
+    map(function(x) {
+      setnames(x, old = anno_type, new = "feature")
+      x <- unique(x[, .(feature, feature_score)])
+      x[, feature_score := ifelse(is.na(feature_score), 0, feature_score)]
+      return(x)
+    })
 
-	## Store counts in appropriate slots.
-	walk(counts, ~ setnames(., old = c("feature", "feature_score"), new = c(anno_type, "score")))
-	walk(sample_data, ~ setnames(., old = "feature", new = anno_type))
+  ## Store counts in appropriate slots.
+  walk(counts, ~ setnames(., old = c("feature", "feature_score"), new = c(anno_type, "score")))
+  walk(sample_data, ~ setnames(., old = "feature", new = anno_type))
 
-	if (data_type == "tss") {
-		experiment@counts$TSSs$raw <- sample_data
-		experiment@counts$TSS_features$raw <- counts
-	} else {
-		experiment@counts$TSRs$raw <- sample_data
-		experiment@counts$TSR_features$raw <- exp_counts
-	}
+  if (data_type == "tss") {
+    experiment@counts$TSSs$raw <- sample_data
+    experiment@counts$TSS_features$raw <- counts
+  } else {
+    experiment@counts$TSRs$raw <- sample_data
+    experiment@counts$TSR_features$raw <- exp_counts
+  }
 
-	return(experiment)
+  return(experiment)
 }
 
 #' Count Matrix
@@ -218,150 +218,149 @@ count_features <- function(
 #' @export
 
 count_matrix <- function(
-	experiment,
-	data_type = c("tss", "tsr", "tss_features", "tsr_features"),
-	samples = "all"
+  experiment,
+  data_type = c("tss", "tsr", "tss_features", "tsr_features"),
+  samples = "all"
 ) {
-	## Check inputs.
-	if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsr explorer object")
-	
-	if (!is(data_type, "character") || length(data_type) > 1) {
-		stop("data_type must be a character")
-	}
-	data_type <- str_to_lower(data_type)
-	if (!data_type %in% c("tss", "tsr", "tss_features", "tsr_features")) {
-		stop("data_type must be either 'tss', 'tsr', 'tss_features', or 'tsr_features'")
-	}
+  ## Check inputs.
+  if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsr explorer object")
+  
+  if (!is(data_type, "character") || length(data_type) > 1) {
+    stop("data_type must be a character")
+  }
+  data_type <- str_to_lower(data_type)
+  if (!data_type %in% c("tss", "tsr", "tss_features", "tsr_features")) {
+    stop("data_type must be either 'tss', 'tsr', 'tss_features', or 'tsr_features'")
+  }
 
-	if (!is(samples, "character")) stop("samples must be a character vector")
+  if (!is(samples, "character")) stop("samples must be a character vector")
 
-	## Extract counts.
-	select_samples <- extract_counts(experiment, data_type, samples)
+  ## Extract counts.
+  select_samples <- extract_counts(experiment, data_type, samples)
 
-	if (data_type %in% c("tss", "tsr")) {
-		select_samples <- map(select_samples, function(x) {
-			x <- x[, .(seqnames, start, end, strand, score, FHASH)]
-			return(x)
-		})
-	}
+  if (data_type %in% c("tss", "tsr")) {
+    select_samples <- map(select_samples, function(x) {
+      x <- x[, .(seqnames, start, end, strand, score, FHASH)]
+      return(x)
+    })
+  }
 
-	## Generate count matrix.
-	if (data_type == "tss") {
+  ## Generate count matrix.
+  if (data_type == "tss") {
 
-		## Merge overlapping TSSs.
-		select_samples <- rbindlist(select_samples, idcol = "sample")
-		select_samples <- dcast(
-			select_samples,
-			seqnames + start + end + strand + FHASH ~ sample,
-			value.var = "score", fill = 0
-		)
+    ## Merge overlapping TSSs.
+    select_samples <- rbindlist(select_samples, idcol = "sample")
+    select_samples <- dcast(
+      select_samples,
+      seqnames + start + end + strand + FHASH ~ sample,
+      value.var = "score", fill = 0
+    )
 
-	} else if (data_type == "tsr") {
+  } else if (data_type == "tsr") {
 
-                ## Merge overlapping TSRs.
-                tsr_consensus <- select_samples %>%
-                        map(makeGRangesFromDataFrame) %>%
-	                purrr::reduce(c) %>%
-                        GenomicRanges::reduce(ignore.strand = FALSE)
+    ## Merge overlapping TSRs.
+    tsr_consensus <- select_samples %>%
+      map(makeGRangesFromDataFrame) %>%
+      purrr::reduce(c) %>%
+      GenomicRanges::reduce(ignore.strand = FALSE)
 
-                ## Create raw count matrix.
-                raw_matrix <- select_samples %>%
-                        map(
-                                ~ makeGRangesFromDataFrame(., keep.extra.columns = TRUE) %>%
-				                          findOverlapPairs(query = tsr_consensus, subject = .) %>%
-                                as.data.table
-                        ) %>%
-                        rbindlist(idcol = "sample")
+    ## Create raw count matrix.
+    raw_matrix <- select_samples %>%
+      map(~ makeGRangesFromDataFrame(.x, keep.extra.columns = TRUE) %>%
+        findOverlapPairs(query = tsr_consensus, subject = .) %>%
+        as.data.table
+      ) %>%
+      rbindlist(idcol = "sample")
 
-                setnames(
-                        raw_matrix,
-                        old = c(
-                                "first.seqnames", "first.start", "first.end",
-                                "first.strand", "second.X.score"
-                        ),
-                        new = c("seqnames", "start", "end", "strand", "score")
-                )
+    setnames(
+      raw_matrix,
+      old = c(
+        "first.seqnames", "first.start", "first.end",
+        "first.strand", "second.X.score"
+      ),
+      new = c("seqnames", "start", "end", "strand", "score")
+    )
 
-                raw_matrix <- raw_matrix[,
-                        .(score = sum(score)),
-                        by = .(sample, seqnames, start, end, strand)
-                ]
+    raw_matrix <- raw_matrix[,
+      .(score = sum(score)),
+      by = .(sample, seqnames, start, end, strand)
+    ]
 
-                select_samples <- dcast(raw_matrix, seqnames + start + end + strand ~ sample, fill = 0)
-		select_samples[,
-			FHASH := str_c(seqnames, start, end, strand, sep = ":"),
-			by = seq_len(nrow(select_samples))
-		]
+    select_samples <- dcast(raw_matrix, seqnames + start + end + strand ~ sample, fill = 0)
+    select_samples[,
+      FHASH := str_c(seqnames, start, end, strand, sep = ":"),
+      by = seq_len(nrow(select_samples))
+    ]
 
 
-	} else if (data_type %in% c("tss_features", "tsr_features")) {
-		
-	  ## Get annotation type.
-		anno_type <- experiment@settings$annotation[["feature_type"]]
-		anno_type <- ifelse(anno_type == "gene", "geneId", "transcriptId")
+  } else if (data_type %in% c("tss_features", "tsr_features")) {
+    
+    ## Get annotation type.
+    anno_type <- experiment@settings$annotation[["feature_type"]]
+    anno_type <- ifelse(anno_type == "gene", "geneId", "transcriptId")
 
-		## Change feature counts to matrix.
-		select_samples <- rbindlist(select_samples, idcol = "sample")
-		select_samples <- dcast(
-			select_samples,
-			as.formula(str_c(anno_type, " ~ sample")),
-			fill = 0
-		)
+    ## Change feature counts to matrix.
+    select_samples <- rbindlist(select_samples, idcol = "sample")
+    select_samples <- dcast(
+      select_samples,
+      as.formula(str_c(anno_type, " ~ sample")),
+      fill = 0
+    )
 
-	}
+  }
 
-	## Create SummarizedExperiments.
-	if (data_type %in% c("tss", "tsr")) {
-	  
-		## Prepare data for RangedSummarizedExperiment
-		row_ranges <- makeGRangesFromDataFrame(select_samples)
+  ## Create SummarizedExperiments.
+  if (data_type %in% c("tss", "tsr")) {
+    
+    ## Prepare data for RangedSummarizedExperiment
+    row_ranges <- makeGRangesFromDataFrame(select_samples)
 
-		select_samples[, c("seqnames", "start", "end", "strand") := NULL]
-		select_samples <- as.matrix(select_samples, rownames = "FHASH")
+    select_samples[, c("seqnames", "start", "end", "strand") := NULL]
+    select_samples <- as.matrix(select_samples, rownames = "FHASH")
 
-        	col_data <- DataFrame(
-        		samples = colnames(select_samples),
-                	row.names = colnames(select_samples)
-        	)
-	
-		## Make RangedSummarizedExperiment.
-		rse <- SummarizedExperiment(
-			assays = list(counts = select_samples),
-			rowRanges = row_ranges,
-			colData = col_data
-		)
-	} else if (data_type %in% c("tss_features", "tsr_features")) {
-		
-	 	 ## Prepare data for SummarizedExperiment.
-		row_data <- select_samples[, 1]
-		
-		select_samples[, eval(anno_type) := NULL]
-		select_samples <- as.matrix(select_samples)
-		rownames(select_samples) <- row_data[[1]]
+    col_data <- DataFrame(
+      samples = colnames(select_samples),
+      row.names = colnames(select_samples)
+    )
+  
+    ## Make RangedSummarizedExperiment.
+    rse <- SummarizedExperiment(
+      assays = list(counts = select_samples),
+      rowRanges = row_ranges,
+      colData = col_data
+    )
+  } else if (data_type %in% c("tss_features", "tsr_features")) {
+    
+     ## Prepare data for SummarizedExperiment.
+    row_data <- select_samples[, 1]
+    
+    select_samples[, eval(anno_type) := NULL]
+    select_samples <- as.matrix(select_samples)
+    rownames(select_samples) <- row_data[[1]]
 
-		col_data <- DataFrame(
-			samples = colnames(select_samples),
-			row.names = colnames(select_samples)
-		)
+    col_data <- DataFrame(
+      samples = colnames(select_samples),
+      row.names = colnames(select_samples)
+    )
 
-		## Make SummarizedExperiment.
-		rse <- SummarizedExperiment(
-			assays = list(counts = select_samples),
-			rowData = row_data,
-			colData = col_data
-		)
-	}
+    ## Make SummarizedExperiment.
+    rse <- SummarizedExperiment(
+      assays = list(counts = select_samples),
+      rowData = row_data,
+      colData = col_data
+    )
+  }
 
-	## Add RangedSummarizedExperiment back to trexplorer object.
-	if (data_type == "tss") {
-		experiment@counts$TSSs$matrix <- rse
-	} else if (data_type == "tsr") {
-		experiment@counts$TSRs$matrix <- rse
-	} else if (data_type == "tss_features") {
-		experiment@counts$TSS_features$matrix <- rse
-	} else if (data_type == "tsr_features") {
-		experiment@counts$TSR_features$matrix <- rse
-	}
+  ## Add RangedSummarizedExperiment back to trexplorer object.
+  if (data_type == "tss") {
+    experiment@counts$TSSs$matrix <- rse
+  } else if (data_type == "tsr") {
+    experiment@counts$TSRs$matrix <- rse
+  } else if (data_type == "tss_features") {
+    experiment@counts$TSS_features$matrix <- rse
+  } else if (data_type == "tsr_features") {
+    experiment@counts$TSR_features$matrix <- rse
+  }
 
-	return(experiment)	
+  return(experiment)  
 }

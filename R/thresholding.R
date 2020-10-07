@@ -41,71 +41,71 @@
 #' @export
 
 explore_thresholds <- function(
-	experiment,
-	max_threshold = 50,
-	samples = "all"
+  experiment,
+  max_threshold = 50,
+  samples = "all"
 ) {
-	## Check inputs.
-	if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsr explorer object")
+  ## Check inputs.
+  if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsr explorer object")
 
-	if (
-		!is(max_threshold, "numeric") || length(max_threshold) > 1 ||
-		max_threshold %% 1 != 0 || max_threshold < 5
-	) {
-		stop("max_threshold must be a positive integer greater than or equal to 5")
-	}
+  if (
+    !is(max_threshold, "numeric") || length(max_threshold) > 1 ||
+    max_threshold %% 1 != 0 || max_threshold < 5
+  ) {
+    stop("max_threshold must be a positive integer greater than or equal to 5")
+  }
 
-	if (!is(samples, "character")) stop("samples must be a character vector")
+  if (!is(samples, "character")) stop("samples must be a character vector")
 
-	## Get settings information.
-	feature_type <- experiment@settings$annotation[["feature_type"]]
-	feature_type <- ifelse(feature_type == "transcript", "transcriptId", "geneId")
+  ## Get settings information.
+  feature_type <- experiment@settings$annotation[["feature_type"]]
+  feature_type <- ifelse(feature_type == "transcript", "transcriptId", "geneId")
 
-	## Get appropriate samples.
-	select_samples <- extract_counts(experiment, "tss", samples)
-	select_samples <- rbindlist(select_samples, idcol = "sample")
+  ## Get appropriate samples.
+  select_samples <- extract_counts(experiment, "tss", samples)
+  select_samples <- rbindlist(select_samples, idcol = "sample")
 
-	## Get information needed for threshold plot.
-	summarized_data <- map_df(seq_len(max_threshold), function(x) {
-		filtered <- select_samples[score >= x]
-		filtered[,
-			promoter_proximity := ifelse(
-				simple_annotations == "Promoter",
-				"n_promoter_proximal", "n_promoter_distal"
-			)
-		]
-		filtered[,
-			n_features := uniqueN(get(feature_type)),
-			by = sample
-		]
+  ## Get information needed for threshold plot.
+  summarized_data <- map_df(seq_len(max_threshold), function(x) {
+    filtered <- select_samples[score >= x]
+    filtered[,
+      promoter_proximity := ifelse(
+        simple_annotations == "Promoter",
+        "n_promoter_proximal", "n_promoter_distal"
+      )
+    ]
+    filtered[,
+      n_features := uniqueN(get(feature_type)),
+      by = sample
+    ]
 
-		feature_stats <- filtered[,
-			.(n_features, count = .N),
-			by = .(sample, promoter_proximity)
-		]
-		feature_stats <- unique(feature_stats)
+    feature_stats <- filtered[,
+      .(n_features, count = .N),
+      by = .(sample, promoter_proximity)
+    ]
+    feature_stats <- unique(feature_stats)
 
-		feature_stats <- dcast(
-			feature_stats, sample + n_features ~ promoter_proximity,
-			value.var = "count"
-		)
+    feature_stats <- dcast(
+      feature_stats, sample + n_features ~ promoter_proximity,
+      value.var = "count"
+    )
 
-		feature_stats[,
-			c("n_total", "frac_promoter_proximal", "threshold") := list(
-				n_promoter_proximal + n_promoter_distal,
-				n_promoter_proximal / (n_promoter_proximal + n_promoter_distal),
-				x
-			)
-		]
-	})
+    feature_stats[,
+      c("n_total", "frac_promoter_proximal", "threshold") := list(
+        n_promoter_proximal + n_promoter_distal,
+        n_promoter_proximal / (n_promoter_proximal + n_promoter_distal),
+        x
+      )
+    ]
+  })
 
-	## Set order of samples if specified.
-	if (!all(samples == "all")) {
-		summarized_data[, sample := factor(sample, levels = samples)]
-	}
+  ## Set order of samples if specified.
+  if (!all(samples == "all")) {
+    summarized_data[, sample := factor(sample, levels = samples)]
+  }
 
-	## Return results.
-	return(summarized_data)
+  ## Return results.
+  return(summarized_data)
 }
 
 #' Plot Threshold Exploration
@@ -146,26 +146,26 @@ explore_thresholds <- function(
 
 plot_threshold_exploration <- function(threshold_data, ncol = 1, point_size = 1, ...) {
 
-	## Check inputs.
-	if (!is(threshold_data, "data.frame")) stop("threshold_data must be a data.frame")
-	
-	if (!is(ncol, "numeric") || ncol %% 1 != 0 || ncol < 1) {
-		stop("ncol must be a positive integer")
-	}
+  ## Check inputs.
+  if (!is(threshold_data, "data.frame")) stop("threshold_data must be a data.frame")
+  
+  if (!is(ncol, "numeric") || ncol %% 1 != 0 || ncol < 1) {
+    stop("ncol must be a positive integer")
+  }
 
-	if (!is(point_size, "numeric") || !point_size > 0) {
-		stop("point_size must be a positive number")
-	}
+  if (!is(point_size, "numeric") || !point_size > 0) {
+    stop("point_size must be a positive number")
+  }
 
-	## Plot data.
-	p <- ggplot(threshold_data, aes(x = threshold, y = frac_promoter_proximal)) +
-		geom_line(color = "lightgrey") +
-		geom_point(aes(color = n_features), size = point_size, ...) +
-		scale_color_viridis_c() +
-		theme_bw() +
-		xlab("Count Threshold") +
-		ylab("Fraction of Promoter Proximal TSSs") +
-		facet_wrap(. ~ sample, ncol = ncol)
+  ## Plot data.
+  p <- ggplot(threshold_data, aes(x=.data$threshold, y=.data$frac_promoter_proximal)) +
+    geom_line(color="lightgrey") +
+    geom_point(aes(color=.data$n_features), size=point_size, ...) +
+    scale_color_viridis_c() +
+    theme_bw() +
+    xlab("Count Threshold") +
+    ylab("Fraction of Promoter Proximal TSSs") +
+    facet_wrap(. ~ sample, ncol=ncol)
 
-	return(p)
+  return(p)
 }

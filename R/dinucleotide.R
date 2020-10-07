@@ -51,104 +51,104 @@
 #' @export
 
 dinucleotide_frequencies <- function(
-	experiment,
-	genome_assembly,
-	samples = "all",
-	threshold = 1,
-	dominant = FALSE,
-	data_conditions = NA
+  experiment,
+  genome_assembly,
+  samples = "all",
+  threshold = 1,
+  dominant = FALSE,
+  data_conditions = NA
 ) {
 
-	## Check inputs.
-	if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsrexplorer object")
+  ## Check inputs.
+  if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsrexplorer object")
 
-        if (!is(genome_assembly, "character") & !is(genome_assembly, "BSgenome")) {
-                stop("genome assembly must be a fasta file or BSgenome package")
-        }
-        if (is(genome_assembly, "character")) {
-                extension <- file_ext(genome_assembly)
-                if (!extension %in% c("fasta", "fa")) {
-                        stop("genome_assembly file extension must be '.fa' or '.fasta'")
-                }
-        }
+  if (!is(genome_assembly, "character") & !is(genome_assembly, "BSgenome")) {
+    stop("genome assembly must be a fasta file or BSgenome package")
+  }
+  if (is(genome_assembly, "character")) {
+    extension <- file_ext(genome_assembly)
+    if (!extension %in% c("fasta", "fa")) {
+      stop("genome_assembly file extension must be '.fa' or '.fasta'")
+    }
+  }
 
-	if (!is(samples, "character")) stop("samples must be a character")
+  if (!is(samples, "character")) stop("samples must be a character")
 
-        if (
-                !is.na(threshold) && (!is(threshold, "numeric") ||
-                threshold %% 1 != 0 || threshold < 1)
-        ) {
-                stop("threshold must be a positive integer")
-        }
+  if (
+    !is.na(threshold) && (!is(threshold, "numeric") ||
+    threshold %% 1 != 0 || threshold < 1)
+  ) {
+    stop("threshold must be a positive integer")
+  }
 
-	if (!is(dominant, "logical")) stop("dominant must be logical")
+  if (!is(dominant, "logical")) stop("dominant must be logical")
 
-	if (all(!is.na(data_conditions)) && !is(data_conditions, "list")) {
-		stop("data_conditions must be a list of values")
-	}
+  if (all(!is.na(data_conditions)) && !is(data_conditions, "list")) {
+    stop("data_conditions must be a list of values")
+  }
 
-	## Load genome assembly.
-	fasta_assembly <- FaFile(genome_assembly)
+  ## Load genome assembly.
+  fasta_assembly <- FaFile(genome_assembly)
 
-	## Get appropriate samples.
-	select_samples <- extract_counts(experiment, "tss", samples)
+  ## Get appropriate samples.
+  select_samples <- extract_counts(experiment, "tss", samples)
 
-	## Preliminary filtering of data.
-	select_samples <- preliminary_filter(select_samples, dominant, threshold)
+  ## Preliminary filtering of data.
+  select_samples <- preliminary_filter(select_samples, dominant, threshold)
 
-	## Apply conditions to data.
-	if (all(!is.na(data_conditions))) {
-		select_samples <- do.call(group_data, c(list(signal_data = select_samples), data_conditions))
-	}
+  ## Apply conditions to data.
+  if (all(!is.na(data_conditions))) {
+    select_samples <- do.call(group_data, c(list(signal_data = select_samples), data_conditions))
+  }
 
-	## Prepare samples for analysis.
-	select_samples <- rbindlist(select_samples, idcol = "sample")
-	select_samples[, tss := start]
-	select_samples[,
-		c("start", "end") := list(
-			ifelse(strand == "+", start - 1, start),
-			ifelse(strand == "+", end, end + 1)
-		)
-	]
+  ## Prepare samples for analysis.
+  select_samples <- rbindlist(select_samples, idcol = "sample")
+  select_samples[, tss := start]
+  select_samples[,
+    c("start", "end") := list(
+      ifelse(strand == "+", start - 1, start),
+      ifelse(strand == "+", end, end + 1)
+    )
+  ]
 
-	## Get dinucleotides.
-	seqs <- select_samples %>%
-		makeGRangesFromDataFrame %>%
-		getSeq(fasta_assembly, .) %>%
-		as.data.table %>%
-		bind_cols(select_samples, .)
-	setnames(seqs, old = "x", new = "dinucleotide")
+  ## Get dinucleotides.
+  seqs <- select_samples %>%
+    makeGRangesFromDataFrame %>%
+    getSeq(fasta_assembly, .) %>%
+    as.data.table %>%
+    bind_cols(select_samples, .)
+  setnames(seqs, old = "x", new = "dinucleotide")
 
-	## Find dinucleotide frequencies.
-	groupings <- any(names(data_conditions) %in% c("quantile_by", "grouping"))
+  ## Find dinucleotide frequencies.
+  groupings <- any(names(data_conditions) %in% c("quantile_by", "grouping"))
 
-	if (!groupings) {
-		freqs <- seqs[,
-			.(count = .N), by = .(sample, dinucleotide)
-		][,
-			.(dinucleotide, count, freqs = count / sum(count)),
-			by = sample
-		]
-	} else {
-		freqs <- seqs[,
-			.(count = .N), by = .(sample, dinucleotide, grouping)
-		][,
-			.(dinucleotide, count, freqs = count / sum(count)),
-			by = .(sample, grouping)
-		]
-	}
+  if (!groupings) {
+    freqs <- seqs[,
+      .(count = .N), by = .(sample, dinucleotide)
+    ][,
+      .(dinucleotide, count, freqs = count / sum(count)),
+      by = sample
+    ]
+  } else {
+    freqs <- seqs[,
+      .(count = .N), by = .(sample, dinucleotide, grouping)
+    ][,
+      .(dinucleotide, count, freqs = count / sum(count)),
+      by = .(sample, grouping)
+    ]
+  }
 
-	## Order samples if required.
-	if (!all(samples == "all")) {
-		freqs[, sample := factor(sample, levels = samples)]
-	}
+  ## Order samples if required.
+  if (!all(samples == "all")) {
+    freqs[, sample := factor(sample, levels = samples)]
+  }
 
-	## Prepare DataFrame to return.
-	freqs_df <- DataFrame(freqs)
-	metadata(freqs_df)$groupings <- groupings
-	metadata(freqs_df)$threshold <- threshold
-	
-	return(freqs_df)
+  ## Prepare DataFrame to return.
+  freqs_df <- DataFrame(freqs)
+  metadata(freqs_df)$groupings <- groupings
+  metadata(freqs_df)$threshold <- threshold
+  
+  return(freqs_df)
 }
 
 #' Plot Dinucleotide Frequencies
@@ -183,64 +183,64 @@ dinucleotide_frequencies <- function(
 #' @export
 
 plot_dinucleotide_frequencies <- function(
-	dinucleotide_frequencies,
-	ncol = 1,
-	...
+  dinucleotide_frequencies,
+  ncol = 1,
+  ...
 ) {
 
-	## Check inputs.
-	if (!is(dinucleotide_frequencies, "DataFrame")) {
-		stop("dinucleotide_frequencies must be a DataFrame")
-	}
+  ## Check inputs.
+  if (!is(dinucleotide_frequencies, "DataFrame")) {
+    stop("dinucleotide_frequencies must be a DataFrame")
+  }
 
-	if (!is(ncol, "numeric") || ncol %% 1 != 0 || ncol < 1) {
-		stop("ncol must be a positive integer")
-	}
+  if (!is(ncol, "numeric") || ncol %% 1 != 0 || ncol < 1) {
+    stop("ncol must be a positive integer")
+  }
 
-	## Pull out some info from the dataframe.
-	groupings <- metadata(dinucleotide_frequencies)$groupings
+  ## Pull out some info from the dataframe.
+  groupings <- metadata(dinucleotide_frequencies)$groupings
 
-	## Convert dataframe to data.table.
-	freqs <- as.data.table(dinucleotide_frequencies)
-	
-	## Set factor order for dinucleotides.
-	if (!groupings) {
-		freqs <- freqs[,
-			.(sample, count, freqs, mean_freqs = mean(freqs)),
-			by = dinucleotide
-		]
-	} else {
-		freqs <- freqs[,
-			.(sample, count, freqs, grouping, mean_freqs = mean(freqs)),
-			by = dinucleotide
-		]
-	}
+  ## Convert dataframe to data.table.
+  freqs <- as.data.table(dinucleotide_frequencies)
+  
+  ## Set factor order for dinucleotides.
+  if (!groupings) {
+    freqs <- freqs[,
+      .(sample, count, freqs, mean_freqs = mean(freqs)),
+      by = dinucleotide
+    ]
+  } else {
+    freqs <- freqs[,
+      .(sample, count, freqs, grouping, mean_freqs = mean(freqs)),
+      by = dinucleotide
+    ]
+  }
 
-	freqs[,
-		rank := dense_rank(mean_freqs)
-	][,
-		dinucleotide := fct_reorder(factor(dinucleotide), rank)
-	][,
-		c("mean_freqs", "rank") := NULL
-	]
+  freqs[,
+    rank := dense_rank(mean_freqs)
+  ][,
+    dinucleotide := fct_reorder(factor(dinucleotide), rank)
+  ][,
+    c("mean_freqs", "rank") := NULL
+  ]
 
-	## Plot dinucleotide frequencies.
+  ## Plot dinucleotide frequencies.
 
-	p <- ggplot(freqs, aes(x = dinucleotide, y = freqs)) +
-		geom_col(width = 0.5, aes(fill = freqs), ...) +
-		theme_bw() +
-		scale_fill_viridis_c(name = "Frequency") +
-		coord_flip() +
-		labs(
-			x="Dinucleotide",
-			y="Frequency"
-		)
+  p <- ggplot(freqs, aes(x = .data$dinucleotide, y = .data$freqs)) +
+    geom_col(width = 0.5, aes(fill = freqs), ...) +
+    theme_bw() +
+    scale_fill_viridis_c(name = "Frequency") +
+    coord_flip() +
+    labs(
+      x="Dinucleotide",
+      y="Frequency"
+    )
 
-	if (groupings) {
-		p <- p + facet_wrap(grouping ~ sample)
-	} else {
-		p <- p + facet_wrap(~ sample, ncol = ncol)
-	}
+  if (groupings) {
+    p <- p + facet_wrap(grouping ~ sample)
+  } else {
+    p <- p + facet_wrap(~ sample, ncol = ncol)
+  }
 
-	return(p)
+  return(p)
 }
