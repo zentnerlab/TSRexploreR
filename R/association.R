@@ -100,6 +100,7 @@ merge_samples <- function(
 #'
 #' @importFrom purrr imap
 #' @importFrom IRanges findOverlapPairs
+#' @importFrom plyranges as_granges join_overlap_left_directed
 #'
 #' @param experiment tsrexplorer object
 #' @param use_sample_sheet Whether to use a sample sheet as a key for association of TSS and TSR samples
@@ -180,61 +181,28 @@ associate_with_tsr <- function(
     tss_set <- extract_counts(experiment, "tss", tss_names) %>%
       rbindlist(idcol = "sample")
     
-    tss_gr <- makeGRangesFromDataFrame(tss_set, keep.extra.columns = TRUE)
+    tss_gr <- as_granges(tss_set)
 
     # Make GRanges of TSRs.
     tsr_set <- extract_counts(experiment, "tsr", tsr_name) %>%
       rbindlist(idcol = "tsr_sample")
     
     tsr_gr <- tsr_set
-    setnames(tsr_gr, old = c("FID", "FHASH"), new = c("TSR_FID", "TSR_FHASH"))
-    tsr_gr <- tsr_gr[, .(seqnames, start, end, strand, TSR_FID, TSR_FHASH)]
-    tsr_gr <- makeGRangesFromDataFrame(tsr_gr, keep.extra.columns = TRUE)
-
-    # Associate TSSs with the TSR they overlap.
-    overlapping <- as.data.table(findOverlapPairs(tss_gr, tsr_gr))
     setnames(
-      overlapping,
-      old = c(
-        "first.X.seqnames", "first.X.start", "first.X.end",
-        "first.X.strand", "second.TSR_FID", "first.sample",
-        "second.X.TSR_FHASH"
-      ),
-      new = c("seqnames", "start", "end", "strand", "TSR_FID", "sample", "TSR_FHASH")
+      tsr_gr,
+      old = c("FID", "FHASH", "width", "score", "n_unique"),
+      new = c("TSR_FID", "TSR_FHASH", "tsr_width", "tsr_score", "tsr_n_unique")
     )
-    overlapping <- overlapping[, .(seqnames, start, end, strand, TSR_FID, TSR_FHASH, sample)]
+    tsr_gr <- as_granges(tsr_gr)
 
-    # Get the score and width for the TSRs.
-    tsr_clean <- copy(tsr_set)
-    tsr_clean[,
-      tsr_coords := str_c(seqnames, start, end, strand, sep = ":"),
-      by = seq_len(nrow(tsr_clean))
-    ]
-    setnames(
-      tsr_clean, old = c("score", "width"), new = c("tsr_score", "tsr_width")
-    )
-    tsr_clean[, c("seqnames", "start", "end", "strand") := NULL]
+    ## Associate TSSs with overlapping TSRs
+    overlapping <- tss_gr %>%
+      join_overlap_left_directed(tsr_gr) %>%
+      as.data.table %>%
+      split(by="sample", keep.by=FALSE)
 
-    # Merge TSR info back into TSSs.
-    key_ids <- c("sample", "seqnames", "start", "end", "strand")
-    setkeyv(overlapping, key_ids)
-    setkeyv(tss_set, key_ids)
-    tss_set <- merge(tss_set, overlapping, all.x = TRUE)
+    return(overlapping)
 
-    # Merge TSR widths and scores.
-    setkeyv(tsr_clean, c("TSR_FID", "TSR_FHASH"))
-    setkeyv(tss_set, c("TSR_FID", "TSR_FHASH"))
-    merged_set <- merge(tss_set, tsr_clean, all.x = TRUE)
-
-    merged_set <- merged_set %>%
-      split(.$sample) %>%
-      map(function(x) {
-        x <- x[order(FID)]
-        x[, sample := NULL]
-        x <- makeGRangesFromDataFrame(x, keep.extra.columns = TRUE)     
-        x <- as.data.table(x)
-        return(x)
-      })
   })
 
   ## Add TSSs back to the tsrexplorer object.
