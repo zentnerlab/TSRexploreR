@@ -6,7 +6,7 @@
 #'
 #' @include tsrexplorer.R
 #'
-#' @importFrom dplyr bind_cols
+#' @importFrom plyranges anchor_3p
 #'
 #' @param experiment tsrexplorer object with TSS GRanges
 #' @param samples Either 'all' to plot all samples or a vector of sample names
@@ -103,20 +103,19 @@ dinucleotide_frequencies <- function(
 
   ## Prepare samples for analysis.
   select_samples <- rbindlist(select_samples, idcol = "sample")
-  select_samples[, tss := start]
-  select_samples[,
-    c("start", "end") := list(
-      ifelse(strand == "+", start - 1, start),
-      ifelse(strand == "+", end, end + 1)
-    )
-  ]
+  select_samples <- select_samples[, .(seqnames, start, end, strand, sample)]
+
+  ## Extend ranges to capture base before TSS.
+  select_samples <- select_samples %>%
+    as_granges %>%
+    anchor_3p %>%
+    plyranges::mutate(width=2)
 
   ## Get dinucleotides.
   seqs <- select_samples %>%
-    makeGRangesFromDataFrame %>%
-    getSeq(fasta_assembly, .) %>%
+    {getSeq(fasta_assembly, .)} %>%
     as.data.table %>%
-    bind_cols(select_samples, .)
+    {cbind(as.data.table(select_samples), .)}
   setnames(seqs, old = "x", new = "dinucleotide")
 
   ## Find dinucleotide frequencies.
