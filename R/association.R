@@ -150,16 +150,13 @@ associate_with_tsr <- function(
 
   ## Check inputs.
   if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsrexplorer object")
-
   if (!is(use_sample_sheet, "logical")) stop("use_sample_sheet must be logical")
-
   if (
     (!use_sample_sheet && all(is.na(sample_list))) |
     (use_sample_sheet && all(!is.na(sample_list)))
   ) {
     stop("a sample list or sample sheet must be specified")
   }
-
   if (
     !use_sample_sheet && (!is(sample_list, "list") ||
     is.null(names(sample_list)))

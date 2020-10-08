@@ -51,25 +51,11 @@ annotate_features <- function(
 
   ## Check inputs.
   if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsrexplorer object")
-
   if (!is(annotation_data, "character") & !is(annotation_data, "TxDb")) {
     stop("annotation_data must be an annotation file or TxDb object")
   }
-  
-  if (!is(data_type, "character") || length(data_type) > 1) {
-    stop("data_type must be a character")
-  }
-  data_type <- str_to_lower(data_type)
-  if (!data_type %in% c("tss", "tsr")) stop("data_type must be 'tss' or 'tsr'")
-
-  if (!is(feature_type, "character") || length(feature_type) > 1) {
-    stop("feature_type must be 'gene' or 'transcript'")
-  }
-  feature_type <- str_to_lower(feature_type)
-  if (!feature_type %in% c("gene", "transcript")) {
-    stop("feature_type must be 'gene' or 'transcript'")
-  }
-
+  data_type <- match.arg(data_type, c("tss", "tsr")) 
+  feature_type <- match.arg(feature_type, c("gene", "transcript"))
   if (!is(upstream, "numeric") | !is(downstream, "numeric")) {
     stop("upstream and downstream must be positive integers")
   }

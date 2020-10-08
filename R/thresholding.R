@@ -47,14 +47,12 @@ explore_thresholds <- function(
 ) {
   ## Check inputs.
   if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsr explorer object")
-
   if (
     !is(max_threshold, "numeric") || length(max_threshold) > 1 ||
     max_threshold %% 1 != 0 || max_threshold < 5
   ) {
     stop("max_threshold must be a positive integer greater than or equal to 5")
   }
-
   if (!is(samples, "character")) stop("samples must be a character vector")
 
   ## Get settings information.
@@ -142,15 +140,18 @@ explore_thresholds <- function(
 #' @rdname plot_threshold_exploration-function
 #' @export
 
-plot_threshold_exploration <- function(threshold_data, ncol = 1, point_size = 1, ...) {
+plot_threshold_exploration <- function(
+  threshold_data,
+  ncol = 1,
+  point_size = 1,
+  ...
+) {
 
   ## Check inputs.
   if (!is(threshold_data, "data.frame")) stop("threshold_data must be a data.frame")
-  
   if (!is(ncol, "numeric") || ncol %% 1 != 0 || ncol < 1) {
     stop("ncol must be a positive integer")
   }
-
   if (!is(point_size, "numeric") || !point_size > 0) {
     stop("point_size must be a positive number")
   }

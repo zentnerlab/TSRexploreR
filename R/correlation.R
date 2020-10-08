@@ -132,35 +132,11 @@ plot_correlation <- function(
 
   ## Check inputs.
   if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsrexplorer object")
-
-  if (!is(data_type, "character") || length(data_type) > 1) {
-    stop("data_type must be a character")
-  }
-  data_type <- str_to_lower(data_type)
-  if (!data_type %in% c("tss", "tsr", "tss_features", "tsr_features")) {
-    stop("data_type must be 'tss', 'tsr', 'tss_features', or 'tsr_features'")
-  }
-
+  data_type <- match.arg(data_type, c("tss", "tsr", "tss_features", "tsr_features"))
   if (!is(samples, "character")) stop("samples must be a character vector")
-
-  if (!is(correlation_plot, "character") || length(correlation_plot) > 1) {
-    stop("correlation_plot must be 'heatmap', 'scatter', 'combined' or 'hierarchical'")
-  }
-  correlation_plot <- str_to_lower(correlation_plot)
-  if (!correlation_plot %in% c("heatmap", "scatter", "combined", "hierarchical")) {
-    stop("correlation_plot must be 'heatmap', 'scatter', 'combined' or 'hierarchical'")
-  }
-
-  if (!is(correlation_metric, "character") || length(correlation_metric) > 1) {
-    stop("correlation_metric must be 'pearson' or 'spearman'")
-  }
-  correlation_metric <- str_to_lower(correlation_metric)
-  if (!correlation_metric %in% c("pearson", "spearman")) {
-    stop("correlation_metric must be 'pearson' or 'spearman'")
-  }
-
+  correlation_plot <- match.arg(correlation_plot, c("heatmap", "scatter", "combined", "hierarchical"))
+  correlation_metric <- match.arg(correlation_metric, c("pearson", "spearman"))
   if (!is(log2_transform, "logical")) stop("log2_transform must be logical")
-
   if(!is(font_size, "numeric") | !is(pt_size, "numeric")) {
     stop("font_size and pt_size must be positive numbers")
   }
@@ -174,8 +150,10 @@ plot_correlation <- function(
   sample_names <- colnames(normalized_counts)
 
   ## Define default color palette.
-  color_palette <- c(
-    "tss" = "#431352", "tsr" = "#34698c",
+  color_palette <- switch(
+    data_type,
+    "tss" = "#431352",
+    "tsr" = "#34698c",
     "tss_features" = "#29AF7FFF",
     "tsr_features" = "#29AF7FFF"
   )
@@ -189,7 +167,7 @@ plot_correlation <- function(
   # Create custom scatter plot format.
   custom_scatter <- function(data, mapping) {
     ggplot(data = data, mapping = mapping) +
-      geom_point(size = pt_size, color = color_palette[data_type], stroke = 0) +
+      geom_point(size = pt_size, color = color_palette, stroke = 0) +
       geom_abline(intercept = 0, slope = 1, lty = 2)
   }
 

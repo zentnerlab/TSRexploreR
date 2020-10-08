@@ -34,13 +34,7 @@ format_counts <- function(
 
   ## Check inputs.
   if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsr explorer object")
-
-  if (!is(data_type, "character") || length(data_type) > 1) {
-    stop("data_type must be a 'tss' or 'tsr'")
-  }
-  data_type <- str_to_lower(data_type)
-  if (!data_type %in% c("tss", "tsr")) stop("data_type must be 'tss' or 'tsr'")
-  
+  data_type <- match.arg(str_to_lower(data_type), c("tss", "tsr"))
   if (!is(samples, "character")) stop("samples must be a character vector")
 
   ## Get selected samples and generate raw count matrices.
@@ -121,12 +115,7 @@ count_features <- function(
 
   ## Check inputs.
   if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsr explorer object")
-
-  if (!is(data_type, "character") || length(data_type) > 1) {
-    stop("data_type must be either 'tss' or 'tsr'")
-  }
-  data_type <- str_to_lower(data_type)
-  if (!data_type %in% c("tss", "tsr")) stop("data_type must be either 'tss' or 'tsr'")  
+  data_type <- match.arg(str_to_lower(data_type), c("tss", "tsr"))
   
   ## Get information on whether annotation was by gene or transcript.
   anno_type <- ifelse(
@@ -216,15 +205,7 @@ count_matrix <- function(
 ) {
   ## Check inputs.
   if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsr explorer object")
-  
-  if (!is(data_type, "character") || length(data_type) > 1) {
-    stop("data_type must be a character")
-  }
-  data_type <- str_to_lower(data_type)
-  if (!data_type %in% c("tss", "tsr", "tss_features", "tsr_features")) {
-    stop("data_type must be either 'tss', 'tsr', 'tss_features', or 'tsr_features'")
-  }
-
+  data_type <- match.arg(str_to_lower(data_type), c("tss", "tsr", "tss_features", "tsr_features")) 
   if (!is(samples, "character")) stop("samples must be a character vector")
 
   ## Extract counts.

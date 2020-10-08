@@ -72,9 +72,7 @@ tss_heatmap_matrix <- function(
 
   ## Check inputs.
   if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsr explorer object")
-
   if (!is(samples, "character")) stop("samples must be a character vector")
-
   if (!is(upstream, "numeric") | !is(downstream, "numeric")) {
     stop("upstream and downstream must be positive integers")
   }
@@ -82,18 +80,15 @@ tss_heatmap_matrix <- function(
     stop("upstream and downstream must be positive integers")
   }
   if (upstream < 0 | downstream < 0) stop("upstream and downstream must be positive integers")
-
   if (
     !is.na(threshold) && (!is(threshold, "numeric") ||
     threshold %% 1 != 0 || threshold < 1)
   ) {
     stop("threshold must be a positive integer")
   }
-
   if (!is(use_cpm, "logical") | !is(dominant, "logical")) {
     stop("use_cpm and/or dominant must be logical")
   }
-
   if (all(!is.na(data_conditions)) && !is(data_conditions, "list")) {
     stop("data_conditions must be a list of values")
   }
@@ -205,7 +200,6 @@ plot_heatmap <- function(
 
   ## Check inputs.
   if (!is(heatmap_matrix, "DataFrame")) stop("heatmap_matrix must be a DataFrame")
-
   if (!is(max_value, "numeric") | !is(ncol, "numeric")) {
     stop("max_value and/or ncol must be positive integers")
   }
@@ -213,7 +207,6 @@ plot_heatmap <- function(
   if (max_value %% 1 != 0 | ncol %% 1 != 0) {
     stop("max_value and/or ncol must be positive integers")
   }
-
   if (!is(background_color, "character") | !is(low_color, "character") | !is(high_color, "character")) {
     stop("background_color, low_color, and high_color must be characters")
   }
@@ -298,9 +291,7 @@ tsr_heatmap_matrix <- function(
 
   ## Check inputs.
   if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsrexplorer object")
-
   if (!is(samples, "character")) stop("samples must be a character")
-
   if (!is(upstream, "numeric") | !is(downstream, "numeric")) {
     stop("upstream and downstream must be positive integers")
   }
@@ -308,18 +299,14 @@ tsr_heatmap_matrix <- function(
     stop("upstream and downstream must be positive integers")
   }
   if (upstream < 0 | downstream < 0) stop("upstream and downstream must be positive integers")
-
   if (
     !is.na(threshold) && (!is(threshold, "numeric") ||
     threshold %% 1 != 0 || threshold < 1)
   ) {
     stop("threshold must be a positive integer")
   }
-
   if (!is(dominant, "logical")) stop("dominant must be TRUE or FALSE")
-
   if (!is(use_cpm, "logical")) stop("use_cpm must be TRUE or FALSE")
-
   if (all(!is.na(data_conditions)) && !is(data_conditions, "list")) stop("data_conditions must in list form")
   
   ## Get requested samples.

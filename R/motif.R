@@ -67,9 +67,7 @@ tss_sequences <- function(
 
   ## Check inputs.
   if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsrexplorer object")
-
   if (!is(samples, "character")) stop("samples must be a character")
-
   if (!is(genome_assembly, "character") & !is(genome_assembly, "BSgenome")) {
     stop("genome assembly must be a fasta file or BSgenome package")
   }
@@ -79,7 +77,6 @@ tss_sequences <- function(
       stop("genome_assembly file extension must be '.fa' or '.fasta'")
     }
   }
-
   if (!is(threshold, "numeric") | !is(distance, "numeric")) {
     stop("threshold and/or distance must be positive integers")
   }
@@ -89,9 +86,7 @@ tss_sequences <- function(
   if (threshold < 1 | distance < 1) {
     stop("threshold and/or distance must be positive integers")
   }
-
   if (!is(dominant, "logical")) stop("dominant must be logical")
-
   if (all(!is.na(data_conditions)) && !is(data_conditions, "list")) {
     stop("data_conditions must be a list of values")
   }
@@ -199,11 +194,9 @@ plot_sequence_logo <- function(
 
   ## Check inputs.
   if (!is(tss_sequences, "DataFrame")) stop("tss_sequences must be a DataFrame")
-
   if (!is(ncol, "numeric") || ncol %% 1 != 0 || ncol < 1) {
     stop("ncol must be a positive integer")
   }
-
   if (!is(font_size, "numeric") || !font_size > 0) {
     stop("font_size must be a positive number")
   }
@@ -315,15 +308,12 @@ plot_sequence_colormap <- function(
 ) {
   ## Check inputs.
   if (!is(tss_sequences, "DataFrame")) stop("tss_sequences must be a DataFrame")
-
-        if (!is(ncol, "numeric") || ncol %% 1 != 0 || ncol < 1) {
+  if (!is(ncol, "numeric") || ncol %% 1 != 0 || ncol < 1) {
     stop("ncol must be a positive integer")
   }
-
-        if (!is(text_size, "numeric") || !text_size > 0) {
+  if (!is(text_size, "numeric") || !text_size > 0) {
     stop("font_size must be a positive number")
   }
-
   if (
     !is(base_colors, "character") || length(base_colors) < 4 ||
     is.null(names(base_colors)) ||

@@ -59,26 +59,15 @@ detect_features <- function(
 
   ## Check inputs.
   if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsr explorer object")
-
   if (!is(samples, "character")) stop("samples must be a character vecotor")
-
-  if (!is(data_type, "character") || length(data_type) > 1) {
-    stop("data_type must be either 'tss', 'tsr', 'tss_features', or 'tsr_features'")
-  }
-  data_type <- str_to_lower(data_type)
-  if (!data_type %in% c("tss", "tsr", "tss_features", "tsr_features")) {
-    stop("data_type must be 'tss', 'tsr', 'tss_features', or 'tsr_features'")
-  }
-
+  data_type <- match.arg(str_to_lower(data_type), c("tss", "tsr", "tss_features", "tsr_features"))
   if (
     !is.na(threshold) && (!is(threshold, "numeric") ||
     threshold %% 1 != 0 || threshold < 1)
   ) {
     stop("threshold must be a positive integer greater than or equal to 1")
   }
-
   if (!is(dominant, "logical")) stop("dominant must be logical")
-
   if (all(!is.na(condition_data)) && !is(condition_data, "list")) {
     stop("condition_data must be a list of values")
   }

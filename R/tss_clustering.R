@@ -37,16 +37,13 @@ tss_clustering <- function(
 
   ## Check inputs.
   if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsrexplorer object")
-
   if (!is(samples, "character")) stop("samples must be a character")
-
   if (
     !is.na(threshold) && (!is(threshold, "numeric") ||
     threshold %% 1 != 0 || threshold < 1)
   ) {
     stop("threshold must be a positive integer")
   }
-
   if (
     !is(max_distance, "numeric") || max_distance %% 1 != 0 ||
     max_distance < 5

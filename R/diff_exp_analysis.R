@@ -31,23 +31,9 @@ plot_de_validation <- function(
 
   ## Input checks.
   if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsr explorer object")
-
-  if (!is(data_type, "character") || length(data_type) > 1) {
-    stop("data_type must be a character")
-  }
-  data_type <- str_to_lower(data_type)
-  if (!data_type %in% c("tss", "tsr", "tss_features", "tsr_features")) {
-    stop("data_type must be 'tss', 'tsr', 'tss_features', or 'tsr_features'")
-  }
-
+  data_type <- match.arg(str_to_lower(data_type), c("tss", "tsr", "tss_features", "tsr_features"))
   if (!is(de_comparisons, "character")) stop("de_comparisons must be 'all' or character vector")
-
-  if (!is(plot_type, "character") || length(plot_type ) > 1) {
-    stop("plot_type must be 'ma' or 'volcano'")
-  }
-  plot_type <- str_to_lower(plot_type)
-  if (!plot_type %in% c("ma", "volcano")) stop("plot_type must be 'ma' or 'volcano'")
-
+  plot_type <- match.arg(str_to_lower(plot_type), c("ma", "volcano"))
   if (!is(ncol, "numeric") || ncol %% 1 != 0 || ncol < 1) {
     stop("ncol must be a positive integer")
   }
@@ -143,9 +129,9 @@ plot_num_de <- function(
   de_comparisons = "all",
   ...
 ) {
+
   ## Input checks.
   if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsr explorer object")
-
   if (!is(data_type, "character") || length(data_type) > 1) {
     stop("data_type must be a character")
   }
@@ -153,9 +139,7 @@ plot_num_de <- function(
   if (!data_type %in% c("tss", "tsr", "tss_features", "tsr_features")) {
     stop("data_type must be 'tss', 'tsr', 'tss_features', or 'tsr_features'")
   }
-
   if (!is(de_comparisons, "character")) stop("de_comparisons must be 'all' or character vector")
-
 
   ## Get appropriate samples.
   de_samples <- extract_de(experiment, data_type, de_comparisons)

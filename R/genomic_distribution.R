@@ -58,26 +58,15 @@ genomic_distribution <- function(
 
   ## Check inputs.
   if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsrexplorer object")
-
-  if (!is(data_type, "character") || length(data_type) > 1) {
-    stop("data_type must be either 'tss' or 'tsr'")
-  }
-  data_type <- str_to_lower(data_type)
-  if (!data_type %in% c("tss", "tsr")) {
-    stop("data_type must be either 'tss' or 'tsr'")
-  }
-
+  data_type <- match.arg(str_to_lower(data_type), c("tss", "tsr"))
   if (!is(samples, "character")) stop("samples must be a character")
-
   if (
     !is.na(threshold) && (!is(threshold, "numeric") ||
     threshold %% 1 != 0 || threshold < 1)
   ) {
     stop("threshold must be a positive integer")
   }
-    
   if (!is.logical(dominant)) stop("dominant must be logical")
-
   if (all(!is.na(data_conditions)) && !is(data_conditions, "list")) stop("data_conditions must in list form")
 
   ## Extract samples.

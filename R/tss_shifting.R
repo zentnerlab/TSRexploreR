@@ -22,25 +22,21 @@ tss_shift <- function(
 
   ## Input checks.
   if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsr explorer object")
-
   if (!is(compare_samples, "character") || length(compare_samples) != 2) {
     stop("compare_samples must be a character vector with the names of the two TSR samples to compare")
   }
-
   if (
     !is(min_distance, "numeric") || length(min_distance) > 1 ||
     min_distance %% 1 != 0 || min_distance < 0
   ) {
     stop("min_distance must be 0 or a positive integer")
   }
-
   if (
     !is(min_threshold, "numeric") || length(min_threshold) > 1 ||
     min_threshold %% 1 != 0 || min_threshold < 1
   ) {
     stop("min_threshold must be a positive integer")
   }
-
   if (!is(n_resamples, "integer") || length(n_resamples) > 1 || n_resamples < 100) {
     stop("n_resamples must be a positive integer greater than or equal to 100")
   }

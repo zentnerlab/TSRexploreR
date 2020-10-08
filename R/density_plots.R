@@ -81,20 +81,11 @@ plot_density <- function(
 
   ## Check inputs.
   if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsrexplorer object")
-
-  if (!is(data_type, "character")) stop("data_type must be a character")
-  if (length(data_type) > 1) stop("data_type must be a character")
-  data_type <- str_to_lower(data_type)
-  if (!data_type %in% c("tss", "tsr")) {
-    stop("data_type must be either 'tss' or 'tsr'")
-  }
-
+  data_type <- match.arg(str_to_lower(data_type), c("tss", "tsr"))
   if (!is(samples, "character")) stop("samples must be a character")
-
   if (!is(consider_score, "logical") | !is(use_cpm, "logical") | !is(dominant, "logical")) {
     stop("consider_score, use_cpm, and/or dominant must be logical")
   }
-
   if (!is(upstream, "numeric") | !is(downstream, "numeric")) {
     stop("upstream and downstream must be positive integers")
   }
@@ -102,18 +93,15 @@ plot_density <- function(
     stop("upstream and downstream must be positive integers")
   }
   if (upstream < 0 | downstream < 0) stop("upstream and downstream must be positive integers")
-
   if (
     !is.na(threshold) && (!is(threshold, "numeric") ||
     threshold %% 1 != 0 || threshold < 1)
   ) {
     stop("threshold must be a positive integer")
   }
-
   if (!is(ncol, "numeric") || ncol %% 1 != 0 || ncol < 1) {
     stop("ncol must be a positive integer")
   }
-
   if (all(!is.na(data_conditions)) && !is(data_conditions, "list")) {
     stop("data_conditions should be a list of values")
   }

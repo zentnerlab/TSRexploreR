@@ -37,36 +37,21 @@ plot_tsr_metric <- function(
 
   ## Input checks.
   if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsrexplorer object")
-
   if (!is(tsr_metrics, "character")) stop("tsr_metrics must be a character vector")
-
-  if (!is(plot_type, "character") || length(plot_type) > 1) {
-    stop("plot_type must be 'violin', 'jitter', 'box', or 'boxjitter'")
-  }
-  plot_type <- str_to_lower(plot_type)
-  if (!plot_type %in% c("violin", "jitter", "box", "boxjitter")) {
-    stop("plot_type must be 'violin', 'jitter', 'box', or 'boxjitter'")
-  }
-
+  plot_type <- match.arg(str_to_lower(plot_type), c("violin", "jitter", "box", "boxjitter"))
   if (!is(samples, "character")) stop("samples must be a character")
-
   if (!is(log2_transform, "logical")) stop("log2_transform must be TRUE or FALSE")
-
   if (!is(ncol, "numeric") || ncol %% 1 != 0 || ncol < 1) {
     stop("ncol must be a positive integer")
   }
-
   if (!is(use_cpm, "logical")) stop("use_cpm must be TRUE or FALSE")
-
   if (!is(dominant, "logical")) stop("dominant must be TRUE or FALSE")
-
   if (
     !is.na(threshold) && (!is(threshold, "numeric") ||
     threshold %% 1 != 0 || threshold < 1)
   ) {
     stop("threshold must be a positive integer")
   }
-
   if (all(!is.na(data_conditions)) && !is(data_conditions, "list")) stop("data_conditions must in list form")
 
   ## Get data.

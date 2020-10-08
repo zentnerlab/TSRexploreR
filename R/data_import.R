@@ -59,9 +59,7 @@ setMethod("tss_import", signature = signature(object = "character"),
 
     ## Check inputs.
     if (!is(tsrexplorer_obj, "tsr_explorer")) stop("tsrexplorer_obj must be a tsr explorer object")
-
     if (!is(sep, "character") || length(sep) > 1) stop("sep must be a character")
-
     if (!is(col_names, "logical") || length(col_names) > 1) stop("col_names must be TRUE or FALSE")
   
     ## Check to see if sample sheet exists.

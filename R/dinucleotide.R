@@ -59,7 +59,6 @@ dinucleotide_frequencies <- function(
 
   ## Check inputs.
   if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsrexplorer object")
-
   if (!is(genome_assembly, "character") & !is(genome_assembly, "BSgenome")) {
     stop("genome assembly must be a fasta file or BSgenome package")
   }
@@ -69,18 +68,14 @@ dinucleotide_frequencies <- function(
       stop("genome_assembly file extension must be '.fa' or '.fasta'")
     }
   }
-
   if (!is(samples, "character")) stop("samples must be a character")
-
   if (
     !is.na(threshold) && (!is(threshold, "numeric") ||
     threshold %% 1 != 0 || threshold < 1)
   ) {
     stop("threshold must be a positive integer")
   }
-
   if (!is(dominant, "logical")) stop("dominant must be logical")
-
   if (all(!is.na(data_conditions)) && !is(data_conditions, "list")) {
     stop("data_conditions must be a list of values")
   }
@@ -189,7 +184,6 @@ plot_dinucleotide_frequencies <- function(
   if (!is(dinucleotide_frequencies, "DataFrame")) {
     stop("dinucleotide_frequencies must be a DataFrame")
   }
-
   if (!is(ncol, "numeric") || ncol %% 1 != 0 || ncol < 1) {
     stop("ncol must be a positive integer")
   }
