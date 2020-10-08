@@ -106,7 +106,7 @@ tss_heatmap_matrix <- function(
         
   annotated_tss <- annotated_tss %>%
     map(function(x) {
-      x <- x[dplyr::between(distanceToTSS, -upstream, downstream)]
+      x <- x[distanceToTSS >= -upstream & distanceToTSS <= downstream]
       return(x)
     })
 
@@ -138,8 +138,10 @@ tss_heatmap_matrix <- function(
     annotated_tss[, sample := factor(sample, levels = samples)]
   }
 
+
   ## Return a DataFrame
-  tss_df <- DataFrame(annotated_tss)
+  tss_df <- annotated_tss[, .(sample, distanceToTSS, score, feature)]
+  tss_df <- DataFrame(tss_df)
   metadata(tss_df)$threshold <- threshold
   metadata(tss_df)$groupings <- groupings
   metadata(tss_df)$use_cpm <- use_cpm
@@ -227,7 +229,7 @@ plot_heatmap <- function(
 
   ## Plot heatmap.
   p <- ggplot(heatmap_mat, aes(x = .data$distanceToTSS, y = .data$feature, fill = log2(.data$score))) +
-    geom_tile() +
+    geom_raster() +
     geom_vline(xintercept = upstream, color = "black", linetype = "dashed", size = 0.1) +
     theme_minimal() +
     scale_x_discrete(
@@ -380,7 +382,8 @@ tsr_heatmap_matrix <- function(
   }
 
   ## Return DataFrame
-  tsr_df <- DataFrame(annotated_tsr)
+  tsr_df <- annotated_tsr[, .(sample, distanceToTSS, score, feature)]
+  tsr_df <- DataFrame(tsr_df)
   metadata(tsr_df)$threshold <- threshold
   metadata(tsr_df)$groupings <- any(names(data_conditions) == "grouping")
   metadata(tsr_df)$use_cpm <- use_cpm

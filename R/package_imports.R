@@ -14,19 +14,20 @@ NULL
 #'   facet_grid facet_wrap
 #'   scale_fill_viridis_c scale_fill_viridis_d
 #'   scale_color_viridis_c scale_color_viridis_d
-#'   scale_fill_continuous scale_fill_manual scale_color_manual scale_x_continuous
+#'   scale_fill_continuous scale_fill_manual scale_color_manual
+#'   scale_x_continuous scale_x_discrete
 #'   theme_bw theme_minimal
 #'   theme element_text element_blank unit element_rect
 #'   geom_density geom_point geom_col geom_vline geom_tile geom_line
-#'   geom_violin geom_boxplot geom_jitter
+#'   geom_violin geom_boxplot geom_jitter geom_raster
 #' @importFrom rlang .data
 #' @importFrom forcats fct_rev fct_inorder fct_reorder
 #' @importFrom dplyr pull
 
 NULL
 
-#' @importFrom rtracklayer import
-#' @importFrom GenomicRanges GRanges makeGRangesFromDataFrame
+#' @importFrom rtracklayer import export
+#' @importFrom GenomicRanges GRanges
 #' @importFrom GenomicFeatures makeTxDbFromGFF
 #' @importFrom plyranges as_granges join_overlap_left_directed anchor_3p
 #' @importFrom Biostrings DNAStringSet getSeq
