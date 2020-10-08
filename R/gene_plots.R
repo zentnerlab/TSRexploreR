@@ -4,8 +4,6 @@
 #' @description
 #' Get the number of genes or transcripts with an associated unique TSS or TSR
 #'
-#' @importFrom purrr walk
-#'
 #' @param experiment tsrexplorer object with annotated TSSs or TSRs
 #' @param samples Either 'all' or a vector of sample names
 #' @param data_type Whether TSSs or TSRs should be analyzed

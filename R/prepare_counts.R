@@ -4,9 +4,6 @@
 #' @description
 #' Format TSS or TSR counts for further analysis. 
 #'
-#' @import data.table
-#' @importFrom stringr str_c str_to_lower
-#'
 #' @param experiment tsrexplorer object
 #' @param data_type Whether to format TSS or TSR counts 
 #' @param samples Character vector of sample names
@@ -88,8 +85,6 @@ format_counts <- function(
 #'
 #' Count the number of reads associated with genes or transcripts
 #'   based on the aggregate score of TSSs or TSRs annotated to them.
-#'
-#' @importFrom purrr discard
 #'
 #' @param experiment tsrexplorer object
 #' @param data_type Either 'tss' or 'tsr'
@@ -186,9 +181,6 @@ count_features <- function(
 #' Count Matrix
 #'
 #' Generate count matrices for correlation analysis.
-#'
-#' @importFrom S4Vectors DataFrame
-#' @importFrom SummarizedExperiment SummarizedExperiment
 #'
 #' @param experiment tsrexplorer object
 #' @param data_type Either 'tss', 'tsr', 'tss_features', or 'tsr_features'

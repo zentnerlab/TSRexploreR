@@ -3,8 +3,6 @@
 #'
 #' Helper function to add RNA-seq and 5' feature count data to tsrexplorer object.
 #'
-#' @import tibble
-#'
 #' @param experiment tsrexplorer object
 #' @param rnaseq_feature_counts Raw counts in count matrix form from RNA-seq data
 #' @param five_prime_feature_counts Raw counts in count matrix form from 5' sequencing data

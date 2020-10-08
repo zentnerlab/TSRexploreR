@@ -66,14 +66,14 @@ plot_de_validation <- function(
 
   ## MA plot of differential expression.
   if (plot_type == "ma") {
-    p <- ggplot(de_samples, aes(x = logCPM, y = log2FC, color = DE)) +
+    p <- ggplot(de_samples, aes(x = .data$logCPM, y = .data$log2FC, color = .data$DE)) +
       geom_point(...) +
       theme_bw() +
       scale_color_viridis_d() +
       facet_wrap(~ sample, ncol = ncol, scales = "free")
   ## Volcano plot of differential expression.
   } else if (plot_type == "volcano") {
-    p <- ggplot(de_samples, aes(x = log2FC, y = -log10(FDR))) +
+    p <- ggplot(de_samples, aes(x = .data$log2FC, y = -log10(.data$FDR))) +
       geom_point(...) +
       theme_bw() +
       scale_color_viridis_d() +
@@ -87,8 +87,6 @@ plot_de_validation <- function(
 #'
 #' Export DEGs for use in clusterProfiler term enrichment.
 #'
-#' @import tibble
-#' 
 #' @param experiment tsrexplorer object
 #' @param data_type Either 'tss', 'tsr', 'tss_features', or 'tsr_features'
 #' @param de_comparisons The DE comparisons to plot

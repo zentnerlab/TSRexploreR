@@ -4,8 +4,6 @@
 #' @description
 #' Get genomic distribution of TSSs and TSRs
 #'
-#' @importFrom S4Vectors "metadata<-" metadata
-#'
 #' @param experiment tsrexplorer object with annotated TSRs
 #' @param samples Either "all" or a vector of sample names
 #' @param data_type Whether to get distribution of TSSs or TSRs
@@ -142,10 +140,6 @@ genomic_distribution <- function(
 #' Plot Genomic Distribution
 #'
 #' Plot genomic distribution of TSSs or TSRs.
-#'
-#' @import tibble
-#' @import ggplot2
-#' @importFrom forcats fct_rev
 #'
 #' @param genomic_distribution Dataframe of TSS or TSR genomic distributions from tsr_genomic_distribution
 #'

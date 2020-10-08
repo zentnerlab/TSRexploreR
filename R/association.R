@@ -98,9 +98,7 @@ merge_samples <- function(
 #' @description
 #' Associate TSSs with TSRs
 #'
-#' @importFrom purrr imap
-#' @importFrom IRanges findOverlapPairs
-#' @importFrom plyranges as_granges join_overlap_left_directed
+#' @importFrom plyranges join_overlap_left_directed
 #'
 #' @param experiment tsrexplorer object
 #' @param use_sample_sheet Whether to use a sample sheet as a key for association of TSS and TSR samples

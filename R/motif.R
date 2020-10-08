@@ -8,7 +8,6 @@
 #'
 #' @importFrom tools file_ext
 #' @importFrom Rsamtools FaFile
-#' @importFrom Biostrings getSeq DNAStringSet
 #'
 #' @param experiment tsrexplorer object with TSS GRanges
 #' @param samples Either "all" or a vector of names of samples to analyze
@@ -256,16 +255,6 @@ plot_sequence_logo <- function(
 #' Plot Sequence Colormap
 #'
 #' Make a sequence colormap for the sequences around TSSs.
-#'
-#' @import tibble
-#' @import ggplot2
-#' @importFrom dplyr bind_rows rename pull bind_cols mutate group_by ungroup desc
-#' @importFrom purrr map
-#' @importFrom stringr str_split
-#' @importFrom tidyr separate gather
-#' @importFrom forcats fct_reorder fct_rev
-#' @importFrom Biostrings DNAStringSet
-#' @importFrom BiocGenerics width
 #'
 #' @param tss_sequences Sequences surrounding TSS generated with tss_sequences
 #' @param ncol Number of columns to plot data if quantiles not specified

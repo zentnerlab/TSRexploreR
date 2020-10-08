@@ -112,8 +112,6 @@ explore_thresholds <- function(
 #'
 #' Make a plot to explore threshold values.
 #'
-#' @import ggplot2
-#'
 #' @param threshold_data Tibble of threshold exploration data from explore_thresholds
 #' @param ncol Number of columns in which to plot data
 #' @param point_size The size of the points on the plot

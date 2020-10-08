@@ -7,8 +7,6 @@
 #' @include tsrexplorer.R
 #' @include annotate.R
 #'
-#' @importFrom forcats fct_reorder
-#'
 #' @param experiment tsrexplorer object with annotated TSSs
 #' @param samples Either 'all' or a vector of sample names to analyze
 #' @param upstream Bases upstream of plot center
@@ -270,15 +268,6 @@ plot_heatmap <- function(
 #' @include tsrexplorer.R
 #' @include annotate.R
 #'
-#' @import tibble
-#' @import data.table
-#' @importFrom SummarizedExperiment SummarizedExperiment rowRanges assay
-#' @importFrom S4Vectors DataFrame "metadata<-"
-#' @importFrom dplyr bind_rows rename select mutate case_when group_by summarize ungroup filter left_join
-#' @importFrom magrittr %>% extract
-#' @importFrom tidyr complete
-#' @importFrom purrr pmap
-#' 
 #' @param experiment tsrexplorer object with annotated TSRs
 #' @param samples Either 'all' or a vector of names of samples to analyze
 #' @param upstream Bases upstream to consider

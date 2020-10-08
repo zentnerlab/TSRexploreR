@@ -3,12 +3,6 @@
 #'
 #' Plot selected TSR metrics.
 #'
-#' @import tibble
-#' @import ggplot2
-#' @importFrom dplyr mutate_at select select_at bind_rows vars mutate
-#' @importFrom tidyr gather
-#' @importFrom forcats fct_inorder
-#'
 #' @param experiment tsrexplorer object with TSR GRanges
 #' @param tsr_metrics Names of metrics in tsrexplorer TSR GRanges to plot
 #' @param plot_type Output either a 'violin', 'jitter', 'box', or 'boxjitter' plot (default: violin)

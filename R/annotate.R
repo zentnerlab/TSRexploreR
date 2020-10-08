@@ -5,11 +5,7 @@
 #' Use the ChIPseeker package to annotate TSSs or TSRs relative to known genes or transcripts.
 #'
 #' @import tibble
-#' @importFrom magrittr %>%
 #' @importFrom ChIPseeker annotatePeak
-#' @importFrom GenomicFeatures makeTxDbFromGFF
-#' @importFrom GenomicRanges GRanges makeGRangesFromDataFrame
-#' @importFrom stringr str_detect
 #'
 #' @param experiment tsrexplorer object with TSS GRanges
 #' @param annotation_data Path to annotation file or loaded TxDb object
@@ -101,7 +97,7 @@ annotate_features <- function(
   
   counts_annotated <- counts %>%
     map(function(x) {
-      x <- makeGRangesFromDataFrame(x, keep.extra.columns = TRUE)
+      x <- as_granges(x, keep.extra.columns = TRUE)
 
       annotated <- x %>%
         annotatePeak(

@@ -6,7 +6,6 @@
 #'
 #' @import Gviz
 #' @importFrom stringr str_count
-#' @importFrom purrr walk
 #' @importFrom GenomicFeatures genes transcripts promoters
 #'
 #' @param experiment tsrexplorer object

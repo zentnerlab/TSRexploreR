@@ -3,12 +3,6 @@
 #'
 #' Calculate a correlation matrix to assess between-sample concordance of TSSs or TSRs
 #'
-#' @import tibble
-#' @importFrom purrr discard
-#' @importFrom SummarizedExperiment SummarizedExperiment assay
-#' @importFrom dplyr select_at vars
-#' @importFrom tidyr gather
-#'
 #' @param experiment tsrexplorer object with TMM-normalized counts
 #' @param data_type Whether to make scatter plots from TSS, TSR, or RNA-seq & 5' data
 #' @param samples Either 'all' or the names of the samples to plot
@@ -47,7 +41,7 @@ find_correlation <- function(
     .[, samples] %>%
     cor(method = correlation_metric) %>%
     as_tibble(.name_repair = "unique", rownames = "sample_1") %>%
-    gather(-sample_1, key = "sample_2", value = "cor")
+    pivot_longer(!sample_1, "sample_2", "cor")
 
   ## Place correlation values into proper slot.
   if (data_type == "tss") {
@@ -65,14 +59,11 @@ find_correlation <- function(
 #'
 #' Heatmaps and/or scatter plots to explore replicate concordance of TSSs or TSRs.
 #'
-#' @import tibble
-#' @importFrom tidyr gather
 #' @importFrom GGally ggpairs
 #' @importFrom ComplexHeatmap Heatmap
 #' @importFrom circlize colorRamp2 
 #' @importFrom viridis viridis
 #' @importFrom grid gpar
-#' @importFrom stringr str_replace
 #'
 #' @param experiment tsrexplorer object with TMM normalized counts
 #' @param data_type Whether to make scatter plots from TSS, TSR, or RNA-seq & 5' data
@@ -210,7 +201,7 @@ plot_correlation <- function(
     correlation <- cor(sample_1, sample_2, method = correlation_metric) %>%
       round(3) %>%
       as_tibble(name_repair = "unique", rownames = "sample_1") %>%
-      gather(key = "sample_2", value = "correlation", -sample_1)
+      pivot_longer(!sample_1, "sample_2", "correlation")
 
     ggplot(correlation, aes(x = sample_1, y = sample_2)) +
       geom_tile(color = "white", aes(fill = correlation)) +

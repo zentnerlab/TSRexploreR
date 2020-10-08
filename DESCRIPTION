@@ -43,7 +43,8 @@ Imports:
     IRanges,
     data.table,
     rtracklayer,
-    Rcpp
+    Rcpp,
+    plyranges
 Depends:
     R (>= 3.5.0)
 Suggests:
@@ -73,6 +74,7 @@ Collate:
     'heatmaps.R'
     'motif.R'
     'normalize.R'
+    'package_imports.R'
     'prepare_counts.R'
     'rnaseq.R'
     'samples_groups.R'

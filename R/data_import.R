@@ -4,8 +4,6 @@
 #' @description
 #' Function to import TSSs from various sources.
 #'
-#' @importFrom rtracklayer import
-#'
 #' @param tsrexplorer tsrexplorer object
 #' @param object Object with TSSs to import into tsrexplorer
 #' @param ... Additional arguments for classes
@@ -147,8 +145,6 @@ setMethod("tss_import", signature(object = "tssObject"),
 
 #' CAGEr object
 #'
-#' @importFrom CAGEr CAGEexp CTSStagCount
-#'
 #' @param data_type Either "tss", "tsr", or "consensus"
 #'
 #' @rdname tss_import-generic
@@ -210,8 +206,6 @@ setMethod("tss_import", signature(object = "CAGEexp"),
 #'
 #' @description
 #' Function to import TSRs from various sources.
-#'
-#' @importFrom rtracklayer import
 #'
 #' @param object Object with TSRs to import into tsrexplorer
 #' @param tsrexplorer_obj tsrexplorer object to which to add TSRs

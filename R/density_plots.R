@@ -4,12 +4,6 @@
 #' @description
 #' Generate density plots of TSSs or TSRs
 #'
-#' @import tibble
-#' @import data.table
-#' @import ggplot2
-#' @importFrom magrittr %>% extract
-#' @importFrom purrr pmap
-#'
 #' @param experiment tsrexplorer object with annotated TSSs
 #' @param samples Either 'all' to plot all samples or a vector of sample names
 #' @param data_type Whether to plot TSS or TSR density
@@ -71,18 +65,18 @@
 #' @export
 
 plot_density <- function(
-        experiment,
-        data_type = c("tss", "tsr"),
-        samples = "all",
-        consider_score = FALSE,
-        upstream = 1000,
-        downstream = 1000,
-        threshold = 1,
-        ncol = 1,
-        use_cpm = FALSE,
-        dominant = FALSE,
-        data_conditions = NA,
-        ...
+  experiment,
+  data_type = c("tss", "tsr"),
+  samples = "all",
+  consider_score = FALSE,
+  upstream = 1000,
+  downstream = 1000,
+  threshold = 1,
+  ncol = 1,
+  use_cpm = FALSE,
+  dominant = FALSE,
+  data_conditions = NA,
+  ...
 ) {
 
   ## Check inputs.

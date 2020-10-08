@@ -62,12 +62,6 @@ setMethod("tsr_experiment<-", signature(tsrexplorer_object = "tsr_explorer"),
 #' @description
 #' Extract counts from a tsrexplorer object.
 #'
-#' @import tibble
-#' @importFrom magrittr extract %>%
-#' @importFrom SummarizedExperiment assay rowRanges
-#' @importFrom purrr map
-#' @importFrom dplyr bind_cols rename
-#'
 #' @param experiment tsrexplorer object
 #' @param data_type Whether to extract TSS or TSR counts
 #' @param samples Names of samples from which to extract counts
@@ -113,8 +107,6 @@ extract_counts <- function(experiment, data_type, samples, use_cpm = FALSE) {
 #' Extract Count Matrices
 #'
 #' Extract normalized count matrices.
-#'
-#' @import tibble
 #'
 #' @param experiment tsrexplorer object
 #' @param data_type Whether to extract 'tss', 'tsr', 'tss_features', or 'tsr_features'

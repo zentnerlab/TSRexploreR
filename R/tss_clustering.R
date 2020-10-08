@@ -4,8 +4,6 @@
 #' @description
 #' Basic distance and threshold-based clustering of TSSs.
 #'
-#' @importFrom S4Vectors mcols
-#'
 #' @param experiment tsrexplorer object
 #' @param threshold Consider only TSSs with at least this number of raw counts
 #' @param samples Samples for which TSSs should be clustered

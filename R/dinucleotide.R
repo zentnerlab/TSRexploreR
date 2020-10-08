@@ -6,8 +6,6 @@
 #'
 #' @include tsrexplorer.R
 #'
-#' @importFrom plyranges anchor_3p
-#'
 #' @param experiment tsrexplorer object with TSS GRanges
 #' @param samples Either 'all' to plot all samples or a vector of sample names
 #' @param genome_assembly fasta file of genome assembly

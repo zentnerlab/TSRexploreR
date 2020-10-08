@@ -3,9 +3,7 @@
 #'
 #' Find differential TSSs, TSRs, or features
 #'
-#' @import tibble
 #' @importFrom edgeR DGEList filterByExpr calcNormFactors cpm estimateDisp glmQLFit
-#' @importFrom forcats fct_inorder
 #'
 #' @param experiment tsrexplorer object with TMM-normalized counts
 #' @param data_type Whether TSSs, TSRs, or feature counts should be analyzed
@@ -90,7 +88,6 @@ fit_edger_model <- function(
 #'
 #' @importFrom SummarizedExperiment rowData
 #' @importFrom edgeR glmQLFTest
-#' @importFrom dplyr pull
 #' @importFrom purrr map_dbl
 #'
 #' @param experiment tsrexplorer object with edgeR differential expression model from fit_edger_model

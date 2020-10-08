@@ -77,7 +77,6 @@ cpm_normalize <- function(
 #' Using edgeR to TMM normalize TSSs or TSRs.
 #'
 #' @importFrom edgeR DGEList calcNormFactors cpm
-#' @importFrom SummarizedExperiment assay "assay<-"
 #'
 #' @param experiment tsrexplorer object
 #' @param data_type Whether TSSs, TSRs, or RNA-seq & 5' feature counts should be normalized

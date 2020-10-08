@@ -191,9 +191,6 @@ max_utr <- function(
 #'
 #' Plot TSS with furthest distance
 #'
-#' @import tibble
-#' @import ggplot2
-#'
 #' @param max_utr tibble of max UTRs output by max_utr
 #' @param upstream Bases upstream to extend average to
 #' @param downstream Bases downstream to extend average to
