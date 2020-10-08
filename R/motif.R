@@ -114,13 +114,14 @@ tss_sequences <- function(
     select_samples <- do.call(group_data, c(list(signal_data = select_samples), data_conditions))
   }
 
-  ## Expand ranges.
+  ## Prepare table for sequence retrieval.
   select_samples <- rbindlist(select_samples, idcol = "sample")
-  select_samples[, c("start", "end", "tss") := list(start - distance, end + distance, start)]
+  select_samples[, tss := start]
 
   ## Get sequences.
   seqs <- select_samples %>%
     as_granges %>%
+    stretch(distance * 2) %>%
     {getSeq(genome_assembly, .)} %>%
     as.data.table %>%
     {cbind(select_samples, .)}
@@ -129,11 +130,18 @@ tss_sequences <- function(
 
   ## Order samples if required.
   if (!all(samples == "all")) {
-    select_samples[, sample := factor(sample, levels = samples)]
+    seqs[, sample := factor(seqs, levels = samples)]
   }
   
   ## Generate and return DataFrame.
   groupings <- any(names(data_conditions) %in% c("quantile_by", "grouping"))
+  
+  keep_cols <- c(
+    "sample", "FHASH", "grouping",
+    "plot_order", "tss", "sequence", "score"
+  )
+  keep_cols <- keep_cols[keep_cols %in% colnames(seqs)]
+  seqs <- seqs[, ..keep_cols]
   
   seqs <- DataFrame(seqs)
   metadata(seqs)$groupings <- groupings
@@ -256,6 +264,9 @@ plot_sequence_logo <- function(
 #'
 #' Make a sequence colormap for the sequences around TSSs.
 #'
+#' @importFrom dplyr bind_cols
+#' @importFrom stringr str_length
+#'
 #' @param tss_sequences Sequences surrounding TSS generated with tss_sequences
 #' @param ncol Number of columns to plot data if quantiles not specified
 #' @param base_colors Named vector specifying colors for each base
@@ -327,16 +338,18 @@ plot_sequence_colormap <- function(
 
   ## Start preparing data for plotting.
   seq_data <- as.data.table(tss_sequences)
-  seq_data[, width := nchar(sequence)]
+  seq_data[, width := str_length(sequence)]
 
   ## Split sequences into columns
-  split_seqs <- seq_data[, as.data.table(str_split(sequence, "", simplify = TRUE))]
+  split_seqs <- seq_data[, tstrsplit(sequence, split="")]
+
+  #split_seqs <- seq_data[, as.data.table(str_split(sequence, "", simplify = TRUE))]
   setnames(
     split_seqs,
-    old = seq(1, (distance * 2) + 1),
+    old = sprintf("V%s", seq(1, (distance * 2) + 1)),
     new = as.character(c(seq(-distance, -1), seq(1, distance + 1)))
   )
-  seq_data <- bind_cols(seq_data, split_seqs)
+  seq_data <- cbind(seq_data, split_seqs)
 
   ## Get order of TSSs for plotting.
   seq_data[, FHASH := fct_reorder(factor(FHASH), plot_order)]
@@ -357,9 +370,9 @@ plot_sequence_colormap <- function(
     
   ## Plot sequence colormap
   p <- ggplot(long_data, aes(x = .data$position, y = .data$FHASH)) +
-    geom_tile(aes(fill = .data$base, color = .data$base)) +
+    geom_tile(aes(fill = .data$base, color=.data$base)) +
     scale_fill_manual(values = base_colors) +
-    scale_color_manual(values = base_colors) +
+    scale_color_manual(values=base_colors) +
     theme_minimal() +
     theme(
       axis.title.y = element_blank(),

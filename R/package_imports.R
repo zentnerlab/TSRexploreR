@@ -17,7 +17,7 @@ NULL
 #'   scale_fill_continuous scale_fill_manual scale_color_manual
 #'   scale_x_continuous scale_x_discrete
 #'   theme_bw theme_minimal
-#'   theme element_text element_blank unit element_rect
+#'   theme element_text element_blank unit margin element_rect
 #'   geom_density geom_point geom_col geom_vline geom_tile geom_line
 #'   geom_violin geom_boxplot geom_jitter geom_raster
 #' @importFrom rlang .data

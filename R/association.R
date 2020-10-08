@@ -13,8 +13,11 @@
 #' @export
 
 merge_samples <- function(
-  experiment, data_type = c("tss", "tsr"), threshold = NA,
-  merge_replicates = FALSE, sample_list = NA
+  experiment,
+  data_type = c("tss", "tsr"),
+  threshold = NA,
+  merge_replicates = FALSE,
+  sample_list = NA
 ) {
   
   ## Prepare list of samples to be merged.
