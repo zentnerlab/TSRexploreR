@@ -252,13 +252,13 @@ count_matrix <- function(
 
     ## Merge overlapping TSRs.
     tsr_consensus <- select_samples %>%
-      map(makeGRangesFromDataFrame) %>%
+      map(as_granges, keep_mcols=FALSE) %>%
       purrr::reduce(c) %>%
       GenomicRanges::reduce(ignore.strand = FALSE)
 
     ## Create raw count matrix.
     raw_matrix <- select_samples %>%
-      map(~ makeGRangesFromDataFrame(.x, keep.extra.columns = TRUE) %>%
+      map(~as_granges(.x) %>%
         findOverlapPairs(query = tsr_consensus, subject = .) %>%
         as.data.table
       ) %>%
@@ -305,7 +305,7 @@ count_matrix <- function(
   if (data_type %in% c("tss", "tsr")) {
     
     ## Prepare data for RangedSummarizedExperiment
-    row_ranges <- makeGRangesFromDataFrame(select_samples)
+    row_ranges <- as_granges(select_samples, keep_mcols=FALSE)
 
     select_samples[, c("seqnames", "start", "end", "strand") := NULL]
     select_samples <- as.matrix(select_samples, rownames = "FHASH")

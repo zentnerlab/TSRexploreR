@@ -77,7 +77,7 @@ tss_export <- function(
   ## Export files.
   if (file_type == "bedgraph") {
     iwalk(export_samples, function(x, y) {
-      x <- sort(makeGRangesFromDataFrame(x, keep.extra.columns = TRUE))
+      x <- sort(as_granges(x))
       
       pos_data <- x[strand(x) == "+"]
       pos_file <- file.path(
@@ -185,7 +185,7 @@ tsr_export <- function(
   ## Export files.
   if (file_type == "bed") {
     iwalk(export_samples, function(x, y) {
-      x <- makeGRangesFromDataFrame(x, keep.extra.columns = TRUE)
+      x <- as_granges(x)
 
       bed_file <- file.path(
         ifelse(is.na(out_dir), getwd(), out_dir),

@@ -69,7 +69,7 @@ tsr_metrics <- function(experiment) {
   walk(select_TSRs, function(x) {
     x[, tsr_sample := NULL]
     setnames(x, old = c("TSR_FID", "TSR_FHASH"), new = c("FID", "FHASH"))
-    x <- makeGRangesFromDataFrame(x, keep.extra.columns = TRUE)
+    x <- as_granges(x)
     x <- as.data.table(x)
     return(x)
   })
@@ -77,7 +77,7 @@ tsr_metrics <- function(experiment) {
   select_samples <- split(select_samples, select_samples$sample)
   walk(select_samples, function(x) {
     x[, sample := NULL]
-    x <- makeGRangesFromDataFrame(x, keep.extra.columns = TRUE)
+    x <- as_granges(x)
     x <- as.data.table(x)
     return(x)
   })

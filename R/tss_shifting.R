@@ -57,7 +57,7 @@ tss_shift <- function(
     tstrsplit(tsr_coords, split = ":")
   ]
 
-  consensus_tsrs <- makeGRangesFromDataFrame(consensus_tsrs)
+  consensus_tsrs <- as_granges(consensus_tsrs, keep_mcols=FALSE)
   consensus_tsrs <- GenomicRanges::reduce(
     consensus_tsrs, ignore.strand = FALSE, min.gapwidth = min_distance
   )
@@ -67,13 +67,13 @@ tss_shift <- function(
     FHASH := digest(str_c(seqnames, start, end, strand, collapse = ":")),
     by = seq_len(nrow(consensus_tsrs))
   ]
-  consensus_tsrs <- makeGRangesFromDataFrame(consensus_tsrs, keep.extra.columns = TRUE)
+  consensus_tsrs <- as_granges(consensus_tsrs)
 
   ## Associate consensus TSRs with TSSs.
   tss_data <- rbindlist(select_samples, idcol = "sample")[,
     .(sample, seqnames, start, end, strand, score)
   ]
-  tss_data <- makeGRangesFromDataFrame(tss_data, keep.extra.columns = TRUE)
+  tss_data <- as_granges(tss_data)
 
   overlap <- findOverlapPairs(query = consensus_tsrs, subject = tss_data)
   overlap <- as.data.table(overlap)[,

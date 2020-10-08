@@ -150,7 +150,7 @@ gene_tracks <- function(
           score >= threshold,
           .(seqnames, start, end, strand, score)
         ]
-        tss_granges <- makeGRangesFromDataFrame(tss_granges, keep.extra.columns = TRUE)
+        tss_granges <- as_granges(tss_granges)
         return(tss_granges)
       })
   }
@@ -162,7 +162,7 @@ gene_tracks <- function(
           score >= threshold,
           .(seqnames, start, end, strand, score)
         ]
-        tsr_granges <- makeGRangesFromDataFrame(tsr_granges, keep.extra.columns = TRUE)
+        tsr_granges <- as_granges(tsr_granges)
         return(tsr_granges)
       })
   }

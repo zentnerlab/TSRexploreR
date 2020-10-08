@@ -120,10 +120,10 @@ tss_sequences <- function(
 
   ## Get sequences.
   seqs <- select_samples %>%
-    makeGRangesFromDataFrame(keep.extra.columns = TRUE) %>%
-    getSeq(genome_assembly, .) %>%
+    as_granges %>%
+    {getSeq(genome_assembly, .)} %>%
     as.data.table %>%
-    bind_cols(select_samples, .)
+    {cbind(select_samples, .)}
       
   setnames(seqs, old = "x", new = "sequence")
 

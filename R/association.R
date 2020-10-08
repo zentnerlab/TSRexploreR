@@ -81,7 +81,7 @@ merge_samples <- function(
   }
 
   ## Convert merged samples to GRanges.
-  merged_samples <- map(merged_samples, ~ makeGRangesFromDataFrame(., keep.extra.columns = TRUE))
+  merged_samples <- map(merged_samples, as_granges)
 
   ## Return merged samples.
   if (data_type == "tss") {

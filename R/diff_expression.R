@@ -193,7 +193,7 @@ differential_expression <- function(
     original[, FHASH := names(original_ranges)]
 
     diff_expression <- merge(diff_expression, original, by = "FHASH")
-    diff_expression <- sort(makeGRangesFromDataFrame(diff_expression, keep.extra.columns = TRUE))
+    diff_expression <- sort(as_granges(diff_expression))
     diff_expression <- as.data.table(diff_expression)
   } else if (data_type %in% c("tss_features", "tsr_features")) {
     setnames(diff_expression, old = 1, new = "feature")[]

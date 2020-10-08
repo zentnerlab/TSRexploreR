@@ -134,7 +134,7 @@ setMethod("tss_import", signature(object = "tssObject"),
     imported_data <- object@tssCountData %>%
       rename(seqnames = seq, start = TSS, score = nTAGs) %>%
       mutate("end" = start) %>%
-      makeGRangesFromDataFrame(keep.extra.columns = TRUE) %>%
+      as_granges %>%
       set_names(object@sampleNames)
 
     ## Add TSSs to tsrexplorer object.
@@ -173,7 +173,7 @@ setMethod("tss_import", signature(object = "CAGEexp"),
     counts_gr <- counts %>%
       map(function(x) {
         x$sample <- NULL
-        x <- makeGRangesFromDataFrame(x, keep.extra.columns = TRUE)
+        x <- as_granges(x)
         return(x)
       })
 
@@ -190,7 +190,7 @@ setMethod("tss_import", signature(object = "CAGEexp"),
     counts <- counts %>%
       map(function(x) {
         setnames(x, old = c("chr", "tpm"), new = c("seqnames", "score"))
-        x <- makeGRangesFromDataFrame(x, keep.extra.columns = TRUE)
+        x <- as_granges(x)
         return(x)
       })
 

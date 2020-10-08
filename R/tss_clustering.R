@@ -67,10 +67,7 @@ tss_clustering <- function(
     })
 
   ## Convert samples to GRanges.
-  select_samples <- map(
-    select_samples,
-    ~ makeGRangesFromDataFrame(., keep.extra.columns = TRUE)
-  )
+  select_samples <- map(select_samples, as_granges)
 
   ## Call TSRs.
   clustered_TSSs <- select_samples %>%
@@ -109,7 +106,7 @@ tss_clustering <- function(
 
   TSR_granges <- map(clustered_TSSs, function(x) {
     TSR_granges <- x[, .(seqnames, start, end, strand, score)]
-    TSR_granges <- makeGRangesFromDataFrame(TSR_granges, keep.extra.columns = TRUE)
+    TSR_granges <- as_granges(TSR_granges)
     return(TSR_granges)
   })
 
