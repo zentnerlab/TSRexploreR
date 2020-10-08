@@ -18,7 +18,7 @@ NULL
 #'   theme_bw theme_minimal
 #'   theme element_text element_blank unit element_rect
 #'   geom_density geom_point geom_col geom_vline geom_tile geom_line
-#'   geom_violing geom_boxplot geom_jitter
+#'   geom_violin geom_boxplot geom_jitter
 #' @importFrom rlang .data
 #' @importFrom forcats fct_rev fct_inorder fct_reorder
 #' @importFrom dplyr pull

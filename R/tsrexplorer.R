@@ -40,8 +40,6 @@ setClass(
 #' start regions (TSRs).
 #'
 #' @import methods
-#' @importFrom GenomicRanges GRanges
-#' @importFrom tibble tibble
 #'
 #' @param TSSs Named list of TSS GRanges
 #' @param TSRs Named list of TSR GRanges
