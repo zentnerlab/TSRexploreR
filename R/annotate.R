@@ -65,11 +65,10 @@ annotate_features <- function(
   if (upstream < 0 | downstream < 0) stop("upstream and downstream must be positive integers")
 
   ## Load GTF.
-  if (is(annotation_data, "character")) {
-    genome_annotation <- makeTxDbFromGFF(annotation_data)
-  } else if (is(annotation_data, "TxDb")) {
-    genome_annotation <- annotation_data
-  }
+  genome_annotation <- case_when(
+    is(annotation_data, "character") ~ makeTxDbFromGFF(annotation_data),
+    is(annotation_data, "TxDb") ~ annotation_data
+  )
 
   ## Grab data from proper slot.
   counts <- switch(data_type,

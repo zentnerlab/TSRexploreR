@@ -92,11 +92,10 @@ tss_sequences <- function(
   }
 
   ## Open genome assembly.
-  if (is(genome_assembly, "character")) {
-    genome_assembly <- FaFile(genome_assembly)
-  } else if (is(genome_assembly, "BSgenome")) {
-    genome_assembly <- genome_assembly
-  }
+  genome_assembly <- case_when(
+    is(genome_assembly, "character") ~ FaFile(genome_assembly),
+    is(genome_assembly, "BSgenome") ~ genome_assembly
+  )
 
   ## Get selected samples.
   select_samples <- extract_counts(experiment, "tss", samples)

@@ -20,17 +20,21 @@ find_correlation <- function(
   samples = "all",
   correlation_metric = "pearson"
 ) {
+
   ## Select appropriate data.
-  if (data_type == "tss") {
-    normalized_counts <- assay(experiment@correlation$TSSs$tmm, "tmm")
-    type_color <- "#431352"
-  } else if (data_type == "tsr") {
-    normalized_counts <- assay(experiment@correlation$TSRs$tmm, "tmm")
-    type_color <- "#34698c"
-  } else if (data_type == "features") {
-    normalized_counts <- assay(experiment@correlation$features$tmm, "tmm")
-    type_color <- "#29AF7FFF"
-  }
+  normalized_counts <- switch(
+    data_type,
+    "tss"=assay(experiment@correlation$TSSs$tmm, "tmm"),
+    "tsr"=assay(experiment@correlation$TSRs$tmm, "tmm"),
+    "features"=assay(experiment@correlation$features$tmm, "tmm")
+  )
+
+  type_color <- switch(
+    type_color,
+    "tss"="#431352",
+    "tsr"="#34698c",
+    "features"="#29AF7FFF"
+  )
 
   ## Select all samples if "all" specified.
   if (samples == "all") samples <- colnames(normalized_counts)

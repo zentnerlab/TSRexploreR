@@ -22,7 +22,7 @@ NULL
 #'   geom_violin geom_boxplot geom_jitter geom_raster
 #' @importFrom rlang .data
 #' @importFrom forcats fct_rev fct_inorder fct_reorder
-#' @importFrom dplyr pull
+#' @importFrom dplyr pull case_when
 
 NULL
 

@@ -33,15 +33,13 @@ cpm_normalize <- function(
   data_type <- match.arg(str_to_lower(data_type), c("tss", "tsr", "tss_features", "tsr_features"))
 
   ## Get selected samples.
-  if (data_type == "tss") {
-    select_samples <- experiment@counts$TSSs$raw
-  } else if (data_type == "tsr") {
-    select_samples <- experiment@counts$TSRs$raw
-  } else if (data_type == "tss_features") {
-    select_samples <- experiment@counts$TSS_features$raw
-  } else if (data_type == "tsr_features") {
-    select_samples <- experiment@counts$TSR_features$raw
-  }
+  select_samples <- switch(
+    data_type,
+    "tss"=experiment@counts$TSSs$raw,
+    "tsr"=experiment@counts$TSRs$raw,
+    "tss_features"=experiment@counts$TSS_features$raw,
+    "tsr_features"=experiment@counts$TSR_features$raw
+  )
 
   ## CPM normalize counts.
   cpm_counts <- select_samples %>%
