@@ -33,7 +33,8 @@ NULL
 
 NULL
 
-#' @importFrom BiocGenerics width
+#' @importFrom BiocGenerics width start end
+#' @importFrom GenomeInfoDb seqnames
 #' @importFrom SummarizedExperiment rowRanges SummarizedExperiment rowData
 #'   assay "assay<-"
 #' @importFrom S4Vectors "metadata<-" metadata DataFrame mcols

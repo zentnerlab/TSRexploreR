@@ -4,7 +4,7 @@
 #' @description
 #' Generate gene tracks in GViz by gene name.
 #'
-#' @import Gviz
+#' @importFrom Gviz GeneRegionTrack DataTrack AnnotationTrack plotTracks
 #' @importFrom stringr str_count
 #' @importFrom GenomicFeatures genes transcripts promoters
 #'
