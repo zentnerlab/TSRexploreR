@@ -16,7 +16,7 @@ dinucleotide_frequencies(
 \arguments{
 \item{experiment}{tsrexplorer object with TSS GRanges}
 
-\item{genome_assembly}{fasta file of genome assembly}
+\item{genome_assembly}{fasta file or BSgenome of genome assembly}
 
 \item{samples}{Either 'all' to plot all samples or a vector of sample names}
 

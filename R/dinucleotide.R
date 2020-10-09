@@ -8,7 +8,7 @@
 #'
 #' @param experiment tsrexplorer object with TSS GRanges
 #' @param samples Either 'all' to plot all samples or a vector of sample names
-#' @param genome_assembly fasta file of genome assembly
+#' @param genome_assembly fasta file or BSgenome of genome assembly
 #' @param threshold Raw TSS count threshold
 #' @param dominant Consider only dominant TSSs
 #' @param data_conditions Condition the data
@@ -81,7 +81,16 @@ dinucleotide_frequencies <- function(
   }
 
   ## Load genome assembly.
-  fasta_assembly <- FaFile(genome_assembly)
+  assembly_type <- case_when(
+    is(genome_assembly, "character") ~ "character",
+    is(genome_assembly, "BSgenome") ~ "bsgenome"
+  )
+
+  fasta_assembly <- switch(
+    assembly_type,
+    "character"=FaFile(genome_assembly),
+    "bsgenome"=genome_assembly
+  )
 
   ## Get appropriate samples.
   select_samples <- extract_counts(experiment, "tss", samples)
@@ -218,7 +227,7 @@ plot_dinucleotide_frequencies <- function(
   ## Plot dinucleotide frequencies.
 
   p <- ggplot(freqs, aes(x = .data$dinucleotide, y = .data$freqs)) +
-    geom_col(width = 0.5, aes(fill = freqs), ...) +
+    geom_col(width = 0.5, aes(fill = .data$freqs), ...) +
     theme_bw() +
     scale_fill_viridis_c(name = "Frequency") +
     coord_flip() +
