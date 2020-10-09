@@ -176,10 +176,9 @@ associate_with_tsr <- function(
   associated_TSSs <- imap(sample_list, function(tss_names, tsr_name) {
 
     # Make GRanges of TSSs.
-    tss_set <- extract_counts(experiment, "tss", tss_names) %>%
-      rbindlist(idcol = "sample")
-    
-    tss_gr <- as_granges(tss_set)
+    tss_gr <- extract_counts(experiment, "tss", tss_names) %>%
+      rbindlist(idcol = "sample") %>%
+      as_granges
 
     # Make GRanges of TSRs.
     tsr_set <- extract_counts(experiment, "tsr", tsr_name) %>%
