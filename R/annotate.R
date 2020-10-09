@@ -65,9 +65,15 @@ annotate_features <- function(
   if (upstream < 0 | downstream < 0) stop("upstream and downstream must be positive integers")
 
   ## Load GTF.
-  genome_annotation <- case_when(
-    is(annotation_data, "character") ~ makeTxDbFromGFF(annotation_data),
-    is(annotation_data, "TxDb") ~ annotation_data
+  anno_type <- case_when(
+    is(annotation_data, "character") ~ "character",
+    is(annotation_data, "TxDb") ~ "txdb"
+  )
+
+  genome_annotation <- switch(
+    anno_type,
+    "character"=makeTxDbFromGFF(annotation_data),
+    "txdb"=annotation_data
   )
 
   ## Grab data from proper slot.
@@ -82,7 +88,7 @@ annotate_features <- function(
   
   counts_annotated <- counts %>%
     map(function(x) {
-      x <- as_granges(x, keep.extra.columns = TRUE)
+      x <- as_granges(x)
 
       annotated <- x %>%
         annotatePeak(
@@ -107,14 +113,11 @@ annotate_features <- function(
     })
 
   ## Place annotated features back into the tsrexplorer object.
-  if (data_type == "tss") {
-    experiment@counts$TSSs$raw <- counts_annotated
-  } else if (data_type == "tsr") {
-    experiment@counts$TSRs$raw <- counts_annotated
-  } else if (data_type == "tss_diff") {
-    experiment@diff_features$TSSs$results <- counts_annotated
-  } else if (data_type == "tsr_diff") {
-    experiment@diff_features$TSRs$results <- counts_annotated
+
+  if (data_type %in% c("tss", "tsr")) {
+      experiment <- set_count_slot(experiment, counts_annotated, "counts", data_type, "raw")
+  } else if (data_type %in% c("tss_diff", "tsr_diff")) {
+      experiment <- set_count_slot(experiment, counts_annotated, "diff_features", data_type, "results")
   }
 
   ## Save annotation settings to the tsrexplorer object.

@@ -205,7 +205,10 @@ associate_with_tsr <- function(
 
   ## Add TSSs back to the tsrexplorer object.
   associated_TSSs <- purrr::reduce(associated_TSSs, c)
-  
-  experiment@counts$TSSs$raw <- associated_TSSs
+
+  experiment <- set_count_slot(
+    experiment, associated_TSSs,
+    "counts", data_type, "raw"
+  )
   return(experiment)
 }

@@ -165,4 +165,47 @@ extract_de <- function(experiment, data_type, de_comparisons = "all") {
   }
 
   return(de)
-} 
+}
+
+#' Set slot data.
+#'
+#' Set the content of a slot.
+#'
+#' @param tsre_obj tsrexplorer object
+#' @param new_data Data to be added to the slot
+#' @param fill_slot either 'counts' or 'diff_features'
+#' @param data_type Either 'tss', 'tsr', 'tss_features', or 'tsr_features'
+#' @param subslot Either 'raw', 'matrix', or 'results'
+#'
+#' @rdname set_slot-function
+#' @export
+
+set_count_slot <- function(
+  tsre_obj,
+  new_data,
+  fill_slot,
+  data_type,
+  subslot
+) {
+
+  ## Check inputs
+  if (!is(tsre_obj, "tsr_explorer")) stop("tsre_obj must be a tsr explorer object")
+  data_type <- match.arg(str_to_lower(data_type), c("tss", "tsr", "tss_features", "tsr_features"))
+  subslot <- match.arg(str_to_lower(subslot), c("raw", "matrix", "results"))
+
+  ## Convert data type to their slot name.
+  data_type <- switch(
+    data_type,
+    "tss"="TSSs",
+    "tsr"="TSRs",
+    "tss_diff"="TSSs",
+    "tsr_diff"="TSRs",
+    "tss_features"="TSS_features",
+    "tsr_features"="TSR_features"
+  )
+
+  ## Fill the slot
+  slot(tsre_obj, fill_slot)[[data_type]][[subslot]] <- new_data
+  return(tsre_obj)
+}
+  

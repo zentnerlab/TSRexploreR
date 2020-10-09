@@ -102,11 +102,10 @@ mark_dominant <- function(
   }
 
   ## Return dominant TSS/TSR.
-  if (data_type == "tss") {
-    experiment@counts$TSSs$raw <- dominant
-  } else if (data_type == "tsr") {
-    experiment@counts$TSRs$raw <- dominant
-  }
+  experiment <- set_count_slot(
+    experiment, dominant,
+    "counts", data_type, "raw"
+  )
 
   return(experiment)
 }

@@ -155,9 +155,9 @@ ggsave("tss_density_plot.png", plot = p, device = "png", type = "cairo", height 
 While a density plot gives a general overview of TSS distribution relative to annotated start codons or TSSs, information may be lost in the process due to the aggregate nature of this plot type. To get a more global view of the data, it can be useful to generate a heatmap of TSS positions relative to all features. However, as TSS are single points and are sometimes sparsely distribution, it can be somewhat difficult to visualize them as a heatmap.
 
 ```
-count_matrix <- tss_heatmap_matrix(exp, threshold = 3, upstream = 250, downstream = 250)
+tss_matrix <- tss_heatmap_matrix(exp, threshold = 3, upstream = 250, downstream = 250)
 
-p <- plot_heatmap(count_matrix, ncol = 3, background_color = "white") +
+p <- plot_heatmap(tss_matrix, ncol = 3, background_color = "white") +
 	ggplot2::theme(text = element_text(size = 4), legend.key.size = unit(0.3, "cm"))
 
 ggsave("tss_heatmap.png", plot = p, device = "png", type = "cairo", height = 2, width = 4)

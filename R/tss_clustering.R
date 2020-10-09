@@ -108,7 +108,10 @@ tss_clustering <- function(
   })
 
   experiment@experiment$TSRs <- TSR_granges
-  experiment@counts$TSRs$raw <- clustered_TSSs
+  experiment <- set_count_slot(
+    experiment, clustered_TSSs,
+    "counts", "tsr", "raw"
+  )
   return(experiment)
 
 }

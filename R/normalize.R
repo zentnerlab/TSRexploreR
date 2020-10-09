@@ -49,15 +49,10 @@ cpm_normalize <- function(
     })
 
   ## Add CPM-normalized counts back to tsrexplorer object.
-  if (data_type == "tss") {
-    experiment@counts$TSSs$raw <- cpm_counts
-  } else if (data_type == "tsr") {
-    experiment@counts$TSRs$raw <- cpm_counts
-  } else if (data_type == "tss_features") {
-    experiment@counts$TSS_features$raw <- cpm_counts
-  } else if (data_type == "tsr_features") {
-    experiment@counts$TSR_features$raw <- cpm_counts
-  }
+  experiment <- set_count_slot(
+    experiment, cpm_counts,
+    "counts", data_type, "raw"
+  )
 
   return(experiment)
 }
@@ -145,15 +140,10 @@ tmm_normalize <- function(
   assay(select_samples, "tmm") <- tmm_counts
 
   ## Add TMM-normalized counts to tsrexplorer object.
-  if (data_type == "tss") {
-    experiment@counts$TSSs$matrix <- select_samples
-  } else if (data_type == "tsr") {
-    experiment@counts$TSRs$matrix <- select_samples
-  } else if (data_type == "tss_features") {
-    experiment@counts$TSS_features$matrix <- select_samples
-  } else if (data_type == "tsr_features") {
-    experiment@counts$TSR_features$matrix <- select_samples
-  }
+  experiment <- set_count_slot(
+    experiment, select_samples,
+    "counts", data_type, "matrix"
+  )
 
   return(experiment)
 }

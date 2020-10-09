@@ -92,9 +92,15 @@ tss_sequences <- function(
   }
 
   ## Open genome assembly.
-  genome_assembly <- case_when(
-    is(genome_assembly, "character") ~ FaFile(genome_assembly),
-    is(genome_assembly, "BSgenome") ~ genome_assembly
+  assembly_type <- case_when(
+    is(genome_assembly, "character") ~ "character",
+    is(genome_assembly, "BSgenome") ~ "bsgenome"
+  )
+
+  genome_assembly <- switch(
+    assembly_type,
+    "character"=FaFile(genome_assembly),
+    "bsgenome"=genome_assembly
   )
 
   ## Get selected samples.

@@ -82,8 +82,14 @@ tsr_metrics <- function(experiment) {
     return(x)
   })
 
-  experiment@counts$TSRs$raw <- select_TSRs
-  experiment@counts$TSSs$raw <- select_samples
+  experiment <- set_count_slot(
+    experiment, select_samples,
+    "counts", "tss", "raw"
+  )
+  experiment <- set_count_slot(
+    experiment, select_TSRs,
+    "counts", "tsr", "raw"
+  )
   return(experiment)
 }
 

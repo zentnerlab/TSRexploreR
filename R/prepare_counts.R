@@ -325,15 +325,10 @@ count_matrix <- function(
   }
 
   ## Add RangedSummarizedExperiment back to trexplorer object.
-  if (data_type == "tss") {
-    experiment@counts$TSSs$matrix <- rse
-  } else if (data_type == "tsr") {
-    experiment@counts$TSRs$matrix <- rse
-  } else if (data_type == "tss_features") {
-    experiment@counts$TSS_features$matrix <- rse
-  } else if (data_type == "tsr_features") {
-    experiment@counts$TSR_features$matrix <- rse
-  }
+  experiment <- set_count_slot(
+    experiment, rse,
+    "counts", data_type, "matrix"
+  )
 
   return(experiment)  
 }
