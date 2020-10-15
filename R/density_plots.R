@@ -16,6 +16,7 @@
 #' @param use_cpm Whether to use CPM normalized or raw counts if score is considered
 #' @param dominant Consider only dominant TSS or TSR
 #' @param data_conditions Data conditioning filters
+#' @param color Either 'default' or a valid color format to set plot color
 #' @param ... Arguments passed to geom_density
 #'
 #' @details
@@ -76,6 +77,7 @@ plot_density <- function(
   use_cpm = FALSE,
   dominant = FALSE,
   data_conditions = NA,
+  color = "default",
   ...
 ) {
 
@@ -107,7 +109,11 @@ plot_density <- function(
   }
 
   ## Assign color type.
-  color_type <- switch(data_type, "tss"="#431352", "tsr"="#34698c")
+  color_type <- case_when(
+    color == "default" & data_type == "tss" ~ "#431352",
+    color == "default" & data_type == "tsr" ~ "#34698c",
+    TRUE ~ color
+  )
 
   ## Pull data out of appropriate slot.
   sample_data <- extract_counts(experiment, data_type, samples, use_cpm)
@@ -117,10 +123,7 @@ plot_density <- function(
     sample_data <- preliminary_filter(sample_data, dominant, threshold)
   }
 
-  sample_data <- map(sample_data, function(x)  {
-    x <- x[dplyr::between(distanceToTSS, -upstream, downstream)]
-    return(x)
-  })
+  sample_data <- map(sample_data, ~ .x[dplyr::between(distanceToTSS, -upstream, downstream)])
 
   ## Condition data.
   if (all(!is.na(data_conditions))) {

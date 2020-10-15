@@ -81,10 +81,7 @@ detect_features <- function(
   }
 
   if (data_type %in% c("tss_features", "tsr_features")) {
-    sample_data <- map(sample_data, function(x) {
-      x <- x[score >= threshold]
-      return(x)
-    })
+    sample_data <- map(sample_data, ~ .x[score >= threshold])
   }
   
   ## Apply data conditioning if set.
@@ -219,7 +216,6 @@ plot_detected_features <- function(
     p <- ggplot(plot_data, aes(x = .data$sample, y = .data$feature_count, fill = .data$count_type)) +
       geom_col(position = "stack", ...) +
       theme_bw() +
-      scale_fill_viridis_d(name = "Feature Type", direction = -1) +
       ylim(c(0, NA)) +
       ylab(str_c(feature_type, "Count", sep = " ")) +
       xlab("Sample") +

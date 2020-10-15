@@ -24,13 +24,13 @@ find_correlation <- function(
   ## Select appropriate data.
   normalized_counts <- switch(
     data_type,
-    "tss"=assay(experiment@correlation$TSSs$tmm, "tmm"),
-    "tsr"=assay(experiment@correlation$TSRs$tmm, "tmm"),
-    "features"=assay(experiment@correlation$features$tmm, "tmm")
+    "tss"=assay(experiment@correlation$TSSs$matrix, "tmm"),
+    "tsr"=assay(experiment@correlation$TSRs$matrix, "tmm"),
+    "features"=assay(experiment@correlation$features$matrix, "tmm")
   )
 
   type_color <- switch(
-    type_color,
+    data_type,
     "tss"="#431352",
     "tsr"="#34698c",
     "features"="#29AF7FFF"
@@ -63,21 +63,21 @@ find_correlation <- function(
 #'
 #' Heatmaps and/or scatter plots to explore replicate concordance of TSSs or TSRs.
 #'
-#' @importFrom GGally ggpairs
 #' @importFrom ComplexHeatmap Heatmap
 #' @importFrom circlize colorRamp2 
 #' @importFrom viridis viridis
-#' @importFrom grid gpar
+#' @importFrom grid gpar grid.text
 #'
 #' @param experiment tsrexplorer object with TMM normalized counts
 #' @param data_type Whether to make scatter plots from TSS, TSR, or RNA-seq & 5' data
 #' @param samples Either 'all' or the names of the samples to plot
-#' @param correlation_plot Whether to make a correlation 'heatmap', 'scatter', 'combined', 
-#'   or 'hierarchical' plot
 #' @param correlation_metric Whether to use Spearman or Pearson correlation
 #' @param log2_transform Should the TMM values be log2+1 transformed prior to plotting?
 #' @param font_size The font size for the heatmap tiles
-#' @param pt_size Point size for the scatter plots
+#' @param cluster_samples Logical whether hierarchical clustering is performed
+#'   on samples in rows and columns.
+#' @param heatmap_colors Vector of colors for heatmap.
+#' @param show_values Show the correlation values on the plot.
 #' @param ... Additional arguments passed to ComplexHeatmap::Heatmap or GGally::ggpairs
 #'
 #' @details
@@ -126,11 +126,12 @@ plot_correlation <- function(
   experiment,
   data_type = c("tss", "tsr", "tss_features", "tsr_features"),
   samples = "all",
-  correlation_plot = "combined",
   correlation_metric = "pearson",
   log2_transform = TRUE,
-  font_size = 4,
-  pt_size = 0.5,
+  font_size = 12,
+  cluster_samples = FALSE,
+  heatmap_colors = NULL,
+  show_values = TRUE,
   ...
 ) {
 
@@ -149,7 +150,8 @@ plot_correlation <- function(
   ## Get data from proper slot.
   normalized_counts <- experiment %>%
     extract_matrix(data_type, samples) %>%
-    assay("tmm")
+    assay("tmm") %>%
+    as.data.table
   
   sample_names <- colnames(normalized_counts)
 
@@ -163,80 +165,107 @@ plot_correlation <- function(
   )
 
   ## Log2 + 1 transform data if indicated.
-  pre_transformed <- as_tibble(normalized_counts, .name_repair = "unique")
-  if (log2_transform) normalized_counts <- log2(normalized_counts + 1) %>% as_tibble(.name_repair = "unique")
+  pre_transformed <- copy(normalized_counts)
+  if (log2_transform) {
+    normalized_counts <- normalized_counts[, lapply(.SD, function(x) log2(x + 1))]
+  }
+
+  ## Correlation Matrix.
+  cor_mat <- cor(normalized_counts, method=correlation_metric)
+
+  ## ComplexHeatmap Correlation Plot.
+  heatmap_args <- list(
+    cor_mat,
+    row_names_gp=gpar(fontsize=font_size),
+    column_names_gp=gpar(fontsize=font_size)
+  )
+  if (!cluster_samples) {
+    heatmap_args <- c(heatmap_args, list(cluster_rows=FALSE, cluster_columns=FALSE))
+  }
+  if (!is.null(heatmap_colors)) {
+    heatmap_args <- c(heatmap_args, list(col=heatmap_colors))
+  }
+  if (show_values) {
+    heatmap_args <- c(heatmap_args, list(
+      cell_fun = function(j, i, x, y, width, height, fill) {
+        grid.text(sprintf("%.2f", cor_mat[i, j]), x, y, gp=gpar(fontsize=font_size))
+      }
+    ))
+  }
+
+  p <- do.call(Heatmap, heatmap_args)
 
   ## Make functions for scatter plot.
 
   # Create custom scatter plot format.
-  custom_scatter <- function(data, mapping) {
-    ggplot(data = data, mapping = mapping) +
-      geom_point(size = pt_size, color = color_palette, stroke = 0) +
-      geom_abline(intercept = 0, slope = 1, lty = 2)
-  }
-
-  # Create custom correlation heatmap format.
-  custom_heatmap <- function(data, mapping) {
-    sample_1 <- pre_transformed[ ,str_replace(mapping$x, "~", "")]
-    sample_2 <- pre_transformed[ ,str_replace(mapping$y, "~", "")]
-
-    correlation <- cor(sample_1, sample_2, method = correlation_metric) %>%
-      round(3) %>%
-      as_tibble(name_repair = "unique", rownames = "sample_1") %>%
-      pivot_longer(!sample_1, "sample_2", "correlation")
-
-    ggplot(correlation, aes(x = sample_1, y = sample_2)) +
-      geom_tile(color = "white", aes(fill = correlation)) +
-      geom_label(aes(label = correlation), label.size=NA, fill=NA, color = "black", size = font_size) +
-      scale_fill_viridis_c(limits = c(0, 1))
-  }
-
-  ## Plot the correlation plot.   
-
-  if (correlation_plot == "scatter") {
-    p <- ggpairs(
-      normalized_counts,
-      columns = sample_names,
-      upper = list(continuous = custom_scatter),
-      lower = NULL,
-      diag = NULL,
-      ...
-    )
-  } else if (correlation_plot == "heatmap") {
-    p <- ggpairs(
-      normalized_counts,
-      columns = sample_names,
-      upper = list(continuous = custom_heatmap),
-      lower = NULL,
-      diag = NULL,
-      ...
-    )
-  } else if (correlation_plot == "combined") {
-    p <- ggpairs(
-      normalized_counts,
-      columns = sample_names,
-      upper = list(continuous = custom_heatmap),
-      lower = list(continuous = custom_scatter),
-      ...
-    )
-  } else if (correlation_plot == "hierarchical") {
-    corr_matrix <- pre_transformed %>%
-      cor(method = correlation_metric)
-
-    p <- Heatmap(
-      corr_matrix,
-      name = correlation_metric,
-      row_names_gp = gpar(fontsize = font_size),
-      column_names_gp = gpar(fontsize = font_size),
-      heatmap_legend_param = list(
-        title_gp = gpar(fontsize = font_size),
-        labels_gp = gpar(fontsize = font_size),
-        grid_height = unit(2, "mm"),
-        grid_width = unit(3, "mm")
-      ),
-      ...
-    )
-  }
+#  custom_scatter <- function(data, mapping) {
+#    ggplot(data = data, mapping = mapping) +
+#      geom_point(size = pt_size, color = color_palette, stroke = 0) +
+#      geom_abline(intercept = 0, slope = 1, lty = 2)
+#  }
+#
+#  # Create custom correlation heatmap format.
+#  custom_heatmap <- function(data, mapping) {
+#    sample_1 <- pre_transformed[ ,str_replace(mapping$x, "~", "")]
+#    sample_2 <- pre_transformed[ ,str_replace(mapping$y, "~", "")]
+#
+#    correlation <- cor(sample_1, sample_2, method = correlation_metric) %>%
+#      round(3) %>%
+#      as_tibble(name_repair = "unique", rownames = "sample_1") %>%
+#      pivot_longer(!sample_1, "sample_2", "correlation")
+#
+#    ggplot(correlation, aes(x = sample_1, y = sample_2)) +
+#      geom_tile(color = "white", aes(fill = correlation)) +
+#      geom_label(aes(label = correlation), label.size=NA, fill=NA, color = "black", size = font_size) +
+#      scale_fill_viridis_c(limits = c(0, 1))
+#  }
+#
+#  ## Plot the correlation plot.   
+#
+#  if (correlation_plot == "scatter") {
+#    p <- ggpairs(
+#      normalized_counts,
+#      columns = sample_names,
+#      upper = list(continuous = custom_scatter),
+#      lower = NULL,
+#      diag = NULL,
+#      ...
+#    )
+#  } else if (correlation_plot == "heatmap") {
+#    p <- ggpairs(
+#      normalized_counts,
+#      columns = sample_names,
+#      upper = list(continuous = custom_heatmap),
+#      lower = NULL,
+#      diag = NULL,
+#      ...
+#    )
+#  } else if (correlation_plot == "combined") {
+#    p <- ggpairs(
+#      normalized_counts,
+#      columns = sample_names,
+#      upper = list(continuous = custom_heatmap),
+#      lower = list(continuous = custom_scatter)#,
+##      ...
+#    )
+#  } else if (correlation_plot == "hierarchical") {
+#    corr_matrix <- pre_transformed %>%
+#      cor(method = correlation_metric)
+#
+#    p <- Heatmap(
+#      corr_matrix,
+#      name = correlation_metric,
+#      row_names_gp = gpar(fontsize = font_size),
+#      column_names_gp = gpar(fontsize = font_size),
+#      heatmap_legend_param = list(
+#        title_gp = gpar(fontsize = font_size),
+#        labels_gp = gpar(fontsize = font_size),
+#        grid_height = unit(2, "mm"),
+#        grid_width = unit(3, "mm")
+#      ),
+#      ...
+#    )
+#  }
 
   return(p)
 }

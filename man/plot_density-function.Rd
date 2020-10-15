@@ -16,6 +16,7 @@ plot_density(
   use_cpm = FALSE,
   dominant = FALSE,
   data_conditions = NA,
+  color = "default",
   ...
 )
 }
@@ -42,6 +43,8 @@ in addition to its unique location.}
 \item{dominant}{Consider only dominant TSS or TSR}
 
 \item{data_conditions}{Data conditioning filters}
+
+\item{color}{Either 'default' or a valid color format to set plot color}
 
 \item{...}{Arguments passed to geom_density}
 }

@@ -46,10 +46,7 @@ merge_samples <- function(
 
       select_samples <- experiment@experiment$TSRs[sample_group]
       if (!is.na(threshold)) {
-        select_samples <- map(select_samples, function(x) {
-          x <- x[score(x) >= threshold]
-          return(x)
-        })
+        select_samples <- map(select_samples, ~.x[score(x) >= threshold])
       }
 
       tsr_consensus <- select_samples %>%

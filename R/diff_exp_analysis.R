@@ -1,7 +1,7 @@
 #' DE MA or Volcano Plot
 #'
 #' @description
-#' Generate MA or VOlcano plot for differential TSRs or Genes (RNA-seq) - confused. I see the MA-plot code but no volcano.
+#' Generate MA or Volcano plot for differential TSRs or Genes (RNA-seq) - confused. I see the MA-plot code but no volcano.
 #'
 #' @param experiment tsrexplorer object
 #' @param de_comparisons Which differential expression comparisons to plot

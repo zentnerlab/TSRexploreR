@@ -8,11 +8,12 @@ plot_correlation(
   experiment,
   data_type = c("tss", "tsr", "tss_features", "tsr_features"),
   samples = "all",
-  correlation_plot = "combined",
   correlation_metric = "pearson",
   log2_transform = TRUE,
-  font_size = 4,
-  pt_size = 0.5,
+  font_size = 12,
+  cluster_samples = FALSE,
+  heatmap_colors = NULL,
+  show_values = TRUE,
   ...
 )
 }
@@ -23,16 +24,18 @@ plot_correlation(
 
 \item{samples}{Either 'all' or the names of the samples to plot}
 
-\item{correlation_plot}{Whether to make a correlation 'heatmap', 'scatter', 'combined', 
-or 'hierarchical' plot}
-
 \item{correlation_metric}{Whether to use Spearman or Pearson correlation}
 
 \item{log2_transform}{Should the TMM values be log2+1 transformed prior to plotting?}
 
 \item{font_size}{The font size for the heatmap tiles}
 
-\item{pt_size}{Point size for the scatter plots}
+\item{cluster_samples}{Logical whether hierarchical clustering is performed
+on samples in rows and columns.}
+
+\item{heatmap_colors}{Vector of colors for heatmap.}
+
+\item{show_values}{Show the correlation values on the plot.}
 
 \item{...}{Additional arguments passed to ComplexHeatmap::Heatmap or GGally::ggpairs}
 }

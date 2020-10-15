@@ -172,7 +172,6 @@ plot_genomic_distribution <- function(
   ## Plot the genomic distribution.
   p <- ggplot(genomic_dist, aes(x = .data$samples, y = .data$count, fill = fct_rev(.data$simple_annotations))) +
     geom_col(position = "fill") +
-    scale_fill_viridis_d(direction = -1, name="Annotation") +
     coord_flip() +
     ylab("Fraction") +
     theme_bw() +

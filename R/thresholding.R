@@ -160,7 +160,6 @@ plot_threshold_exploration <- function(
   p <- ggplot(threshold_data, aes(x=.data$threshold, y=.data$frac_promoter_proximal)) +
     geom_line(color="lightgrey") +
     geom_point(aes(color=.data$n_features), size=point_size, ...) +
-    scale_color_viridis_c() +
     theme_bw() +
     xlab("Count Threshold") +
     ylab("Fraction of Promoter Proximal TSSs") +

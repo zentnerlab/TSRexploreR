@@ -229,7 +229,6 @@ plot_dinucleotide_frequencies <- function(
   p <- ggplot(freqs, aes(x = .data$dinucleotide, y = .data$freqs)) +
     geom_col(width = 0.5, aes(fill = .data$freqs), ...) +
     theme_bw() +
-    scale_fill_viridis_c(name = "Frequency") +
     coord_flip() +
     labs(
       x="Dinucleotide",

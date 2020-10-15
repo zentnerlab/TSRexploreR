@@ -6,7 +6,7 @@ NULL
 #' @importFrom tibble tibble as_tibble
 #' @importFrom magrittr %>%
 #' @importFrom stringr str_detect str_replace str_c str_split str_to_lower
-#' @importFrom purrr imap map walk iwalk discard
+#' @importFrom purrr imap map walk iwalk discard pmap
 #' @importFrom tidyr pivot_longer
 #' @importFrom ggplot2
 #'   labs ylab xlab ylim xlim
@@ -29,7 +29,7 @@ NULL
 #' @importFrom rtracklayer import export
 #' @importFrom GenomicRanges GRanges
 #' @importFrom GenomicFeatures makeTxDbFromGFF
-#' @importFrom plyranges as_granges join_overlap_left_directed anchor_3p
+#' @importFrom plyranges as_granges stretch join_overlap_left_directed anchor_3p
 #' @importFrom Biostrings DNAStringSet getSeq
 
 NULL

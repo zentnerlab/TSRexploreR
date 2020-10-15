@@ -240,7 +240,7 @@ count_matrix <- function(
     ## Create raw count matrix.
     raw_matrix <- select_samples %>%
       map(~as_granges(.x) %>%
-        findOverlapPairs(query = tsr_consensus, subject = .) %>%
+        IRanges::findOverlapPairs(query = tsr_consensus, subject = .) %>%
         as.data.table
       ) %>%
       rbindlist(idcol = "sample")

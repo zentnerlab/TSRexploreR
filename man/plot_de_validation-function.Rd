@@ -30,7 +30,7 @@ plot_de_validation(
 ggplot2 object of MA plot.
 }
 \description{
-Generate MA or VOlcano plot for differential TSRs or Genes (RNA-seq) - confused. I see the MA-plot code but no volcano.
+Generate MA or Volcano plot for differential TSRs or Genes (RNA-seq) - confused. I see the MA-plot code but no volcano.
 }
 \details{
 This function generates an MA plot of the results from

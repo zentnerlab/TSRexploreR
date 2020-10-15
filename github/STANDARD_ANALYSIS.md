@@ -18,8 +18,8 @@ TSSs <- readRDS(TSSs)
 
 # Keep only the 3 WT samples for now.
 TSSs <- names(TSSs) %>%
-	stringr::str_detect("WT") %>%
-	purrr::keep(TSSs, .)
+  stringr::str_detect("WT") %>%
+  purrr::keep(TSSs, .)
 
 exp <- tsr_explorer(TSSs)
 ```
@@ -52,8 +52,8 @@ After formatting counts and optionally CPM normalizing them, TSSs will be annota
 annotation <- system.file("extdata", "S288C_Annotation.gtf", package = "tsrexplorer")
 
 exp <- annotate_features(
-        exp, annotation_data = annotation,
-        data_type = "tss", feature_type = "transcript"
+  exp, annotation_data = annotation,
+  data_type = "tss", feature_type = "transcript"
 )
 ```
 
@@ -66,7 +66,8 @@ All TSS mapping methods contain some degree of background in the form of low-cou
 threshold_data <- explore_thresholds(exp, max_threshold = 25)
 
 p <- plot_threshold_exploration(threshold_data, ncol = 3, point_size = 0.5) +
-	ggplot2::theme(text = element_text(size = 4), legend.key.size = unit(0.3, "cm"))
+  scale_color_viridis_c() + 
+  ggplot2::theme(text = element_text(size = 4), legend.key.size = unit(0.3, "cm"))
 
 ggsave("tss_thresholding.png", plot = p, device = "png", type = "cairo", height = 1.25, width = 5)
 ```
@@ -96,8 +97,8 @@ This this example, a combined scatterplot/heatmap is generated.
 
 ```
 p <- plot_correlation(exp, data_type = "tss", font_size = 2, pt_size = 0.4) +
-        ggplot2::theme_bw() +
-        ggplot2::theme(text = element_text(size = 3), panel.grid = element_blank())
+  ggplot2::theme_bw() +
+  ggplot2::theme(text = element_text(size = 3), panel.grid = element_blank())
 
 ggsave("tss_correlation.png", plot = p, device = "png", type = "cairo", height = 2, width = 2)
 ```
@@ -115,7 +116,8 @@ A stacked bar plot can be generated to showcase the fractional distribution of T
 tss_distribution <- genomic_distribution(exp, data_type = "tss", threshold = 3)
 
 p <- plot_genomic_distribution(tss_distribution) +
-	ggplot2::theme(text = element_text(size = 4), legend.key.size = unit(0.3, "cm"))
+  scale_fill_viridis_d(direction = -1, name="Annotation") +
+  ggplot2::theme(text = element_text(size = 4), legend.key.size = unit(0.3, "cm"))
 
 ggsave("tss_genomic_distribution.png", plot = p, device = "png", type = "cairo", height = 1, width = 2.5)
 ```
@@ -130,7 +132,7 @@ The number of features detected and fraction of features with a promoter-proxima
 features <- detect_features(exp, data_type = "tss", threshold = 3)
 
 p <- plot_detected_features(features) +
-	ggplot2::theme(text = element_text(size = 3), legend.key.size = unit(0.3, "cm"))
+  ggplot2::theme(text = element_text(size = 3), legend.key.size = unit(0.3, "cm"))
 
 ggsave("tss_feature_plot.png", plot = p, device = "png", type = "cairo", height = 1, width = 1.75)
 ```
@@ -143,7 +145,7 @@ Density plots are useful for visualizing where, on average, TSSs are located rel
 
 ```
 p <- plot_density(exp, data_type = "tss", threshold = 3, ncol = 3) +
-	ggplot2::theme(text = element_text(size = 4))
+  ggplot2::theme(text = element_text(size = 4))
 
 ggsave("tss_density_plot.png", plot = p, device = "png", type = "cairo", height = 1, width = 2)
 ```
@@ -158,7 +160,7 @@ While a density plot gives a general overview of TSS distribution relative to an
 tss_matrix <- tss_heatmap_matrix(exp, threshold = 3, upstream = 250, downstream = 250)
 
 p <- plot_heatmap(tss_matrix, ncol = 3, background_color = "white") +
-	ggplot2::theme(text = element_text(size = 4), legend.key.size = unit(0.3, "cm"))
+  ggplot2::theme(text = element_text(size = 4), legend.key.size = unit(0.3, "cm"))
 
 ggsave("tss_heatmap.png", plot = p, device = "png", type = "cairo", height = 2, width = 4)
 ```
@@ -199,7 +201,7 @@ A sequence logo "averages" the bases when displaying data, but, as with TSSs, it
 
 ```
 p <- plot_sequence_colormap(seqs, ncol = 3) +
-	ggplot2::theme(text = element_text(size = 4), legend.key.size = unit(0.3, "cm"))
+  ggplot2::theme(text = element_text(size = 4), legend.key.size = unit(0.3, "cm"))
 
 ggsave("tss_seq_colormap.png", plot = p, device = "png", type = "cairo", height = 1.5, width = 3)
 ```
@@ -216,7 +218,7 @@ assembly <- system.file("extdata", "S288C_Assembly.fasta", package = "tsrexplore
 frequencies <- dinucleotide_frequencies(exp, genome_assembly = assembly, threshold = 3)
 
 p <- plot_dinucleotide_frequencies(frequencies, ncol = 3) +
-	ggplot2::theme(text = element_text(size = 6))
+  ggplot2::theme(text = element_text(size = 6))
 
 ggsave("tss_dinucleotide_frequencies.png", plot = p, device = "png", type = "cairo", height = 2, width = 5)
 ```
@@ -241,12 +243,12 @@ TSSexploreR provides great flexibility for working with TSSs and TSRs. After TSR
 
 ```
 exp <- associate_with_tsr(
-	exp, use_sample_sheet = FALSE,
-	sample_list = list(
-		"S288C_WT_1" = "S288C_WT_1",
-		"S288C_WT_2" = "S288C_WT_2",
-		"S288C_WT_3" = "S288C_WT_3"
-	)
+  exp, use_sample_sheet = FALSE,
+  sample_list = list(
+    "S288C_WT_1" = "S288C_WT_1",
+    "S288C_WT_2" = "S288C_WT_2",
+    "S288C_WT_3" = "S288C_WT_3"
+  )
 )
 ```
 
@@ -383,7 +385,7 @@ Summary plots can be generated for most TSR metrics. In this example, we generat
 
 ```
 p <- plot_tsr_metric(exp, tsr_metrics = c("score", "width"), log2_transform = TRUE, ncol = 2) +
-	ggplot2::theme(text = element_text(size = 5), legend.key.size = unit(0.3, "cm"))
+  ggplot2::theme(text = element_text(size = 5), legend.key.size = unit(0.3, "cm"))
 
 ggsave("tsr_metrics.png", plot = p, device = "png", type = "cairo", height = 1, width = 3)
 ```
@@ -400,8 +402,8 @@ assembly <- system.file("extdata", "S288C_Assembly.fasta", package = "tsrexplore
 
 conditions <- list(order_by = "score", grouping = "shape_class")
 seqs <- tss_sequences(
-	exp, genome_assembly = assembly, threshold = 10,
-	dominant = TRUE, data_conditions = conditions
+  exp, genome_assembly = assembly, threshold = 10,
+  dominant = TRUE, data_conditions = conditions
 )
 
 p <- plot_sequence_logo(seqs, ncol = 3)
@@ -423,13 +425,13 @@ annotation <- system.file("extdata", "S288C_Annotation.gtf", package = "tsrexplo
 
 png("gene_track.png", units = "in", res = 300, height = 3.5, width = 4, type = "cairo")
 gene_tracks(
-	exp, annotation, feature_name = "YAL012W",
-	samples = c(
-		"TSS:S288C_WT_1", "TSR:S288C_WT_1",
-		"TSS:S288C_WT_2", "TSR:S288C_WT_2",
-		"TSS:S288C_WT_3", "TSR:S288C_WT_3"
-	),
-	ymax = 80, tss_colors = viridis::viridis(3), tsr_colors = viridis::viridis(3)
+  exp, annotation, feature_name = "YAL012W",
+  samples = c(
+    "TSS:S288C_WT_1", "TSR:S288C_WT_1",
+    "TSS:S288C_WT_2", "TSR:S288C_WT_2",
+    "TSS:S288C_WT_3", "TSR:S288C_WT_3"
+  ),
+  ymax = 80, tss_colors = viridis::viridis(3), tsr_colors = viridis::viridis(3)
 )
 dev.off()
 ```
