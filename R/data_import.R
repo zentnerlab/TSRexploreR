@@ -58,9 +58,9 @@ setMethod("tss_import", signature = signature(object = "character"),
   ) {
 
     ## Check inputs.
-    if (!is(tsrexplorer_obj, "tsr_explorer")) stop("tsrexplorer_obj must be a tsr explorer object")
-    if (!is(sep, "character") || length(sep) > 1) stop("sep must be a character")
-    if (!is(col_names, "logical") || length(col_names) > 1) stop("col_names must be TRUE or FALSE")
+    assert_that(is(tsr_explorer, "tsr_explorer"))
+    assert_that(is.string(sep))
+    assert_that(is.flag(col_names))
   
     ## Check to see if sample sheet exists.
     if (!file.exists(object)) {
@@ -96,7 +96,7 @@ setMethod("tss_import", signature = signature(object = "data.frame"),
     object
   ) {
     ## Check inputs.
-    if (!is(tsrexplorer_obj, "tsr_explorer")) stop("tsrexplorer_obj must be a tsr explorer object")
+    assert_that(is(tsrexplorer_obj, "tsr_explorer"))
 
     ## Import data.
     imported_data <- sample_sheet %>%
@@ -125,7 +125,7 @@ setMethod("tss_import", signature(object = "tssObject"),
     object
   ) {
     ## Check inputs.
-    if (!is(tsrexplorer_obj, "tsr_explorer")) stop("tsrexplorer_obj must be a tsr explorer object")
+    assert_that(is(tsrexplorer_obj, "tsr_explorer"))
 
     ## Pull the TSSs out of the TSRchitect tssObject.
     message("...Importing TSSs from TSRchitect object")

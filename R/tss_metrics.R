@@ -54,16 +54,11 @@ mark_dominant <- function(
 ) {
 
   ## Check inputs.
-  if (!is(experiment, "tsr_explorer")) stop("'experiment' must be a tsr explorer object")
+  assert_that(is(experiment, "tsr_explorer"))
   data_type <- match.arg(str_to_lower(data_type), c("tss", "tsr"))
-  if (
-    !is.na(threshold) && !is(threshold, "numeric") ||
-    threshold %% 1 != 0 || threshold < 1
-  ) {
-    stop("threshold must be a positive integer greater than or equal to 1")
-  }
+  assert_that(is.count(threshold) && threshold > 0)
   mark_per <- match.arg(str_to_lower(mark_per), c("default", "gene"))
-  
+
   ## Select samples.
   select_samples <- extract_counts(experiment, data_type, "all")
 

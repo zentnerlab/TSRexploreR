@@ -58,16 +58,11 @@ detect_features <- function(
 ) {
 
   ## Check inputs.
-  if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsr explorer object")
-  if (!is(samples, "character")) stop("samples must be a character vecotor")
+  assert_that(is(experiment, "tsr_explorer"))
+  assert_that(is.character(samples))
   data_type <- match.arg(str_to_lower(data_type), c("tss", "tsr", "tss_features", "tsr_features"))
-  if (
-    !is.na(threshold) && (!is(threshold, "numeric") ||
-    threshold %% 1 != 0 || threshold < 1)
-  ) {
-    stop("threshold must be a positive integer greater than or equal to 1")
-  }
-  if (!is(dominant, "logical")) stop("dominant must be logical")
+  assert_that(is.na(threshold) || (is.count(threshold) && threshold > 0))
+  assert_that(is.flag(dominant))
   if (all(!is.na(condition_data)) && !is(condition_data, "list")) {
     stop("condition_data must be a list of values")
   }
@@ -189,7 +184,7 @@ plot_detected_features <- function(
 ) {
 
   ## Check inputs.
-  if (!is(detected_features, "DataFrame")) stop("detected_features must be a DataFrame")
+  assert_that(is(detected_features, "DataFrame"))
   
   ## Get some info from DataFrame.
   data_type <- metadata(detected_features)$data_type

@@ -44,7 +44,8 @@ Imports:
     data.table,
     rtracklayer,
     Rcpp,
-    plyranges
+    plyranges,
+    assertthat
 Depends:
     R (>= 3.5.0)
 Suggests:

@@ -66,27 +66,12 @@ tss_sequences <- function(
 ) {
 
   ## Check inputs.
-  if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsrexplorer object")
-  if (!is(samples, "character")) stop("samples must be a character")
-  if (!is(genome_assembly, "character") & !is(genome_assembly, "BSgenome")) {
-    stop("genome assembly must be a fasta file or BSgenome package")
-  }
-  if (is(genome_assembly, "character")) {
-    extension <- file_ext(genome_assembly)
-    if (!extension %in% c("fasta", "fa")) {
-      stop("genome_assembly file extension must be '.fa' or '.fasta'")
-    }
-  }
-  if (!is(threshold, "numeric") | !is(distance, "numeric")) {
-    stop("threshold and/or distance must be positive integers")
-  }
-  if (threshold %% 1 != 0 | distance %% 1 != 0) {
-    stop("threshold and/or distance must be positive integers")
-  }
-  if (threshold < 1 | distance < 1) {
-    stop("threshold and/or distance must be positive integers")
-  }
-  if (!is(dominant, "logical")) stop("dominant must be logical")
+  assert_that(is(experiment, "tsr_explorer"))
+  assert_that(is.character(samples))
+  assert_that(is.character(genome_assembly) || is(genome_assembly, "BSgenome"))
+  assert_that(is.count(threshold) && threshold > 0)
+  assert_that(is.count(distance) && distance > 1)
+  assert_that(is.flag(dominant))
   if (all(!is.na(data_conditions)) && !is(data_conditions, "list")) {
     stop("data_conditions must be a list of values")
   }
@@ -198,13 +183,9 @@ plot_sequence_logo <- function(
 ) {
 
   ## Check inputs.
-  if (!is(tss_sequences, "DataFrame")) stop("tss_sequences must be a DataFrame")
-  if (!is(ncol, "numeric") || ncol %% 1 != 0 || ncol < 1) {
-    stop("ncol must be a positive integer")
-  }
-  if (!is(font_size, "numeric") || !font_size > 0) {
-    stop("font_size must be a positive number")
-  }
+  assert_that(is(tss_sequences, "DataFrame"))
+  assert_that(is.count(ncol) && ncol > 0)
+  assert_that(is.numeric(font_size) && font_size > 0)
 
   ## Get some info used to pull sequencs.
   distance <- metadata(tss_sequences)$distance
@@ -312,20 +293,13 @@ plot_sequence_colormap <- function(
   ...
 ) {
   ## Check inputs.
-  if (!is(tss_sequences, "DataFrame")) stop("tss_sequences must be a DataFrame")
-  if (!is(ncol, "numeric") || ncol %% 1 != 0 || ncol < 1) {
-    stop("ncol must be a positive integer")
-  }
-  if (!is(text_size, "numeric") || !text_size > 0) {
-    stop("font_size must be a positive number")
-  }
-  if (
-    !is(base_colors, "character") || length(base_colors) < 4 ||
-    is.null(names(base_colors)) ||
-    !all(str_to_lower(names(base_colors)) %in% c("a", "t", "g", "c"))
-  ) {
-    stop("base_colors must be a named character vector")
-  }
+  assert_that(is(tss_sequences, "DataFrame"))
+  assert_that(is.count(ncol) && ncol > 0)
+  assert_that(
+    is.character(base_colors) &&
+    has_name(base_colors, c("A", "C", "T", "G"))
+  )
+  assert_that(is.numeric(base_size) && base_size > 0)
 
   ## Grab some information out of DataFrame.
   distance <- metadata(tss_sequences)$distance

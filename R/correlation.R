@@ -138,15 +138,15 @@ plot_correlation <- function(
   ## Check inputs.
   if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsrexplorer object")
   data_type <- match.arg(data_type, c("tss", "tsr", "tss_features", "tsr_features"))
-  if (!is(samples, "character")) stop("samples must be a character vector")
+  assert_that(is.character(samples))
   correlation_plot <- match.arg(correlation_plot, c("heatmap", "scatter", "combined", "hierarchical"))
   correlation_metric <- match.arg(correlation_metric, c("pearson", "spearman"))
-  if (!is(log2_transform, "logical")) stop("log2_transform must be logical")
-  if(!is(font_size, "numeric") | !is(pt_size, "numeric")) {
-    stop("font_size and pt_size must be positive numbers")
-  }
-  if (!(font_size >= 0) | !(pt_size >= 0)) stop("font_size and point_size must be positive numbers")
-  
+  assert_that(is.flag(log2_transform))
+  assert_that(is.numeric(font_size) && font_size > 0)
+  assert_that(is.flag(cluster_samples))
+  assert_that(is.null(heatmap_colors) | is.character(heatmap_colors))
+  assert_that(is.flag(show_values))
+
   ## Get data from proper slot.
   normalized_counts <- experiment %>%
     extract_matrix(data_type, samples) %>%

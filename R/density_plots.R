@@ -82,28 +82,16 @@ plot_density <- function(
 ) {
 
   ## Check inputs.
-  if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsrexplorer object")
+  assert_that(is(experiment, "tsr_explorer"))
   data_type <- match.arg(str_to_lower(data_type), c("tss", "tsr"))
-  if (!is(samples, "character")) stop("samples must be a character")
-  if (!is(consider_score, "logical") | !is(use_cpm, "logical") | !is(dominant, "logical")) {
-    stop("consider_score, use_cpm, and/or dominant must be logical")
-  }
-  if (!is(upstream, "numeric") | !is(downstream, "numeric")) {
-    stop("upstream and downstream must be positive integers")
-  }
-  if (upstream %% 1 != 0 | downstream %% 1 != 0) {
-    stop("upstream and downstream must be positive integers")
-  }
-  if (upstream < 0 | downstream < 0) stop("upstream and downstream must be positive integers")
-  if (
-    !is.na(threshold) && (!is(threshold, "numeric") ||
-    threshold %% 1 != 0 || threshold < 1)
-  ) {
-    stop("threshold must be a positive integer")
-  }
-  if (!is(ncol, "numeric") || ncol %% 1 != 0 || ncol < 1) {
-    stop("ncol must be a positive integer")
-  }
+  assert_that(is.character(samples))
+  assert_that(is.flag(consider_score))
+  assert_that(is.count(upstream) && upstream > 0)
+  assert_that(is.count(downstream) && downstream > 0)
+  assert_that(is.count(threshold) && threshold > 0)
+  assert_that(is.count(ncol) && ncol > 0)
+  assert_that(is.flag(use_cpm))
+  assert_that(is.flag(dominant))
   if (all(!is.na(data_conditions)) && !is(data_conditions, "list")) {
     stop("data_conditions should be a list of values")
   }

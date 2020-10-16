@@ -50,19 +50,15 @@ annotate_features <- function(
 ) {
 
   ## Check inputs.
-  if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsrexplorer object")
-  if (!is(annotation_data, "character") & !is(annotation_data, "TxDb")) {
-    stop("annotation_data must be an annotation file or TxDb object")
-  }
+  assert_that(is(experiment, "tsr_explorer"))
+  assert_that(
+    is(annotation_data, "character") | is(annotation_data, "TxDb"),
+    msg="annotation_data must be an annotation file or TxDb object"
+  )
   data_type <- match.arg(data_type, c("tss", "tsr")) 
   feature_type <- match.arg(feature_type, c("gene", "transcript"))
-  if (!is(upstream, "numeric") | !is(downstream, "numeric")) {
-    stop("upstream and downstream must be positive integers")
-  }
-  if (upstream %% 1 != 0 | downstream %% 1 != 0) {
-    stop("upstream and downstream must be positive integers")
-  }
-  if (upstream < 0 | downstream < 0) stop("upstream and downstream must be positive integers")
+  assert_that(is.count(upstream) && upstream > 0)
+  assert_that(is.count(downstream) && downstream > 0)
 
   ## Load GTF.
   anno_type <- case_when(

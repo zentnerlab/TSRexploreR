@@ -29,7 +29,7 @@ cpm_normalize <- function(
 ) {
 
   ## Check inputs.
-  if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsrexplorer object")
+  assert_that(is(experiment, "tsr_explorer"))
   data_type <- match.arg(str_to_lower(data_type), c("tss", "tsr", "tss_features", "tsr_features"))
 
   ## Get selected samples.
@@ -106,18 +106,14 @@ tmm_normalize <- function(
 ) {
 
   ## Check inputs.
-  if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsr explorer object")
-  data_type <- match.arg(str_to_lower(data_type), c("tss", "tsr", "tss_features", "tsr_features"))
-  if (!is(samples, "character")) stop("samples must be a character vector")
-  if (!is(threshold, "numeric") | !is(n_samples, "numeric")) {
-    stop("threshold and n_samples must be positive integers")
-  }
-  if (threshold %% 1 != 0 | n_samples %% 1 != 0) {
-    stop("threshold and n_samples must be positive integers")
-  }
-  if (threshold < 1 | n_samples < 1) {
-    stop("threshold and n_samples must be greater than or equal to 1")
-  }
+  assert_that(is(experiment, "tsr_explorer"))
+  data_type <- match.arg(
+    str_to_lower(data_type),
+    c("tss", "tsr", "tss_features", "tsr_features")
+  )
+  assert_that(is.character(samples))
+  assert_that(is.count(threshold) && threshold > 0)
+  assert_that(is.count(n_samples) && n_samples > 0)
 
   ## Get selected samples.
   select_samples <- extract_matrix(experiment, data_type, samples)

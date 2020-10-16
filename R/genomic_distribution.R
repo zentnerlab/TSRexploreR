@@ -57,16 +57,11 @@ genomic_distribution <- function(
 ) {
 
   ## Check inputs.
-  if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsrexplorer object")
+  assert_that(is(experiment, "tsr_explorer"))
   data_type <- match.arg(str_to_lower(data_type), c("tss", "tsr"))
-  if (!is(samples, "character")) stop("samples must be a character")
-  if (
-    !is.na(threshold) && (!is(threshold, "numeric") ||
-    threshold %% 1 != 0 || threshold < 1)
-  ) {
-    stop("threshold must be a positive integer")
-  }
-  if (!is.logical(dominant)) stop("dominant must be logical")
+  assert_that(is.character(samples))
+  assert_that(is.na(threshold) || (is.count(threshold) && threshold > 0))
+  assert_that(is.flag(dominant))
   if (all(!is.na(data_conditions)) && !is(data_conditions, "list")) stop("data_conditions must in list form")
 
   ## Extract samples.
@@ -164,7 +159,7 @@ plot_genomic_distribution <- function(
 ) {
 
   ## Check inputs.
-  if (!is(genomic_distribution, "DataFrame")) stop("genomic distribution must be a DataFrame")
+  assert_that(is(genomic_distribution, "DataFrame"))
   
   ## Pull out information from DataFrame.
   genomic_dist <- as_tibble(genomic_distribution, .name_repair = "unique")

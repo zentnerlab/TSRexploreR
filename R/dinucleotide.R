@@ -58,24 +58,11 @@ dinucleotide_frequencies <- function(
 ) {
 
   ## Check inputs.
-  if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsrexplorer object")
-  if (!is(genome_assembly, "character") & !is(genome_assembly, "BSgenome")) {
-    stop("genome assembly must be a fasta file or BSgenome package")
-  }
-  if (is(genome_assembly, "character")) {
-    extension <- file_ext(genome_assembly)
-    if (!extension %in% c("fasta", "fa")) {
-      stop("genome_assembly file extension must be '.fa' or '.fasta'")
-    }
-  }
-  if (!is(samples, "character")) stop("samples must be a character")
-  if (
-    !is.na(threshold) && (!is(threshold, "numeric") ||
-    threshold %% 1 != 0 || threshold < 1)
-  ) {
-    stop("threshold must be a positive integer")
-  }
-  if (!is(dominant, "logical")) stop("dominant must be logical")
+  assert_that(is(experiment, "tsr_explorer"))
+  assert_that(is.character(genome_assembly) | is(genome_assembly, "BSgenome"))
+  assert_that(is.character(samples))
+  assert_that(is.count(threshold) && threshold > 0)
+  assert_that(is.flag(dominant))
   if (all(!is.na(data_conditions)) && !is(data_conditions, "list")) {
     stop("data_conditions must be a list of values")
   }
@@ -190,12 +177,8 @@ plot_dinucleotide_frequencies <- function(
 ) {
 
   ## Check inputs.
-  if (!is(dinucleotide_frequencies, "DataFrame")) {
-    stop("dinucleotide_frequencies must be a DataFrame")
-  }
-  if (!is(ncol, "numeric") || ncol %% 1 != 0 || ncol < 1) {
-    stop("ncol must be a positive integer")
-  }
+  assert_that(is(dinucleotide_frequencies, "DataFrame"))
+  assert_that(is.count(ncol) && ncol > 0)
 
   ## Pull out some info from the dataframe.
   groupings <- metadata(dinucleotide_frequencies)$groupings

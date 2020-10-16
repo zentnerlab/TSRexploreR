@@ -21,26 +21,11 @@ tss_shift <- function(
 ){
 
   ## Input checks.
-  if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsr explorer object")
-  if (!is(compare_samples, "character") || length(compare_samples) != 2) {
-    stop("compare_samples must be a character vector with the names of the two TSR samples to compare")
-  }
-  if (
-    !is(min_distance, "numeric") || length(min_distance) > 1 ||
-    min_distance %% 1 != 0 || min_distance < 0
-  ) {
-    stop("min_distance must be 0 or a positive integer")
-  }
-  if (
-    !is(min_threshold, "numeric") || length(min_threshold) > 1 ||
-    min_threshold %% 1 != 0 || min_threshold < 1
-  ) {
-    stop("min_threshold must be a positive integer")
-  }
-  if (!is(n_resamples, "integer") || length(n_resamples) > 1 || n_resamples < 100) {
-    stop("n_resamples must be a positive integer greater than or equal to 100")
-  }
-
+  assert_that(is(experiment, "tsr_explorer"))
+  assert_that(is.character(compare_samples), length(compare_samples) == 2)
+  assert_that(is.count(min_distance) && min_distance > 0)
+  assert_that(is.count(min_threshold) && min_threshold > 5)
+  assert_that(is.integer(n_resamples) && n_resamples >= 100)
   
   ## Get samples to be compared.
   select_samples <- extract_counts(experiment, "tss", compare_samples)

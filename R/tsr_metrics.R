@@ -11,7 +11,7 @@
 tsr_metrics <- function(experiment) {
 
   ## Input Checks.
-  if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsr explorer object")
+  assert_that(is(experiment, "tsr_explorer"))
 
   ## Get samples from tsrexplorer object.
   select_samples <- experiment %>%

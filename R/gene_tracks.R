@@ -78,26 +78,37 @@ gene_tracks <- function(
   }
   
   ## Prepare genome annotation.
-  if (is(genome_annotation, "character")) {
-    anno <- makeTxDbFromGFF(genome_annotation)
-  } else if (is(genome_annotation, "TxDb")) {
-    anno <- genome_annotation
-  }
+  anno_type <- case_when(
+    is(genome_annotation, "character") ~ "character",
+    is(genome_annotation, "TxDb") ~ "txdb"
+  )
+
+  anno <- switch(
+    anno_type,
+    "character"=makeTxDbFromGFF(genome_annotation),
+    "txdb"=genome_annotation
+  )
+  
   options(ucscChromosomeNames = FALSE)
 
   ## Grab appropriate ranges.
-  if (promoter_only) {
-    if (feature_type == "transcript") {
-      feature_ranges <- promoters(transcripts(anno), upstream = upstream, downstream = downstream)
-    } else {
-      feature_ranges <- promoters(genes(anno), upstream = upstream, downstream = downstream)
-    }
-  } else {
-    if (feature_type == "transcript") {
-      feature_ranges <- transcripts(anno)
-    } else {
-      feature_ranges <- genes(anno)
-    }
+  ftype <- case_when(
+    promoter_only & feature_type == "transcript" ~ "transcript_promoter",
+    promoter_only & feature_type == "gene" ~ "gene_promoter",
+    !promoter_only & feature_type == "transcript" ~ "transcript",
+    !promoter_only & feature_type == "gene" ~ "gene"
+  )
+
+  feature_ranges <- switch(ftype,
+    "transcript_promoter"=promoters(transcripts(anno), upstream=upstream, downstream=downstream),
+    "gene_promoter"=promoters(genes(anno), upstream=upstream, downstream=downstream),
+    "transcript"=transcripts(anno),
+    "gene"=genes(anno)
+  )
+
+
+  ## If not promoter only, expand ranges.
+  if (!promoter_only) {
     feature_ranges <- feature_ranges %>%
       resize(., width = width(.) + downstream, "start") %>%
       resize(., width = width(.) + upstream,  "end")

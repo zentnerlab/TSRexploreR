@@ -36,20 +36,10 @@ tss_clustering <- function(
 ) {
 
   ## Check inputs.
-  if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsrexplorer object")
-  if (!is(samples, "character")) stop("samples must be a character")
-  if (
-    !is.na(threshold) && (!is(threshold, "numeric") ||
-    threshold %% 1 != 0 || threshold < 1)
-  ) {
-    stop("threshold must be a positive integer")
-  }
-  if (
-    !is(max_distance, "numeric") || max_distance %% 1 != 0 ||
-    max_distance < 5
-  ) {
-    stop("max_distance must be a positive integer greater than or equal to 5")
-  }
+  assert_that(is(experiment, "tsr_explorer"))
+  assert_that(is.character(samples))
+  assert_that(is.count(threshold) && threshold > 0)
+  assert_that(is.count(max_distance) && max_distance >= 5)
 
   ## Get selected samples.
   select_samples <- extract_counts(experiment, "tss", samples)

@@ -23,6 +23,7 @@ NULL
 #' @importFrom rlang .data
 #' @importFrom forcats fct_rev fct_inorder fct_reorder
 #' @importFrom dplyr pull case_when
+#' @importFrom assertthat assert_that is.count is.flag is.string has_name
 
 NULL
 

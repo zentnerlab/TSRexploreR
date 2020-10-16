@@ -30,13 +30,11 @@ plot_de_validation <- function(
 ){
 
   ## Input checks.
-  if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsr explorer object")
+  assert_that(is(experiment, "tsr_explorer"))
   data_type <- match.arg(str_to_lower(data_type), c("tss", "tsr", "tss_features", "tsr_features"))
-  if (!is(de_comparisons, "character")) stop("de_comparisons must be 'all' or character vector")
+  assert_that(is.character(de_comparisons))
   plot_type <- match.arg(str_to_lower(plot_type), c("ma", "volcano"))
-  if (!is(ncol, "numeric") || ncol %% 1 != 0 || ncol < 1) {
-    stop("ncol must be a positive integer")
-  }
+  assert_that(is.count(ncol) && ncol > 0)
 
   ## Get differential expression tables.
   de_samples <- extract_de(experiment, data_type, de_comparisons)
@@ -87,17 +85,12 @@ export_for_enrichment <- function(
   de_comparisons = "all" 
 ) {
   ## Input checks.
-  if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsr explorer object")
-
-  if (!is(data_type, "character") || length(data_type) > 1) {
-    stop("data_type must be a character")
-  }
-  data_type <- str_to_lower(data_type)
-  if (!data_type %in% c("tss", "tsr", "tss_features", "tsr_features")) {
-    stop("data_type must be 'tss', 'tsr', 'tss_features', or 'tsr_features'")
-  }
-
-  if (!is(de_comparisons, "character")) stop("de_comparisons must be 'all' or character vector")
+  assert_that(is(experiment, "tsr_explorer"))
+  data_type <- match.arg(
+    str_to_lower(data_type),
+    c("tss", "tsr", "tss_features", "tsr_features")
+  )
+  assert_that(is.character(de_comparisons))
 
   ## Get DE comparisons.
   de_data <- extract_de(experiment, data_type, de_comparisons)
@@ -131,15 +124,12 @@ plot_num_de <- function(
 ) {
 
   ## Input checks.
-  if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsr explorer object")
-  if (!is(data_type, "character") || length(data_type) > 1) {
-    stop("data_type must be a character")
-  }
-    data_type <- str_to_lower(data_type)
-  if (!data_type %in% c("tss", "tsr", "tss_features", "tsr_features")) {
-    stop("data_type must be 'tss', 'tsr', 'tss_features', or 'tsr_features'")
-  }
-  if (!is(de_comparisons, "character")) stop("de_comparisons must be 'all' or character vector")
+  assert_that(is(experiment, "tsr_explorer"))
+  data_type <- match.arg(
+    str_to_lower(data_type),
+    c("tss", "tsr", "tss_features", "tsr_features")
+  )
+  assert_that(is.character(de_comparisons))
 
   ## Get appropriate samples.
   de_samples <- extract_de(experiment, data_type, de_comparisons)

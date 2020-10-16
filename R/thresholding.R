@@ -46,14 +46,9 @@ explore_thresholds <- function(
   samples = "all"
 ) {
   ## Check inputs.
-  if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsr explorer object")
-  if (
-    !is(max_threshold, "numeric") || length(max_threshold) > 1 ||
-    max_threshold %% 1 != 0 || max_threshold < 5
-  ) {
-    stop("max_threshold must be a positive integer greater than or equal to 5")
-  }
-  if (!is(samples, "character")) stop("samples must be a character vector")
+  assert_that(is(experiment, "tsr_explorer"))
+  assert_that(is.count(max_threshold) && max_threshold >= 5)
+  assert_that(is.character(samples))
 
   ## Get settings information.
   feature_type <- experiment@settings$annotation[["feature_type"]]
@@ -148,13 +143,9 @@ plot_threshold_exploration <- function(
 ) {
 
   ## Check inputs.
-  if (!is(threshold_data, "data.frame")) stop("threshold_data must be a data.frame")
-  if (!is(ncol, "numeric") || ncol %% 1 != 0 || ncol < 1) {
-    stop("ncol must be a positive integer")
-  }
-  if (!is(point_size, "numeric") || !point_size > 0) {
-    stop("point_size must be a positive number")
-  }
+  assert_that(is.data.frame(threshold_data))
+  assert_that(is.count(ncol) && ncol > 0)
+  assert_that(is.numeric(point_size) && point_size > 0)
 
   ## Plot data.
   p <- ggplot(threshold_data, aes(x=.data$threshold, y=.data$frac_promoter_proximal)) +

@@ -36,22 +36,18 @@ plot_tsr_metric <- function(
 ) {
 
   ## Input checks.
-  if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsrexplorer object")
-  if (!is(tsr_metrics, "character")) stop("tsr_metrics must be a character vector")
-  plot_type <- match.arg(str_to_lower(plot_type), c("violin", "jitter", "box", "boxjitter"))
-  if (!is(samples, "character")) stop("samples must be a character")
-  if (!is(log2_transform, "logical")) stop("log2_transform must be TRUE or FALSE")
-  if (!is(ncol, "numeric") || ncol %% 1 != 0 || ncol < 1) {
-    stop("ncol must be a positive integer")
-  }
-  if (!is(use_cpm, "logical")) stop("use_cpm must be TRUE or FALSE")
-  if (!is(dominant, "logical")) stop("dominant must be TRUE or FALSE")
-  if (
-    !is.na(threshold) && (!is(threshold, "numeric") ||
-    threshold %% 1 != 0 || threshold < 1)
-  ) {
-    stop("threshold must be a positive integer")
-  }
+  assert_that(is(experiment, "tsr_explorer"))
+  assert_that(is.character(tsr_metrics))
+  plot_type <- match.arg(
+    str_to_lower(plot_type),
+    c("violin", "jitter", "box", "boxjitter")
+  )
+  assert_that(is.character(samples))
+  assert_that(is.flag(log2_transform))
+  assert_that(is.count(ncol) && ncol > 0)
+  assert_that(is.flag(use_cpm))
+  assert_that(is.flag(dominant))
+  assert_that(is.na(threshold) || (is.count(threshold) && threshold > 0))
   if (all(!is.na(data_conditions)) && !is(data_conditions, "list")) stop("data_conditions must in list form")
 
   ## Get data.

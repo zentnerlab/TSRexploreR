@@ -50,20 +50,11 @@ plot_reduction <- function(
 ) {
 
   ## Input checks.
-  if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsrexplorer object")
+  assert_that(is(experiment, "tsr_explorer"))
   data_type <- match.arg(str_to_lower(data_type), c("tss", "tsr", "tss_features", "tsr_features"))
   method <- match.arg(str_to_lower(method), c("umap", "pca"))
-  if (
-    !is(n_neighbors, "numeric") || length(n_neighbors) > 1 ||
-    n_neighbors %% 1 != 0 || n_neighbors < 2
-  ) {
-    stop("n_neighbors must be a positive integer greater than or equal to 2")
-  }
-  if (
-    !is(min_dist, "numeric") || length(min_dist) > 1 || min_dist < 0
-  ){
-    stop("min_dist must be a number greater than or equal to 0")
-  }
+  assert_that(is.count(n_neighbors) && n_neighbors > 1)
+  assert_that(is.numeric(min_dist) && min_dist > 0)
 
   ## Grab TMM counts.
   tmm_counts <- extract_matrix(experiment, data_type, "all")
