@@ -61,7 +61,7 @@ detect_features <- function(
   assert_that(is(experiment, "tsr_explorer"))
   assert_that(is.character(samples))
   data_type <- match.arg(str_to_lower(data_type), c("tss", "tsr", "tss_features", "tsr_features"))
-  assert_that(is.na(threshold) || (is.count(threshold) && threshold > 0))
+  assert_that(is.na(threshold) || is.count(threshold))
   assert_that(is.flag(dominant))
   if (all(!is.na(condition_data)) && !is(condition_data, "list")) {
     stop("condition_data must be a list of values")

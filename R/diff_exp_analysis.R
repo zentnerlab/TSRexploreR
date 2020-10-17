@@ -34,7 +34,7 @@ plot_de_validation <- function(
   data_type <- match.arg(str_to_lower(data_type), c("tss", "tsr", "tss_features", "tsr_features"))
   assert_that(is.character(de_comparisons))
   plot_type <- match.arg(str_to_lower(plot_type), c("ma", "volcano"))
-  assert_that(is.count(ncol) && ncol > 0)
+  assert_that(is.count(ncol))
 
   ## Get differential expression tables.
   de_samples <- extract_de(experiment, data_type, de_comparisons)

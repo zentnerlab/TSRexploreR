@@ -144,7 +144,7 @@ plot_threshold_exploration <- function(
 
   ## Check inputs.
   assert_that(is.data.frame(threshold_data))
-  assert_that(is.count(ncol) && ncol > 0)
+  assert_that(is.count(ncol))
   assert_that(is.numeric(point_size) && point_size > 0)
 
   ## Plot data.

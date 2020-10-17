@@ -23,7 +23,7 @@ tss_shift <- function(
   ## Input checks.
   assert_that(is(experiment, "tsr_explorer"))
   assert_that(is.character(compare_samples), length(compare_samples) == 2)
-  assert_that(is.count(min_distance) && min_distance > 0)
+  assert_that(is.count(min_distance))
   assert_that(is.count(min_threshold) && min_threshold > 5)
   assert_that(is.integer(n_resamples) && n_resamples >= 100)
   

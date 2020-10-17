@@ -53,7 +53,7 @@ plot_reduction <- function(
   assert_that(is(experiment, "tsr_explorer"))
   data_type <- match.arg(str_to_lower(data_type), c("tss", "tsr", "tss_features", "tsr_features"))
   method <- match.arg(str_to_lower(method), c("umap", "pca"))
-  assert_that(is.count(n_neighbors) && n_neighbors > 1)
+  assert_that(is.count(n_neighbors))
   assert_that(is.numeric(min_dist) && min_dist > 0)
 
   ## Grab TMM counts.

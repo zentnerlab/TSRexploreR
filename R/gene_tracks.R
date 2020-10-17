@@ -45,38 +45,21 @@ gene_tracks <- function(
 ) {
 
   ## Input checks.
-  if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsr explorer object")
-  if (!is(genome_annotation, "character") & !is(genome_annotation, "TxDb")) {
-    stop("genome_annotation must be a file path or TxDb object")
-  }
-  if (!is(feature_name, "character") || length(feature_name) > 1) stop("feature_name must be a character")
+  assert_that(is(experiment, "tsr_explorer"))
+  assert_that(is.character(genome_annotation) | is(genome_annotation, "TxDb"))
+  assert_that(is.string(feature_name))
   feature_type <- match.arg(str_to_lower(feature_type), c("gene", "transcript"))
-  if (!is(samples, "character")) stop("samples must be a character")
-  if (!all(str_detect(sample, "^TS[RS]:"))) stop("sample names must be prefixed with 'TSS:' or 'TSR:'")
-  if (
-    !is.na(threshold) && (!is(threshold, "numeric") ||
-    threshold %% 1 != 0 || threshold < 1)
-  ) {
-    stop("threshold must be a positive integer")
-  }
-  if (!is(upstream, "numeric") | !is(downstream, "numeric")) {
-    stop("upstream and downstream must be positive integers")
-  }
-  if (upstream %% 1 != 0 | downstream %% 1 != 0) {
-    stop("upstream and downstream must be positive integers")
-  }
-  if (upstream < 0 | downstream < 0) stop("upstream and downstream must be positive integers")
-  if (!is(promoter_only, "logical")) stop("promoter_only must be TRUE or FALSE")
-  if (!is(use_cpm, "logical")) stop("use_cpm must be TRUE or FALSE")
-  if (!is(tss_colors, "character")) stop("tss_colors must be a character vector")
-  if (!is(tsr_colors, "character")) stop("tsr_colors must be a character vector")
-  if (!is(axis_scale, "numeric") || length(axis_scale) > 1 || axis_scale <= 0) {
-    stop("axis_scale must be a positive number")
-  }
-  if (!is.na(ymax) && (!is(ymax, "numeric") || length(ymax) > 1 || ymax <= 0)) {
-    stop("ymax must be a positive number")
-  }
-  
+  assert_that(is.character(samples))
+  assert_that(is.count(threshold))
+  assert_that(is.count(upstream))
+  assert_that(is.count(downstream))
+  assert_that(is.flag(promoter_only))
+  assert_that(is.flag(use_cpm))
+  assert_that(is.character(tss_colors))
+  assert_that(is.character(tsr_colors))
+  assert_that(is.numeric(axis_scale) && axis_scale > 0)
+  assert_that(is.na(ymax) || is.numeric(ymax))
+
   ## Prepare genome annotation.
   anno_type <- case_when(
     is(genome_annotation, "character") ~ "character",

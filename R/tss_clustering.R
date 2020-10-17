@@ -38,8 +38,8 @@ tss_clustering <- function(
   ## Check inputs.
   assert_that(is(experiment, "tsr_explorer"))
   assert_that(is.character(samples))
-  assert_that(is.count(threshold) && threshold > 0)
-  assert_that(is.count(max_distance) && max_distance >= 5)
+  assert_that(is.count(threshold))
+  assert_that(is.count(max_distance))
 
   ## Get selected samples.
   select_samples <- extract_counts(experiment, "tss", samples)

@@ -56,7 +56,7 @@ mark_dominant <- function(
   ## Check inputs.
   assert_that(is(experiment, "tsr_explorer"))
   data_type <- match.arg(str_to_lower(data_type), c("tss", "tsr"))
-  assert_that(is.count(threshold) && threshold > 0)
+  assert_that(is.count(threshold))
   mark_per <- match.arg(str_to_lower(mark_per), c("default", "gene"))
 
   ## Select samples.

@@ -57,8 +57,8 @@ annotate_features <- function(
   )
   data_type <- match.arg(data_type, c("tss", "tsr")) 
   feature_type <- match.arg(feature_type, c("gene", "transcript"))
-  assert_that(is.count(upstream) && upstream > 0)
-  assert_that(is.count(downstream) && downstream > 0)
+  assert_that(is.count(upstream))
+  assert_that(is.count(downstream))
 
   ## Load GTF.
   anno_type <- case_when(

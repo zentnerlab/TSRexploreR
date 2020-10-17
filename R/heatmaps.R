@@ -73,9 +73,9 @@ tss_heatmap_matrix <- function(
   ## Check inputs.
   assert_that(is(experiment, "tsr_explorer"))
   assert_that(is.character(samples))
-  assert_that(is.count(upstream) && upstream > 0)
-  assert_that(is.count(downstream) && downstream > 0)
-  assert_that(is.na(threshold) || (is.count(threshold) && threshold > 0))
+  assert_that(is.count(upstream))
+  assert_that(is.count(downstream))
+  assert_that(is.na(threshold) || is.count(threshold))
   assert_that(is.flag(use_cpm))
   assert_that(is.flag(dominant))
   if (all(!is.na(data_conditions)) && !is(data_conditions, "list")) {
@@ -192,7 +192,7 @@ plot_heatmap <- function(
   ## Check inputs.
   assert_that(is(heatmap_matrix, "DataFrame"))
   assert_that(is.numeric(max_value) && max_value > 2)
-  assert_that(is.count(ncol) && ncol > 0)
+  assert_that(is.count(ncol))
   assert_that(is.string(background_color))
   assert_that(is.string(low_color))
   assert_that(is.string(high_color))
@@ -278,9 +278,9 @@ tsr_heatmap_matrix <- function(
   ## Check inputs.
   assert_that(is(experiment, "tsr_explorer"))
   assert_that(is.character(samples))
-  assert_that(is.count(upstream) && upstream > 0)
-  assert_that(is.count(downstream) && downstream > 0)
-  assert_that(is.na(threshold) || (is.count(threshold) && threshold > 0))
+  assert_that(is.count(upstream))
+  assert_that(is.count(downstream))
+  assert_that(is.na(threshold) || is.count(threshold))
   assert_that(is.flag(use_cpm))
   assert_that(is.flag(dominant))
   if (all(!is.na(data_conditions)) && !is(data_conditions, "list")) stop("data_conditions must in list form")

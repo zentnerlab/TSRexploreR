@@ -112,8 +112,8 @@ tmm_normalize <- function(
     c("tss", "tsr", "tss_features", "tsr_features")
   )
   assert_that(is.character(samples))
-  assert_that(is.count(threshold) && threshold > 0)
-  assert_that(is.count(n_samples) && n_samples > 0)
+  assert_that(is.count(threshold))
+  assert_that(is.count(n_samples))
 
   ## Get selected samples.
   select_samples <- extract_matrix(experiment, data_type, samples)

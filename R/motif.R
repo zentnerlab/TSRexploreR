@@ -69,8 +69,8 @@ tss_sequences <- function(
   assert_that(is(experiment, "tsr_explorer"))
   assert_that(is.character(samples))
   assert_that(is.character(genome_assembly) || is(genome_assembly, "BSgenome"))
-  assert_that(is.count(threshold) && threshold > 0)
-  assert_that(is.count(distance) && distance > 1)
+  assert_that(is.count(threshold))
+  assert_that(is.count(distance))
   assert_that(is.flag(dominant))
   if (all(!is.na(data_conditions)) && !is(data_conditions, "list")) {
     stop("data_conditions must be a list of values")
@@ -184,7 +184,7 @@ plot_sequence_logo <- function(
 
   ## Check inputs.
   assert_that(is(tss_sequences, "DataFrame"))
-  assert_that(is.count(ncol) && ncol > 0)
+  assert_that(is.count(ncol))
   assert_that(is.numeric(font_size) && font_size > 0)
 
   ## Get some info used to pull sequencs.
@@ -294,7 +294,7 @@ plot_sequence_colormap <- function(
 ) {
   ## Check inputs.
   assert_that(is(tss_sequences, "DataFrame"))
-  assert_that(is.count(ncol) && ncol > 0)
+  assert_that(is.count(ncol))
   assert_that(
     is.character(base_colors) &&
     has_name(base_colors, c("A", "C", "T", "G"))

@@ -60,7 +60,7 @@ genomic_distribution <- function(
   assert_that(is(experiment, "tsr_explorer"))
   data_type <- match.arg(str_to_lower(data_type), c("tss", "tsr"))
   assert_that(is.character(samples))
-  assert_that(is.na(threshold) || (is.count(threshold) && threshold > 0))
+  assert_that(is.na(threshold) || is.count(threshold))
   assert_that(is.flag(dominant))
   if (all(!is.na(data_conditions)) && !is(data_conditions, "list")) stop("data_conditions must in list form")
 

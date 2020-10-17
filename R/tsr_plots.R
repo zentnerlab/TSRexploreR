@@ -44,10 +44,10 @@ plot_tsr_metric <- function(
   )
   assert_that(is.character(samples))
   assert_that(is.flag(log2_transform))
-  assert_that(is.count(ncol) && ncol > 0)
+  assert_that(is.count(ncol))
   assert_that(is.flag(use_cpm))
   assert_that(is.flag(dominant))
-  assert_that(is.na(threshold) || (is.count(threshold) && threshold > 0))
+  assert_that(is.na(threshold) || is.count(threshold))
   if (all(!is.na(data_conditions)) && !is(data_conditions, "list")) stop("data_conditions must in list form")
 
   ## Get data.

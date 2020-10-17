@@ -61,7 +61,7 @@ dinucleotide_frequencies <- function(
   assert_that(is(experiment, "tsr_explorer"))
   assert_that(is.character(genome_assembly) | is(genome_assembly, "BSgenome"))
   assert_that(is.character(samples))
-  assert_that(is.count(threshold) && threshold > 0)
+  assert_that(is.count(threshold))
   assert_that(is.flag(dominant))
   if (all(!is.na(data_conditions)) && !is(data_conditions, "list")) {
     stop("data_conditions must be a list of values")
@@ -178,7 +178,7 @@ plot_dinucleotide_frequencies <- function(
 
   ## Check inputs.
   assert_that(is(dinucleotide_frequencies, "DataFrame"))
-  assert_that(is.count(ncol) && ncol > 0)
+  assert_that(is.count(ncol))
 
   ## Pull out some info from the dataframe.
   groupings <- metadata(dinucleotide_frequencies)$groupings

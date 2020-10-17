@@ -23,14 +23,11 @@ fit_edger_model <- function(
   groups
 ) {
   ## Input checks.
-  if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsr explorer object")
+  assert_that(is(experiment, "tsr_explorer"))
   data_type <- match.arg(str_to_lower(data_type), c("tss", "tsr", "tss_features", "tsr_features"))
-  if (!is(samples, "character") || length(samples) < 6) {
-    stop("samples should be a character vector with at least 6 sample names")
-  }
-  if (!is(groups, "character") || length(groups) < 6 || length(groups) != length(samples)) {
-    stop("groups must be a character vector of the same length as 'samples'")
-  }
+  assert_that(is.character(samples) && length(samples) >= 6)
+  assert_that(is.character(samples) && length(samples) >= 6)
+  assert_that(length(groups) == length(groups))
 
   ## Design table.
   design <- data.table("samples" = samples, "groups" = groups)
@@ -102,20 +99,11 @@ differential_expression <- function(
 ) {
 
   ## Input checks.
-  if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsr explorer object")
+  assert_that(is(experiment, "tsr_explorer"))
   data_type <- match.arg(str_to_lower(data_type), c("tss", "tsr", "tss_features", "tsr_features"))
-  if (!is(compare_groups, "character") || length(compare_groups) != 2) {
-    stop("compare_groups must be a character vector of length 2")
-  }
-  if (
-    !is(fdr_cutoff, "numeric") || length(fdr_cutoff) > 1 ||
-    fdr_cutoff < 0 || fdr_cutoff > 1
-  ) {
-    stop("fdr_cutoff must be a positive number between 0 and 1 inclusive")
-  }
-  if (!is(log2fc_cutoff, "numeric") || length(log2fc_cutoff) > 1 || log2fc_cutoff < 0) {
-    stop("log2fc_cutoff must be a positive number")
-  }
+  assert_that(is.character(compare_groups) && length(compare_groups) == 2)
+  assert_that(is.numeric(log2fc_cutoff) && log2fc_cutoff >= 0)
+  assert_that(is.numeric(fdr_cutoff) && fdr_cutoff > 0)
   
   ## Grab appropriate model.
   if (data_type == "tss") {
@@ -213,9 +201,9 @@ de_table <- function(
   de_type = c("up", "unchanged", "down")
 ) {
   ## Input checks.
-  if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsr explorer object")
+  assert_that(is(experiment, "tsr_explorer"))
   data_type <- match.arg(str_to_lower(data_type), c("tss", "tsr", "tss_features", "tsr_features"))
-  if (!is(de_comparisons, "character")) stop("de_comparisons must be 'all' or character vector")
+  assert_that(is.character(de_comparisons))
   de_type <- match.arg(str_to_lower(de_type), c("up", "unchanged", "down"), several.ok=TRUE)
 
   ## Grab tables.
