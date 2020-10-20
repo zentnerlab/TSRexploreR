@@ -37,7 +37,7 @@
 setGeneric(
   "tss_import",
   function(tsrexplorer_obj, object, ...) standardGeneric("tss_import"),
-  signature = "object"
+  signature="object"
 )
 
 #' Bedgraph/bigwig files (sample sheet saved as file) qq sample sheet specifications?
@@ -49,12 +49,12 @@ setGeneric(
 #'
 #' @export
 
-setMethod("tss_import", signature = signature(object = "character"),
+setMethod("tss_import", signature=signature(object="character"),
   function(
     tsrexplorer_obj,
     object,
-    sep = "\t",
-    col_names = TRUE
+    sep="\t",
+    col_names=TRUE
   ) {
 
     ## Check inputs.
@@ -64,10 +64,10 @@ setMethod("tss_import", signature = signature(object = "character"),
   
     ## Check to see if sample sheet exists.
     if (!file.exists(object)) {
-      message(str_c(object, "does not exist", sep = " "))
+      message(str_c(object, "does not exist", sep=" "))
     }
 
-    sample_sheet <- read.delim(object, sep = sep, header = col_names, stringsAsFactors = FALSE)
+    sample_sheet <- read.delim(object, sep=sep, header=col_names, stringsAsFactors=FALSE)
 
     ## Import data.
     imported_data <- sample_sheet %>%
@@ -90,7 +90,7 @@ setMethod("tss_import", signature = signature(object = "character"),
 #'
 #' @export
 
-setMethod("tss_import", signature = signature(object = "data.frame"),
+setMethod("tss_import", signature=signature(object="data.frame"),
   function(
     tsrexplorer_obj,
     object
@@ -119,7 +119,7 @@ setMethod("tss_import", signature = signature(object = "data.frame"),
 #'
 #' @rdname tss_import-generic
 
-setMethod("tss_import", signature(object = "tssObject"),
+setMethod("tss_import", signature(object="tssObject"),
   function(
     tsrexplorer_obj,
     object
@@ -130,8 +130,8 @@ setMethod("tss_import", signature(object = "tssObject"),
     ## Pull the TSSs out of the TSRchitect tssObject.
     message("...Importing TSSs from TSRchitect object")
     imported_data <- object@tssCountData %>%
-      rename(seqnames = seq, start = TSS, score = nTAGs) %>%
-      mutate("end" = start) %>%
+      rename(seqnames=seq, start=TSS, score=nTAGs) %>%
+      mutate("end"=start) %>%
       as_granges %>%
       set_names(object@sampleNames)
 
@@ -147,7 +147,7 @@ setMethod("tss_import", signature(object = "tssObject"),
 #'
 #' @rdname tss_import-generic
 
-setMethod("tss_import", signature(object = "CAGEexp"),
+setMethod("tss_import", signature(object="CAGEexp"),
   function(tsrexplorer_obj, object, data_type) {
     message("Importing TSSs from CAGEexp object")
 
@@ -159,11 +159,11 @@ setMethod("tss_import", signature(object = "CAGEexp"),
     ## Format counts for input to tsrexplorer.
     sample_names <- discard(colnames(counts), ~ . %in% c("chr", "pos", "strand"))
     counts <- melt(
-      counts, variable.name = "sample", value.name = "score",
-      measure.vars = sample_names, fill = 0
+      counts, variable.name="sample", value.name="score",
+      measure.vars=sample_names, fill=0
     )
     counts <- counts[score > 0]
-    setnames(counts, old = c("chr", "pos"), new = c("seqnames", "start"))
+    setnames(counts, old=c("chr", "pos"), new=c("seqnames", "start"))
     counts[, end := start]
     counts <- split(counts, counts$sample)
 
@@ -187,7 +187,7 @@ setMethod("tss_import", signature(object = "CAGEexp"),
     ## Format counts for input to tsrexplorer.
     counts <- counts %>%
       map(function(x) {
-        setnames(x, old = c("chr", "tpm"), new = c("seqnames", "score"))
+        setnames(x, old=c("chr", "tpm"), new=c("seqnames", "score"))
         x <- as_granges(x)
         return(x)
       })
@@ -238,21 +238,21 @@ setMethod("tss_import", signature(object = "CAGEexp"),
 setGeneric(
   "tsr_import",
   function(tsrexplorer_obj, object, ...) standardGeneric("tsr_import"),
-  signature = "object"
+  signature="object"
 )
 
 #' Bed files (sample sheet saved as file) 
 #'
 #' @rdname tsr_import-generic
 
-setMethod("tsr_import", signature(object = "character"),
+setMethod("tsr_import", signature(object="character"),
   function(tsrexplorer_obj, object) {
     ## Prepare sample sheet.
     if (!file.exists(object)) {
       message(paste(object, "does not exist"))
       stop()
     } else {
-      sample_sheet <- read.delim(object, sep = "\t", header = TRUE, stringsAsFactors = FALSE)
+      sample_sheet <- read.delim(object, sep="\t", header=TRUE, stringsAsFactors=FALSE)
     }
 
     ## Import data.
@@ -273,7 +273,7 @@ setMethod("tsr_import", signature(object = "character"),
 #'
 #' @rdname tsr_import-generic
 
-setMethod("tsr_import", signature(object = "data.frame"),
+setMethod("tsr_import", signature(object="data.frame"),
   function(tsrexplorer_obj, object) {
     ## Import data.
     imported_data <- object %>%

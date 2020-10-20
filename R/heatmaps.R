@@ -40,14 +40,14 @@
 #' @return DataFrame of counts for each gene/transcript and position
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="tsrexplorer")
 #' TSSs <- readRDS(TSSs)
 #' tsre_exp <- tsr_explorer(TSSs)
-#' tsre_exp <- format_counts(tsre_exp, data_type = "tss")
-#' annotation <- system.file("extdata", "S288C_Annotation.gtf", package = "tsrexplorer")
+#' tsre_exp <- format_counts(tsre_exp, data_type="tss")
+#' annotation <- system.file("extdata", "S288C_Annotation.gtf", package="tsrexplorer")
 #' tsre_exp <- annotate_features(
-#'   tsre_exp, annotation_data = annotation,
-#'   data_type = "tss", feature_type = "transcript"
+#'   tsre_exp, annotation_data=annotation,
+#'   data_type="tss", feature_type="transcript"
 #' )
 #' hm_mat <- tss_heatmap_matrix(tsre_exp)
 #'
@@ -61,13 +61,13 @@
 
 tss_heatmap_matrix <- function(
   experiment,
-  samples = "all",
-  upstream = 1000,
-  downstream = 1000,
-  threshold = NA,
-  use_cpm = FALSE,
-  dominant = FALSE,
-  data_conditions = list(order_by = "score")
+  samples="all",
+  upstream=1000,
+  downstream=1000,
+  threshold=NA,
+  use_cpm=FALSE,
+  dominant=FALSE,
+  data_conditions=list(order_by="score")
 ) {
 
   ## Check inputs.
@@ -96,17 +96,17 @@ tss_heatmap_matrix <- function(
 
   ## Apply conditions to data.
   if (all(!is.na(data_conditions))) {
-    annotated_tss <- do.call(group_data, c(list(signal_data = annotated_tss), data_conditions))
+    annotated_tss <- do.call(group_data, c(list(signal_data=annotated_tss), data_conditions))
   }
 
   ## Rename feature column.
-  annotated_tss <- rbindlist(annotated_tss, idcol = "sample")
+  annotated_tss <- rbindlist(annotated_tss, idcol="sample")
   setnames(annotated_tss,
-    old = ifelse(
+    old=ifelse(
       experiment@settings$annotation[, feature_type] == "transcript",
       "transcriptId", "geneId"
     ),
-    new = "feature"
+    new="feature"
   )
 
   ## Format for plotting.
@@ -115,11 +115,11 @@ tss_heatmap_matrix <- function(
   if(any(names(annotated_tss) == "plot_order")) {
     annotated_tss[, feature := fct_reorder(factor(feature), plot_order)]
   }
-  annotated_tss[, distanceToTSS := factor(distanceToTSS, levels = seq(-upstream, downstream, 1))]
+  annotated_tss[, distanceToTSS := factor(distanceToTSS, levels=seq(-upstream, downstream, 1))]
 
   ## Order samples if required.
   if (!all(samples == "all")) {
-    annotated_tss[, sample := factor(sample, levels = samples)]
+    annotated_tss[, sample := factor(sample, levels=samples)]
   }
 
 
@@ -159,14 +159,14 @@ tss_heatmap_matrix <- function(
 #' @return ggplot2 object of TSS or TSR heatmap
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="tsrexplorer")
 #' TSSs <- readRDS(TSSs)
 #' tsre_exp <- tsr_explorer(TSSs)
-#' tsre_exp <- format_counts(tsre_exp, data_type = "tss")
-#' annotation <- system.file("extdata", "S288C_Annotation.gtf", package = "tsrexplorer")
+#' tsre_exp <- format_counts(tsre_exp, data_type="tss")
+#' annotation <- system.file("extdata", "S288C_Annotation.gtf", package="tsrexplorer")
 #' tsre_exp <- annotate_features(
-#'   tsre_exp, annotation_data = annotation,
-#'   data_type = "tss", feature_type = "transcript"
+#'   tsre_exp, annotation_data=annotation,
+#'   data_type="tss", feature_type="transcript"
 #' )
 #' hm_mat <- tss_heatmap_matrix(tsre_exp)
 #' plot_heatmap(hm_matrix)
@@ -181,11 +181,11 @@ tss_heatmap_matrix <- function(
 
 plot_heatmap <- function(
   heatmap_matrix,
-  max_value = 5,
-  ncol = 1, 
-  background_color = "#F0F0F0",
-  low_color = "#56B1F7",
-  high_color = "#132B43",
+  max_value=5,
+  ncol=1, 
+  background_color="#F0F0F0",
+  low_color="#56B1F7",
+  high_color="#132B43",
   ...
 ) {
 
@@ -207,36 +207,36 @@ plot_heatmap <- function(
   heatmap_mat[, score := ifelse(log2(score) > max_value, max_value, log2(score))]
 
   ## Plot heatmap.
-  p <- ggplot(heatmap_mat, aes(x = .data$distanceToTSS, y = .data$feature, fill = log2(.data$score))) +
+  p <- ggplot(heatmap_mat, aes(x=.data$distanceToTSS, y=.data$feature, fill=log2(.data$score))) +
     geom_raster() +
-    geom_vline(xintercept = upstream, color = "black", linetype = "dashed", size = 0.1) +
+    geom_vline(xintercept=upstream, color="black", linetype="dashed", size=0.1) +
     theme_minimal() +
     scale_x_discrete(
-      breaks = seq(-upstream, downstream, 1) %>% keep(~ (./100) %% 1 == 0),
-      labels = seq(-upstream, downstream, 1) %>% keep(~ (./100) %% 1 == 0)
+      breaks=seq(-upstream, downstream, 1) %>% keep(~ (./100) %% 1 == 0),
+      labels=seq(-upstream, downstream, 1) %>% keep(~ (./100) %% 1 == 0)
     ) +
     scale_fill_continuous(
-      limits = c(0, max_value),
-      breaks = seq(0, max_value, 1),
-      labels = c(seq(0, max_value - 1, 1), paste0(">=", max_value)),
-      name = "Log2(Score)",
-      low = low_color,
-      high = high_color
+      limits=c(0, max_value),
+      breaks=seq(0, max_value, 1),
+      labels=c(seq(0, max_value - 1, 1), paste0(">=", max_value)),
+      name="Log2(Score)",
+      low=low_color,
+      high=high_color
     ) +
     theme(
-      axis.text.x = element_text(angle = 45, hjust = 1),
-      panel.spacing = unit(1.5, "lines"),
-      axis.text.y = element_blank(),
-      axis.ticks.y = element_blank(),
-      panel.grid = element_blank(),
-      panel.background = element_rect(fill = background_color, color = "black")
+      axis.text.x=element_text(angle=45, hjust=1),
+      panel.spacing=unit(1.5, "lines"),
+      axis.text.y=element_blank(),
+      axis.ticks.y=element_blank(),
+      panel.grid=element_blank(),
+      panel.background=element_rect(fill=background_color, color="black")
     ) +
-    labs(x = "Position", y = "Feature")
+    labs(x="Position", y="Feature")
 
   if (metadata(heatmap_matrix)$groupings) {
-    p <- p + facet_wrap(grouping ~ sample, scales = "free")
+    p <- p + facet_wrap(grouping ~ sample, scales="free")
   } else {
-    p <- p + facet_wrap(. ~ sample, ncol = ncol)
+    p <- p + facet_wrap(. ~ sample, ncol=ncol)
   }
 
   return(p)
@@ -266,13 +266,13 @@ plot_heatmap <- function(
 
 tsr_heatmap_matrix <- function(
   experiment,
-  samples = "all",
-  upstream = 1000,
-  downstream = 1000,
-  threshold = NA,
-  use_cpm = FALSE,
-  dominant = FALSE,
-  data_conditions = list(order_by = "score")
+  samples="all",
+  upstream=1000,
+  downstream=1000,
+  threshold=NA,
+  use_cpm=FALSE,
+  dominant=FALSE,
+  data_conditions=list(order_by="score")
 ) {
 
   ## Check inputs.
@@ -295,21 +295,21 @@ tsr_heatmap_matrix <- function(
 
   walk(annotated_tsr, function(x) {
     setnames(x,
-      old = ifelse(
+      old=ifelse(
         experiment@settings$annotation[, feature_type] == "transcript",
         "transcriptId", "geneId"
       ),
-      new = "feature"
+      new="feature"
     )
   })
 
   ## Apply conditions to data.
   if (all(!is.na(data_conditions))) {
-    annotated_tsr <- do.call(group_data, c(list(signal_data = annotated_tsr), data_conditions))
+    annotated_tsr <- do.call(group_data, c(list(signal_data=annotated_tsr), data_conditions))
   }
 
   ## Prepare data for plotting.
-  annotated_tsr <- rbindlist(annotated_tsr, idcol = "sample")
+  annotated_tsr <- rbindlist(annotated_tsr, idcol="sample")
   annotated_tsr[,
     c("startDist", "endDist", "tsr_id") := list(
       ifelse(strand == "+", start - geneStart, -(end - geneEnd)),
@@ -321,15 +321,15 @@ tsr_heatmap_matrix <- function(
   ## Put TSR score for entire range of TSR (put it where? qq).
   new_ranges <- annotated_tsr[,
     .(sample, seqnames, start, end, strand,
-    distanceToTSS = seq(as.numeric(startDist), as.numeric(endDist), 1)),
-                by = tsr_id
+    distanceToTSS=seq(as.numeric(startDist), as.numeric(endDist), 1)),
+                by=tsr_id
   ]
   new_ranges[, tsr_id := NULL]
   setkeyv(new_ranges, c("sample", "seqnames", "start", "end", "strand"))
 
   annotated_tsr[, distanceToTSS := NULL]
   setkeyv(annotated_tsr, c("sample", "seqnames", "start", "end", "strand"))
-  annotated_tsr <- merge(new_ranges, annotated_tsr, all.x = TRUE)[
+  annotated_tsr <- merge(new_ranges, annotated_tsr, all.x=TRUE)[
     dplyr::between(distanceToTSS, -upstream, downstream)
   ]
 
@@ -337,11 +337,11 @@ tsr_heatmap_matrix <- function(
   if(any(names(annotated_tsr) == "plot_order")) {
     annotated_tsr[, feature := fct_reorder(factor(feature), plot_order)]
   }
-  annotated_tsr[, distanceToTSS := factor(distanceToTSS, levels = seq(-upstream, downstream, 1))]
+  annotated_tsr[, distanceToTSS := factor(distanceToTSS, levels=seq(-upstream, downstream, 1))]
 
   ## Order samples if required.
   if (!all(samples == "all")) {
-    annotated_tsr[, sample := factor(sample, levels = samples)]
+    annotated_tsr[, sample := factor(sample, levels=samples)]
   }
 
   ## Return DataFrame

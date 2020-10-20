@@ -153,7 +153,7 @@ gene_tracks <- function(
       map(function(x) {
         pos_ranges <- plyranges::filter(x, strand == "+")
         neg_ranges <- plyranges::filter(x, strand == "-")
-        split_ranges <- list(pos=pos_ranges, neg = neg_ranges)
+        split_ranges <- list(pos=pos_ranges, neg=neg_ranges)
         return(split_ranges)
       })
     split_TSSs <- unlist(split_TSSs, recursive=FALSE)

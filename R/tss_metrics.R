@@ -26,16 +26,16 @@
 #' for TSSs, 'gene' can also be specified, which will mark the dominant TSS per gene.  
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="tsrexplorer")
 #' TSSs <- readRDS(TSSs)
 #' tsre_exp <- tsr_explorer(TSSs)
-#' tsre_exp <- format_counts(tsre_exp, data_type = "tss")
+#' tsre_exp <- format_counts(tsre_exp, data_type="tss")
 #' tsre_exp <- tss_clustering(tsre_exp)
-#' tsre_exp <- associate_with_tsr(tsre_exp, sample_list = list(
-#'   "S288C_WT_1" = "S288C_WT_1", "S288C_WT_2" = "S288C_WT_2", "S288C_WT_3" = "S288C_WT_3",
-#'   "S288C_D_1" = "S288C_D_1", "S288C_D_2" = "S288C_D_2", "S288C_D_3" = "S288C_D_3"
+#' tsre_exp <- associate_with_tsr(tsre_exp, sample_list=list(
+#'   "S288C_WT_1"="S288C_WT_1", "S288C_WT_2"="S288C_WT_2", "S288C_WT_3"="S288C_WT_3",
+#'   "S288C_D_1"="S288C_D_1", "S288C_D_2"="S288C_D_2", "S288C_D_3"="S288C_D_3"
 #' ))
-#' tsre_exp <- mark_dominant(tsre_exp, data_type = "tss")
+#' tsre_exp <- mark_dominant(tsre_exp, data_type="tss")
 #'
 #' @return tsr exlorer object with dominant status added to TSSs or TSRs.
 #'
@@ -48,9 +48,9 @@
 
 mark_dominant <- function(
   experiment,
-  data_type = c("tss", "tsr"),
-  threshold = 1,
-  mark_per = "default"
+  data_type=c("tss", "tsr"),
+  threshold=1,
+  mark_per="default"
 ) {
 
   ## Check inputs.
@@ -71,7 +71,7 @@ mark_dominant <- function(
           !simple_annotations %in% c("Downstream", "Intergenic") &
           score >= threshold
         ),
-        by = eval(ifelse(
+        by=eval(ifelse(
           experiment@settings$annotation[, feature_type] == "transcript",
           "transcriptId", "geneId"
         ))
@@ -89,7 +89,7 @@ mark_dominant <- function(
           score == max(score) &
           score >= threshold
         ),
-        by = TSR_FID
+        by=TSR_FID
       ]
 
       return(x)
@@ -125,20 +125,20 @@ mark_dominant <- function(
 
 max_utr <- function(
   experiment,
-  samples = "all",
-  threshold = 1,
-  max_upstream = 1000,
-  max_downstream = 100,
-  feature_type = c("geneId", "transcriptId"),
-  quantiles = NA
+  samples="all",
+  threshold=1,
+  max_upstream=1000,
+  max_downstream=100,
+  feature_type=c("geneId", "transcriptId"),
+  quantiles=NA
 ) {
   ## Grab selected samples.
   max_utr <- experiment %>%
     extract_counts("tss", samples) %>%
-    bind_rows(.id = "sample") %>%
+    bind_rows(.id="sample") %>%
     as.data.table
 
-  setnames(max_utr, old = feature_type, new = "feature")
+  setnames(max_utr, old=feature_type, new="feature")
 
   ## Filter data.
   max_utr <- max_utr[
@@ -150,12 +150,12 @@ max_utr <- function(
   ## Get TSS with minimum distance to start codon.
   max_utr <- max_utr[,
     .SD[which.min(distanceToTSS)],
-    by = .(sample, feature)
+    by=.(sample, feature)
   ]
 
   ## Add quantiles if requested.
   if (!is.na(quantiles)) {
-    max_utr[, ntile := ntile(score, quantiles), by = sample]
+    max_utr[, ntile := ntile(score, quantiles), by=sample]
   }
 
   ## Return DataFrame.
@@ -187,8 +187,8 @@ max_utr <- function(
 #' @export
 
 plot_max_utr <- function(
-  max_utr, upstream = 1000, downstream = 100,
-  ncol = 1, consider_score = FALSE, ...
+  max_utr, upstream=1000, downstream=100,
+  ncol=1, consider_score=FALSE, ...
 ) {
 
   ## Grab some info from DataFrame.
@@ -207,20 +207,20 @@ plot_max_utr <- function(
   }
 
   ## Plot max UTR length detected.
-  p <- ggplot(utr_plot, aes(x = .data$distanceToTSS)) +
-    geom_density(fill = "#431352", color = "#431352")+#, ...) +
+  p <- ggplot(utr_plot, aes(x=.data$distanceToTSS)) +
+    geom_density(fill="#431352", color="#431352")+#, ...) +
     xlim(-upstream, downstream) +
     theme_bw() +
     labs(
-      x = "Max UTR Length",
-      y = "Density"
+      x="Max UTR Length",
+      y="Density"
     ) +
-    geom_vline(xintercept = 0, lty = 2)
+    geom_vline(xintercept=0, lty=2)
 
   if (!is.na(quantiles)) {
     p <- p + facet_grid(ntile ~ sample)
   } else {
-    p <- p + facet_wrap(~ sample, ncol = ncol)
+    p <- p + facet_wrap(~ sample, ncol=ncol)
   }
 
   return(p)

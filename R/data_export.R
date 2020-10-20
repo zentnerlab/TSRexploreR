@@ -27,10 +27,10 @@
 #' If 'diff_tss' is TRUE, only differential TSSs will be output.
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="tsrexplorer")
 #' TSSs <- readRDS(TSSs)
 #' tsre_exp <- tsr_explorer(TSSs)
-#' tsre_exp <- format_counts(tsre_exp, data_type = "tss")
+#' tsre_exp <- format_counts(tsre_exp, data_type="tss")
 #' tss_export(tsre_exp)
 #'
 #' @return Either bedgraphs split by strand, or a tabular file.
@@ -45,11 +45,11 @@
 
 tss_export <- function(
   experiment,
-  samples = "all",
-  file_type = "bedgraph",
-  out_dir = NA,
-  diff_tss = FALSE,
-  sep = "\t"
+  samples="all",
+  file_type="bedgraph",
+  out_dir=NA,
+  diff_tss=FALSE,
+  sep="\t"
 ) {
 
   ## Input checks.
@@ -94,8 +94,8 @@ tss_export <- function(
         str_c(y, "_TSSs.tsv")
       )
       fwrite(
-        x, export_file, sep = sep, col.names = TRUE,
-        row.names = FALSE, quote = FALSE
+        x, export_file, sep=sep, col.names=TRUE,
+        row.names=FALSE, quote=FALSE
       )
     })
   }
@@ -128,10 +128,10 @@ tss_export <- function(
 #' If 'diff_tsr' is TRUE, only differential TSRs will be output.
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="tsrexplorer")
 #' TSSs <- readRDS(TSSs)
 #' tsre_exp <- tsr_explorer(TSSs)
-#' tsre_exp <- format_counts(tsre_exp, data_type = "tss")
+#' tsre_exp <- format_counts(tsre_exp, data_type="tss")
 #' tsre_exp <- tss_clustering(tsre_exp)
 #' tsr_export(tsre_exp)
 #'
@@ -147,11 +147,11 @@ tss_export <- function(
 
 tsr_export <- function(
   experiment,
-  samples = "all",
-  file_type = "bed",
-  out_dir = NA,
-  diff_tsr = FALSE,
-  sep = "\t"
+  samples="all",
+  file_type="bed",
+  out_dir=NA,
+  diff_tsr=FALSE,
+  sep="\t"
 ) {
 
   ## Check inputs.
@@ -190,8 +190,8 @@ tsr_export <- function(
       )
 
       fwrite(
-        x, export_file, sep = sep, col.names = TRUE,
-        row.names = FALSE, quote = FALSE
+        x, export_file, sep=sep, col.names=TRUE,
+        row.names=FALSE, quote=FALSE
       )
     })
   }

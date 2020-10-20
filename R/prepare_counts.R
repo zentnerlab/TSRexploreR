@@ -18,18 +18,18 @@
 #'    in data.table format.
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="tsrexplorer")
 #' TSSs <- readRDS(TSSs)
 #' tsre_exp <- tsr_explorer(TSSs)
-#' tsre_exp <- format_counts(tsre_exp, data_type = "tss")
+#' tsre_exp <- format_counts(tsre_exp, data_type="tss")
 #'
 #' @rdname format_counts-function
 #' @export
 
 format_counts <- function(
   experiment,
-  data_type = c("tss", "tsr"),
-  samples = "all"
+  data_type=c("tss", "tsr"),
+  samples="all"
 ) {
 
   ## Check inputs.
@@ -58,8 +58,8 @@ format_counts <- function(
       x <- as.data.table(x)
       x[, FID := seq_len(nrow(x))]
       x[,
-        FHASH := str_c(seqnames, start, end, strand, sep = ":"),
-        by = seq_len(nrow(x))
+        FHASH := str_c(seqnames, start, end, strand, sep=":"),
+        by=seq_len(nrow(x))
       ]
       return(x)
     })
@@ -89,16 +89,16 @@ format_counts <- function(
 #' This allows for an RNA-seq like analysis of gene expression using TSS mapping data.
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="tsrexplorer")
 #' TSSs <- readRDS(TSSs)
 #' tsre_exp <- tsr_explorer(TSSs)
-#' tsre_exp <- format_counts(tsre_exp, data_type = "tss")
-#' annotation <- system.file("extdata", "S288C_Annotation.gtf", package = "tsrexplorer")
+#' tsre_exp <- format_counts(tsre_exp, data_type="tss")
+#' annotation <- system.file("extdata", "S288C_Annotation.gtf", package="tsrexplorer")
 #' tsre_exp <- annotate_features(
-#'   tsre_exp, annotation_data = annotation,
-#'   data_type = "tss", feature_type = "transcript"
+#'   tsre_exp, annotation_data=annotation,
+#'   data_type="tss", feature_type="transcript"
 #' )
-#' tsre_exp <- count_features(tsre_exp, data_type = "tss")
+#' tsre_exp <- count_features(tsre_exp, data_type="tss")
 #'
 #' @return RNA-seq like count matrix added to tsr explorer object.
 #'
@@ -110,7 +110,7 @@ format_counts <- function(
 
 count_features <- function(
   experiment,
-  data_type = c("tss", "tsr")
+  data_type=c("tss", "tsr")
 ) {
 
   ## Check inputs.
@@ -131,13 +131,13 @@ count_features <- function(
     map(function(x) {
       feature_scores <- x[
         !simple_annotations %in% c("Downstream", "Intergenic"),
-        .(feature_score = sum(score)),
-        by = eval(anno_type)
+        .(feature_score=sum(score)),
+        by=eval(anno_type)
       ]
 
       setkeyv(x, anno_type)
       setkeyv(feature_scores, anno_type)
-      x <- merge(x, feature_scores, all.x = TRUE)
+      x <- merge(x, feature_scores, all.x=TRUE)
       setcolorder(x, c(discard(colnames(x), ~ . == anno_type), anno_type))
       
       return(x)
@@ -146,15 +146,15 @@ count_features <- function(
   ## Get feature counts per sample.
   counts <- sample_data %>%
     map(function(x) {
-      setnames(x, old = anno_type, new = "feature")
+      setnames(x, old=anno_type, new="feature")
       x <- unique(x[, .(feature, feature_score)])
       x[, feature_score := ifelse(is.na(feature_score), 0, feature_score)]
       return(x)
     })
 
   ## Store counts in appropriate slots.
-  walk(counts, ~ setnames(., old = c("feature", "feature_score"), new = c(anno_type, "score")))
-  walk(sample_data, ~ setnames(., old = "feature", new = anno_type))
+  walk(counts, ~ setnames(., old=c("feature", "feature_score"), new=c(anno_type, "score")))
+  walk(sample_data, ~ setnames(., old="feature", new=anno_type))
 
   if (data_type == "tss") {
     experiment@counts$TSSs$raw <- sample_data
@@ -186,11 +186,11 @@ count_features <- function(
 #' @return tsrexplorer object with added count matrices
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="tsrexplorer")
 #' TSSs <- readRDS(TSSs)
 #' tsre_exp <- tsr_explorer(TSSs)
-#' tsre_exp <- format_counts(tsre_exp, data_type = "tss")
-#' tsre_exp <- count_matrix(tsre_exp, data_type = "tss")
+#' tsre_exp <- format_counts(tsre_exp, data_type="tss")
+#' tsre_exp <- count_matrix(tsre_exp, data_type="tss")
 #'
 #' @seealso \code{\link{tmm_normalize}} to normalize the count matrices.
 #'   \code{\link{plot_correlation}} for various correlation plots.
@@ -200,8 +200,8 @@ count_features <- function(
 
 count_matrix <- function(
   experiment,
-  data_type = c("tss", "tsr", "tss_features", "tsr_features"),
-  samples = "all"
+  data_type=c("tss", "tsr", "tss_features", "tsr_features"),
+  samples="all"
 ) {
   ## Check inputs.
   assert_that(is(experiment, "tsr_explorer"))
@@ -225,11 +225,11 @@ count_matrix <- function(
   if (data_type == "tss") {
 
     ## Merge overlapping TSSs.
-    select_samples <- rbindlist(select_samples, idcol = "sample")
+    select_samples <- rbindlist(select_samples, idcol="sample")
     select_samples <- dcast(
       select_samples,
       seqnames + start + end + strand + FHASH ~ sample,
-      value.var = "score", fill = 0
+      value.var="score", fill=0
     )
 
   } else if (data_type == "tsr") {
@@ -238,34 +238,34 @@ count_matrix <- function(
     tsr_consensus <- select_samples %>%
       map(as_granges, keep_mcols=FALSE) %>%
       purrr::reduce(c) %>%
-      GenomicRanges::reduce(ignore.strand = FALSE)
+      GenomicRanges::reduce(ignore.strand=FALSE)
 
     ## Create raw count matrix.
     raw_matrix <- select_samples %>%
       map(~as_granges(.x) %>%
-        IRanges::findOverlapPairs(query = tsr_consensus, subject = .) %>%
+        IRanges::findOverlapPairs(query=tsr_consensus, subject=.) %>%
         as.data.table
       ) %>%
-      rbindlist(idcol = "sample")
+      rbindlist(idcol="sample")
 
     setnames(
       raw_matrix,
-      old = c(
+      old=c(
         "first.seqnames", "first.start", "first.end",
         "first.strand", "second.X.score"
       ),
-      new = c("seqnames", "start", "end", "strand", "score")
+      new=c("seqnames", "start", "end", "strand", "score")
     )
 
     raw_matrix <- raw_matrix[,
-      .(score = sum(score)),
-      by = .(sample, seqnames, start, end, strand)
+      .(score=sum(score)),
+      by=.(sample, seqnames, start, end, strand)
     ]
 
-    select_samples <- dcast(raw_matrix, seqnames + start + end + strand ~ sample, fill = 0)
+    select_samples <- dcast(raw_matrix, seqnames + start + end + strand ~ sample, fill=0)
     select_samples[,
-      FHASH := str_c(seqnames, start, end, strand, sep = ":"),
-      by = seq_len(nrow(select_samples))
+      FHASH := str_c(seqnames, start, end, strand, sep=":"),
+      by=seq_len(nrow(select_samples))
     ]
 
 
@@ -276,11 +276,11 @@ count_matrix <- function(
     anno_type <- ifelse(anno_type == "gene", "geneId", "transcriptId")
 
     ## Change feature counts to matrix.
-    select_samples <- rbindlist(select_samples, idcol = "sample")
+    select_samples <- rbindlist(select_samples, idcol="sample")
     select_samples <- dcast(
       select_samples,
       as.formula(str_c(anno_type, " ~ sample")),
-      fill = 0
+      fill=0
     )
 
   }
@@ -292,18 +292,18 @@ count_matrix <- function(
     row_ranges <- as_granges(select_samples, keep_mcols=FALSE)
 
     select_samples[, c("seqnames", "start", "end", "strand") := NULL]
-    select_samples <- as.matrix(select_samples, rownames = "FHASH")
+    select_samples <- as.matrix(select_samples, rownames="FHASH")
 
     col_data <- DataFrame(
-      samples = colnames(select_samples),
-      row.names = colnames(select_samples)
+      samples=colnames(select_samples),
+      row.names=colnames(select_samples)
     )
   
     ## Make RangedSummarizedExperiment.
     rse <- SummarizedExperiment(
-      assays = list(counts = select_samples),
-      rowRanges = row_ranges,
-      colData = col_data
+      assays=list(counts=select_samples),
+      rowRanges=row_ranges,
+      colData=col_data
     )
   } else if (data_type %in% c("tss_features", "tsr_features")) {
     
@@ -315,15 +315,15 @@ count_matrix <- function(
     rownames(select_samples) <- row_data[[1]]
 
     col_data <- DataFrame(
-      samples = colnames(select_samples),
-      row.names = colnames(select_samples)
+      samples=colnames(select_samples),
+      row.names=colnames(select_samples)
     )
 
     ## Make SummarizedExperiment.
     rse <- SummarizedExperiment(
-      assays = list(counts = select_samples),
-      rowData = row_data,
-      colData = col_data
+      assays=list(counts=select_samples),
+      rowData=row_data,
+      colData=col_data
     )
   }
 

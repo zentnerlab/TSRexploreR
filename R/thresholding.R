@@ -23,14 +23,14 @@
 #' @return data.frame containing information for each threshold and sample
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="tsrexplorer")
 #' TSSs <- readRDS(TSSs)
 #' tsre_exp <- tsr_explorer(TSSs)
-#' tsre_exp <- format_counts(tsre_exp, data_type = "tss")
-#' annotation <- system.file("extdata", "S288C_Annotation.gtf", package = "tsrexplorer")
+#' tsre_exp <- format_counts(tsre_exp, data_type="tss")
+#' annotation <- system.file("extdata", "S288C_Annotation.gtf", package="tsrexplorer")
 #' tsre_exp <- annotate_features(
-#'   tsre_exp, annotation_data = annotation,
-#'   data_type = "tss", feature_type = "transcript"
+#'   tsre_exp, annotation_data=annotation,
+#'   data_type="tss", feature_type="transcript"
 #' )
 #' thresh_results <- explore_thresholds(tsre_exp)
 #'
@@ -42,8 +42,8 @@
 
 explore_thresholds <- function(
   experiment,
-  max_threshold = 50,
-  samples = "all"
+  max_threshold=50,
+  samples="all"
 ) {
   ## Check inputs.
   assert_that(is(experiment, "tsr_explorer"))
@@ -56,7 +56,7 @@ explore_thresholds <- function(
 
   ## Get appropriate samples.
   select_samples <- extract_counts(experiment, "tss", samples)
-  select_samples <- rbindlist(select_samples, idcol = "sample")
+  select_samples <- rbindlist(select_samples, idcol="sample")
 
   ## Get information needed for threshold plot.
   summarized_data <- map_df(seq_len(max_threshold), function(x) {
@@ -69,18 +69,18 @@ explore_thresholds <- function(
     ]
     filtered[,
       n_features := uniqueN(get(feature_type)),
-      by = sample
+      by=sample
     ]
 
     feature_stats <- filtered[,
-      .(n_features, count = .N),
-      by = .(sample, promoter_proximity)
+      .(n_features, count=.N),
+      by=.(sample, promoter_proximity)
     ]
     feature_stats <- unique(feature_stats)
 
     feature_stats <- dcast(
       feature_stats, sample + n_features ~ promoter_proximity,
-      value.var = "count"
+      value.var="count"
     )
 
     feature_stats[,
@@ -94,7 +94,7 @@ explore_thresholds <- function(
 
   ## Set order of samples if specified.
   if (!all(samples == "all")) {
-    summarized_data[, sample := factor(sample, levels = samples)]
+    summarized_data[, sample := factor(sample, levels=samples)]
   }
 
   ## Return results.
@@ -118,14 +118,14 @@ explore_thresholds <- function(
 #' @return ggplot2 object containing the threshold exploration plot
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="tsrexplorer")
 #' TSSs <- readRDS(TSSs)
 #' tsre_exp <- tsr_explorer(TSSs)
-#' tsre_exp <- format_counts(tsre_exp, data_type = "tss")
-#' annotation <- system.file("extdata", "S288C_Annotation.gtf", package = "tsrexplorer")
+#' tsre_exp <- format_counts(tsre_exp, data_type="tss")
+#' annotation <- system.file("extdata", "S288C_Annotation.gtf", package="tsrexplorer")
 #' tsre_exp <- annotate_features(
-#'   tsre_exp, annotation_data = annotation,
-#'   data_type = "tss", feature_type = "transcript"
+#'   tsre_exp, annotation_data=annotation,
+#'   data_type="tss", feature_type="transcript"
 #' )
 #' thresh_results <- explore_thresholds(tsre_exp)
 #' plot_threshold_exploration(thresh_results)
@@ -137,8 +137,8 @@ explore_thresholds <- function(
 
 plot_threshold_exploration <- function(
   threshold_data,
-  ncol = 1,
-  point_size = 1,
+  ncol=1,
+  point_size=1,
   ...
 ) {
 

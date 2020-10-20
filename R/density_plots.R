@@ -47,16 +47,16 @@
 #' @return ggplot2 object of density plot
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="tsrexplorer")
 #' TSSs <- readRDS(TSSs)
 #' tsre_exp <- tsr_explorer(TSSs)
-#' tsre_exp <- format_counts(tsre_exp, data_type = "tss")
-#' annotation <- system.file("extdata", "S288C_Annotation.gtf", package = "tsrexplorer")
+#' tsre_exp <- format_counts(tsre_exp, data_type="tss")
+#' annotation <- system.file("extdata", "S288C_Annotation.gtf", package="tsrexplorer")
 #' tsre_exp <- annotate_features(
-#'   tsre_exp, annotation_data = annotation,
-#'   data_type = "tss", feature_type = "transcript"
+#'   tsre_exp, annotation_data=annotation,
+#'   data_type="tss", feature_type="transcript"
 #' )
-#' plot_average(tsre_exp, data_type = "tss")
+#' plot_average(tsre_exp, data_type="tss")
 #'
 #' @seealso
 #' \code{\link{annotate_features}} to annotate the TSSs or TSRs.
@@ -67,17 +67,17 @@
 
 plot_density <- function(
   experiment,
-  data_type = c("tss", "tsr"),
-  samples = "all",
-  consider_score = FALSE,
-  upstream = 1000,
-  downstream = 1000,
-  threshold = 1,
-  ncol = 1,
-  use_cpm = FALSE,
-  dominant = FALSE,
-  data_conditions = NA,
-  color = "default",
+  data_type=c("tss", "tsr"),
+  samples="all",
+  consider_score=FALSE,
+  upstream=1000,
+  downstream=1000,
+  threshold=1,
+  ncol=1,
+  use_cpm=FALSE,
+  dominant=FALSE,
+  data_conditions=NA,
+  color="default",
   ...
 ) {
 
@@ -115,33 +115,33 @@ plot_density <- function(
 
   ## Condition data.
   if (all(!is.na(data_conditions))) {
-    sample_data <- do.call(group_data, c(list(signal_data = sample_data), data_conditions))
+    sample_data <- do.call(group_data, c(list(signal_data=sample_data), data_conditions))
   }
 
   ## Update data if score is to be considered in addition to unique position.
-  sample_data <- rbindlist(sample_data, idcol = "sample")
+  sample_data <- rbindlist(sample_data, idcol="sample")
   if (consider_score) sample_data <- sample_data[rep(seq_len(.N), score)]
 
   ## Set sample order if required.
   if (!all(samples == "all")) {
-    sample_data[, samples := factor(samples, levels = samples)]
+    sample_data[, samples := factor(samples, levels=samples)]
   }
 
   ## Plot densities.
   groupings <- any(names(data_conditions) %in% c("quantile_by", "grouping"))
 
   p <- ggplot(sample_data, aes(.data$distanceToTSS)) +
-    geom_density(fill = color_type, color = color_type, ...) +
+    geom_density(fill=color_type, color=color_type, ...) +
     labs(
-      x = "Position Relative to Annotated TSS",
-      y = "Density"
+      x="Position Relative to Annotated TSS",
+      y="Density"
     ) +
     theme_bw()
 
   if (groupings) {
     p <- p + facet_grid(fct_rev(factor(grouping)) ~ sample)
   } else {
-    p <- p + facet_wrap(~ sample, ncol = ncol)
+    p <- p + facet_wrap(~ sample, ncol=ncol)
   }
   return(p)
 }

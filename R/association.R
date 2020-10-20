@@ -14,10 +14,10 @@
 
 merge_samples <- function(
   experiment,
-  data_type = c("tss", "tsr"),
-  threshold = NA,
-  merge_replicates = FALSE,
-  sample_list = NA
+  data_type=c("tss", "tsr"),
+  threshold=NA,
+  merge_replicates=FALSE,
+  sample_list=NA
 ) {
   
   ## Prepare list of samples to be merged.
@@ -37,7 +37,7 @@ merge_samples <- function(
 
       merged <- rbindlist(select_samples)
       if (!is.na(threshold)) merged <- merged[score >= threshold]
-      merged <- merged[, .(score = sum(score)), by = .(seqnames, start, end, strand)]
+      merged <- merged[, .(score=sum(score)), by=.(seqnames, start, end, strand)]
 
       return(merged)
     })
@@ -51,10 +51,10 @@ merge_samples <- function(
 
       tsr_consensus <- select_samples %>%
         purrr::reduce(c) %>%
-        GenomicRanges::reduce(ignore.strand = FALSE)
+        GenomicRanges::reduce(ignore.strand=FALSE)
 
       merged <- map(select_samples, function(x) {
-          overlap <- findOverlapPairs(query = tsr_consensus, subject = x)
+          overlap <- findOverlapPairs(query=tsr_consensus, subject=x)
           overlap <- as.data.table(overlap)
       })
       merged <- rbindlist(merged)[,
@@ -64,16 +64,16 @@ merge_samples <- function(
 
       setnames(
         merged,
-        old = c(
+        old=c(
           "first.seqnames", "first.start", "first.end",
           "first.strand", "second.X.score"
         ),
-        new = c("seqnames", "start", "end", "strand", "score")
+        new=c("seqnames", "start", "end", "strand", "score")
       )
 
       merged <- merged[,
-        .(score = sum(score)),
-        by = .(seqnames, start, end, strand)
+        .(score=sum(score)),
+        by=.(seqnames, start, end, strand)
       ]
 
       return(merged)
@@ -105,14 +105,14 @@ merge_samples <- function(
 #' @param sample_list If 'use_sample_sheet' is FALSE, provide a list with TSR and TSS sample names
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="tsrexplorer")
 #' TSSs <- readRDS(TSSs)
 #' tsre_exp <- tsr_explorer(TSSs)
-#' tsre_exp <- format_counts(tsre_exp, data_type = "tss")
+#' tsre_exp <- format_counts(tsre_exp, data_type="tss")
 #' tsre_exp <- tss_clustering(tsre_exp)
-#' tsre_exp <- associate_with_tsr(tsre_exp, sample_list = list(
-#'   "S288C_WT_1" = "S288C_WT_1", "S288C_WT_2" = "S288C_WT_2", "S288C_WT_3" = "S288C_WT_3",
-#'   "S288C_D_1" = "S288C_D_1", "S288C_D_2" = "S288C_D_2", "S288C_D_3" = "S288C_D_3"
+#' tsre_exp <- associate_with_tsr(tsre_exp, sample_list=list(
+#'   "S288C_WT_1"="S288C_WT_1", "S288C_WT_2"="S288C_WT_2", "S288C_WT_3"="S288C_WT_3",
+#'   "S288C_D_1"="S288C_D_1", "S288C_D_2"="S288C_D_2", "S288C_D_3"="S288C_D_3"
 #' ))
 #'
 #' @details
@@ -141,8 +141,8 @@ merge_samples <- function(
 
 associate_with_tsr <- function(
   experiment,
-  sample_list = NA,
-  use_sample_sheet = FALSE
+  sample_list=NA,
+  use_sample_sheet=FALSE
 ) {
 
   ## Check inputs.
@@ -174,18 +174,18 @@ associate_with_tsr <- function(
 
     # Make GRanges of TSSs.
     tss_gr <- extract_counts(experiment, "tss", tss_names) %>%
-      rbindlist(idcol = "sample") %>%
+      rbindlist(idcol="sample") %>%
       as_granges
 
     # Make GRanges of TSRs.
     tsr_set <- extract_counts(experiment, "tsr", tsr_name) %>%
-      rbindlist(idcol = "tsr_sample")
+      rbindlist(idcol="tsr_sample")
     
     tsr_gr <- tsr_set
     setnames(
       tsr_gr,
-      old = c("FID", "FHASH", "width", "score", "n_unique"),
-      new = c("TSR_FID", "TSR_FHASH", "tsr_width", "tsr_score", "tsr_n_unique")
+      old=c("FID", "FHASH", "width", "score", "n_unique"),
+      new=c("TSR_FID", "TSR_FHASH", "tsr_width", "tsr_score", "tsr_n_unique")
     )
     tsr_gr <- as_granges(tsr_gr)
 

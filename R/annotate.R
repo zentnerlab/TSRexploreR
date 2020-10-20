@@ -27,14 +27,14 @@
 #' @return tsrexplorer object with annotated features
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="tsrexplorer")
 #' TSSs <- readRDS(TSSs)
 #' tsre_exp <- tsr_explorer(TSSs)
-#' tsre_exp <- format_counts(tsre_exp, data_type = "tss")
-#' annotation <- system.file("extdata", "S288C_Annotation.gtf", package = "tsrexplorer")
+#' tsre_exp <- format_counts(tsre_exp, data_type="tss")
+#' annotation <- system.file("extdata", "S288C_Annotation.gtf", package="tsrexplorer")
 #' tsre_exp <- annotate_features(
-#'   tsre_exp, annotation_data = annotation,
-#'   data_type = "tss", feature_type = "transcript"
+#'   tsre_exp, annotation_data=annotation,
+#'   data_type="tss", feature_type="transcript"
 #' )
 #'
 #' @rdname annotate_features-function
@@ -43,10 +43,10 @@
 annotate_features <- function(
   experiment,
   annotation_data,
-  data_type = c("tss", "tsr", "tss_diff", "tsr_diff"),
-  feature_type = c("gene", "transcript"),
-  upstream = 1000,
-  downstream = 100
+  data_type=c("tss", "tsr", "tss_diff", "tsr_diff"),
+  feature_type=c("gene", "transcript"),
+  upstream=1000,
+  downstream=100
 ) {
 
   ## Check inputs.
@@ -88,10 +88,10 @@ annotate_features <- function(
 
       annotated <- x %>%
         annotatePeak(
-          tssRegion = c(-upstream, downstream),
-          TxDb = genome_annotation,
-          sameStrand = TRUE,
-          level = feature_type
+          tssRegion=c(-upstream, downstream),
+          TxDb=genome_annotation,
+          sameStrand=TRUE,
+          level=feature_type
         ) %>%
         as.data.table
       
@@ -118,9 +118,9 @@ annotate_features <- function(
 
   ## Save annotation settings to the tsrexplorer object.
   anno_settings <- data.table(
-    "feature_type" = feature_type,
-    "upstream" = upstream,
-    "downstream" = downstream
+    "feature_type"=feature_type,
+    "upstream"=upstream,
+    "downstream"=downstream
   )
   experiment@settings[["annotation"]] <- anno_settings
 

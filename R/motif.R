@@ -41,12 +41,12 @@
 #' @return DataFrame of sequences surrounding TSSs.
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="tsrexplorer")
 #' TSSs <- readRDS(TSSs)
 #' tsre_exp <- tsr_explorer(TSSs)
-#' tsre_exp <- format_counts(tsre_exp, data_type = "tss")
-#' assembly <- system.file("extdata", "S288C_Assembly.fasta", package = "tsrexplorer")
-#' seqs <- tss_sequences(tsre_exp, genome_assembly = assembly)
+#' tsre_exp <- format_counts(tsre_exp, data_type="tss")
+#' assembly <- system.file("extdata", "S288C_Assembly.fasta", package="tsrexplorer")
+#' seqs <- tss_sequences(tsre_exp, genome_assembly=assembly)
 #'
 #' @seealso
 #' \code{\link{plot_sequence_logo}} to make sequence logos.
@@ -57,12 +57,12 @@
 
 tss_sequences <- function(
   experiment,
-  samples = "all",
+  samples="all",
   genome_assembly,
-  threshold = 1,
-  distance = 10,
-  dominant = FALSE,
-  data_conditions = list(order_by = "score")
+  threshold=1,
+  distance=10,
+  dominant=FALSE,
+  data_conditions=list(order_by="score")
 ) {
 
   ## Check inputs.
@@ -96,11 +96,11 @@ tss_sequences <- function(
 
   ## Condition the data.
   if (all(!is.na(data_conditions))) {
-    select_samples <- do.call(group_data, c(list(signal_data = select_samples), data_conditions))
+    select_samples <- do.call(group_data, c(list(signal_data=select_samples), data_conditions))
   }
 
   ## Prepare table for sequence retrieval.
-  select_samples <- rbindlist(select_samples, idcol = "sample")
+  select_samples <- rbindlist(select_samples, idcol="sample")
   select_samples[, tss := start]
 
   ## Get sequences.
@@ -111,11 +111,11 @@ tss_sequences <- function(
     as.data.table %>%
     {cbind(select_samples, .)}
       
-  setnames(seqs, old = "x", new = "sequence")
+  setnames(seqs, old="x", new="sequence")
 
   ## Order samples if required.
   if (!all(samples == "all")) {
-    seqs[, sample := factor(seqs, levels = samples)]
+    seqs[, sample := factor(seqs, levels=samples)]
   }
   
   ## Generate and return DataFrame.
@@ -161,12 +161,12 @@ tss_sequences <- function(
 #' @return ggplot2 object with sequence logo
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="tsrexplorer")
 #' TSSs <- readRDS(TSSs)
 #' tsre_exp <- tsr_explorer(TSSs)
-#' tsre_exp <- format_counts(tsre_exp, data_type = "tss")
-#' assembly <- system.file("extdata", "S288C_Assembly.fasta", package = "tsrexplorer")
-#' seqs <- tss_sequences(tsre_exp, genome_assembly = assembly)
+#' tsre_exp <- format_counts(tsre_exp, data_type="tss")
+#' assembly <- system.file("extdata", "S288C_Assembly.fasta", package="tsrexplorer")
+#' seqs <- tss_sequences(tsre_exp, genome_assembly=assembly)
 #' plot_sequence_logo(seqs)
 #'
 #' @seealso
@@ -178,8 +178,8 @@ tss_sequences <- function(
 
 plot_sequence_logo <- function(
   tss_sequences,
-  ncol = 1,
-  font_size = 6
+  ncol=1,
+  font_size=6
 ) {
 
   ## Check inputs.
@@ -209,31 +209,31 @@ plot_sequence_logo <- function(
 
   ## Create viridis color scheme for bases.
   viridis_bases <- make_col_scheme(
-    chars = c("A", "C", "G", "T"),
-    groups = c("A", "C", "G", "T"),
-    cols = c("#431352", "#34698c", "#44b57b", "#fde540")
+    chars=c("A", "C", "G", "T"),
+    groups=c("A", "C", "G", "T"),
+    cols=c("#431352", "#34698c", "#44b57b", "#fde540")
   )
 
   ## Make sequence logo.
   if (!groupings) {
-    p <- ggseqlogo(sequences, ncol = ncol) +
-      theme(text = element_text(size = font_size)) #+
+    p <- ggseqlogo(sequences, ncol=ncol) +
+      theme(text=element_text(size=font_size)) #+
       #scale_x_continuous(
-      # breaks = c(1, distance, distance + 1, (distance * 2) + 1),
-      # labels = c(-distance, -1, +1, distance + 1)
+      # breaks=c(1, distance, distance + 1, (distance * 2) + 1),
+      # labels=c(-distance, -1, +1, distance + 1)
       #)
   } else {
     p <- rev(sequences) %>%
       map(function(x) {
-        ggseqlogo(x, ncol = ncol) +
-          theme(text = element_text(size = font_size)) #+
+        ggseqlogo(x, ncol=ncol) +
+          theme(text=element_text(size=font_size)) #+
           #scale_x_continuous(
-          # breaks = c(1, distance, distance + 1, (distance * 2) + 1),
-          # labels = c(-distance, -1, +1, distance + 1)
+          # breaks=c(1, distance, distance + 1, (distance * 2) + 1),
+          # labels=c(-distance, -1, +1, distance + 1)
           #)
       })
 
-    p <- plot_grid(plotlist = p, labels = rev(names(sequences)), ncol = 1)
+    p <- plot_grid(plotlist=p, labels=rev(names(sequences)), ncol=1)
   }
 
   return(p)
@@ -265,12 +265,12 @@ plot_sequence_logo <- function(
 #' @return ggplot2 object of sequence colormap
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="tsrexplorer")
 #' TSSs <- readRDS(TSSs)
 #' tsre_exp <- tsr_explorer(TSSs)
-#' tsre_exp <- format_counts(tsre_exp, data_type = "tss")
-#' assembly <- system.file("extdata", "S288C_Assembly.fasta", package = "tsrexplorer")
-#' seqs <- tss_sequences(tsre_exp, genome_assembly = assembly)
+#' tsre_exp <- format_counts(tsre_exp, data_type="tss")
+#' assembly <- system.file("extdata", "S288C_Assembly.fasta", package="tsrexplorer")
+#' seqs <- tss_sequences(tsre_exp, genome_assembly=assembly)
 #' plot_sequence_colormap(seqs)
 #'
 #' @seealso
@@ -282,14 +282,14 @@ plot_sequence_logo <- function(
 
 plot_sequence_colormap <- function(
   tss_sequences,
-  ncol = 1,
-  base_colors = c(
-    "A" = "#109649",
-    "C" = "#255C99",
-    "G" = "#F7B32C",
-    "T" = "#D62839"
+  ncol=1,
+  base_colors=c(
+    "A"="#109649",
+    "C"="#255C99",
+    "G"="#F7B32C",
+    "T"="#D62839"
   ),
-  text_size = 6,
+  text_size=6,
   ...
 ) {
   ## Check inputs.
@@ -312,11 +312,11 @@ plot_sequence_colormap <- function(
   ## Split sequences into columns
   split_seqs <- seq_data[, tstrsplit(sequence, split="")]
 
-  #split_seqs <- seq_data[, as.data.table(str_split(sequence, "", simplify = TRUE))]
+  #split_seqs <- seq_data[, as.data.table(str_split(sequence, "", simplify=TRUE))]
   setnames(
     split_seqs,
-    old = sprintf("V%s", seq(1, (distance * 2) + 1)),
-    new = as.character(c(seq(-distance, -1), seq(1, distance + 1)))
+    old=sprintf("V%s", seq(1, (distance * 2) + 1)),
+    new=as.character(c(seq(-distance, -1), seq(1, distance + 1)))
   )
   seq_data <- cbind(seq_data, split_seqs)
 
@@ -326,40 +326,40 @@ plot_sequence_colormap <- function(
   ## Format data for plotting.
   long_data <- seq_data %>%
     melt(
-      measure.vars = as.character(c(seq(-distance, -1), seq(1, distance + 1))),
-      variable.name = "position", value.name = "base"
+      measure.vars=as.character(c(seq(-distance, -1), seq(1, distance + 1))),
+      variable.name="position", value.name="base"
     )
 
   long_data[,
     c("position", "base") := list(
-      position = as.numeric(position),
-      base = factor(base, levels = c("A", "C", "G", "T"))
+      position=as.numeric(position),
+      base=factor(base, levels=c("A", "C", "G", "T"))
     )
   ]
     
   ## Plot sequence colormap
-  p <- ggplot(long_data, aes(x = .data$position, y = .data$FHASH)) +
-    geom_tile(aes(fill = .data$base, color=.data$base)) +
-    scale_fill_manual(values = base_colors) +
+  p <- ggplot(long_data, aes(x=.data$position, y=.data$FHASH)) +
+    geom_tile(aes(fill=.data$base, color=.data$base)) +
+    scale_fill_manual(values=base_colors) +
     scale_color_manual(values=base_colors) +
     theme_minimal() +
     theme(
-      axis.title.y = element_blank(),
-      axis.text.y = element_blank(),
-      legend.title = element_blank(),
-      axis.title.x = element_text(margin = margin(t = 15)),
-      panel.grid = element_blank(),
-      text = element_text(size = text_size)
+      axis.title.y=element_blank(),
+      axis.text.y=element_blank(),
+      legend.title=element_blank(),
+      axis.title.x=element_text(margin=margin(t=15)),
+      panel.grid=element_blank(),
+      text=element_text(size=text_size)
     ) +
     scale_x_continuous(
-      breaks = c(1, distance, distance + 1, (distance * 2) + 1),
-      labels = c(-distance, -1, 1, distance + 1)
+      breaks=c(1, distance, distance + 1, (distance * 2) + 1),
+      labels=c(-distance, -1, 1, distance + 1)
     )
 
   if (!groupings) {
-    p <- p + facet_wrap(. ~ sample, scales = "free", ncol = ncol)
+    p <- p + facet_wrap(. ~ sample, scales="free", ncol=ncol)
   } else {
-    p <- p + facet_wrap(grouping ~ sample, scales = "free", ncol = ncol)
+    p <- p + facet_wrap(grouping ~ sample, scales="free", ncol=ncol)
   }
 
   return(p)

@@ -30,16 +30,16 @@
 #' @return DataFrame of detected feature numbers.
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="tsrexplorer")
 #' TSSs <- readRDS(TSSs)
 #' tsre_exp <- tsr_explorer(TSSs)
-#' tsre_exp <- format_counts(tsre_exp, data_type = "tss")
-#' annotation <- system.file("extdata", "S288C_Annotation.gtf", package = "tsrexplorer")
+#' tsre_exp <- format_counts(tsre_exp, data_type="tss")
+#' annotation <- system.file("extdata", "S288C_Annotation.gtf", package="tsrexplorer")
 #' tsre_exp <- annotate_features(
-#'   tsre_exp, annotation_data = annotation,
-#'   data_type = "tss", feature_type = "transcript"
+#'   tsre_exp, annotation_data=annotation,
+#'   data_type="tss", feature_type="transcript"
 #' )
-#' detected <- detect_features(tsre_exp, data_type = "tss")
+#' detected <- detect_features(tsre_exp, data_type="tss")
 #'
 #' @seealso
 #' \code{\link{annotate_features}} to annotate the TSSs and TSRs.
@@ -50,11 +50,11 @@
 
 detect_features <- function(
   experiment,
-  samples = "all",
-  data_type = c("tss", "tsr", "tss_features", "tsr_features"),
-  threshold = NA,
-  dominant = FALSE,
-  condition_data = NA
+  samples="all",
+  data_type=c("tss", "tsr", "tss_features", "tsr_features"),
+  threshold=NA,
+  dominant=FALSE,
+  condition_data=NA
 ) {
 
   ## Check inputs.
@@ -81,50 +81,50 @@ detect_features <- function(
   
   ## Apply data conditioning if set.
   if (data_type %in% c("tss", "tsr") && all(!is.na(condition_data))) {
-    sample_data <- do.call(group_data, c(list(signal_data = sample_data), condition_data))
+    sample_data <- do.call(group_data, c(list(signal_data=sample_data), condition_data))
   }
 
   ## Rename feature column.
   walk(sample_data, function(x) {
     setnames(
-      x, old = ifelse(
+      x, old=ifelse(
         experiment@settings$annotation[, feature_type] == "transcript",
         "transcriptId", "geneId"
       ),
-      new = "feature"
+      new="feature"
     )
   })
 
   ## Get feature counts.
   groupings <- data_type %in% c("tss", "tsr") &&
     any(names(condition_data) %in% c("quantile_by", "grouping"))
-  sample_data <- rbindlist(sample_data, idcol = "sample")
+  sample_data <- rbindlist(sample_data, idcol="sample")
 
   if (data_type %in% c("tss", "tsr")) {
     if (groupings) {
       sample_data <- sample_data[,
-        .(grouping, promoter = any(simple_annotations == "Promoter")),
-        by = .(sample, feature)
+        .(grouping, promoter=any(simple_annotations == "Promoter")),
+        by=.(sample, feature)
       ][,
-        .(with_promoter = sum(promoter), without_promoter = .N - sum(promoter), total = .N),
-        by = .(sample, grouping)
+        .(with_promoter=sum(promoter), without_promoter=.N - sum(promoter), total=.N),
+        by=.(sample, grouping)
       ]
     } else {
       sample_data <- sample_data[,
-        .(promoter = any(simple_annotations == "Promoter")),
-        by = .(sample, feature)
+        .(promoter=any(simple_annotations == "Promoter")),
+        by=.(sample, feature)
       ][,
-        .(with_promoter = sum(promoter), without_promoter = .N - sum(promoter), total = .N),
-        by = sample
+        .(with_promoter=sum(promoter), without_promoter=.N - sum(promoter), total=.N),
+        by=sample
       ]
     }
   } else if (data_type %in% c("tss_features", "tsr_features")) {
-    sample_data <- sample_data[, .(count = uniqueN(feature)), by = sample]
+    sample_data <- sample_data[, .(count=uniqueN(feature)), by=sample]
   }
 
   ## Order samples if required.
   if (!all(samples == "all")) {
-    sample_data[, samples := factor(samples, levels = samples)]
+    sample_data[, samples := factor(samples, levels=samples)]
   }
 
   ## Create DataFrame to export.
@@ -159,16 +159,16 @@ detect_features <- function(
 #' @return ggplot2 object of detected feature counts
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="tsrexplorer")
 #' TSSs <- readRDS(TSSs)
 #' tsre_exp <- tsr_explorer(TSSs)
-#' tsre_exp <- format_counts(tsre_exp, data_type = "tss")
-#' annotation <- system.file("extdata", "S288C_Annotation.gtf", package = "tsrexplorer")
+#' tsre_exp <- format_counts(tsre_exp, data_type="tss")
+#' annotation <- system.file("extdata", "S288C_Annotation.gtf", package="tsrexplorer")
 #' tsre_exp <- annotate_features(
-#'   tsre_exp, annotation_data = annotation,
-#'   data_type = "tss", feature_type = "transcript"
+#'   tsre_exp, annotation_data=annotation,
+#'   data_type="tss", feature_type="transcript"
 #' )
-#' detected <- detect_features(tsre_exp, data_type = "tss")
+#' detected <- detect_features(tsre_exp, data_type="tss")
 #' plot_detected_features(detected)
 #'
 #' @seealso
@@ -199,39 +199,39 @@ plot_detected_features <- function(
   if (data_type %in% c("tss", "tsr")) {
     plot_data[, total := NULL]  
     plot_data <- melt(plot_data,
-      measure.vars = c("with_promoter", "without_promoter"),
-      variable.name = "count_type",
-      value.name = "feature_count"
+      measure.vars=c("with_promoter", "without_promoter"),
+      variable.name="count_type",
+      value.name="feature_count"
     )
     plot_data[, count_type := fct_rev(factor(count_type))]
   }
 
   ## Plot data.
   if (data_type %in% c("tss", "tsr")) {
-    p <- ggplot(plot_data, aes(x = .data$sample, y = .data$feature_count, fill = .data$count_type)) +
-      geom_col(position = "stack", ...) +
+    p <- ggplot(plot_data, aes(x=.data$sample, y=.data$feature_count, fill=.data$count_type)) +
+      geom_col(position="stack", ...) +
       theme_bw() +
       ylim(c(0, NA)) +
-      ylab(str_c(feature_type, "Count", sep = " ")) +
+      ylab(str_c(feature_type, "Count", sep=" ")) +
       xlab("Sample") +
       theme(
-        axis.text.x = element_text(angle = 45, hjust = 1)
+        axis.text.x=element_text(angle=45, hjust=1)
       )
 
     if (grouping_status) {
       p <- p + facet_grid(fct_rev(factor(grouping)) ~ .)
     }
   } else if (data_type %in% c("tss_features", "tsr_features")) {
-    p <- ggplot(plot_data, aes(x = .data$sample, y = .data$count, fill = .data$sample)) +
+    p <- ggplot(plot_data, aes(x=.data$sample, y=.data$count, fill=.data$sample)) +
       geom_col(...) +
       theme_bw() +
       scale_fill_viridis_d() +
       ylim(c(0, NA)) +
-      ylab(str_c(feature_type, "Count", sep = " ")) +
+      ylab(str_c(feature_type, "Count", sep=" ")) +
       xlab("Sample") +
       theme(
-        axis.text.x = element_text(angle = 45, hjust = 1),
-        legend.position = "none"
+        axis.text.x=element_text(angle=45, hjust=1),
+        legend.position="none"
       )
   }
     

@@ -16,13 +16,13 @@ setGeneric("tss_experiment<-", function(tsrexplorer_object, value) standardGener
 
 #' @rdname tss_experiment-generic
 
-setMethod("tss_experiment", signature(tsrexplorer_object = "tsr_explorer"),
+setMethod("tss_experiment", signature(tsrexplorer_object="tsr_explorer"),
   function(tsrexplorer_object) {
     tsrexplorer_object@experiment$TSSs
   }
 )
 
-setMethod("tss_experiment<-", signature(tsrexplorer_object = "tsr_explorer"),
+setMethod("tss_experiment<-", signature(tsrexplorer_object="tsr_explorer"),
   function(tsrexplorer_object, value) {
     tsrexplorer_object@experiment$TSSs <- value
   }
@@ -45,13 +45,13 @@ setGeneric("tsr_experiment<-", function(tsrexplorer_object, value) standardGener
 
 #' @rdname tsr_experiment-generic
 
-setMethod("tsr_experiment", signature(tsrexplorer_object = "tsr_explorer"),
+setMethod("tsr_experiment", signature(tsrexplorer_object="tsr_explorer"),
   function(tsrexplorer_object) {
     tsrexplorer_object@experiment$TSRs
   }
 )
 
-setMethod("tsr_experiment<-", signature(tsrexplorer_object = "tsr_explorer"),
+setMethod("tsr_experiment<-", signature(tsrexplorer_object="tsr_explorer"),
   function(tsrexplorer_object, value) {
     tsrexplorer_object@experiment$TSRs <- value
   }
@@ -70,7 +70,7 @@ setMethod("tsr_experiment<-", signature(tsrexplorer_object = "tsr_explorer"),
 #' @rdname extract_counts-function
 #' @export
 
-extract_counts <- function(experiment, data_type, samples, use_cpm = FALSE) {
+extract_counts <- function(experiment, data_type, samples, use_cpm=FALSE) {
 
   ## Extract appropriate TSS or TSR samples.
   if (data_type == "tss") {
@@ -144,7 +144,7 @@ extract_matrix <- function(experiment, data_type, samples) {
 #' @rdname extract_de-function
 #' @export
 
-extract_de <- function(experiment, data_type, de_comparisons = "all") {
+extract_de <- function(experiment, data_type, de_comparisons="all") {
         
   if (data_type == "tss") {
     if (de_comparisons == "all") de_comparisons <- names(experiment@diff_features$TSSs$results)

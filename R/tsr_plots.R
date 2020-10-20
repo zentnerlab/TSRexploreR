@@ -24,14 +24,14 @@
 plot_tsr_metric <- function(
   experiment,
   tsr_metrics,
-  plot_type = "violin",
-  samples = "all",
-  log2_transform = FALSE,
-  ncol = 1,
-  use_cpm = FALSE,
-  dominant = FALSE,
-  threshold = NA,
-  data_conditions = NA,
+  plot_type="violin",
+  samples="all",
+  log2_transform=FALSE,
+  ncol=1,
+  use_cpm=FALSE,
+  dominant=FALSE,
+  threshold=NA,
+  data_conditions=NA,
   ...
 ) {
 
@@ -58,29 +58,29 @@ plot_tsr_metric <- function(
   
   ## Condition the data.
   if (all(!is.na(data_conditions))) {
-    selected_data <- do.call(group_data, c(list(signal_data = selected_data), data_conditions))
+    selected_data <- do.call(group_data, c(list(signal_data=selected_data), data_conditions))
   }
 
   groupings <- !is.na(data_conditions) & any(names(data_conditions) %in% c("grouping", "quantile_by"))
 
   ## Combine data into one data table.
-  selected_data <- rbindlist(selected_data, idcol = "sample")
+  selected_data <- rbindlist(selected_data, idcol="sample")
   
   if (samples == "all") {
     selected_data[, sample := fct_inorder(factor(sample))]
   } else {
-    selected_data[, sample := factor(sample, levels = samples)]
+    selected_data[, sample := factor(sample, levels=samples)]
   }
 
   ## Log2 + 1 transform data if required.
   if (log2_transform) {
     selected_data[,
       (tsr_metrics) := lapply(.SD, function(x) log2(x + 1)),
-      .SDcols = tsr_metrics
+      .SDcols=tsr_metrics
     ]
     setnames(
-      selected_data, old = tsr_metrics,
-      new = str_c("Log2(", tsr_metrics, " + 1)")
+      selected_data, old=tsr_metrics,
+      new=str_c("Log2(", tsr_metrics, " + 1)")
     )
     selected_data <- as.data.table(selected_data)
   }
@@ -89,36 +89,36 @@ plot_tsr_metric <- function(
   if (log2_transform) {
     selected_data <- melt(
       selected_data,
-      measure.vars = str_c("Log2(", tsr_metrics, " + 1)"),
-      variable.name = "metric"
+      measure.vars=str_c("Log2(", tsr_metrics, " + 1)"),
+      variable.name="metric"
     )
   } else {
     selected_data <- melt(
       selected_data,
-      measure.vars = tsr_metrics,
-      variable.name = "metric"
+      measure.vars=tsr_metrics,
+      variable.name="metric"
     )
   }
 
   ## Order samples if required.
   if (!all(samples == "all")) {
-    selected_data[, sample := factor(sample, levels = samples)]
+    selected_data[, sample := factor(sample, levels=samples)]
   }
 
 
   ## Make plot of selected TSR metric(s).
-  p <- ggplot(selected_data, aes(x = .data$sample, y = .data$value))
+  p <- ggplot(selected_data, aes(x=.data$sample, y=.data$value))
 
   if (plot_type == "violin") {
-    p <- p + geom_violin(aes(fill = .data$sample), ...)
+    p <- p + geom_violin(aes(fill=.data$sample), ...)
   } else if (plot_type == "box") {
-    p <- p + geom_boxplot(fill = NA, aes(color = .data$sample), ...)
+    p <- p + geom_boxplot(fill=NA, aes(color=.data$sample), ...)
   } else if (plot_type == "jitter") {
-    p <- p + geom_jitter(aes(color = .data$sample), ...)
+    p <- p + geom_jitter(aes(color=.data$sample), ...)
   } else if (plot_type == "boxjitter") {
     p <- p +
-      geom_jitter(color = "lightgrey", ...) +
-      geom_boxplot(fill = NA, aes(color = .data$sample), outlier.shape = NA)
+      geom_jitter(color="lightgrey", ...) +
+      geom_boxplot(fill=NA, aes(color=.data$sample), outlier.shape=NA)
   }
     
   p <- p +
@@ -126,14 +126,14 @@ plot_tsr_metric <- function(
     scale_fill_viridis_d() +
     scale_color_viridis_d() +
     theme(
-      axis.text.x = element_blank(),
-      axis.ticks.x = element_blank()
+      axis.text.x=element_blank(),
+      axis.ticks.x=element_blank()
     )
 
   if (groupings) {
-    p <- p + facet_wrap(grouping ~ metric, ncol = ncol, scales = "free")
+    p <- p + facet_wrap(grouping ~ metric, ncol=ncol, scales="free")
   } else {
-    p <- p + facet_wrap(~ metric, ncol = ncol, scales = "free")
+    p <- p + facet_wrap(~ metric, ncol=ncol, scales="free")
   }
 
   return(p)

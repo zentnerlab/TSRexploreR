@@ -24,7 +24,7 @@ add_sample_sheet <- function(
 
   ## Import sample sheet if it is a file.
   if (is(sample_sheet, "character")) {
-    sample_sheet <- fread(sample_sheet, sep = "\t", header = TRUE)
+    sample_sheet <- fread(sample_sheet, sep="\t", header=TRUE)
   }
 
   ## Convert sample sheet to data.table
@@ -53,8 +53,8 @@ add_feature_group <- function(experiment, group_sheet, feature_type) {
   ## Import group sheet if it is a file.
   if (is(group_sheet, "character")) {
     group_sheet <- read.delim(
-      group_sheet, sep = "\t", header = TRUE,
-      stringsAsFactors = FALSE
+      group_sheet, sep="\t", header=TRUE,
+      stringsAsFactors=FALSE
     )
   }
 

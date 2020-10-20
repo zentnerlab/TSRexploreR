@@ -28,12 +28,12 @@
 #'   in the UMAP plot. 
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="tsrexplorer")
 #' TSSs <- readRDS(TSSs)
 #' tsre_exp <- tsr_explorer(TSSs)
-#' tsre_exp <- format_counts(tsre_exp, data_type = "tss")
+#' tsre_exp <- format_counts(tsre_exp, data_type="tss")
 #' tsre_exp <- tss_clustering(tsre_exp)
-#' plot_reduction(tsre_exp, data_type = "tsr")
+#' plot_reduction(tsre_exp, data_type="tsr")
 #'
 #' @return ggplot2 plot of dimension reduction
 #'
@@ -42,10 +42,10 @@
 
 plot_reduction <- function(
   experiment,
-  data_type = c("tss", "tsr", "tss_features", "tsr_features"),
-  method = "umap",
-  n_neighbors = 2,
-  min_dist = 0.1,
+  data_type=c("tss", "tsr", "tss_features", "tsr_features"),
+  method="umap",
+  n_neighbors=2,
+  min_dist=0.1,
   ...
 ) {
 
@@ -76,14 +76,14 @@ plot_reduction <- function(
 
   ## UMAP dimensionality reduction.
   umap_results <- tmm_counts %>%
-    umap(n_neighbors = n_neighbors, min_dist = min_dist)
+    umap(n_neighbors=n_neighbors, min_dist=min_dist)
   
   umap_results <- as.data.table(umap_results)
-  setnames(umap_results, old = c("V1", "V2"), new = c("UMAP_1", "UMAP_2"))
+  setnames(umap_results, old=c("V1", "V2"), new=c("UMAP_1", "UMAP_2"))
   umap_results[, sample := tmm_counts[["sample"]]]
 
   ## Plot UMAP.
-  p <- ggplot(umap_results, aes(x = .data$UMAP_1, y = .data$UMAP_2, color = .data$sample)) +
+  p <- ggplot(umap_results, aes(x=.data$UMAP_1, y=.data$UMAP_2, color=.data$sample)) +
     geom_point(...) +
     theme_bw() +
     scale_color_viridis_d()

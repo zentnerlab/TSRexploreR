@@ -19,10 +19,10 @@
 #' @return tsrexplorer object with TSRs
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="tsrexplorer")
 #' TSSs <- readRDS(TSSs)
 #' tsre_exp <- tsr_explorer(TSSs)
-#' tsre_exp <- format_counts(tsre_exp, data_type = "tss")
+#' tsre_exp <- format_counts(tsre_exp, data_type="tss")
 #' tsre_exp <- tss_clustering(tsre_exp)
 #'
 #' @rdname tss_clustering-function
@@ -30,9 +30,9 @@
 
 tss_clustering <- function(
   experiment,
-  samples = "all",
-  threshold = 1,
-  max_distance = 25
+  samples="all",
+  threshold=1,
+  max_distance=25
 ) {
 
   ## Check inputs.
@@ -62,15 +62,15 @@ tss_clustering <- function(
 
       # Cluster TSSs within 'max_distance'.
       clustered <- GenomicRanges::reduce(
-        x, with.revmap = TRUE,
-        min.gapwidth = max_distance + 1
+        x, with.revmap=TRUE,
+        min.gapwidth=max_distance + 1
       )
 
       # Get aggregate sum of scores.
       cluster_info <- aggregate(
         x, mcols(clustered)$revmap,
-        score = sum(score),
-        n_unique = lengths(score)
+        score=sum(score),
+        n_unique=lengths(score)
       )
 
       clustered$score <- cluster_info$score
@@ -85,8 +85,8 @@ tss_clustering <- function(
     x <- as.data.table(x)
     x[, FID := seq_len(nrow(x))]
     x[,
-      FHASH := str_c(seqnames, start, end, strand, sep = ":"),
-      by = seq_len(nrow(x))
+      FHASH := str_c(seqnames, start, end, strand, sep=":"),
+      by=seq_len(nrow(x))
     ]
     return(x)
   })

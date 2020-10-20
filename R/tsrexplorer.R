@@ -14,20 +14,20 @@
 setClass(
   "tsr_explorer",
   representation(
-    experiment = "list",
-    counts = "list",
-    correlation = "list",
-    diff_features = "list",
-    settings = "list",
-    meta_data = "list"
+    experiment="list",
+    counts="list",
+    correlation="list",
+    diff_features="list",
+    settings="list",
+    meta_data="list"
   ),
   prototype(
-    experiment = list(),
-    counts = list(),
-    correlation = list(),
-    diff_features = list(),
-    settings = list(),
-    meta_data = list()
+    experiment=list(),
+    counts=list(),
+    correlation=list(),
+    diff_features=list(),
+    settings=list(),
+    meta_data=list()
   )
 )
 
@@ -47,7 +47,7 @@ setClass(
 #' @return A tsrexplorer object containing TSSs and/or TSRs
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="tsrexplorer")
 #' TSSs <- readRDS(TSSs)
 #' exp <- tsr_explorer(TSSs)
 #'
@@ -55,18 +55,18 @@ setClass(
 #'
 #' @export
 
-tsr_explorer <- function(TSSs = NA, TSRs = NA) {
+tsr_explorer <- function(TSSs=NA, TSRs=NA) {
 
     tsr_obj <- new(
       "tsr_explorer",
-      experiment = list("TSSs" = TSSs, "TSRs" = TSRs),
-      diff_features = list(
-        "TSSs" = list(results = list()),
-        "TSRs" = list(results = list())
+      experiment=list("TSSs"=TSSs, "TSRs"=TSRs),
+      diff_features=list(
+        "TSSs"=list(results=list()),
+        "TSRs"=list(results=list())
       ),
-      counts = list(
-        "TSSs" = list(raw = list()),
-        "TSRs" = list(raw = list())
+      counts=list(
+        "TSSs"=list(raw=list()),
+        "TSRs"=list(raw=list())
       )
     )
 

@@ -14,18 +14,18 @@
 #' @return tsrexplorer object with CPM values.
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="tsrexplorer")
 #' TSSs <- readRDS(TSSs)
 #' tsre_exp <- tsr_explorer(TSSs)
-#' tsre_exp <- format_counts(tsre_exp, data_type = "tss")
-#' tsre_exp <- cpm_normalize(tsre_exp, data_type = "tss")
+#' tsre_exp <- format_counts(tsre_exp, data_type="tss")
+#' tsre_exp <- cpm_normalize(tsre_exp, data_type="tss")
 #'
 #' @rdname cpm_normalize-function
 #' @export
 
 cpm_normalize <- function(
   experiment,
-  data_type = c("tss", "tsr", "tss_features", "tsr_features")
+  data_type=c("tss", "tsr", "tss_features", "tsr_features")
 ) {
 
   ## Check inputs.
@@ -84,12 +84,12 @@ cpm_normalize <- function(
 #' @return tsrexplorer object with tmm normalized count matrices
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="tsrexplorer")
 #' TSSs <- readRDS(TSSs)
 #' tsre_exp <- tsr_explorer(TSSs)
-#' tsre_exp <- format_counts(tsre_exp, data_type = "tss")
-#' tsre_exp <- count_matrix(tsre_exp, data_type = "tss")
-#' tsre_exp <- tmm_normalize(exp, data_type = "tss")
+#' tsre_exp <- format_counts(tsre_exp, data_type="tss")
+#' tsre_exp <- count_matrix(tsre_exp, data_type="tss")
+#' tsre_exp <- tmm_normalize(exp, data_type="tss")
 #'
 #' @seealso \code{\link{count_matrix}} to prepare the matrices.
 #'   \code{\link{plot_correlation}} for various correlation plots.
@@ -99,10 +99,10 @@ cpm_normalize <- function(
 
 tmm_normalize <- function(
   experiment,
-  data_type = c("tss", "tsr", "tss_features", "tsr_features"),
-  samples = "all",
-  threshold = 1,
-  n_samples = 1
+  data_type=c("tss", "tsr", "tss_features", "tsr_features"),
+  samples="all",
+  threshold=1,
+  n_samples=1
 ) {
 
   ## Check inputs.

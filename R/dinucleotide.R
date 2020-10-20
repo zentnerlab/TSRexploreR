@@ -35,12 +35,12 @@
 #' @return DataFrame with dinucleotide frequencies
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="tsrexplorer")
 #' TSSs <- readRDS(TSSs)
 #' tsre_exp <- tsr_explorer(TSSs)
-#' tsre_exp <- format_counts(tsre_exp, data_type = "tss")
-#' assembly <- system.file("extdata", "S288C_Assembly.fasta", package = "tsrexplorer")
-#' freqs <- dinucleotide_frequencies(tsre_exp, genome_assembly = assembly)
+#' tsre_exp <- format_counts(tsre_exp, data_type="tss")
+#' assembly <- system.file("extdata", "S288C_Assembly.fasta", package="tsrexplorer")
+#' freqs <- dinucleotide_frequencies(tsre_exp, genome_assembly=assembly)
 #'
 #' @seealso
 #' \code{\link{plot_dinculeotide_frequencies}} to plot the dinucleotide frequencies.
@@ -51,10 +51,10 @@
 dinucleotide_frequencies <- function(
   experiment,
   genome_assembly,
-  samples = "all",
-  threshold = 1,
-  dominant = FALSE,
-  data_conditions = NA
+  samples="all",
+  threshold=1,
+  dominant=FALSE,
+  data_conditions=NA
 ) {
 
   ## Check inputs.
@@ -87,11 +87,11 @@ dinucleotide_frequencies <- function(
 
   ## Apply conditions to data.
   if (all(!is.na(data_conditions))) {
-    select_samples <- do.call(group_data, c(list(signal_data = select_samples), data_conditions))
+    select_samples <- do.call(group_data, c(list(signal_data=select_samples), data_conditions))
   }
 
   ## Prepare samples for analysis.
-  select_samples <- rbindlist(select_samples, idcol = "sample")
+  select_samples <- rbindlist(select_samples, idcol="sample")
   select_samples <- select_samples[, .(seqnames, start, end, strand, sample)]
 
   ## Extend ranges to capture base before TSS.
@@ -105,30 +105,30 @@ dinucleotide_frequencies <- function(
     {getSeq(fasta_assembly, .)} %>%
     as.data.table %>%
     {cbind(as.data.table(select_samples), .)}
-  setnames(seqs, old = "x", new = "dinucleotide")
+  setnames(seqs, old="x", new="dinucleotide")
 
   ## Find dinucleotide frequencies.
   groupings <- any(names(data_conditions) %in% c("quantile_by", "grouping"))
 
   if (!groupings) {
     freqs <- seqs[,
-      .(count = .N), by = .(sample, dinucleotide)
+      .(count=.N), by=.(sample, dinucleotide)
     ][,
-      .(dinucleotide, count, freqs = count / sum(count)),
-      by = sample
+      .(dinucleotide, count, freqs=count / sum(count)),
+      by=sample
     ]
   } else {
     freqs <- seqs[,
-      .(count = .N), by = .(sample, dinucleotide, grouping)
+      .(count=.N), by=.(sample, dinucleotide, grouping)
     ][,
-      .(dinucleotide, count, freqs = count / sum(count)),
-      by = .(sample, grouping)
+      .(dinucleotide, count, freqs=count / sum(count)),
+      by=.(sample, grouping)
     ]
   }
 
   ## Order samples if required.
   if (!all(samples == "all")) {
-    freqs[, sample := factor(sample, levels = samples)]
+    freqs[, sample := factor(sample, levels=samples)]
   }
 
   ## Prepare DataFrame to return.
@@ -156,12 +156,12 @@ dinucleotide_frequencies <- function(
 #' @return ggplot2 object of dinucleotide frequencies plot
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="tsrexplorer")
 #' TSSs <- readRDS(TSSs)
 #' tsre_exp <- tsr_explorer(TSSs)
-#' tsre_exp <- format_counts(tsre_exp, data_type = "tss")
-#' assembly <- system.file("extdata", "S288C_Assembly.fasta", package = "tsrexplorer")
-#' freqs <- dinucleotide_frequencies(tsre_exp, genome_assembly = assembly)
+#' tsre_exp <- format_counts(tsre_exp, data_type="tss")
+#' assembly <- system.file("extdata", "S288C_Assembly.fasta", package="tsrexplorer")
+#' freqs <- dinucleotide_frequencies(tsre_exp, genome_assembly=assembly)
 #' plot_dinucleotide_frequencies(freqs)
 #'
 #' @seealso
@@ -172,7 +172,7 @@ dinucleotide_frequencies <- function(
 
 plot_dinucleotide_frequencies <- function(
   dinucleotide_frequencies,
-  ncol = 1,
+  ncol=1,
   ...
 ) {
 
@@ -189,13 +189,13 @@ plot_dinucleotide_frequencies <- function(
   ## Set factor order for dinucleotides.
   if (!groupings) {
     freqs <- freqs[,
-      .(sample, count, freqs, mean_freqs = mean(freqs)),
-      by = dinucleotide
+      .(sample, count, freqs, mean_freqs=mean(freqs)),
+      by=dinucleotide
     ]
   } else {
     freqs <- freqs[,
-      .(sample, count, freqs, grouping, mean_freqs = mean(freqs)),
-      by = dinucleotide
+      .(sample, count, freqs, grouping, mean_freqs=mean(freqs)),
+      by=dinucleotide
     ]
   }
 
@@ -209,8 +209,8 @@ plot_dinucleotide_frequencies <- function(
 
   ## Plot dinucleotide frequencies.
 
-  p <- ggplot(freqs, aes(x = .data$dinucleotide, y = .data$freqs)) +
-    geom_col(width = 0.5, aes(fill = .data$freqs), ...) +
+  p <- ggplot(freqs, aes(x=.data$dinucleotide, y=.data$freqs)) +
+    geom_col(width=0.5, aes(fill=.data$freqs), ...) +
     theme_bw() +
     coord_flip() +
     labs(
@@ -221,7 +221,7 @@ plot_dinucleotide_frequencies <- function(
   if (groupings) {
     p <- p + facet_wrap(grouping ~ sample)
   } else {
-    p <- p + facet_wrap(~ sample, ncol = ncol)
+    p <- p + facet_wrap(~ sample, ncol=ncol)
   }
 
   return(p)

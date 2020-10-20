@@ -18,7 +18,7 @@
 
 fit_edger_model <- function(
   experiment,
-  data_type = c("tss", "tsr", "tss_features", "tsr_features"),
+  data_type=c("tss", "tsr", "tss_features", "tsr_features"),
   samples,
   groups
 ) {
@@ -30,7 +30,7 @@ fit_edger_model <- function(
   assert_that(length(groups) == length(groups))
 
   ## Design table.
-  design <- data.table("samples" = samples, "groups" = groups)
+  design <- data.table("samples"=samples, "groups"=groups)
   design[, groups := fct_inorder(as.character(groups))]
 
   ## Grab data from appropriate slot.
@@ -41,16 +41,16 @@ fit_edger_model <- function(
 
   ## Filter out features with low counts.
   sample_data <- sample_data[filterByExpr(
-    assay(sample_data, "counts"), design = sample_design,
-    group = design[["group"]]
+    assay(sample_data, "counts"), design=sample_design,
+    group=design[["group"]]
   ), ]
 
   ## Create DE model.
   fitted_model <- assay(sample_data, "counts") %>%
-    DGEList(group = design[["groups"]]) %>%
+    DGEList(group=design[["groups"]]) %>%
     calcNormFactors %>%
-    estimateDisp(design = sample_design) %>%
-    glmQLFit(design = sample_design)
+    estimateDisp(design=sample_design) %>%
+    glmQLFit(design=sample_design)
 
   ## Store model in tsrexplorer object.
   if (data_type == "tss") {
@@ -92,10 +92,10 @@ fit_edger_model <- function(
 
 differential_expression <- function(
   experiment,
-  data_type = c("tss", "tsr", "tss_features", "tsr_features"),
+  data_type=c("tss", "tsr", "tss_features", "tsr_features"),
   compare_groups,
-  fdr_cutoff = 0.05,
-  log2fc_cutoff = 1
+  fdr_cutoff=0.05,
+  log2fc_cutoff=1
 ) {
 
   ## Input checks.
@@ -140,10 +140,10 @@ differential_expression <- function(
     })
 
   ## Differential expression analysis.
-  diff_expression <- glmQLFTest(edger_model, contrast = comparison_contrast)
-  diff_expression <- as.data.table(diff_expression$table, keep.rownames = "FHASH")
+  diff_expression <- glmQLFTest(edger_model, contrast=comparison_contrast)
+  diff_expression <- as.data.table(diff_expression$table, keep.rownames="FHASH")
 
-  setnames(diff_expression, old = "logFC", new = "log2FC")
+  setnames(diff_expression, old="logFC", new="log2FC")
 
   comparison_name <- str_c(compare_groups[1], "_vs_", compare_groups[2])
   diff_expression[, c("FDR", "sample") := list(
@@ -161,11 +161,11 @@ differential_expression <- function(
     original <- as.data.table(original_ranges)
     original[, FHASH := names(original_ranges)]
 
-    diff_expression <- merge(diff_expression, original, by = "FHASH")
+    diff_expression <- merge(diff_expression, original, by="FHASH")
     diff_expression <- sort(as_granges(diff_expression))
     diff_expression <- as.data.table(diff_expression)
   } else if (data_type %in% c("tss_features", "tsr_features")) {
-    setnames(diff_expression, old = 1, new = "feature")[]
+    setnames(diff_expression, old=1, new="feature")[]
   }
 
   ## Add differential expression data back to tsrexplorer object.
@@ -196,9 +196,9 @@ differential_expression <- function(
 
 de_table <- function(
   experiment,
-  data_type = c("tss", "tsr", "tss_features", "tsr_features"),
-  de_comparisons = "all",
-  de_type = c("up", "unchanged", "down")
+  data_type=c("tss", "tsr", "tss_features", "tsr_features"),
+  de_comparisons="all",
+  de_type=c("up", "unchanged", "down")
 ) {
   ## Input checks.
   assert_that(is(experiment, "tsr_explorer"))
