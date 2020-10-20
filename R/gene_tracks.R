@@ -31,17 +31,17 @@ gene_tracks <- function(
   experiment,
   genome_annotation,
   feature_name,
-  feature_type = "gene",
-  samples = "all",
-  threshold = 1,
-  upstream = 250,
-  downstream = 250,
-  promoter_only = FALSE,
-  use_cpm = FALSE,
-  tss_colors = "black",
-  tsr_colors = "black",
-  axis_scale = 0.25,
-  ymax = NA
+  feature_type="gene",
+  samples="all",
+  threshold=1,
+  upstream=250,
+  downstream=250,
+  promoter_only=FALSE,
+  use_cpm=FALSE,
+  tss_colors="black",
+  tsr_colors="black",
+  axis_scale=0.25,
+  ymax=NA
 ) {
 
   ## Input checks.
@@ -76,7 +76,7 @@ gene_tracks <- function(
     "txdb"=genome_annotation
   )
   
-  options(ucscChromosomeNames = FALSE)
+  options(ucscChromosomeNames=FALSE)
 
   ## Grab appropriate ranges.
   ftype <- case_when(
@@ -153,10 +153,10 @@ gene_tracks <- function(
       map(function(x) {
         pos_ranges <- plyranges::filter(x, strand == "+")
         neg_ranges <- plyranges::filter(x, strand == "-")
-        split_ranges <- list(pos = pos_ranges, neg = neg_ranges)
+        split_ranges <- list(pos=pos_ranges, neg = neg_ranges)
         return(split_ranges)
       })
-    split_TSSs <- unlist(split_TSSs, recursive = FALSE)
+    split_TSSs <- unlist(split_TSSs, recursive=FALSE)
   }
 
   ## Build gene tracks.
@@ -201,7 +201,7 @@ gene_tracks <- function(
     tsr_tracks <- imap(selected_TSRs, function(gr, sample_name) {
       anno_track <- AnnotationTrack(
         gr, name=sample_name, fill=tsr_colors[sample_name],
-        cex.title=axis_scale, col = NA 
+        cex.title=axis_scale, col=NA 
       )
     })
   }
@@ -219,19 +219,19 @@ gene_tracks <- function(
   })
 
   tracks <- purrr::flatten(tracks)
-  tracks <- c(list("genome_track" = genome_track), tracks)
+  tracks <- c(list("genome_track"=genome_track), tracks)
 
   plotTracks(
     tracks,
-    chromosome = seqnames(feature_ranges),
-    from = start(feature_ranges),
-    to = end(feature_ranges),
-    background.title = "white",
-    col.title = "black",
-    col.axis = "black",
-    type = "histogram",
-    baseline = 0,
-    col.baseline = "black",
-    title.width = 2
+    chromosome=seqnames(feature_ranges),
+    from=start(feature_ranges),
+    to=end(feature_ranges),
+    background.title="white",
+    col.title="black",
+    col.axis="black",
+    type="histogram",
+    baseline=0,
+    col.baseline="black",
+    title.width=2
   )
 }
