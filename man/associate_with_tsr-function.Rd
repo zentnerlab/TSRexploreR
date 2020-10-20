@@ -38,14 +38,14 @@ It should have 3 columns: 'replicate_id', 'tss_name', and 'tsr_name'.
 \code{\link{add_sample_sheet}} to add a sample sheet to the tsrexplorer object.
 }
 \examples{
-TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
+TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="tsrexplorer")
 TSSs <- readRDS(TSSs)
 tsre_exp <- tsr_explorer(TSSs)
-tsre_exp <- format_counts(tsre_exp, data_type = "tss")
+tsre_exp <- format_counts(tsre_exp, data_type="tss")
 tsre_exp <- tss_clustering(tsre_exp)
-tsre_exp <- associate_with_tsr(tsre_exp, sample_list = list(
-  "S288C_WT_1" = "S288C_WT_1", "S288C_WT_2" = "S288C_WT_2", "S288C_WT_3" = "S288C_WT_3",
-  "S288C_D_1" = "S288C_D_1", "S288C_D_2" = "S288C_D_2", "S288C_D_3" = "S288C_D_3"
+tsre_exp <- associate_with_tsr(tsre_exp, sample_list=list(
+  "S288C_WT_1"="S288C_WT_1", "S288C_WT_2"="S288C_WT_2", "S288C_WT_3"="S288C_WT_3",
+  "S288C_D_1"="S288C_D_1", "S288C_D_2"="S288C_D_2", "S288C_D_3"="S288C_D_3"
 ))
 
 }

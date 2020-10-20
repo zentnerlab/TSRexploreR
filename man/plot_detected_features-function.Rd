@@ -23,16 +23,16 @@ This plotting function returns a stacked bar-plot showing the number of
 The information is first prepared using the 'detect_features' function.
 }
 \examples{
-TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
+TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="tsrexplorer")
 TSSs <- readRDS(TSSs)
 tsre_exp <- tsr_explorer(TSSs)
-tsre_exp <- format_counts(tsre_exp, data_type = "tss")
-annotation <- system.file("extdata", "S288C_Annotation.gtf", package = "tsrexplorer")
+tsre_exp <- format_counts(tsre_exp, data_type="tss")
+annotation <- system.file("extdata", "S288C_Annotation.gtf", package="tsrexplorer")
 tsre_exp <- annotate_features(
-  tsre_exp, annotation_data = annotation,
-  data_type = "tss", feature_type = "transcript"
+  tsre_exp, annotation_data=annotation,
+  data_type="tss", feature_type="transcript"
 )
-detected <- detect_features(tsre_exp, data_type = "tss")
+detected <- detect_features(tsre_exp, data_type="tss")
 plot_detected_features(detected)
 
 }

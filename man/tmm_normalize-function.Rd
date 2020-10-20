@@ -41,12 +41,12 @@ Features must have greater than or equal to 'threshold' number of raw counts in 
   'n_samples' number of samples to be retained.
 }
 \examples{
-TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
+TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="tsrexplorer")
 TSSs <- readRDS(TSSs)
 tsre_exp <- tsr_explorer(TSSs)
-tsre_exp <- format_counts(tsre_exp, data_type = "tss")
-tsre_exp <- count_matrix(tsre_exp, data_type = "tss")
-tsre_exp <- tmm_normalize(exp, data_type = "tss")
+tsre_exp <- format_counts(tsre_exp, data_type="tss")
+tsre_exp <- count_matrix(tsre_exp, data_type="tss")
+tsre_exp <- tmm_normalize(exp, data_type="tss")
 
 }
 \seealso{

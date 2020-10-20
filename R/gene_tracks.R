@@ -160,6 +160,8 @@ gene_tracks <- function(
   }
 
   ## Build gene tracks.
+
+  # Set track colors.
   if (use_tss) {
     if (length(tss_colors) > 1) {
       tss_colors <- rep(tss_colors, each=2)
@@ -190,7 +192,7 @@ gene_tracks <- function(
         col.histogram=tss_colors[sample_name],
         fill.histogram=tss_colors[sample_name]
       )
-      if (!is.na(ymax)) track_args <- list(track_args, ylim=c(0, ymax))
+      if (!is.na(ymax)) track_args <- c(track_args, list(ylim=c(0, ymax)))
 
       data_track <- do.call(DataTrack, track_args)
       return(data_track)

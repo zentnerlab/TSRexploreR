@@ -42,14 +42,14 @@ Whether genes or transcripts are used depends on the feature type chosen
   when annotating the TSSs with the 'annotate_features' function.
 }
 \examples{
-TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
+TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="tsrexplorer")
 TSSs <- readRDS(TSSs)
 tsre_exp <- tsr_explorer(TSSs)
-tsre_exp <- format_counts(tsre_exp, data_type = "tss")
-annotation <- system.file("extdata", "S288C_Annotation.gtf", package = "tsrexplorer")
+tsre_exp <- format_counts(tsre_exp, data_type="tss")
+annotation <- system.file("extdata", "S288C_Annotation.gtf", package="tsrexplorer")
 tsre_exp <- annotate_features(
-  tsre_exp, annotation_data = annotation,
-  data_type = "tss", feature_type = "transcript"
+  tsre_exp, annotation_data=annotation,
+  data_type="tss", feature_type="transcript"
 )
 hm_mat <- tss_heatmap_matrix(tsre_exp)
 plot_heatmap(hm_matrix)

@@ -57,12 +57,12 @@ For TSSs this can be either dominant per TSR or gene, and for TSRs
   of data.
 }
 \examples{
-TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
+TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="tsrexplorer")
 TSSs <- readRDS(TSSs)
 tsre_exp <- tsr_explorer(TSSs)
-tsre_exp <- format_counts(tsre_exp, data_type = "tss")
-assembly <- system.file("extdata", "S288C_Assembly.fasta", package = "tsrexplorer")
-seqs <- tss_sequences(tsre_exp, genome_assembly = assembly)
+tsre_exp <- format_counts(tsre_exp, data_type="tss")
+assembly <- system.file("extdata", "S288C_Assembly.fasta", package="tsrexplorer")
+seqs <- tss_sequences(tsre_exp, genome_assembly=assembly)
 
 }
 \seealso{

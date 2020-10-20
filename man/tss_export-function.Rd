@@ -48,10 +48,10 @@ The directory to output the files can be set with 'out_dir'.
 If 'diff_tss' is TRUE, only differential TSSs will be output.
 }
 \examples{
-TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
+TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="tsrexplorer")
 TSSs <- readRDS(TSSs)
 tsre_exp <- tsr_explorer(TSSs)
-tsre_exp <- format_counts(tsre_exp, data_type = "tss")
+tsre_exp <- format_counts(tsre_exp, data_type="tss")
 tss_export(tsre_exp)
 
 }

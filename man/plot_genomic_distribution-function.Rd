@@ -22,16 +22,16 @@ Genomic features include exons, introns, intergenic, downstream and promoter reg
 The promoter region is user defined when annotating the TSSs or TSRs.
 }
 \examples{
-TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
+TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="tsrexplorer")
 TSSs <- readRDS(TSSs)
 tsre_exp <- tsr_explorer(TSSs)
-tsre_exp <- format_counts(tsre_exp, data_type = "tss")
-annotation <- system.file("extdata", "S288C_Annotation.gtf", package = "tsrexplorer")
+tsre_exp <- format_counts(tsre_exp, data_type="tss")
+annotation <- system.file("extdata", "S288C_Annotation.gtf", package="tsrexplorer")
 tsre_exp <- annotate_features(
-  tsre_exp, annotation_data = annotation,
-  data_type = "tss", feature_type = "transcript"
+  tsre_exp, annotation_data=annotation,
+  data_type="tss", feature_type="transcript"
 )
-genomic_dist <- genomic_distribution(tsre_exp, data_type = "tss")
+genomic_dist <- genomic_distribution(tsre_exp, data_type="tss")
 plot_genomic_distribution(genomic_dist)
 
 }
