@@ -139,7 +139,6 @@ plot_correlation <- function(
   if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsrexplorer object")
   data_type <- match.arg(data_type, c("tss", "tsr", "tss_features", "tsr_features"))
   assert_that(is.character(samples))
-  correlation_plot <- match.arg(correlation_plot, c("heatmap", "scatter", "combined", "hierarchical"))
   correlation_metric <- match.arg(correlation_metric, c("pearson", "spearman"))
   assert_that(is.flag(log2_transform))
   assert_that(is.numeric(font_size) && font_size > 0)
