@@ -147,7 +147,7 @@ associate_with_tsr <- function(
 
   ## Check inputs.
   assert_that(is(experiment, "tsr_explorer"))
-  assert(is.flag(use_sample_sheet))
+  assert_that(is.flag(use_sample_sheet))
   if (
     (!use_sample_sheet && all(is.na(sample_list))) |
     (use_sample_sheet && all(!is.na(sample_list)))
@@ -204,7 +204,7 @@ associate_with_tsr <- function(
 
   experiment <- set_count_slot(
     experiment, associated_TSSs,
-    "counts", data_type, "raw"
+    "counts", "tss", "raw"
   )
   return(experiment)
 }

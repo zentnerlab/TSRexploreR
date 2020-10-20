@@ -50,6 +50,10 @@ gene_tracks <- function(
   assert_that(is.string(feature_name))
   feature_type <- match.arg(str_to_lower(feature_type), c("gene", "transcript"))
   assert_that(is.character(samples))
+  names(samples) <- match.arg(
+    str_to_lower(names(samples)),
+    c("tss", "tsr"), several.ok=TRUE
+  )
   assert_that(is.count(threshold))
   assert_that(is.count(upstream))
   assert_that(is.count(downstream))
@@ -93,31 +97,28 @@ gene_tracks <- function(
   ## If not promoter only, expand ranges.
   if (!promoter_only) {
     feature_ranges <- feature_ranges %>%
-      resize(., width = width(.) + downstream, "start") %>%
-      resize(., width = width(.) + upstream,  "end")
+      anchor_5p %>%
+      stretch(downstream) %>%
+      anchor_3p %>%
+      stretch(upstream)
   }
 
   ## Get ranges for requested gene.
-  if (feature_type == "transcript") {
-    feature_ranges <- feature_ranges[feature_ranges$tx_name == feature_name, ]
-  } else if (feature_type == "gene") {
-    feature_ranges <- feature_ranges[feature_ranges$gene_id == feature_name, ]
-  }
+  feature_ranges <- switch(feature_type,
+    "transcript"=feature_ranges[feature_ranges$tx_name == feature_name, ],
+    "gene"=feature_ranges[feature_ranges$gene_id == feature_name, ]
+  )
 
   ## Grab selected samples.
-  use_tss <- sum(str_count(samples, "^TSS:")) > 0
-  use_tsr <- sum(str_count(samples, "^TSR:")) > 0
+  use_tss <- any(names(samples) == "tss")
+  use_tsr <- any(names(samples) == "tsr")
 
   if (use_tss) {
-    tss_samples <- samples %>%
-      keep(~ str_detect(., "^TSS:")) %>%
-      str_replace("^TSS:", "")
+    tss_samples <- samples[names(samples) == "tss"]
     selected_TSSs <- extract_counts(experiment, "tss", tss_samples, use_cpm)
   }
   if (use_tsr) {
-    tsr_samples <- samples %>%
-      keep(~ str_detect(., "^TSR:")) %>%
-      str_replace("^TSR:", "")
+    tsr_samples <- samples[names(samples) == "tsr"]
     selected_TSRs <- extract_counts(experiment, "tsr", tsr_samples, use_cpm)
   }
 
@@ -150,8 +151,8 @@ gene_tracks <- function(
   if (use_tss) {
     split_TSSs <- selected_TSSs %>%
       map(function(x) {
-        pos_ranges <- x[strand(x) == "+",]
-        neg_ranges <- x[strand(x) == "-",]
+        pos_ranges <- plyranges::filter(x, strand == "+")
+        neg_ranges <- plyranges::filter(x, strand == "-")
         split_ranges <- list(pos = pos_ranges, neg = neg_ranges)
         return(split_ranges)
       })
@@ -159,13 +160,11 @@ gene_tracks <- function(
   }
 
   ## Build gene tracks.
-
-  # Assign colors to tracks.
   if (use_tss) {
     if (length(tss_colors) > 1) {
-      tss_colors <- unlist(map(tss_colors, ~ rep(., 2)))
+      tss_colors <- rep(tss_colors, each=2)
     } else {
-      tss_colors <- rep(tss_colors, length(split_TSSs)) 
+      tss_colors <- rep(tss_colors, length(split_TSSs))
     }
     names(tss_colors) <- names(split_TSSs)
   }
@@ -179,26 +178,21 @@ gene_tracks <- function(
 
   # Genome annotation track.
   genome_track <- GeneRegionTrack(
-    anno, name = "", shape = "arrow", col = NA, fill = "black",
-    showId = TRUE, cex.group = axis_scale
+    anno, name="", shape="arrow", col=NA, fill="black",
+    showId=TRUE, cex.group=axis_scale
   )
 
   # Data tracks.
   if (use_tss) {
     tss_tracks <- imap(split_TSSs, function(gr, sample_name) {
-      if (is.na(ymax)) {
-        data_track <- DataTrack(
-          gr, name = sample_name, cex.title = axis_scale,
-          cex.axis = axis_scale, col.histogram = tss_colors[sample_name],
-          fill.histogram = tss_colors[sample_name]
-        )
-      } else {
-        data_track <- DataTrack(
-          gr, name = sample_name, cex.title = axis_scale,
-          cex.axis = axis_scale, col.histogram = tss_colors[sample_name],
-          fill.histogram = tss_colors[sample_name], ylim = c(0, ymax)
-        )
-      }
+      track_args <- list(
+        gr, name=sample_name, cex.title=axis_scale, cex.axis=axis_scale,
+        col.histogram=tss_colors[sample_name],
+        fill.histogram=tss_colors[sample_name]
+      )
+      if (!is.na(ymax)) track_args <- list(track_args, ylim=c(0, ymax))
+
+      data_track <- do.call(DataTrack, track_args)
       return(data_track)
     })
   }
@@ -206,23 +200,26 @@ gene_tracks <- function(
   if (use_tsr) {
     tsr_tracks <- imap(selected_TSRs, function(gr, sample_name) {
       anno_track <- AnnotationTrack(
-        gr, name = sample_name, fill = tsr_colors[sample_name],
-        cex.title = axis_scale, col = NA 
+        gr, name=sample_name, fill=tsr_colors[sample_name],
+        cex.title=axis_scale, col = NA 
       )
     })
   }
 
   # Combine and plot tracks.
-  tracks <- list("genome_track" = genome_track)
-  for (samp in samples) {
-    track_name <- str_replace(samp, "^(TSS:|TSR:)", "")
-    if (str_detect(samp, "^TSS:")) {
-      tracks[[str_c(track_name, ".pos")]] <- tss_tracks[[str_c(track_name, ".pos")]]
-      tracks[[str_c(track_name, ".neg")]] <- tss_tracks[[str_c(track_name, ".neg")]]
-    } else if (str_detect(samp, "^TSR:")) {
-      tracks[[track_name]] <- tsr_tracks[[track_name]]
+  tracks <- imap(samples, function(x, y) {
+    track <- list()
+    if (y == "tss") {
+      track[[str_c(x, ".pos")]] <- tss_tracks[[str_c(x, ".pos")]]
+      track[[str_c(x, ".neg")]] <- tss_tracks[[str_c(x, ".neg")]]
+    } else if (y == "tsr") {
+      track[[x]] <- tsr_tracks[[x]]
     }
-  }
+    return(track)
+  })
+
+  tracks <- purrr::flatten(tracks)
+  tracks <- c(list("genome_track" = genome_track), tracks)
 
   plotTracks(
     tracks,

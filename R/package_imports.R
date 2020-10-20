@@ -30,7 +30,9 @@ NULL
 #' @importFrom rtracklayer import export
 #' @importFrom GenomicRanges GRanges
 #' @importFrom GenomicFeatures makeTxDbFromGFF
-#' @importFrom plyranges as_granges stretch join_overlap_left_directed anchor_3p
+#' @importFrom plyranges
+#'   as_granges stretch join_overlap_left_directed
+#'   anchor_3p anchor_5p
 #' @importFrom Biostrings DNAStringSet getSeq
 
 NULL
