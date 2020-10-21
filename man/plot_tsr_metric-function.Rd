@@ -11,9 +11,9 @@ plot_tsr_metric(
   samples = "all",
   log2_transform = FALSE,
   ncol = 1,
-  use_cpm = FALSE,
+  use_normalized = FALSE,
   dominant = FALSE,
-  threshold = NA,
+  threshold = NULL,
   data_conditions = NA,
   ...
 )
@@ -31,7 +31,7 @@ plot_tsr_metric(
 
 \item{ncol}{Number of columns to use when plotting multiple samples}
 
-\item{use_cpm}{Whether to use the CPM-normalized counts}
+\item{use_normalized}{Whether to use the CPM-normalized counts}
 
 \item{dominant}{Whether to only consider dominant TSRs}
 

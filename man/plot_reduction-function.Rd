@@ -10,6 +10,7 @@ plot_reduction(
   method = "umap",
   n_neighbors = 2,
   min_dist = 0.1,
+  use_normalized = TRUE,
   ...
 )
 }

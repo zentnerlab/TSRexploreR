@@ -13,6 +13,7 @@
 #' @param samples Either "all" or a vector of names of samples to analyze
 #' @param genome_assembly Genome assembly in fasta format or bioconductor BSgenome
 #' @param threshold Keep only TSSs with at least this number of raw counts
+#' @param use_normalized Whether to use normalized counts
 #' @param distance Bases to add on each side of eacg TSS
 #' @param dominant Whether to only consider dominant TSSs
 #' @param data_conditions Condition the data (filter, quantile, and grouping available)
@@ -59,7 +60,7 @@ tss_sequences <- function(
   experiment,
   samples="all",
   genome_assembly,
-  threshold=1,
+  threshold=NULL,
   distance=10,
   dominant=FALSE,
   data_conditions=list(order_by="score")
@@ -69,12 +70,13 @@ tss_sequences <- function(
   assert_that(is(experiment, "tsr_explorer"))
   assert_that(is.character(samples))
   assert_that(is.character(genome_assembly) || is(genome_assembly, "BSgenome"))
-  assert_that(is.count(threshold))
+  assert_that(is.null(threshold) || (is.numeric(threshold) && threshold >= 0))
   assert_that(is.count(distance))
   assert_that(is.flag(dominant))
   if (all(!is.na(data_conditions)) && !is(data_conditions, "list")) {
     stop("data_conditions must be a list of values")
   }
+  assert_that(is.flag(use_normalized))
 
   ## Open genome assembly.
   assembly_type <- case_when(
@@ -89,10 +91,9 @@ tss_sequences <- function(
   )
 
   ## Get selected samples.
-  select_samples <- extract_counts(experiment, "tss", samples)
-
-  ## Preliminary filtering of data.
-  select_samples <- preliminary_filter(select_samples, dominant, threshold)
+  select_samples <- experiment %>%
+    extract_counts("tss", samples, use_normalized) %>%
+    preliminary_filter(dominant, threshold)
 
   ## Condition the data.
   if (all(!is.na(data_conditions))) {
@@ -284,10 +285,8 @@ plot_sequence_colormap <- function(
   tss_sequences,
   ncol=1,
   base_colors=c(
-    "A"="#109649",
-    "C"="#255C99",
-    "G"="#F7B32C",
-    "T"="#D62839"
+    "A"="#109649", "C"="#255C99",
+    "G"="#F7B32C", "T"="#D62839"
   ),
   text_size=6,
   ...
@@ -299,7 +298,7 @@ plot_sequence_colormap <- function(
     is.character(base_colors) &&
     has_name(base_colors, c("A", "C", "T", "G"))
   )
-  assert_that(is.numeric(base_size) && base_size > 0)
+  assert_that(is.numeric(text_size) && text_size > 0)
 
   ## Grab some information out of DataFrame.
   distance <- metadata(tss_sequences)$distance

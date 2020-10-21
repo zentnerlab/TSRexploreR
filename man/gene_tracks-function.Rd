@@ -10,11 +10,11 @@ gene_tracks(
   feature_name,
   feature_type = "gene",
   samples = "all",
-  threshold = 1,
+  threshold = NULL,
   upstream = 250,
   downstream = 250,
   promoter_only = FALSE,
-  use_cpm = FALSE,
+  use_normalized = FALSE,
   tss_colors = "black",
   tsr_colors = "black",
   axis_scale = 0.25,
@@ -41,7 +41,7 @@ Append sample names with 'TSS:' or 'TSR:' for TSS and TSR tracks respectively.}
 
 \item{promoter_only}{Instead of plotting the entire gene, plot the promoter region}
 
-\item{use_cpm}{Use CPM normalized reads or not}
+\item{use_normalized}{Use CPM normalized reads or not}
 
 \item{tss_colors}{Either a single color value for all TSS tracks, or a vector of colors}
 

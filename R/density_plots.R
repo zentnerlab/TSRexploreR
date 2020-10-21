@@ -13,7 +13,7 @@
 #' @param downstream Bases downstream of plot center
 #' @param threshold Raw count threshold value for TSSs
 #' @param ncol Number of columns to use for plotting data when quantiles not set
-#' @param use_cpm Whether to use CPM normalized or raw counts if score is considered
+#' @param use_normalized Whether to use CPM normalized or raw counts if score is considered
 #' @param dominant Consider only dominant TSS or TSR
 #' @param data_conditions Data conditioning filters
 #' @param color Either 'default' or a valid color format to set plot color
@@ -33,7 +33,7 @@
 #'   'upstream' and 'downstream', which should be positive integers.
 #'
 #' A set of functions to control data structure for plotting are included.
-#' 'use_cpm' will use the CPM normalized scores, which only matters if
+#' 'use_normalized' will use the CPM normalized scores, which only matters if
 #'   'consider_score' is TRUE.
 #' 'threshold' defines the minimum number of raw counts a TSS or TSR
 #'  must have to be considered.
@@ -72,9 +72,9 @@ plot_density <- function(
   consider_score=FALSE,
   upstream=1000,
   downstream=1000,
-  threshold=1,
+  threshold=NULL,
   ncol=1,
-  use_cpm=FALSE,
+  use_normalized=FALSE,
   dominant=FALSE,
   data_conditions=NA,
   color="default",
@@ -88,9 +88,9 @@ plot_density <- function(
   assert_that(is.flag(consider_score))
   assert_that(is.count(upstream))
   assert_that(is.count(downstream))
-  assert_that(is.count(threshold))
+  assert_that(is.null(threshold) || (is.numeric(threshold) && threshold >= 0))
   assert_that(is.count(ncol))
-  assert_that(is.flag(use_cpm))
+  assert_that(is.flag(use_normalized))
   assert_that(is.flag(dominant))
   if (all(!is.na(data_conditions)) && !is(data_conditions, "list")) {
     stop("data_conditions should be a list of values")
@@ -104,12 +104,9 @@ plot_density <- function(
   )
 
   ## Pull data out of appropriate slot.
-  sample_data <- extract_counts(experiment, data_type, samples, use_cpm)
-
-  ## Preliminary data preparation.
-  if (dominant | !is.na(threshold)) {
-    sample_data <- preliminary_filter(sample_data, dominant, threshold)
-  }
+  sample_data <- experiment %>%
+    extract_counts(data_type, samples, use_normalized) %>%
+    preliminary_filter(dominant, threshold)
 
   sample_data <- map(sample_data, ~ .x[dplyr::between(distanceToTSS, -upstream, downstream)])
 

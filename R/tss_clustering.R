@@ -31,54 +31,33 @@
 tss_clustering <- function(
   experiment,
   samples="all",
-  threshold=1,
+  threshold=NULL,
   max_distance=25
 ) {
 
   ## Check inputs.
   assert_that(is(experiment, "tsr_explorer"))
   assert_that(is.character(samples))
-  assert_that(is.count(threshold))
+  assert_that(is.null(threshold) || (is.numeric(threshold) && threshold >= 0))
   assert_that(is.count(max_distance))
 
   ## Get selected samples.
-  select_samples <- extract_counts(experiment, "tss", samples)
+  select_samples <- experiment %>%
+    extract_counts("tss", samples, use_normalized) %>%
+    preliminary_filter(FALSE, threshold)
+
+  select_samples <- map(select_samples, function(x) {
+    keep_cols <- c("seqnames", "start", "end", "strand", "score")
+    if (any(colnames(x) == "normalized_score")) {
+      keep_cols <- c(keep_cols, "normalized_score")
+    }
+    x <- x[, ..keep_cols]
+    x <- as_granges(x)
+    return(x)
+  })
   
-  select_samples <- select_samples %>%
-    map(function(x) {
-      x <- x[
-        score >= threshold,
-        .(seqnames, start, end, strand, score)
-      ]
-      return(x)
-    })
-
-  ## Convert samples to GRanges.
-  select_samples <- map(select_samples, as_granges)
-
   ## Call TSRs.
-  clustered_TSSs <- select_samples %>%
-    map(function(x) {
-
-      # Cluster TSSs within 'max_distance'.
-      clustered <- GenomicRanges::reduce(
-        x, with.revmap=TRUE,
-        min.gapwidth=max_distance + 1
-      )
-
-      # Get aggregate sum of scores.
-      cluster_info <- aggregate(
-        x, mcols(clustered)$revmap,
-        score=sum(score),
-        n_unique=lengths(score)
-      )
-
-      clustered$score <- cluster_info$score
-      clustered$n_unique <- cluster_info$n_unique
-      clustered$revmap <- NULL
-
-      return(clustered)
-    })
+  clustered_TSSs <- map(clustered_TSSs, .aggr_scores, max_distance)
 
   ## Add TSRs back to tsrexplorer object.
   clustered_TSSs <- map(clustered_TSSs, function(x) {
@@ -92,7 +71,11 @@ tss_clustering <- function(
   })
 
   TSR_granges <- map(clustered_TSSs, function(x) {
-    TSR_granges <- x[, .(seqnames, start, end, strand, score)]
+    keep_cols <- c("seqnames", "start", "end", "strand", "score")
+    if (any(colnames(x) == "normalized_score")) {
+      keep_cols <- c(keep_cols, "normalized_score")
+    }
+    TSR_granges <- x[, ..keep_cols]
     TSR_granges <- as_granges(TSR_granges)
     return(TSR_granges)
   })
@@ -104,4 +87,45 @@ tss_clustering <- function(
   )
   return(experiment)
 
+}
+
+#' Aggregate Scores
+#'
+#' @param granges GRanges
+#' @param maxdist Maximum distance to cluster
+
+.aggr_scores <- function(granges, maxdist) {
+
+  ## Check inputs.
+  assert_that(is(granges, "GRanges"))
+  assert_that(is.count(maxdist) | maxdist == 0)
+
+  ## Cluster TSSs within 'max_distance'
+  clustered <- GenomicRanges::reduce(
+    granges, with.revmap=TRUE,
+    min.gapwidth=maxdist + 1
+  )
+
+  ## Get aggregate sum of scores.
+  aggr_args <- list(
+    granges, mcols(clustered)$revmap, score=sum(score),
+    n_unique=lengths(score    )
+  )
+  if (any(colnames(mcols(x)) == "normalized_score")) {
+    aggr_args <- list(
+      aggr_args,
+      list(normalized_score=sum(normalized_score))
+    )
+  }
+
+  cluster_info <- do.call(aggregate, aggr_args)
+
+  clustered$score <- cluster_info$score
+  clustered$n_unique <- cluster_info$n_unique
+  if (any(colnames(mcols(x)) == "normalized_score")) {
+    clustered$normalized_score <- cluster_info$normalized_score
+  }
+  clustered$revmap <- NULL
+
+  return(clustered)
 }

@@ -9,8 +9,8 @@ tss_heatmap_matrix(
   samples = "all",
   upstream = 1000,
   downstream = 1000,
-  threshold = NA,
-  use_cpm = FALSE,
+  threshold = NULL,
+  use_normalized = FALSE,
   dominant = FALSE,
   data_conditions = list(order_by = "score")
 )
@@ -26,7 +26,7 @@ tss_heatmap_matrix(
 
 \item{threshold}{Raw count threshold value}
 
-\item{use_cpm}{Whether to use CPM-normalized counts}
+\item{use_normalized}{Whether to use CPM-normalized counts}
 
 \item{dominant}{Whether to only consider dominant TSSs}
 
@@ -49,7 +49,7 @@ The region around the annotated TSS used for plotting is controlled by
   'upstream' and 'downstream', which should be positive integers.
 
 A set of arguments to control data structure for plotting are included.
-'use_cpm' will use the CPM normalized scores as opposed to raw read counts.
+'use_normalized' will use the CPM normalized scores as opposed to raw read counts.
 'threshold' will define the minimum number of reads a TSS or TSR
  must have to be considered.
 'dominant' specifies whether only the dominant TSS or TSR is considered 

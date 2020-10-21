@@ -11,9 +11,9 @@ plot_density(
   consider_score = FALSE,
   upstream = 1000,
   downstream = 1000,
-  threshold = 1,
+  threshold = NULL,
   ncol = 1,
-  use_cpm = FALSE,
+  use_normalized = FALSE,
   dominant = FALSE,
   data_conditions = NA,
   color = "default",
@@ -38,7 +38,7 @@ in addition to its unique location.}
 
 \item{ncol}{Number of columns to use for plotting data when quantiles not set}
 
-\item{use_cpm}{Whether to use CPM normalized or raw counts if score is considered}
+\item{use_normalized}{Whether to use CPM normalized or raw counts if score is considered}
 
 \item{dominant}{Consider only dominant TSS or TSR}
 
@@ -68,7 +68,7 @@ The region around the annotated TSS used for plotting is controlled by
   'upstream' and 'downstream', which should be positive integers.
 
 A set of functions to control data structure for plotting are included.
-'use_cpm' will use the CPM normalized scores, which only matters if
+'use_normalized' will use the CPM normalized scores, which only matters if
   'consider_score' is TRUE.
 'threshold' defines the minimum number of raw counts a TSS or TSR
  must have to be considered.

@@ -82,31 +82,13 @@ annotate_features <- function(
 
   ## Annotate features.
   
-  counts_annotated <- counts %>%
-    map(function(x) {
-      x <- as_granges(x)
-
-      annotated <- x %>%
-        annotatePeak(
-          tssRegion=c(-upstream, downstream),
-          TxDb=genome_annotation,
-          sameStrand=TRUE,
-          level=feature_type
-        ) %>%
-        as.data.table
-      
-      annotated[,
-        simple_annotations := case_when(
-          annotation == "Promoter" ~ "Promoter",
-          str_detect(annotation, pattern="(Exon|UTR)") ~ "Exon",
-          str_detect(annotation, pattern="Intron") ~ "Intron",
-          str_detect(annotation, pattern="Downstream") ~ "Downstream",
-          annotation == "Distal Intergenic" ~ "Intergenic"
-        )
-      ]
-      
-      return(annotated)
-    })
+  counts_annotated <- map(counts, function(x) {
+    x <- .annotate(
+      x, upstream, downstream, feature_type,
+      genome_annotation
+    )
+    return(x)
+  })
 
   ## Place annotated features back into the tsrexplorer object.
 
@@ -125,4 +107,45 @@ annotate_features <- function(
   experiment@settings[["annotation"]] <- anno_settings
 
   return(experiment)
+}
+
+#' Annotate Features
+#'
+#' @inheritParams annotate_features
+#' @param sample_table Sample table
+
+.annotate <- function(
+  sample_table,
+  upstream,
+  downstream,
+  feature_type,
+  annotation_data
+) {
+
+  ## Convert to GRanges.
+  sample_table <- as_granges(sample_table)
+
+  ## Annotate.
+  annotated <- sample_table %>%
+    annotatePeak(
+      tssRegion=c(-upstream, downstream),
+      TxDb=annotation_data,
+      sameStrand=TRUE,
+      level=feature_type
+    ) %>%
+    as.data.table
+
+  ## Create a column iwth simplified annotations.
+  annotated[,
+    simple_annotations := case_when(
+      annotation == "Promoter" ~ "Promoter",
+      str_detect(annotation, pattern="(Exon|UTR)") ~ "Exon",
+      str_detect(annotation, pattern="Intron") ~ "Intron",
+      str_detect(annotation, pattern="Downstream") ~ "Downstream",
+      annotation == "Distal Intergenic" ~ "Intergenic"
+    )
+  ]
+
+  return(annotated)
+
 }

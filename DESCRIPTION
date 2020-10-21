@@ -45,7 +45,8 @@ Imports:
     rtracklayer,
     Rcpp,
     plyranges,
-    assertthat
+    assertthat,
+    DESeq2
 Depends:
     R (>= 3.5.0)
 Suggests:

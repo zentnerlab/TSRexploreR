@@ -8,7 +8,9 @@
 #' @param experiment tsrexplorer object with annotated TSSs
 #' @param samples Either "all" or a vector of names of samples to analyze
 #' @param max_threshold Thresholds from 1 to max_threshold will be explored
-#'
+#' @param use_normalized Whether to use the raw or normalized counts
+#' @param steps Steps to get the threshold values
+
 #' @details
 #' All TSS mapping technologies have some degree of spurious background reads.
 #' tsr_explorer allows for basic thresholding of data by requiring
@@ -42,24 +44,29 @@
 
 explore_thresholds <- function(
   experiment,
-  max_threshold=50,
-  samples="all"
+  max_threshold=25,
+  steps=0.5,
+  samples="all",
+  use_normalized=FALSE
 ) {
+
   ## Check inputs.
   assert_that(is(experiment, "tsr_explorer"))
-  assert_that(is.count(max_threshold) && max_threshold >= 5)
+  assert_that(is.numeric(max_threshold) && max_threshold >= 5)
   assert_that(is.character(samples))
+  assert_that(is.numeric(steps) && steps >= 0.1)
+  assert_that(is.flag(use_normalized))
 
   ## Get settings information.
   feature_type <- experiment@settings$annotation[["feature_type"]]
   feature_type <- ifelse(feature_type == "transcript", "transcriptId", "geneId")
 
   ## Get appropriate samples.
-  select_samples <- extract_counts(experiment, "tss", samples)
+  select_samples <- extract_counts(experiment, "tss", samples, use_normalized)
   select_samples <- rbindlist(select_samples, idcol="sample")
 
   ## Get information needed for threshold plot.
-  summarized_data <- map_df(seq_len(max_threshold), function(x) {
+  summarized_data <- map_df(seq(0, max_threshold, steps), function(x) {
     filtered <- select_samples[score >= x]
     filtered[,
       promoter_proximity := ifelse(

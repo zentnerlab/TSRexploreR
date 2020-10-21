@@ -7,7 +7,8 @@
 mark_dominant(
   experiment,
   data_type = c("tss", "tsr"),
-  threshold = 1,
+  threshold = NULL,
+  use_normalized = FALSE,
   mark_per = "default"
 )
 }
@@ -17,6 +18,8 @@ mark_dominant(
 \item{data_type}{Either 'tss' or 'tsr'}
 
 \item{threshold}{Read threshold for TSS/TSRs}
+
+\item{use_normalized}{Whether to use normalized counts}
 
 \item{mark_per}{By default marks dominant TSR per gene, and dominant TSS per TSR.
 TSSs can also be set per as dominant TSS per 'gene'.}

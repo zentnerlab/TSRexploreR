@@ -4,7 +4,12 @@
 \alias{tss_clustering}
 \title{TSS Clustering}
 \usage{
-tss_clustering(experiment, samples = "all", threshold = 1, max_distance = 25)
+tss_clustering(
+  experiment,
+  samples = "all",
+  threshold = NULL,
+  max_distance = 25
+)
 }
 \arguments{
 \item{experiment}{tsrexplorer object}

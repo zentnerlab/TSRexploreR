@@ -10,7 +10,7 @@ tsr_heatmap_matrix(
   upstream = 1000,
   downstream = 1000,
   threshold = NA,
-  use_cpm = FALSE,
+  use_normalized = FALSE,
   dominant = FALSE,
   data_conditions = list(order_by = "score")
 )
@@ -26,7 +26,7 @@ tsr_heatmap_matrix(
 
 \item{threshold}{Raw count threshold value}
 
-\item{use_cpm}{Whether to use CPM-normalized counts}
+\item{use_normalized}{Whether to use CPM-normalized counts}
 
 \item{dominant}{Whether to only consider dominant TSRs}
 

@@ -4,8 +4,9 @@
 #' Add a sample sheet to a tsrexplorer object.
 #'
 #' @param experiment tsrexplorer object
-#' @param sample_sheet Sample sheet as tab delimited file or data.frame
-#' with columns: 'replicate_id', 'tss_name', 'tsr_name', and optionally 'group_id'
+#' @param sample_sheet Sample sheet as tab delimited file or data.frame.
+#' Must have columns: 'tss_name' and 'tsr_name', and can have additional
+#'   columns specifying condition, batch, etc.
 #'
 #' @rdname add_sample_sheet-function
 #' @export
@@ -16,19 +17,24 @@ add_sample_sheet <- function(
 ) {
 
   ## Input checks.
-  if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsr explorer object")
-
-  if (!is(sample_sheet, "character") & !is(sample_sheet, "data.frame")) {
-    stop("sample_sheet must be a file path or data.frame")
-  }
+  assert_that(is(experiment, "tsr_explorer"))
+  assert_that(is.string(sample_sheet) | is.data.frame(sample_sheet))
 
   ## Import sample sheet if it is a file.
-  if (is(sample_sheet, "character")) {
-    sample_sheet <- fread(sample_sheet, sep="\t", header=TRUE)
-  }
+  sample_sheet_type <- case_when(
+    is.string(sample_sheet) ~ "character",
+    is.data.frame(sample_sheet) ~ "data.frame"
+  )
+
+  sample_sheet <- switch(
+    sample_sheet_type,
+    "character"=fread(sample_sheet, sep="\t", header=TRUE),
+    "data.frame"=sample_sheet
+  )
+  assert_that(has_name(sample_sheet, c("tss_name", "tsr_name")))
 
   ## Convert sample sheet to data.table
-  sample_sheet <- as.data.table(sample_sheet)
+  if (!is.data.table(sample_sheet)) setDT(sample_sheet)
   
   ## Add sample sheet to tsrexplorer object.
   experiment@meta_data$sample_sheet <- sample_sheet

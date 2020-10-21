@@ -166,7 +166,7 @@ associate_with_tsr <- function(
   if (use_sample_sheet) {
     samples <- experiment@meta_data$sample_sheet
     sample_list <- as.list(samples$tss_name)
-    sample_list <- set_names(sample_list, samples$tsr_name)
+    sample_list <- magrittr::set_names(sample_list, samples$tsr_name)
   }
   
   ## Associate TSSs with TSRs.

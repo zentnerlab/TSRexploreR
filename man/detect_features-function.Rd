@@ -8,8 +8,9 @@ detect_features(
   experiment,
   samples = "all",
   data_type = c("tss", "tsr", "tss_features", "tsr_features"),
-  threshold = NA,
+  threshold = NULL,
   dominant = FALSE,
+  use_normalized = FALSE,
   condition_data = NA
 )
 }

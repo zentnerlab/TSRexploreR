@@ -46,6 +46,7 @@ plot_reduction <- function(
   method="umap",
   n_neighbors=2,
   min_dist=0.1,
+  use_normalized=TRUE,
   ...
 ) {
 
@@ -56,19 +57,17 @@ plot_reduction <- function(
   assert_that(is.count(n_neighbors))
   assert_that(is.numeric(min_dist) && min_dist > 0)
 
-  ## Grab TMM counts.
-  tmm_counts <- extract_matrix(experiment, data_type, "all")
-
-  ## Filter out counts with too little expression.
-  keep_index <- tmm_counts %>%
-    assay("counts") %>%
-    filterByExpr
-
-  tmm_counts <- tmm_counts[keep_index, ]
+  ## Grab counts.
+  counts <- extract_matrix(experiment, data_type, "all")
+  
+  if (use_normalized) {
+    counts <- assay(counts, "normalized")
+  } else {
+    counts <- assay(counts, "counts")
+  }
 
   ## Prepare data for umap.
-  tmm_counts <- tmm_counts %>%
-    assay("tmm") %>%
+  counts <- counts %>%
     t %>%
     as.data.frame %>%
     rownames_to_column("sample") %>%

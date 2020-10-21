@@ -10,6 +10,7 @@
 #' @param samples Either 'all' to plot all samples or a vector of sample names
 #' @param genome_assembly fasta file or BSgenome of genome assembly
 #' @param threshold Raw TSS count threshold
+#' @param use_normalized Whether to use normalized counts
 #' @param dominant Consider only dominant TSSs
 #' @param data_conditions Condition the data
 #'
@@ -52,7 +53,8 @@ dinucleotide_frequencies <- function(
   experiment,
   genome_assembly,
   samples="all",
-  threshold=1,
+  threshold=NULL,
+  use_normalized=FALSE,
   dominant=FALSE,
   data_conditions=NA
 ) {
@@ -61,7 +63,8 @@ dinucleotide_frequencies <- function(
   assert_that(is(experiment, "tsr_explorer"))
   assert_that(is.character(genome_assembly) | is(genome_assembly, "BSgenome"))
   assert_that(is.character(samples))
-  assert_that(is.count(threshold))
+  assert_that(is.null(threshold) || (is.numeric(threshold) && threshold >= 0))
+  assert_that(is.flag(use_normalized))
   assert_that(is.flag(dominant))
   if (all(!is.na(data_conditions)) && !is(data_conditions, "list")) {
     stop("data_conditions must be a list of values")
@@ -80,10 +83,9 @@ dinucleotide_frequencies <- function(
   )
 
   ## Get appropriate samples.
-  select_samples <- extract_counts(experiment, "tss", samples)
-
-  ## Preliminary filtering of data.
-  select_samples <- preliminary_filter(select_samples, dominant, threshold)
+  select_samples <- experiment %>%
+    extract_counts("tss", samples, use_normalized) %>%
+    preliminary_filter(dominant, threshold)
 
   ## Apply conditions to data.
   if (all(!is.na(data_conditions))) {

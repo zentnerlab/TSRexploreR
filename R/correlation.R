@@ -149,7 +149,7 @@ plot_correlation <- function(
   ## Get data from proper slot.
   normalized_counts <- experiment %>%
     extract_matrix(data_type, samples) %>%
-    assay("tmm") %>%
+    assay("normalized") %>%
     as.data.table
   
   sample_names <- colnames(normalized_counts)

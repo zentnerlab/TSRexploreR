@@ -209,7 +209,7 @@ preliminary_filter <- function(signal_data, dominant, threshold) {
   }
 
   ## Apply a threshold to score if required.
-  if (!is.na(threshold)) {
+  if (!is.null(threshold)) {
     signal_data <- map(signal_data, function(x) {
       x <- x[score >= threshold]
       return(x)

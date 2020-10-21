@@ -8,7 +8,8 @@ dinucleotide_frequencies(
   experiment,
   genome_assembly,
   samples = "all",
-  threshold = 1,
+  threshold = NULL,
+  use_normalized = FALSE,
   dominant = FALSE,
   data_conditions = NA
 )
@@ -21,6 +22,8 @@ dinucleotide_frequencies(
 \item{samples}{Either 'all' to plot all samples or a vector of sample names}
 
 \item{threshold}{Raw TSS count threshold}
+
+\item{use_normalized}{Whether to use normalized counts}
 
 \item{dominant}{Consider only dominant TSSs}
 

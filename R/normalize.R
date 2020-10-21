@@ -62,14 +62,12 @@ cpm_normalize <- function(
 #' @description
 #' Using edgeR to TMM normalize TSSs or TSRs.
 #'
-#' @importFrom edgeR DGEList calcNormFactors cpm
-#'
 #' @param experiment tsrexplorer object
 #' @param data_type Whether TSSs, TSRs, or RNA-seq & 5' feature counts should be normalized
+#' @param normalization_method Either 'edgeR', 'DESeq2', or 'CPM'
 #' @param threshold Consider only features with at least this number of raw counts
 #' @param n_samples Filter out positions without features meeting the the selected threshold
 #'   in this number of samples
-#' @param samples Vector with names of samples to include in the normalization
 #'
 #' @details
 #' The TMM normalization method, employed by edgeR, is designed to reduce the influence of
@@ -94,13 +92,13 @@ cpm_normalize <- function(
 #' @seealso \code{\link{count_matrix}} to prepare the matrices.
 #'   \code{\link{plot_correlation}} for various correlation plots.
 #'
-#' @rdname tmm_normalize-function
+#' @rdname normalize_counts-function
 #' @export
 
-tmm_normalize <- function(
+normalize_counts <- function(
   experiment,
   data_type=c("tss", "tsr", "tss_features", "tsr_features"),
-  samples="all",
+  method="DESeq2",
   threshold=1,
   n_samples=1
 ) {
@@ -111,12 +109,12 @@ tmm_normalize <- function(
     str_to_lower(data_type),
     c("tss", "tsr", "tss_features", "tsr_features")
   )
-  assert_that(is.character(samples))
+  method <- match.arg(str_to_lower(method), c("edger", "deseq2", "cpm"))
   assert_that(is.count(threshold))
   assert_that(is.count(n_samples))
 
   ## Get selected samples.
-  select_samples <- extract_matrix(experiment, data_type, samples)
+  select_samples <- extract_matrix(experiment, data_type, "all")
 
   ## Filter counts.
   sample_matrix <- as.data.table(assay(select_samples, "counts"))
@@ -126,20 +124,94 @@ tmm_normalize <- function(
   select_samples <- select_samples[keep_ids, ]
   filtered_counts <- assay(select_samples, "counts")
 
-  ## TMM normalize filtered counts.
-  tmm_counts <- filtered_counts %>%
-    DGEList %>%
-    calcNormFactors %>%
-    cpm
+  ## If method is DESeq2, prepare coldata.
+  if (method == "deseq2") {
+    coldata <- experiment@meta_data$sample_sheet
+    coldata <- switch(
+      data_type,
+      "tss"=coldata[match(coldata$tss_name, colnames(filtered_counts)), ],
+      "tsr"=coldata[match(coldata$tsr_name, colnames(filtered_counts)), ]
+    )
+  }
 
-  ## Create filtered and TMM normalized RangedSummarizedExperiment.
-  assay(select_samples, "tmm") <- tmm_counts
+  ## Normalize filtered counts.
+  normalized_counts <- switch(
+    method,
+    "edger"=.edger_normalize(filtered_counts),
+    "cpm"=cpm(filtered_counts),
+    "deseq2"=.deseq2_normalize(filtered_counts, coldata)
+  )
 
-  ## Add TMM-normalized counts to tsrexplorer object.
+  ## Create filtered and normalized RangedSummarizedExperiment.
+  assay(select_samples, "normalized") <- normalized_counts
+
+  ## Add normalized count matrix to tsrexplorer object.
   experiment <- set_count_slot(
     experiment, select_samples,
     "counts", data_type, "matrix"
   )
 
+  ## Add normalized counts to sample tables.
+  normalized_counts <- normalized_counts %>%
+    as.data.table(keep.rownames="FHASH") %>%
+    melt(
+      id.vars="FHASH", variable.name="sample",
+      value.name="normalized_score"
+    )
+
+  sample_tables <- experiment %>%
+    extract_counts(data_type, samples) %>%
+    rbindlist(idcol="sample") %>%
+    {merge(normalized_counts, ., by=c("sample", "FHASH"), all.y=TRUE)} %>%
+    as_granges %>%
+    sort %>%
+    as.data.table %>%
+    split(by="sample", keep.by=FALSE)
+
+  experiment <- set_count_slot(
+    experiment, sample_tables, "counts",
+    data_type, "raw"
+  )
+
   return(experiment)
+}
+
+#' edgeR Normalize
+#'
+#' @param count_matrix count matrix
+
+.edger_normalize <- function(count_matrix) {
+  
+  ## Input check.
+  assert_that(is.matrix(count_matrix))
+
+  ## TMM Normalization.
+  normalized_counts <- count_matrix %>%
+    DGEList %>%
+    calcNormFactors %>%
+    cpm
+
+  return(normalized_counts)   
+}
+
+#' DESeq2 Normalize
+#'
+#' @param count_matrix count matrix
+#' @param design design formula
+#' @param coldata column data
+#' @param blind Whether normalization is blind
+
+.deseq2_normalize <- function(count_matrix, coldata) {
+
+  ## Validate inputs.
+  assert_that(is.matrix(count_matrix))
+  assert_that(is.data.frame(coldata))
+
+  ## DESeq2 Normalization.
+  normalized_counts <- count_matrix %>%
+    DESeqDataSetFromMatrix(colData=coldata, design= ~ 1) %>%
+    estimateSizeFactors %>%
+    counts(normalized=TRUE)
+
+  return(normalized_counts)
 }

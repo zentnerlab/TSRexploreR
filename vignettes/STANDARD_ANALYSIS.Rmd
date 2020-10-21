@@ -32,6 +32,26 @@ TSSs <- names(TSSs) %>%
 exp <- tsr_explorer(TSSs)
 ```
 
+### Sample Sheet
+
+Adding a sample sheet allows for easier processing downstream.
+
+```{r message=FALSE}
+sample_sheet <- data.frame(
+  tss_name=sprintf("S288C_WT_%s", seq_len(3)),
+  tsr_name=sprintf("S288C_WT_%s", seq_len(3)),
+  condition=rep("Untreated", 3)
+)
+```
+
+```{r echo=FALSE}
+knitr::kable(sample_sheet)
+```
+
+```{r message=FALSE}
+exp <- add_sample_sheet(exp, sample_sheet)
+```
+
 ## Initial TSS Processing
 
 After the TSSs are loaded into the tsrexplorer object,
@@ -51,7 +71,8 @@ The next step is to normalize TSS counts using the Counts Per Million (CPM) appr
  This step is optional - if the counts you input were already normalized, this step can be safely skipped.
 
 ```{r message=FALSE}
-exp <- cpm_normalize(exp, data_type="tss")
+exp <- count_matrix(exp, data_type="tss")
+exp <- normalize_counts(exp, data_type="tss")
 ```
 
 ### TSS Annotation
@@ -85,7 +106,7 @@ The number of features (genes or transcripts) with at least one unique promoter-
 
 
 ```{r}
-threshold_data <- explore_thresholds(exp, max_threshold=25)
+threshold_data <- explore_thresholds(exp, steps=1)
 
 plot_threshold_exploration(threshold_data, ncol=3, point_size=0.5) +
   scale_color_viridis_c() + 
@@ -98,17 +119,10 @@ Looking at the plot, a threshold of three or more reads is a sensible choice: th
 
 Assessing correlation between samples provides information on replicate similarity and can also give a cursory indication of the degree of difference between biologically distinct samples (e.g. different genotypes or treatments).
 
-### TMM Normalization
+### Correlation Matrix Plots
 
 For correlation analysis, TSRexploreR uses TMM normalization via the edgeR package.
 This method was designed to make comparison **between** samples more efficacious. In the example below, TSSs are retained only if at least one sample has a count of 3 or more reads.
-
-```{r message=FALSE}
-exp <- count_matrix(exp, data_type="tss")
-exp <- tmm_normalize(exp, data_type="tss", threshold=3, n_samples=1)
-```
-
-### Correlation Matrix Plots
 
 After TMM normalizing the samples, various correlation plots can be generated.
 This this example, a combined scatterplot/heatmap is generated.
@@ -174,7 +188,10 @@ However, as TSS are single points and are sometimes sparsely distribution,
  it can be somewhat difficult to visualize them as a heatmap.
 
 ```{r message=FALSE}
-tss_matrix <- tss_heatmap_matrix(exp, threshold=3, upstream=250, downstream=250)
+tss_matrix <- tss_heatmap_matrix(
+  exp, threshold=3, upstream=250, downstream=250,
+  use_normalized=TRUE
+)
 
 plot_heatmap(tss_matrix, ncol=3, background_color="white") +
   ggplot2::theme(text=element_text(size=4), legend.key.size=unit(0.3, "cm"))
@@ -278,6 +295,14 @@ Now that the TSSs have been clustered and associated with TSRs,
  the TSRs can undergo initial processing.
 This involves annotating the TSRs, calculating various metrics of TSR shape and strength, and optional normalization of the TSR scores.
 
+### Normalize TSRs
+
+The TSRs can optionally be CPM normalized.
+
+```{r message=FALSE}
+exp <- normalize_counts(exp, data_type="tsr")
+```
+
 ### TSR Metrics
 
 After TSSs have been associated with TSRs, various metrics describing TSR shape and strength can be computed. First, the dominant TSS (that is, the highest-scoring TSS) within a TSR will be annotated. Then, various shape features such as inter-quantile range, shape index, and balance will be calculated.
@@ -285,14 +310,6 @@ After TSSs have been associated with TSRs, various metrics describing TSR shape 
 ```{r message=FALSE}
 exp <- mark_dominant(exp, data_type="tss", threshold=3)
 exp <- tsr_metrics(exp)
-```
-
-### Normalize TSRs
-
-The TSRs can optionally be CPM normalized.
-
-```{r message=FALSE}
-exp <- cpm_normalize(exp, data_type="tsr")
 ```
 
 ### Annotate TSRs

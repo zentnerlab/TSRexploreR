@@ -33,6 +33,7 @@ NULL
 #' @importFrom plyranges
 #'   as_granges stretch join_overlap_left_directed
 #'   anchor_3p anchor_5p
+#'   bind_ranges reduce_ranges_directed
 #' @importFrom Biostrings DNAStringSet getSeq
 
 NULL
@@ -42,5 +43,12 @@ NULL
 #' @importFrom SummarizedExperiment rowRanges SummarizedExperiment rowData
 #'   assay "assay<-"
 #' @importFrom S4Vectors "metadata<-" metadata DataFrame mcols
+
+NULL
+
+#' @importFrom edgeR DGEList calcNormFactors cpm filterByExpr
+#' @importFrom DESeq2
+#'   DESeqDataSetFromMatrix estimateSizeFactors
+#'   DESeq lfcShrink results rlog counts
 
 NULL

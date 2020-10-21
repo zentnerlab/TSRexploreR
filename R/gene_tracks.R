@@ -15,10 +15,11 @@
 #' @param samples Names of samples to plot.
 #'   Append sample names with 'TSS:' or 'TSR:' for TSS and TSR tracks respectively.
 #' @param threshold TSSs and TSRs below threshold are excluded from plotting
+#' @param use_normalized Whether to use normalized counts
 #' @param upstream bases upstream to extend gene or promoter track
 #' @param downstream bases downstream to extend gene or promoter track
 #' @param promoter_only Instead of plotting the entire gene, plot the promoter region
-#' @param use_cpm Use CPM normalized reads or not
+#' @param use_normalized Use CPM normalized reads or not
 #' @param tss_colors Either a single color value for all TSS tracks, or a vector of colors
 #' @param tsr_colors Either a single color value for all TSR tracks, or a vector of colors
 #' @param axis_scale Relative size scale for axis text and title
@@ -33,11 +34,11 @@ gene_tracks <- function(
   feature_name,
   feature_type="gene",
   samples="all",
-  threshold=1,
+  threshold=NULL,
   upstream=250,
   downstream=250,
   promoter_only=FALSE,
-  use_cpm=FALSE,
+  use_normalized=FALSE,
   tss_colors="black",
   tsr_colors="black",
   axis_scale=0.25,
@@ -54,11 +55,11 @@ gene_tracks <- function(
     str_to_lower(names(samples)),
     c("tss", "tsr"), several.ok=TRUE
   )
-  assert_that(is.count(threshold))
+  assert_that(is.null(threshold) || (is.numeric(threshold) && threshold >= 0))
   assert_that(is.count(upstream))
   assert_that(is.count(downstream))
   assert_that(is.flag(promoter_only))
-  assert_that(is.flag(use_cpm))
+  assert_that(is.flag(use_normalized))
   assert_that(is.character(tss_colors))
   assert_that(is.character(tsr_colors))
   assert_that(is.numeric(axis_scale) && axis_scale > 0)
@@ -109,42 +110,25 @@ gene_tracks <- function(
     "gene"=feature_ranges[feature_ranges$gene_id == feature_name, ]
   )
 
-  ## Grab selected samples.
+  ## Grab selected samples and convert to granges.
   use_tss <- any(names(samples) == "tss")
   use_tsr <- any(names(samples) == "tsr")
 
   if (use_tss) {
     tss_samples <- samples[names(samples) == "tss"]
-    selected_TSSs <- extract_counts(experiment, "tss", tss_samples, use_cpm)
+    selected_TSSs <- experiment %>%
+      extract_counts("tss", tss_samples, use_normalized) %>%
+      preliminary_filter(FALSE, threshold) %>%
+      {.[, .(seqnames, start, end, strand, score)]} %>%
+      as_granges
   }
   if (use_tsr) {
     tsr_samples <- samples[names(samples) == "tsr"]
-    selected_TSRs <- extract_counts(experiment, "tsr", tsr_samples, use_cpm)
-  }
-
-  ## Convert samples to GRanges.
-  if (use_tss) {
-    selected_TSSs <- selected_TSSs %>%
-      map(function(x) {
-        tss_granges <- x[
-          score >= threshold,
-          .(seqnames, start, end, strand, score)
-        ]
-        tss_granges <- as_granges(tss_granges)
-        return(tss_granges)
-      })
-  }
-
-  if (use_tsr) {
-    selected_TSRs <- selected_TSRs %>%
-      map(function(x) {
-        tsr_granges <- x[
-          score >= threshold,
-          .(seqnames, start, end, strand, score)
-        ]
-        tsr_granges <- as_granges(tsr_granges)
-        return(tsr_granges)
-      })
+    selected_TSRs <- experiment %>%
+      extract_counts("tsr", tsr_samples, use_normalized) %>%
+      preliminary_filter(FALSE, threshold) %>%
+      {.[, .(seqnames, start, end, strand, score)]} %>%
+      as_granges
   }
 
   ## Split positive and negative strands for TSSs.

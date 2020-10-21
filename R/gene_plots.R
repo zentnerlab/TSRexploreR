@@ -52,8 +52,9 @@ detect_features <- function(
   experiment,
   samples="all",
   data_type=c("tss", "tsr", "tss_features", "tsr_features"),
-  threshold=NA,
+  threshold=NULL,
   dominant=FALSE,
+  use_normalized=FALSE,
   condition_data=NA
 ) {
 
@@ -61,23 +62,17 @@ detect_features <- function(
   assert_that(is(experiment, "tsr_explorer"))
   assert_that(is.character(samples))
   data_type <- match.arg(str_to_lower(data_type), c("tss", "tsr", "tss_features", "tsr_features"))
-  assert_that(is.na(threshold) || is.count(threshold))
+  assert_that(is.null(threshold) || (is.numeric(threshold) && threshold >= 0))
   assert_that(is.flag(dominant))
   if (all(!is.na(condition_data)) && !is(condition_data, "list")) {
     stop("condition_data must be a list of values")
   }
+  assert_that(is.flag(use_normalized))
   
   ## Get sample data.
-  sample_data <- extract_counts(experiment, data_type, samples)
-
-  ## Initial sample processing.
-  if (data_type %in% c("tss", "tsr") && (dominant | !is.na(threshold))) {
-    sample_data <- preliminary_filter(sample_data, dominant, threshold)
-  }
-
-  if (data_type %in% c("tss_features", "tsr_features")) {
-    sample_data <- map(sample_data, ~ .x[score >= threshold])
-  }
+  sample_data <- experiment %>%
+    extract_counts(data_type, samples, use_normalized) %>%
+    preliminary_filter(dominant, threshold)
   
   ## Apply data conditioning if set.
   if (data_type %in% c("tss", "tsr") && all(!is.na(condition_data))) {

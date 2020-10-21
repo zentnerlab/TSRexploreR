@@ -7,6 +7,7 @@
 #' @param experiment tsrexplorer object with annotated TSSs/TSRs
 #' @param data_type Either 'tss' or 'tsr'
 #' @param threshold Read threshold for TSS/TSRs
+#' @param use_normalized Whether to use normalized counts
 #' @param mark_per By default marks dominant TSR per gene, and dominant TSS per TSR.
 #'   TSSs can also be set per as dominant TSS per 'gene'.
 #'
@@ -49,7 +50,8 @@
 mark_dominant <- function(
   experiment,
   data_type=c("tss", "tsr"),
-  threshold=1,
+  threshold=NULL,
+  use_normalized=FALSE,
   mark_per="default"
 ) {
 
@@ -60,7 +62,7 @@ mark_dominant <- function(
   mark_per <- match.arg(str_to_lower(mark_per), c("default", "gene"))
 
   ## Select samples.
-  select_samples <- extract_counts(experiment, data_type, "all")
+  select_samples <- extract_counts(experiment, data_type, "all", use_normalized)
 
   ## Mark dominant TSS/TSR per gene if requested.
   if (data_type == "tsr" | (data_type == "tss" & mark_per == "gene")) {

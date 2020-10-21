@@ -8,7 +8,7 @@ tss_sequences(
   experiment,
   samples = "all",
   genome_assembly,
-  threshold = 1,
+  threshold = NULL,
   distance = 10,
   dominant = FALSE,
   data_conditions = list(order_by = "score")
@@ -28,6 +28,8 @@ tss_sequences(
 \item{dominant}{Whether to only consider dominant TSSs}
 
 \item{data_conditions}{Condition the data (filter, quantile, and grouping available)}
+
+\item{use_normalized}{Whether to use normalized counts}
 }
 \value{
 DataFrame of sequences surrounding TSSs.

@@ -4,7 +4,7 @@
 \alias{extract_counts}
 \title{Extract Counts}
 \usage{
-extract_counts(experiment, data_type, samples, use_cpm = FALSE)
+extract_counts(experiment, data_type, samples, use_normalized = FALSE)
 }
 \arguments{
 \item{experiment}{tsrexplorer object}
@@ -13,7 +13,7 @@ extract_counts(experiment, data_type, samples, use_cpm = FALSE)
 
 \item{samples}{Names of samples from which to extract counts}
 
-\item{use_cpm}{Whether CPM values should be returned}
+\item{use_normalized}{Whether CPM values should be returned}
 }
 \description{
 Extract counts from a tsrexplorer object.

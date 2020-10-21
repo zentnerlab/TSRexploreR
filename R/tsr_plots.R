@@ -9,7 +9,7 @@
 #' @param samples Either 'all' or a vector of sample names to analyze
 #' @param log2_transform Whether the metric should be log2 + 1 transformed prior to plotting
 #' @param ncol Number of columns to use when plotting multiple samples
-#' @param use_cpm Whether to use the CPM-normalized counts
+#' @param use_normalized Whether to use the CPM-normalized counts
 #' @param dominant Whether to only consider dominant TSRs
 #' @param threshold Keep only TSRs with at least this number of raw counts
 #' @param data_conditions Condition the data (filter and quantile/group available)
@@ -28,9 +28,9 @@ plot_tsr_metric <- function(
   samples="all",
   log2_transform=FALSE,
   ncol=1,
-  use_cpm=FALSE,
+  use_normalized=FALSE,
   dominant=FALSE,
-  threshold=NA,
+  threshold=NULL,
   data_conditions=NA,
   ...
 ) {
@@ -45,17 +45,16 @@ plot_tsr_metric <- function(
   assert_that(is.character(samples))
   assert_that(is.flag(log2_transform))
   assert_that(is.count(ncol))
-  assert_that(is.flag(use_cpm))
+  assert_that(is.flag(use_normalized))
   assert_that(is.flag(dominant))
-  assert_that(is.na(threshold) || is.count(threshold))
+  assert_that(is.null(threshold) || (is.numeric(threshold) && threshold >= 0))
   if (all(!is.na(data_conditions)) && !is(data_conditions, "list")) stop("data_conditions must in list form")
 
   ## Get data.
-  selected_data <- extract_counts(experiment, "tsr", samples, use_cpm)
+  selected_data <- experiment %>%
+    extract_counts("tsr", samples, use_normalized) %>%
+    preliminary_filter(dominant, threshold)
 
-  ## Preliminary filtering of data.
-  selected_data <- preliminary_filter(selected_data, dominant, threshold)
-  
   ## Condition the data.
   if (all(!is.na(data_conditions))) {
     selected_data <- do.call(group_data, c(list(signal_data=selected_data), data_conditions))

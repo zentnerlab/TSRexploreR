@@ -10,6 +10,7 @@
 #' @param threshold Raw count threshold for a TSS or TSR to be considered
 #' @param dominant Whether only the dominant TSS per gene or TSR should be considered
 #' @param data_conditions Apply conditions to data (supports filtering and quantiles/grouping)
+#' @param use_normalized Whether normalized or raw counts should be used
 #'
 #' @details
 #' This function summarizes the distribution of TSSs or TSRs relative
@@ -51,7 +52,8 @@ genomic_distribution <- function(
   experiment,
   data_type=c("tss", "tsr"),
   samples="all",
-  threshold=NA,
+  threshold=NULL,
+  use_normalized=FALSE,
   dominant=FALSE,
   data_conditions=NA
 ) {
@@ -60,17 +62,14 @@ genomic_distribution <- function(
   assert_that(is(experiment, "tsr_explorer"))
   data_type <- match.arg(str_to_lower(data_type), c("tss", "tsr"))
   assert_that(is.character(samples))
-  assert_that(is.na(threshold) || is.count(threshold))
+  assert_that(is.null(threshold) || (is.numeric(threshold) && threshold >= 0))
   assert_that(is.flag(dominant))
   if (all(!is.na(data_conditions)) && !is(data_conditions, "list")) stop("data_conditions must in list form")
 
   ## Extract samples.
-  selected_samples <- extract_counts(experiment, data_type, samples)
-
-  ## Preliminary sample preparation.
-  if (dominant | !is.na(threshold)) {
-    selected_samples <- preliminary_filter(selected_samples, dominant, threshold)
-  }
+  selected_samples <- experiment %>%
+    extract_counts(data_type, samples, use_normalized) %>%
+    preliminary_filter(dominant, threshold)
 
   walk(selected_samples, function(x) {
     x[, simple_annotations := factor(

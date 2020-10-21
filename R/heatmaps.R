@@ -12,7 +12,7 @@
 #' @param upstream Bases upstream of plot center
 #' @param downstream Bases downstream of plot center
 #' @param threshold Raw count threshold value
-#' @param use_cpm Whether to use CPM-normalized counts
+#' @param use_normalized Whether to use CPM-normalized counts
 #' @param dominant Whether to only consider dominant TSSs
 #' @param data_conditions Condition the data (filter, order, and quantile/group available)
 #'
@@ -27,7 +27,7 @@
 #'   'upstream' and 'downstream', which should be positive integers.
 #'
 #' A set of arguments to control data structure for plotting are included.
-#' 'use_cpm' will use the CPM normalized scores as opposed to raw read counts.
+#' 'use_normalized' will use the CPM normalized scores as opposed to raw read counts.
 #' 'threshold' will define the minimum number of reads a TSS or TSR
 #'  must have to be considered.
 #' 'dominant' specifies whether only the dominant TSS or TSR is considered 
@@ -64,8 +64,8 @@ tss_heatmap_matrix <- function(
   samples="all",
   upstream=1000,
   downstream=1000,
-  threshold=NA,
-  use_cpm=FALSE,
+  threshold=NULL,
+  use_normalized=FALSE,
   dominant=FALSE,
   data_conditions=list(order_by="score")
 ) {
@@ -75,19 +75,18 @@ tss_heatmap_matrix <- function(
   assert_that(is.character(samples))
   assert_that(is.count(upstream))
   assert_that(is.count(downstream))
-  assert_that(is.na(threshold) || is.count(threshold))
-  assert_that(is.flag(use_cpm))
+  assert_that(is.null(threshold) || (is.numeric(threshold) && threshold >= 0))
+  assert_that(is.flag(use_normalized))
   assert_that(is.flag(dominant))
   if (all(!is.na(data_conditions)) && !is(data_conditions, "list")) {
     stop("data_conditions must be a list of values")
   }
 
   ## Get requested samples.
-  annotated_tss <- extract_counts(experiment, "tss", samples, use_cpm)
+  annotated_tss <- experiment %>%
+    extract_counts("tss", samples, use_normalized) %>%
+    preliminary_filter(dominant, threshold)
 
-  ## Preliminary filtering of data.
-  annotated_tss <- preliminary_filter(annotated_tss, dominant, threshold)
-        
   annotated_tss <- annotated_tss %>%
     map(function(x) {
       x <- x[distanceToTSS >= -upstream & distanceToTSS <= downstream]
@@ -128,7 +127,7 @@ tss_heatmap_matrix <- function(
   tss_df <- DataFrame(tss_df)
   metadata(tss_df)$threshold <- threshold
   metadata(tss_df)$groupings <- groupings
-  metadata(tss_df)$use_cpm <- use_cpm
+  metadata(tss_df)$use_normalized <- use_normalized
   metadata(tss_df)$dominant <- dominant
   metadata(tss_df)$promoter <- c(upstream, downstream)
 
@@ -254,7 +253,7 @@ plot_heatmap <- function(
 #' @param upstream Bases upstream to consider
 #' @param downstream bases downstream to consider
 #' @param threshold Raw count threshold value
-#' @param use_cpm Whether to use CPM-normalized counts
+#' @param use_normalized Whether to use CPM-normalized counts
 #' @param dominant Whether to only consider dominant TSRs
 #' @param data_conditions Condition the data (filter and quantile/group available)
 #'
@@ -270,7 +269,7 @@ tsr_heatmap_matrix <- function(
   upstream=1000,
   downstream=1000,
   threshold=NA,
-  use_cpm=FALSE,
+  use_normalized=FALSE,
   dominant=FALSE,
   data_conditions=list(order_by="score")
 ) {
@@ -280,18 +279,15 @@ tsr_heatmap_matrix <- function(
   assert_that(is.character(samples))
   assert_that(is.count(upstream))
   assert_that(is.count(downstream))
-  assert_that(is.na(threshold) || is.count(threshold))
-  assert_that(is.flag(use_cpm))
+  assert_that(is.null(threshold) || (is.numeric(threshold) && threshold >= 0))
+  assert_that(is.flag(use_normalized))
   assert_that(is.flag(dominant))
   if (all(!is.na(data_conditions)) && !is(data_conditions, "list")) stop("data_conditions must in list form")
   
   ## Get requested samples.
-  annotated_tsr <- extract_counts(experiment, "tsr", samples, use_cpm)
-
-  ## Preliminary filtering of data.
-  if (!is.na(threshold) | dominant) {
-    anntotated_tsr <- preliminary_filter(annotated_tsr, dominant, threshold)
-  }
+  annotated_tsr <- experiment %>%
+    extract_counts("tsr", samples, use_normalized) %>%
+    preliminary_filter(dominant, threshold)
 
   walk(annotated_tsr, function(x) {
     setnames(x,
@@ -349,7 +345,7 @@ tsr_heatmap_matrix <- function(
   tsr_df <- DataFrame(tsr_df)
   metadata(tsr_df)$threshold <- threshold
   metadata(tsr_df)$groupings <- any(names(data_conditions) == "grouping")
-  metadata(tsr_df)$use_cpm <- use_cpm
+  metadata(tsr_df)$use_normalized <- use_normalized
   metadata(tsr_df)$promoter <- c(upstream, downstream)
 
   return(tsr_df)

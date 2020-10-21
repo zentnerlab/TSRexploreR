@@ -4,14 +4,24 @@
 \alias{explore_thresholds}
 \title{Threshold Exploration}
 \usage{
-explore_thresholds(experiment, max_threshold = 50, samples = "all")
+explore_thresholds(
+  experiment,
+  max_threshold = 25,
+  steps = 0.5,
+  samples = "all",
+  use_normalized = FALSE
+)
 }
 \arguments{
 \item{experiment}{tsrexplorer object with annotated TSSs}
 
 \item{max_threshold}{Thresholds from 1 to max_threshold will be explored}
 
+\item{steps}{Steps to get the threshold values}
+
 \item{samples}{Either "all" or a vector of names of samples to analyze}
+
+\item{use_normalized}{Whether to use the raw or normalized counts}
 }
 \value{
 data.frame containing information for each threshold and sample

@@ -237,32 +237,24 @@ count_matrix <- function(
     ## Merge overlapping TSRs.
     tsr_consensus <- select_samples %>%
       map(as_granges, keep_mcols=FALSE) %>%
-      purrr::reduce(c) %>%
-      GenomicRanges::reduce(ignore.strand=FALSE)
+      bind_ranges %>%
+      reduce_ranges_directed %>%
+      as.data.table(key=c("seqnames", "strand", "start", "end"))
 
     ## Create raw count matrix.
-    raw_matrix <- select_samples %>%
-      map(~as_granges(.x) %>%
-        IRanges::findOverlapPairs(query=tsr_consensus, subject=.) %>%
-        as.data.table
-      ) %>%
-      rbindlist(idcol="sample")
+    select_samples <- select_samples %>%
+      imap(function(x, y) {
+        consensus_counts <- x %>%
+          foverlaps(tsr_consensus) %>%
+          {.[, .(score=sum(score)), by=.(seqnames, start, end, strand)]}
+        setnames(consensus_counts, old="score", new=y)
+      }) %>%
+      purrr::reduce(
+        merge, by=c("seqnames", "start", "end", "strand"),
+        all=TRUE
+      )
+    select_samples[is.na(select_samples)] <- 0
 
-    setnames(
-      raw_matrix,
-      old=c(
-        "first.seqnames", "first.start", "first.end",
-        "first.strand", "second.X.score"
-      ),
-      new=c("seqnames", "start", "end", "strand", "score")
-    )
-
-    raw_matrix <- raw_matrix[,
-      .(score=sum(score)),
-      by=.(sample, seqnames, start, end, strand)
-    ]
-
-    select_samples <- dcast(raw_matrix, seqnames + start + end + strand ~ sample, fill=0)
     select_samples[,
       FHASH := str_c(seqnames, start, end, strand, sep=":"),
       by=seq_len(nrow(select_samples))

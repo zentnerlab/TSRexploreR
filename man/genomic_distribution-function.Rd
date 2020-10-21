@@ -8,7 +8,8 @@ genomic_distribution(
   experiment,
   data_type = c("tss", "tsr"),
   samples = "all",
-  threshold = NA,
+  threshold = NULL,
+  use_normalized = FALSE,
   dominant = FALSE,
   data_conditions = NA
 )
@@ -21,6 +22,8 @@ genomic_distribution(
 \item{samples}{Either "all" or a vector of sample names}
 
 \item{threshold}{Raw count threshold for a TSS or TSR to be considered}
+
+\item{use_normalized}{Whether normalized or raw counts should be used}
 
 \item{dominant}{Whether only the dominant TSS per gene or TSR should be considered}
 

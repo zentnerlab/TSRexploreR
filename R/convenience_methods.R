@@ -65,12 +65,12 @@ setMethod("tsr_experiment<-", signature(tsrexplorer_object="tsr_explorer"),
 #' @param experiment tsrexplorer object
 #' @param data_type Whether to extract TSS or TSR counts
 #' @param samples Names of samples from which to extract counts
-#' @param use_cpm Whether CPM values should be returned
+#' @param use_normalized Whether CPM values should be returned
 #'
 #' @rdname extract_counts-function
 #' @export
 
-extract_counts <- function(experiment, data_type, samples, use_cpm=FALSE) {
+extract_counts <- function(experiment, data_type, samples, use_normalized=FALSE) {
 
   ## Extract appropriate TSS or TSR samples.
   if (data_type == "tss") {
@@ -91,10 +91,10 @@ extract_counts <- function(experiment, data_type, samples, use_cpm=FALSE) {
   return_samples <- map(selected_samples, copy)
 
   ## Return CPM score if requested.
-  if (use_cpm) {
+  if (use_normalized) {
     walk(return_samples, function(x) {
-      x[, score := cpm]
-      x[, cpm := NULL]
+      x[, score := normalized_score]
+      x[, normalized_score := NULL]
       return(x)
     })
   }
