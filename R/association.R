@@ -171,34 +171,10 @@ associate_with_tsr <- function(
   }
   
   ## Associate TSSs with TSRs.
-  associated_TSSs <- imap(sample_list, function(tss_names, tsr_name) {
-
-    # Make GRanges of TSSs.
-    tss_gr <- extract_counts(experiment, "tss", tss_names) %>%
-      rbindlist(idcol="sample") %>%
-      as_granges
-
-    # Make GRanges of TSRs.
-    tsr_set <- extract_counts(experiment, "tsr", tsr_name) %>%
-      rbindlist(idcol="tsr_sample")
-    
-    tsr_gr <- tsr_set
-    setnames(
-      tsr_gr,
-      old=c("FID", "FHASH", "width", "score", "n_unique"),
-      new=c("TSR_FID", "TSR_FHASH", "tsr_width", "tsr_score", "tsr_n_unique")
-    )
-    tsr_gr <- as_granges(tsr_gr)
-
-    ## Associate TSSs with overlapping TSRs
-    overlapping <- tss_gr %>%
-      join_overlap_left_directed(tsr_gr) %>%
-      as.data.table %>%
-      split(by="sample", keep.by=FALSE)
-
-    return(overlapping)
-
-  })
+  associated_TSSs <- imap(
+    sample_list,
+    ~ .tss_association(experiment, .x, .y)
+  )
 
   ## Add TSSs back to the tsrexplorer object.
   associated_TSSs <- purrr::reduce(associated_TSSs, c)
@@ -208,4 +184,43 @@ associate_with_tsr <- function(
     "counts", "tss", "raw"
   )
   return(experiment)
+}
+
+#' TSS Association
+#'
+#' @param experiment tsr explorer object
+#' @param tss_names names of TSSs that will be ssociated with the TSR
+#' @param tsr_name name of TSR that TSSs will be associated with
+
+.tss_association <- function(
+  experiment,
+  tss_names,
+  tsr_name
+) {
+
+  # Make GRanges of TSSs.
+  tss_gr <- extract_counts(experiment, "tss", tss_names) %>%
+    rbindlist(idcol="sample") %>%
+    as_granges
+
+  # Make GRanges of TSRs.
+  tsr_set <- extract_counts(experiment, "tsr", tsr_name) %>%
+    rbindlist(idcol="tsr_sample")
+
+  tsr_gr <- tsr_set
+  setnames(
+    tsr_gr,
+    old=c("FID", "FHASH", "width", "score", "n_unique"),
+    new=c("TSR_FID", "TSR_FHASH", "tsr_width", "tsr_score", "tsr_n_unique")
+  )
+  tsr_gr <- as_granges(tsr_gr)
+
+  ## Associate TSSs with overlapping TSRs
+  overlapping <- tss_gr %>%
+    join_overlap_left_directed(tsr_gr) %>%
+    as.data.table %>%
+    split(by="sample", keep.by=FALSE)
+
+  return(overlapping)
+
 }
