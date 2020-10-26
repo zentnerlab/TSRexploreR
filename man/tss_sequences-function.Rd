@@ -9,6 +9,7 @@ tss_sequences(
   samples = "all",
   genome_assembly,
   threshold = NULL,
+  use_normalized = FALSE,
   distance = 10,
   dominant = FALSE,
   data_conditions = list(order_by = "score")
@@ -23,13 +24,13 @@ tss_sequences(
 
 \item{threshold}{Keep only TSSs with at least this number of raw counts}
 
+\item{use_normalized}{Whether to use normalized counts}
+
 \item{distance}{Bases to add on each side of eacg TSS}
 
 \item{dominant}{Whether to only consider dominant TSSs}
 
 \item{data_conditions}{Condition the data (filter, quantile, and grouping available)}
-
-\item{use_normalized}{Whether to use normalized counts}
 }
 \value{
 DataFrame of sequences surrounding TSSs.

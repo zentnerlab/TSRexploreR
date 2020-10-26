@@ -152,27 +152,29 @@ normalize_counts <- function(
   )
 
   ## Add normalized counts to sample tables.
-  normalized_counts <- normalized_counts %>%
-    as.data.table(keep.rownames="FHASH") %>%
-    melt(
-      id.vars="FHASH", variable.name="sample",
-      value.name="normalized_score"
+  if (data_type != "tsr") {
+    normalized_counts <- normalized_counts %>%
+      as.data.table(keep.rownames="FHASH") %>%
+      melt(
+        id.vars="FHASH", variable.name="sample",
+        value.name="normalized_score"
+      )
+  
+    sample_tables <- experiment %>%
+      extract_counts(data_type, "all") %>%
+      rbindlist(idcol="sample") %>%
+      {merge(normalized_counts, ., by=c("sample", "FHASH"), all.y=TRUE)} %>%
+      as_granges %>%
+      sort %>%
+      as.data.table %>%
+      split(by="sample", keep.by=FALSE)
+  
+    experiment <- set_count_slot(
+      experiment, sample_tables, "counts",
+      data_type, "raw"
     )
-
-  sample_tables <- experiment %>%
-    extract_counts(data_type, samples) %>%
-    rbindlist(idcol="sample") %>%
-    {merge(normalized_counts, ., by=c("sample", "FHASH"), all.y=TRUE)} %>%
-    as_granges %>%
-    sort %>%
-    as.data.table %>%
-    split(by="sample", keep.by=FALSE)
-
-  experiment <- set_count_slot(
-    experiment, sample_tables, "counts",
-    data_type, "raw"
-  )
-
+  }
+  
   return(experiment)
 }
 

@@ -61,6 +61,7 @@ tss_sequences <- function(
   samples="all",
   genome_assembly,
   threshold=NULL,
+  use_normalized=FALSE,
   distance=10,
   dominant=FALSE,
   data_conditions=list(order_by="score")

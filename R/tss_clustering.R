@@ -43,7 +43,7 @@ tss_clustering <- function(
 
   ## Get selected samples.
   select_samples <- experiment %>%
-    extract_counts("tss", samples, use_normalized) %>%
+    extract_counts("tss", samples, FALSE) %>%
     preliminary_filter(FALSE, threshold)
 
   select_samples <- map(select_samples, function(x) {
@@ -57,7 +57,7 @@ tss_clustering <- function(
   })
   
   ## Call TSRs.
-  clustered_TSSs <- map(clustered_TSSs, .aggr_scores, max_distance)
+  clustered_TSSs <- map(select_samples, .aggr_scores, max_distance)
 
   ## Add TSRs back to tsrexplorer object.
   clustered_TSSs <- map(clustered_TSSs, function(x) {
@@ -107,22 +107,24 @@ tss_clustering <- function(
   )
 
   ## Get aggregate sum of scores.
-  aggr_args <- list(
-    granges, mcols(clustered)$revmap, score=sum(score),
-    n_unique=lengths(score    )
-  )
-  if (any(colnames(mcols(x)) == "normalized_score")) {
-    aggr_args <- list(
-      aggr_args,
-      list(normalized_score=sum(normalized_score))
+  if (any(colnames(mcols(granges)) == "normalized_score")) {
+    cluster_info <- aggregate(
+      granges, mcols(clustered)$revmap, 
+      score=sum(score),
+      normalized_score=sum(normalized_score),
+      n_unique=length(score)
+    )
+  } else {
+    cluster_info <- aggregate(
+      granges, mcols(clustered)$revmap,
+      score=sum(score),
+      n_unique=length(score)
     )
   }
 
-  cluster_info <- do.call(aggregate, aggr_args)
-
   clustered$score <- cluster_info$score
   clustered$n_unique <- cluster_info$n_unique
-  if (any(colnames(mcols(x)) == "normalized_score")) {
+  if (any(colnames(mcols(granges)) == "normalized_score")) {
     clustered$normalized_score <- cluster_info$normalized_score
   }
   clustered$revmap <- NULL

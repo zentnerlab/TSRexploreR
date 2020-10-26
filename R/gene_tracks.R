@@ -114,21 +114,30 @@ gene_tracks <- function(
   use_tss <- any(names(samples) == "tss")
   use_tsr <- any(names(samples) == "tsr")
 
+  keep_cols <- c("seqnames", "start", "end", "strand", "score")
+
   if (use_tss) {
     tss_samples <- samples[names(samples) == "tss"]
     selected_TSSs <- experiment %>%
       extract_counts("tss", tss_samples, use_normalized) %>%
-      preliminary_filter(FALSE, threshold) %>%
-      {.[, .(seqnames, start, end, strand, score)]} %>%
-      as_granges
+      preliminary_filter(FALSE, threshold)
+    selected_TSSs <- map(selected_TSSs, function(x) {
+      x <- x[, ..keep_cols]
+      x <- as_granges(x)
+      return(x)
+    })
   }
   if (use_tsr) {
     tsr_samples <- samples[names(samples) == "tsr"]
     selected_TSRs <- experiment %>%
       extract_counts("tsr", tsr_samples, use_normalized) %>%
-      preliminary_filter(FALSE, threshold) %>%
-      {.[, .(seqnames, start, end, strand, score)]} %>%
-      as_granges
+      preliminary_filter(FALSE, threshold)
+    selected_TSRs <- map(selected_TSRs, function(x) {
+      x <- x[, ..keep_cols]
+      x <- as_granges(x)
+      return(x)
+    })
+
   }
 
   ## Split positive and negative strands for TSSs.

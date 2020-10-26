@@ -295,14 +295,6 @@ Now that the TSSs have been clustered and associated with TSRs,
  the TSRs can undergo initial processing.
 This involves annotating the TSRs, calculating various metrics of TSR shape and strength, and optional normalization of the TSR scores.
 
-### Normalize TSRs
-
-The TSRs can optionally be CPM normalized.
-
-```{r message=FALSE}
-exp <- normalize_counts(exp, data_type="tsr")
-```
-
 ### TSR Metrics
 
 After TSSs have been associated with TSRs, various metrics describing TSR shape and strength can be computed. First, the dominant TSS (that is, the highest-scoring TSS) within a TSR will be annotated. Then, various shape features such as inter-quantile range, shape index, and balance will be calculated.
@@ -335,7 +327,7 @@ TMM normalization is also used for comparing TSRs.
 
 ```{r message=FALSE}
 exp <- count_matrix(exp, data_type="tsr")
-exp <- tmm_normalize(exp, data_type="tsr")
+exp <- normalize_counts(exp, data_type="tsr")
 ```
 
 ### Correlation Matrix Plots

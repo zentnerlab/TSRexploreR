@@ -148,6 +148,7 @@ associate_with_tsr <- function(
   ## Check inputs.
   assert_that(is(experiment, "tsr_explorer"))
   assert_that(is.flag(use_sample_sheet))
+
   if (
     (!use_sample_sheet && all(is.na(sample_list))) |
     (use_sample_sheet && all(!is.na(sample_list)))
