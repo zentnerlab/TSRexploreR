@@ -94,7 +94,34 @@ detect_features <- function(
   groupings <- data_type %in% c("tss", "tsr") &&
     any(names(condition_data) %in% c("quantile_by", "grouping"))
   sample_data <- rbindlist(sample_data, idcol="sample")
+  sample_data <- .count_features(sample_data, data_type, groupings)
 
+  ## Order samples if required.
+  if (!all(samples == "all")) {
+    sample_data[, samples := factor(samples, levels=samples)]
+  }
+
+  ## Create DataFrame to export.
+  detected_features <- DataFrame(sample_data)
+
+  metadata(detected_features)$threshold <- threshold
+  metadata(detected_features)$data_type <- data_type
+  metadata(detected_features)$feature_type <- experiment@settings$annotation[, feature_type]
+  if (data_type %in% c("tss", "tsr")) {
+    metadata(detected_features)$dominant <- dominant
+    metadata(detected_features)$groupings <- groupings
+  }
+
+  return(detected_features)
+}
+
+#' Calculate Feature Counts
+#'
+#' @param sample_data Sample data
+#' @param data_type Type of data
+#' @param groupings Whether there is a grouping variable
+
+.count_features <- function(sample_data, data_type, groupings) {
   if (data_type %in% c("tss", "tsr")) {
     if (groupings) {
       sample_data <- sample_data[,
@@ -117,23 +144,7 @@ detect_features <- function(
     sample_data <- sample_data[, .(count=uniqueN(feature)), by=sample]
   }
 
-  ## Order samples if required.
-  if (!all(samples == "all")) {
-    sample_data[, samples := factor(samples, levels=samples)]
-  }
-
-  ## Create DataFrame to export.
-  detected_features <- DataFrame(sample_data)
-
-  metadata(detected_features)$threshold <- threshold
-  metadata(detected_features)$data_type <- data_type
-  metadata(detected_features)$feature_type <- experiment@settings$annotation[, feature_type]
-  if (data_type %in% c("tss", "tsr")) {
-    metadata(detected_features)$dominant <- dominant
-    metadata(detected_features)$groupings <- groupings
-  }
-
-  return(detected_features)
+  return(sample_data)
 }
 
 #' Plot Detected Features
