@@ -111,8 +111,29 @@ dinucleotide_frequencies <- function(
 
   ## Find dinucleotide frequencies.
   groupings <- any(names(data_conditions) %in% c("quantile_by", "grouping"))
+  freqs <- .calculate_freqs(seqs, groupings)
 
-  if (!groupings) {
+  ## Order samples if required.
+  if (!all(samples == "all")) {
+    freqs[, sample := factor(sample, levels=samples)]
+  }
+
+  ## Prepare DataFrame to return.
+  freqs_df <- DataFrame(freqs)
+  metadata(freqs_df)$groupings <- groupings
+  metadata(freqs_df)$threshold <- threshold
+  
+  return(freqs_df)
+}
+
+#' Internal DinucleotideFrequency Calculation
+#'
+#' @param seqs Dinucleotide sequences
+#' @param grouping_status Whether any goruping should be applied
+
+.calculate_freqs <- function(seqs, grouping_status) {
+
+ if (!grouping_status) {
     freqs <- seqs[,
       .(count=.N), by=.(sample, dinucleotide)
     ][,
@@ -128,17 +149,7 @@ dinucleotide_frequencies <- function(
     ]
   }
 
-  ## Order samples if required.
-  if (!all(samples == "all")) {
-    freqs[, sample := factor(sample, levels=samples)]
-  }
-
-  ## Prepare DataFrame to return.
-  freqs_df <- DataFrame(freqs)
-  metadata(freqs_df)$groupings <- groupings
-  metadata(freqs_df)$threshold <- threshold
-  
-  return(freqs_df)
+  return(freqs)
 }
 
 #' Plot Dinucleotide Frequencies
