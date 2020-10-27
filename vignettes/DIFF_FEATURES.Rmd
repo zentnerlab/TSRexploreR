@@ -50,6 +50,8 @@ but all analysis and plots can be generated for the different treatment conditio
 
 ```{r message=FALSE}
 exp <- format_counts(exp, data_type="tss") %>%
+  count_matrix(data_type="tss") %>%
+  normalize_counts(data_type="tss") %>%
   tss_clustering(threshold=3, max_distance=25) %>%
   associate_with_tsr(use_sample_sheet=TRUE)
 ```
@@ -64,8 +66,9 @@ Just as with the normal TSS and TSR analysis, 'TMM' normalization is used for mo
 These values will be used for both the correlation and dimensionality reduction plots.
 
 ```
-exp <- count_matrix(exp, data_type="tsr")
-exp <- tmm_normalize(exp, data_type="tsr")
+exp <- exp %>%
+  count_matrix(data_type="tsr") %>%
+  normalize_counts(exp, data_type="tsr")
 ```
 
 ### Correlation Matrix Plots

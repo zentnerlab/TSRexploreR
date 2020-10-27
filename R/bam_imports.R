@@ -1,0 +1,115 @@
+
+#' Import BAMs
+#'
+#' @importFrom GenomicAlignments readGAlignmentPairs readGAlignments
+#'
+#' @param experiment tsr explorer object
+#' @param paired Whether the BAMs are paired (TRUE) or unpaired (FALSE)
+#' @param sample sheet to import bams
+#' @param soft_remove Remove read if greater than this number of soft-clipped bases.
+#' @param proper_pair Whether reads should be properly paired for paired end data.
+#'   TRUE by default when data is paired end.
+#' @param remove_seconday Remove non-primary reads.
+
+import_bams <- function(
+  experiment,
+  paired,
+  sample_sheet=NULL,
+  soft_remove=3,
+  proper_pair=NULL,
+  remove_secondary=TRUE
+) {
+
+  ## Input checks.
+  assert_that(is(experiment, "tsr_explorer"))
+  assert_that(
+    is.null(sample_sheet) ||
+    (is.character(sample_sheet) | is.data.frame(sample_sheet))
+  )
+  assert_that(is.null(soft_remove) || is.count(soft_remove))
+  assert_that(is.null(proper_pair) || is.flag(proper_pair))
+  assert_that(is.flag(remove_secondary))
+
+  ## Prepare sample sheet if required.
+  sample_sheet_type <- case_when(
+    is.null(sample_sheet) ~ "internal",
+    is.character(sample_sheet) ~ "file",
+    is.data.frame(sample_sheet) ~ "data_frame"
+  )
+
+  sample_sheet <- switch(sample_sheet_type,
+    "internal"=experiment@meta_data$sample_sheet,
+    "file"=fread(sample_sheet, sep="\t"),
+    "data_frame"=as.data.table(df)
+  )
+
+  samples <- as.list(sample_sheet[, file_1])
+  names(samples) <- sample_sheet[, sample_name]
+
+  ## Specifying flag settings for filtering.
+  flag_args <- list(
+    isUnmappedQuery=FALSE # Remove unmapped.
+  )
+  if (remove_secondary) {
+    flag_args <- c(flag_args, list(
+      isSecondaryAlignment=FALSE # Remove non-primary.
+    ))
+  }
+  if (paired & (!is.null(proper_pair) && proper_pair)) {
+    flag_args <- c(flag_args, list(
+      isPaired=TRUE, # Return only paired reads.
+      isProperPair=TRUE, #Remove improperly paired reads.
+      hasUnmappedMate=FALSE #Remove reads with unmapped mate.
+    ))
+  }
+
+  ## Import BAMs.
+  if (pairs) {
+    bams <- map(samples, function(x) {
+      bam <- readGAlignmentPairs(x, param=ScanBamParam(what="seq", flag=do.call(scanBamFlag, flag_args)))
+      bam <- as.data.table(bam)[, .(
+        seqnames=seqnames.first, start=start.first, end=end.first,
+        strand=strand.first, cigar=cigar.first, seq=seq.first
+      )]
+      return(bam)
+    })
+  } else {
+    bams <- map(samples, function(x) {
+      bam <- readGAlignments(x, param=ScanBamParam(what="seq", flag=do.call(scanBamFlag, flag_args)))
+      bam <- as.data.table(bam)[, .(seqnames, start, end, strand, cigar, seq)]
+      return(bam)
+    })
+  }
+
+  ## Get soft-clipped bases.
+  walk(bams, function(x) {
+    x[, n_soft := as.numeric(ifelse(
+      strand == "+",
+      str_extract(cigar, "^[[:digit:]]+(?=S)"), # For + strand soft-clip is at cigar beginning.
+      str_extract(cigar, "[[:digit:]]+S$")      # For - strand soft-clip is at cigar end.
+    ))][,
+      seq := str_sub(seq, end=n_soft) # The sequence for negative strand is reverse complement.
+    ]
+    setnames(x, old="seq", new="seq_soft")
+  })
+
+  ## Remove reads with too many soft-clipped bases.
+  bams <- map(bams, ~ .x[is.na(n_soft) | n_soft <= soft_remove])
+
+  ## Convert to GRanges.
+  walk(bams, function(x) {
+    x[,
+      start := ifelse(strand == "+", start, end)
+    ][,
+      end := start
+    ]
+    x[, cigar := NULL]
+  })
+
+  bams <- map(bams, as_granges)
+
+  ## Add GRanges to tsr explorer object.
+  experiment@experiment$TSSs <- bams
+
+  return(experiment)
+}

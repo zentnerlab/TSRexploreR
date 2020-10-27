@@ -46,7 +46,8 @@ Imports:
     Rcpp,
     plyranges,
     assertthat,
-    DESeq2
+    DESeq2,
+    GenomicAlignments
 Depends:
     R (>= 3.5.0)
 Suggests:
@@ -59,6 +60,7 @@ Collate:
     'RcppExports.R'
     'annotate.R'
     'association.R'
+    'bam_imports.R'
     'tsrexplorer.R'
     'convenience_methods.R'
     'correlation.R'

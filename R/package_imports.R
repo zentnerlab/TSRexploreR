@@ -5,7 +5,9 @@ NULL
 
 #' @importFrom tibble tibble as_tibble
 #' @importFrom magrittr %>%
-#' @importFrom stringr str_detect str_replace str_c str_split str_to_lower
+#' @importFrom stringr
+#'   str_detect str_replace str_c str_split str_to_lower
+#'   str_extract str_sub
 #' @importFrom purrr imap map walk iwalk discard pmap
 #' @importFrom tidyr pivot_longer
 #' @importFrom ggplot2
