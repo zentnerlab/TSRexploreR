@@ -7,7 +7,7 @@ NULL
 #' @importFrom magrittr %>%
 #' @importFrom stringr
 #'   str_detect str_replace str_c str_split str_to_lower
-#'   str_extract str_sub
+#'   str_extract str_sub str_pad
 #' @importFrom purrr imap map walk iwalk discard pmap
 #' @importFrom tidyr pivot_longer replace_na
 #' @importFrom ggplot2
@@ -21,11 +21,10 @@ NULL
 #'   theme_bw theme_minimal
 #'   theme element_text element_blank unit margin element_rect
 #'   geom_density geom_point geom_col geom_vline geom_tile geom_line
-#'   geom_violin geom_boxplot geom_jitter geom_raster
+#'   geom_violin geom_boxplot geom_jitter geom_raster geom_histogram
 #'   geom_bar
-#'
 #' @importFrom rlang .data
-#' @importFrom forcats fct_rev fct_inorder fct_reorder
+#' @importFrom forcats fct_rev fct_inorder fct_reorder fct_relevel
 #' @importFrom dplyr pull case_when
 #' @importFrom assertthat assert_that is.count is.flag is.string has_name
 #' @importFrom knitr kable

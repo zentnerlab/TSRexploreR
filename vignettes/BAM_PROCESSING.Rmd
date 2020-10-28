@@ -19,17 +19,31 @@ samples <- data.frame(sample_name="S288C", file_1=bam_file)
 
 Import BAMs.
 
-```{r message=FALSE}
+```{r message=FALSE, warning=FALSE}
 exp <- import_bams(
   exp, paired=TRUE, sample_sheet=samples,
   proper_pair=TRUE
 )
 ```
 
-Plot softclipped.
+Plot soft-clipped histogram.
 
-```{r fig.height=2}
-softclip_histogram(experiment, n_bases=1) +
-  theme_minimal() +
+```{r message=FALSE, fig.height=2, fig.width=3}
+softclip_histogram(experiment) +
+  theme_bw() +
   scale_fill_viridis_d()
+```
+
+Plot softclipped base frequency.
+
+```{r fig.height=2.5, fig.width=3}
+softclip_composition(experiment) +
+  theme_bw() +
+  scale_fill_viridis_d()
+```
+
+Aggregate TSSs by position.
+
+```{r message=FALSE}
+exp <- tss_aggregate(exp)
 ```

@@ -2,13 +2,19 @@
 % Please edit documentation in R/softclip_analysis.R
 \name{softclip_histogram}
 \alias{softclip_histogram}
-\title{Number of Softclipped Bases}
+\title{Number of soft-clipped bases.}
 \usage{
-softclip_histogram(experiment, samples = "all", n_bases = NULL)
+softclip_histogram(experiment, samples = "all", n_bases = NULL, ncol = 3)
 }
 \arguments{
 \item{experiment}{tsr explorer object}
+
+\item{samples}{samples to plot}
+
+\item{n_bases}{Number of bases to plot}
+
+\item{ncol}{Number of columns for plot}
 }
 \description{
-Number of Softclipped Bases
+Number of soft-clipped bases.
 }

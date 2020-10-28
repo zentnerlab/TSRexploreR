@@ -1,22 +1,28 @@
 
-#' Number of Softclipped Bases
+#' Composition of Softclipped Bases
 #'
 #' @param experiment tsr explorer object
+#' @param samples Samples to analyze
+#' @param n_bases Number of bases from -1 position to keep
+#' @param ncol number of columns
 #'
 #' @export
 
-softclip_histogram <- function(
+softclip_composition <- function(
   experiment,
   samples="all",
-  n_bases=NULL
+  n_bases=NULL,
+  ncol=3
 ) {
 
   ## Input checks.
   assert_that(is(experiment, "tsr_explorer"))
   assert_that(is.character(samples))
+  assert_that(is.null(n_bases) || is.count(n_bases))
+  assert_that(is.count(ncol))
 
   ## Retrieve selected samples.
-  if (samples == "all") {
+  if (all(samples == "all")) {
     select_samples <- experiment@experiment$TSSs
   } else {
     select_samples <- experiment@experiment$TSSs[samples]
@@ -27,6 +33,10 @@ softclip_histogram <- function(
     map(as.data.table) %>%
     rbindlist(idcol="sample")
 
+  select_samples[,
+    c("seqnames", "start", "end", "strand", "width") := NULL
+  ]
+
   ## Trim bases if n_bases is set.
   if (!is.null(n_bases)) {
     select_samples[
@@ -35,20 +45,84 @@ softclip_histogram <- function(
     ]
   }
 
-  ## Get table of base frequencies.
-  freqs <- select_samples[, .(count=.N), by=.(sample, seq_soft)]
-  freqs[,
-    freq := count/sum(count), by=sample
+  ## Get base content per soft-clip position.
+  max_bases <- max(select_samples[, n_soft])
+
+  select_samples[
+    n_soft == 0,
+    seq_soft := str_c(rep("-", max_bases), collapse="")
+  ][
+    n_soft > 0,
+    seq_soft := str_pad(seq_soft, max_bases, "left", "-")
   ][,
-    seq_soft := fct_reorder(seq_soft, count, .desc=TRUE)
+    c(as.character(seq(-max_bases, -1, 1))) := tstrsplit(seq_soft, "")
+  ][,
+    c("rowid", "seq_soft", "n_soft") := list(.I, NULL, NULL)
   ]
 
-  kable(freqs, format="simple", caption="Soft-clipped Base Frequency")
+  select_samples <- melt(
+    select_samples, id.vars=c("sample", "rowid"),
+    variable.name="position", value.name="base"
+  )
+  select_samples[,
+    position := fct_relevel(position, as.character(seq(-1, -max_bases, -1)))
+  ]
+
+  ## Get table of base frequencies.
+  select_samples <- select_samples[,
+    .(count=.N),
+    by=.(sample, position, base)
+  ]
 
   ## Plot frequencies.
-  p <- ggplot(freqs, aes(x=sample, y=count)) +
-    geom_col(aes(fill=seq_soft), position="fill") +
-    coord_flip()
+  p <- ggplot(select_samples, aes(x=.data$sample, y=.data$count)) +
+    geom_col(aes(fill=.data$base), position="fill") +
+    facet_wrap(~position, ncol=ncol)
+
+  return(p)
+}
+
+#' Number of soft-clipped bases.
+#'
+#' @param experiment tsr explorer object
+#' @param samples samples to plot
+#' @param n_bases Number of bases to plot
+#' @param ncol Number of columns for plot
+#'
+#' @export
+
+softclip_histogram <- function(
+  experiment,
+  samples="all",
+  n_bases=NULL,
+  ncol=3
+) {
+
+  ## Check inputs.
+  assert_that(is(experiment, "tsr_explorer"))
+  assert_that(is.character(samples))
+  assert_that(is.null(n_bases) || is.count(n_bases))
+  assert_that(is.count(ncol))
+
+  ## Get samples.
+  if (all(samples == "all")) {
+    select_samples <- experiment@experiment$TSSs
+  } else {
+    select_samples <- experiment@experiment$TSSs[samples]
+  }
+
+  ## Prepare data for analysis.
+  select_samples <- select_samples %>%
+    map(as.data.table) %>%
+    rbindlist(idcol="sample")
+  select_samples[,
+    c("seqnames", "start", "end", "strand", "width", "seq_soft") := NULL
+  ]
+
+  ## Plot histogram.
+  p <- ggplot(select_samples, aes(.data$n_soft)) +
+    geom_histogram(aes(fill=.data$sample), binwidth=1) +
+    facet_wrap(~ sample, ncol=ncol)
 
   return(p)
 }

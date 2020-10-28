@@ -142,7 +142,7 @@ tss_aggregate <- function(experiment) {
   ## Aggregate TSSs.
   samples <- map(samples, function(x) {
     x <- as.data.table(x)
-    x <- x[, .(score=N.), by=.(seqnames, start, end, strand)]
+    x <- x[, .(score=.N), by=.(seqnames, start, end, strand)]
     x <- as_granges(x)
     return(x)
   })
