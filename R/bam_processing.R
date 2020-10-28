@@ -42,7 +42,7 @@ import_bams <- function(
   sample_sheet <- switch(sample_sheet_type,
     "internal"=experiment@meta_data$sample_sheet,
     "file"=fread(sample_sheet, sep="\t"),
-    "data_frame"=as.data.table(df)
+    "data_frame"=as.data.table(sample_sheet)
   )
 
   samples <- as.list(sample_sheet[, file_1])
@@ -66,7 +66,7 @@ import_bams <- function(
   }
 
   ## Import BAMs.
-  if (pairs) {
+  if (paired) {
     bams <- map(samples, function(x) {
       bam <- readGAlignmentPairs(x, param=ScanBamParam(what="seq", flag=do.call(scanBamFlag, flag_args)))
       bam <- as.data.table(bam)[, .(
@@ -90,9 +90,15 @@ import_bams <- function(
       str_extract(cigar, "^[[:digit:]]+(?=S)"), # For + strand soft-clip is at cigar beginning.
       str_extract(cigar, "[[:digit:]]+S$")      # For - strand soft-clip is at cigar end.
     ))][,
+      n_soft := replace_na(n_soft, 0)
+    ][
+      n_soft == 0, seq := "none" # If there are no soft-clipped bases, replace seq with 'none'
+    ][
+      n_soft > 0, # Only subset sequences with soft-clipped bases.
       seq := str_sub(seq, end=n_soft) # The sequence for negative strand is reverse complement.
     ]
     setnames(x, old="seq", new="seq_soft")
+    return(x)
   })
 
   ## Remove reads with too many soft-clipped bases.

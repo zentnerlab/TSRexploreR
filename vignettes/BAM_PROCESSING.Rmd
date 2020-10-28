@@ -1,0 +1,35 @@
+---
+title: Bam Processing
+author: Robert Policastro
+output: html_document
+---
+
+Create tsrexplorer object.
+
+```{r message=FALSE}
+exp <- tsr_explorer()
+```
+
+Prepare sample sheet.
+
+```{r message=FALSE}
+bam_file <- system.file("extdata", "S288C.bam", package="tsrexplorer")
+samples <- data.frame(sample_name="S288C", file_1=bam_file)
+```
+
+Import BAMs.
+
+```{r message=FALSE}
+exp <- import_bams(
+  exp, paired=TRUE, sample_sheet=samples,
+  proper_pair=TRUE
+)
+```
+
+Plot softclipped.
+
+```{r fig.height=2}
+softclip_histogram(experiment, n_bases=1) +
+  theme_minimal() +
+  scale_fill_viridis_d()
+```

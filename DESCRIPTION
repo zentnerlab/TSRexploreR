@@ -82,6 +82,7 @@ Collate:
     'prepare_counts.R'
     'rnaseq.R'
     'samples_groups.R'
+    'softclip_analysis.R'
     'thresholding.R'
     'tsr_metrics.R'
     'tsr_plots.R'
