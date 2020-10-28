@@ -10,6 +10,8 @@
 #' @param proper_pair Whether reads should be properly paired for paired end data.
 #'   TRUE by default when data is paired end.
 #' @param remove_seconday Remove non-primary reads.
+#'
+#' @export
 
 import_bams <- function(
   experiment,
@@ -110,6 +112,37 @@ import_bams <- function(
 
   ## Add GRanges to tsr explorer object.
   experiment@experiment$TSSs <- bams
+
+  return(experiment)
+}
+
+#' Aggregate TSSs
+#'
+#' @description
+#' Aggregate overlapping TSSs into a total sum score.
+#'
+#' @param experiment tsr explorer object
+#'
+#' @export
+
+tss_aggregate <- function(experiment) {
+
+  ## Check inputs.
+  assert_that(is(experiment, "tsr_explorer"))
+
+  ## Pull samples out.
+  samples <- experiment@experiment$TSSs
+
+  ## Aggregate TSSs.
+  samples <- map(samples, function(x) {
+    x <- as.data.table(x)
+    x <- x[, .(score=N.), by=.(seqnames, start, end, strand)]
+    x <- as_granges(x)
+    return(x)
+  })
+
+  ## Add samples back.
+  experiment@experiment$TSSs <- samples
 
   return(experiment)
 }

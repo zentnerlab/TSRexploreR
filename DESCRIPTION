@@ -60,7 +60,7 @@ Collate:
     'RcppExports.R'
     'annotate.R'
     'association.R'
-    'bam_imports.R'
+    'bam_processing.R'
     'tsrexplorer.R'
     'convenience_methods.R'
     'correlation.R'
