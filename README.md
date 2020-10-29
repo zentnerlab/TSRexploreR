@@ -1,6 +1,6 @@
-# TSSexploreR
+# TSRexploreR
 
-## Installing TSSexploreR
+## Installing TSRexploreR
 
 **Create conda environment**
 ```
@@ -36,7 +36,7 @@ devtools::install_github("rpolicastro/tsrexplorer", ref = "clean")
 
 ### Importing Data
 
-TSSexplereR was designed to allow high flexibility and interoperability when import data.
+TSRexplereR was designed to allow high flexibility and interoperability when import data.
 TSSs and TSRs can be imported from common genomic formats such as bedgraphs and beds.
 Furthermore, data can be imported directly from other R libraries such as TSRchitect and CAGEr.
 
