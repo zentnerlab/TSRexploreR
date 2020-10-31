@@ -42,6 +42,14 @@ softclip_composition(experiment) +
   scale_fill_viridis_d()
 ```
 
+Correct for G content.
+
+```{r message=FALSE}
+assembly <- system.file("extdata", "S288C_Assembly.fasta", package="tsrexplorer")
+
+exp <- G_correction(exp, assembly)
+```
+
 Aggregate TSSs by position.
 
 ```{r message=FALSE}
