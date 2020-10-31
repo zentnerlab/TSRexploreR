@@ -219,7 +219,7 @@ G_correction <- function(
   })
 
   ## Add data back to tsr explorer object.
-  select_samples <- map(select_samples, as_grages)
+  select_samples <- map(select_samples, as_granges)
   experiment@experiment$TSSs <- select_samples
 
   return(experiment)
