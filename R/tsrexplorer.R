@@ -55,20 +55,58 @@ setClass(
 #'
 #' @export
 
-tsr_explorer <- function(TSSs=NA, TSRs=NA) {
+tsr_explorer <- function(TSSs=NA, TSRs=NA, sample_sheet=NULL) {
 
-    tsr_obj <- new(
-      "tsr_explorer",
-      experiment=list("TSSs"=TSSs, "TSRs"=TSRs),
-      diff_features=list(
-        "TSSs"=list(results=list()),
-        "TSRs"=list(results=list())
-      ),
-      counts=list(
-        "TSSs"=list(raw=list()),
-        "TSRs"=list(raw=list())
-      )
+  ## Input Check.
+  assert_that(
+    is.na(TSSs) ||
+   (is.list(TSSs) && has_attr(TSSs, "names"))
+  )
+  assert_that(
+    is.na(TSRs) ||
+    (is.list(TSRs) && has_attr(TSRs, "names"))
+  )
+  assert_that(
+    is.null(sample_sheet) ||
+    is.data.frame(sample_sheet) ||
+    is.readable(sample_sheet)
+  )
+
+  ## Prepare sample sheet.
+  sample_sheet_type <- case_when(
+    is.null(sample_sheet) ~ "none",
+    is.data.frame(sample_sheet) ~ "dataframe",
+    is.character(sample_sheet) ~ "file"
+  )
+
+  if (sample_sheet_type != "none") {
+    assert_that(
+      c("sample_name", "file_1", "file_2") %in%
+      colnames(sample_sheet)
     )
+  }
 
-    return(tsr_obj)
+  sample_sheet <- switch(
+    sample_sheet_type,
+    "none"=NA,
+    "dataframe"=as.data.table(sample_sheet),
+    "file"=fread(sample_sheet, sep="\t")
+  )
+
+  ## Create tsr explorer object.
+  tsr_obj <- new(
+    "tsr_explorer",
+    experiment=list("TSSs"=TSSs, "TSRs"=TSRs),
+    diff_features=list(
+      "TSSs"=list(results=list()),
+      "TSRs"=list(results=list())
+    ),
+    counts=list(
+      "TSSs"=list(raw=list()),
+      "TSRs"=list(raw=list())
+    ),
+    meta_data=list("sample_sheet"=sample_sheet)
+  )
+
+  return(tsr_obj)
 }
