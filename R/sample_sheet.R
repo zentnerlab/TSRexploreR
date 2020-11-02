@@ -19,8 +19,8 @@ add_sample_sheet <- function(
   ## Input checks.
   assert_that(is(experiment, "tsr_explorer"))
   assert_that(
-    (is.string(sample_sheet) && is.readable(sample_sheet)) ||
-    is.data.frame(sample_sheet)
+    is.data.frame(sample_sheet) || 
+    (is.string(sample_sheet) && is.readable(sample_sheet))
   )
 
   ## Import sample sheet if it is a file.
@@ -35,10 +35,10 @@ add_sample_sheet <- function(
     "data.frame"=as.data.table(sample_sheet)
   )
 
-  assert_that(
+  assert_that(all(
     c("sample_name", "file_1", "file_2") %in%
     colnames(sample_sheet)
-  )
+  ))
 
   ## Add sample sheet to tsrexplorer object.
   experiment@meta_data$sample_sheet <- sample_sheet
