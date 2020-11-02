@@ -9,6 +9,7 @@ plot_correlation(
   data_type = c("tss", "tsr", "tss_features", "tsr_features"),
   samples = "all",
   correlation_metric = "pearson",
+  use_normalized = TRUE,
   log2_transform = TRUE,
   font_size = 12,
   cluster_samples = FALSE,
@@ -25,6 +26,8 @@ plot_correlation(
 \item{samples}{Either 'all' or the names of the samples to plot}
 
 \item{correlation_metric}{Whether to use Spearman or Pearson correlation}
+
+\item{use_normalized}{Whether to use the normalized (TRUE) or raw (FALSE) counts}
 
 \item{log2_transform}{Should the TMM values be log2+1 transformed prior to plotting?}
 

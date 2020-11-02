@@ -18,20 +18,22 @@
 
   ## Change scores to normalized scores if requested.
   if (use_normalized) {
-    walk(select_samples, ~.x[, score := normalized_score])
+    walk(count_data, ~.x[, score := normalized_score])
   }
 
   ## Create the count matrix.
-  select_samples <- rbindlist(select_samples, idcol="sample")[
+  count_data <- rbindlist(count_data, idcol="sample")[,
     .(FHASH, sample, score)
   ]
-  select_samples <- dcast(select_samples, FHASH ~ sample, value.var="score")
-  setnafill(select_samples, fill=0)
+  count_data <- dcast(count_data, FHASH ~ sample, value.var="score")
 
-  select_samples <- select_samples %>%
+  fill_cols <- colnames(count_data)[!colnames(count_data) == "FHASH"]
+  setnafill(count_data, fill=0, cols=fill_cols)
+
+  count_data <- count_data %>%
     column_to_rownames("FHASH") %>%
     as.matrix
 
   ## Return the count matrix.
-  return(select_samples)
+  return(count_data)
 }
