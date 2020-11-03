@@ -86,15 +86,15 @@ genomic_distribution <- function(
   ## Prepare data to be plotted later.
   selected_samples <- rbindlist(selected_samples, idcol="samples")
   groupings <- any(names(data_conditions) %in% c("quantile_by", "grouping"))
-  genmic_distribution <- .calculate_distribution(selected_samples, groupings)
+  genomic_dist <- .calculate_distribution(selected_samples, groupings)
 
   ## Order samples if required.
   if (!all(samples == "all")) {
-    genomic_distribution[, samples := factor(samples, levels=samples)]
+    genomic_dist[, samples := factor(samples, levels=samples)]
   }
 
   ## Prepare dataframe to return.
-  dist_exp <- DataFrame(genomic_distribution)
+  dist_exp <- DataFrame(genomic_dist)
 
   ## Add quantile information to summarized experiment.
   metadata(dist_exp)$groupings <- groupings
