@@ -320,15 +320,6 @@ exp <- annotate_features(
 
 Smiilar to looking at the correlation of TSSs, looking at TSR correlation before further analysis is good practice.
 
-### TMM Normalization
-
-TMM normalization is also used for comparing TSRs.
-
-```{r message=FALSE}
-exp <- count_matrix(exp, data_type="tsr")
-exp <- normalize_counts(exp, data_type="tsr")
-```
-
 ### Correlation Matrix Plots
 
 After TMM normalization, correlation plots can be generated.

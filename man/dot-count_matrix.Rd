@@ -9,8 +9,6 @@
 \arguments{
 \item{count_data}{Names list of counts.}
 
-\item{data_type}{Currently supports 'tss' only.}
-
 \item{use_normalized}{Whether to use normalized counts.}
 }
 \description{
