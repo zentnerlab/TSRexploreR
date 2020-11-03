@@ -18,7 +18,7 @@ tsr_metrics <- function(experiment) {
     extract_counts("tss", "all") %>%
     rbindlist(idcol="sample")
 
-  keys <- c("sample", "TSR_FID")
+  keys <- c("sample", "TSR_FHASH")
   setkeyv(select_samples, keys)
 
   ## Calculate shape index.
@@ -49,16 +49,16 @@ tsr_metrics <- function(experiment) {
   select_TSRs <- experiment %>%
     extract_counts("tsr", tsr_names) %>%
     rbindlist(idcol="tsr_sample")
-  setnames(select_TSRs, old=c("FID", "FHASH"), new=c("TSR_FID", "TSR_FHASH"))
+  setnames(select_TSRs, old="FHASH", new="TSR_FHASH")
 
   tsr_metrics <- select_samples[
-    !is.na(TSR_FID),
-    .(tsr_sample, TSR_FID, TSR_FHASH, shape_index, shape_class, peak_balance,
+    !is.na(TSR_FHASH),
+    .(tsr_sample, TSR_FHASH, shape_index, shape_class, peak_balance,
     iqr_min, iqr_max, iqr_width, iqr_coords)
   ]
   tsr_metrics <- unique(tsr_metrics)  
 
-  tsr_keys <- c("tsr_sample", "TSR_FID", "TSR_FHASH")
+  tsr_keys <- c("tsr_sample", "TSR_FHASH")
   setkeyv(select_TSRs, tsr_keys)
   setkeyv(tsr_metrics, tsr_keys)
 
@@ -68,7 +68,7 @@ tsr_metrics <- function(experiment) {
   select_TSRs <- split(select_TSRs, select_TSRs$tsr_sample)
   walk(select_TSRs, function(x) {
     x[, tsr_sample := NULL]
-    setnames(x, old=c("TSR_FID", "TSR_FHASH"), new=c("FID", "FHASH"))
+    setnames(x, old="TSR_FHASH", new="FHASH")
     x <- as_granges(x)
     x <- as.data.table(x)
     return(x)
@@ -106,11 +106,11 @@ shape_index <- function(tss_table) {
   
   ## Calculate shape index.
   si_results <- tss_table[
-    !is.na(TSR_FID) & score > 1,
+    !is.na(TSR_FHASH) & score > 1,
     .(shape_index=((score / tsr_score) * log2(score / tsr_score))),
-    by=.(sample, TSR_FID)
+    by=.(sample, TSR_FHASH)
   ][,
-    .(shape_index=2 + sum(shape_index)), by=.(sample, TSR_FID)
+    .(shape_index=2 + sum(shape_index)), by=.(sample, TSR_FHASH)
   ]
 
   ## Classify TSRs based on shape index.
@@ -133,9 +133,9 @@ peak_concentration <- function(tss_table) {
   
   ## Calculate peak concentration.
   pc_results <- tss_table[
-    !is.na(TSR_FID) & score > 1,
+    !is.na(TSR_FHASH) & score > 1,
     .(peak_concentration=log2((max(score) / sum(score)) * max(score))),
-    by=.(sample, TSR_FID)
+    by=.(sample, TSR_FHASH)
   ]
 
   ## Return peak concentration results.
@@ -155,19 +155,19 @@ peak_balance <- function(tss_table) {
 
   ## Get TSS position relative to TSR midpoints.
   tss_position <- tss_table[
-    !is.na(TSR_FID) & score > 1,
+    !is.na(TSR_FHASH) & score > 1,
     .(score, tsr_score, tss_pos=ifelse(
       strand == "+",
       start - median(range(start)),
       median(range(start)) - start
     )),
-    by=.(sample, TSR_FID)
+    by=.(sample, TSR_FHASH)
   ]
 
   ## Calculate peak balance.
   pb_results <- tss_position[,
     .(peak_balance=sum((score / sum(score)) * tss_pos)),
-    by=.(sample, TSR_FID)
+    by=.(sample, TSR_FHASH)
   ]
 
   ## Return peak balance values.
@@ -188,24 +188,24 @@ iq_range <- function(tss_table) {
   
   ## Get TSS positions relative to TSR midpoints.
   tss_position <- tss_table[
-    !is.na(TSR_FID) & score > 1,
+    !is.na(TSR_FHASH) & score > 1,
     .(score, seqnames, start, strand, tss_pos=ifelse(
       strand == "+",
       start - median(range(start)),
       median(range(start)) - start
     )),
-    by=.(sample, TSR_FID)
+    by=.(sample, TSR_FHASH)
   ]
 
   ## Calculate IQR.
-  tss_position <- tss_position[order(sample, TSR_FID, tss_pos)]
+  tss_position <- tss_position[order(sample, TSR_FHASH, tss_pos)]
 
   tss_position[,
     cum_sum := cumsum(score),
-    by=.(sample, TSR_FID)
+    by=.(sample, TSR_FHASH)
   ][,
     ecdf := ecdf_function(cum_sum),
-    by=.(sample, TSR_FID)
+    by=.(sample, TSR_FHASH)
   ]
 
   iqr_results <- tss_position[
@@ -215,7 +215,7 @@ iq_range <- function(tss_table) {
     iqr_max=max(cum_sum),
     iqr_width=max(tss_pos) - min(tss_pos),
     iqr_coords=str_c(seqnames, min(start), max(start), strand, sep=":")),
-    by=.(sample, TSR_FID)
+    by=.(sample, TSR_FHASH)
   ]
   iqr_results <- unique(iqr_results)
 

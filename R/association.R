@@ -210,8 +210,8 @@ associate_with_tsr <- function(
   tsr_gr <- tsr_set
   setnames(
     tsr_gr,
-    old=c("FID", "FHASH", "width", "score", "n_unique"),
-    new=c("TSR_FID", "TSR_FHASH", "tsr_width", "tsr_score", "tsr_n_unique")
+    old=c("FHASH", "width", "score", "n_unique"),
+    new=c("TSR_FHASH", "tsr_width", "tsr_score", "tsr_n_unique")
   )
   tsr_gr <- as_granges(tsr_gr)
 
