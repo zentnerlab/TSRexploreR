@@ -3,54 +3,53 @@
 #'
 #' Find differential TSSs, TSRs, or features
 #'
-#' @importFrom edgeR DGEList filterByExpr calcNormFactors cpm estimateDisp glmQLFit
-#'
 #' @param experiment tsrexplorer object with TMM-normalized counts
 #' @param data_type Whether TSSs, TSRs, or feature counts should be analyzed
 #' @param samples Vector of sample names to analyze
-#' @param groups Character vector of groups
+#' @param formula DE formula
+#' @param method Either 'DESeq2' or 'edgeR'
 #'
 #' @return DGEList object with fitted model
 #'
-#' @rdname fit_edger_model-function
-#'
 #' @export
 
-fit_edger_model <- function(
+fit_de_model <- function(
   experiment,
   data_type=c("tss", "tsr", "tss_features", "tsr_features"),
   samples,
-  groups
+  formula= ~ condition,
+  method="DESeq2"
 ) {
+
   ## Input checks.
   assert_that(is(experiment, "tsr_explorer"))
   data_type <- match.arg(str_to_lower(data_type), c("tss", "tsr", "tss_features", "tsr_features"))
   assert_that(is.character(samples) && length(samples) >= 6)
-  assert_that(is.character(samples) && length(samples) >= 6)
-  assert_that(length(groups) == length(groups))
+  assert_that(is(formula, "formula"))
+  method <- match.arg(method, c("deseq2", "edger"))
 
   ## Design table.
-  design <- data.table("samples"=samples, "groups"=groups)
-  design[, groups := fct_inorder(as.character(groups))]
+  sample_sheet <- copy(experiment@meta_data$sample_sheet)
+  sample_sheet[, c("file_1", "file_2") := NULL]
+  assert_that(all(all.vars(formula) %in% colnames(sample_sheet)))
+  sample_sheet <- column_to_rownames(sample_sheet, "sample_name")
 
-  ## Grab data from appropriate slot.
-  sample_data <- extract_matrix(experiment, data_type, samples)
+  ## Grab data from appropriate slot and convert to count matrix.
+  sample_data <- experiment %>%
+    extract_counts(data_type, samples) %>%
+    .count_matrix(data_type)
 
-  ## Set sample design.
-  sample_design <- model.matrix(~ 0 + design[["groups"]])
+  ## Ensure rows of sample sheet match columns of count matrix.
+  sample_sheet <- sample_sheet[
+    match(rownames(sample_sheet), colnames(sample_data)),
+  ]
 
-  ## Filter out features with low counts.
-  sample_data <- sample_data[filterByExpr(
-    assay(sample_data, "counts"), design=sample_design,
-    group=design[["group"]]
-  ), ]
-
-  ## Create DE model.
-  fitted_model <- assay(sample_data, "counts") %>%
-    DGEList(group=design[["groups"]]) %>%
-    calcNormFactors %>%
-    estimateDisp(design=sample_design) %>%
-    glmQLFit(design=sample_design)
+  ## Build the DE modle.
+  fitted_model <- switch(
+    method,
+    "edger"=.edger_model(sample_data, sample_sheet, formula),
+    "deseq2"=.deseq2_model(sample_data, sample_sheet, formula)
+  )
 
   ## Store model in tsrexplorer object.
   if (data_type == "tss") {
@@ -68,6 +67,60 @@ fit_edger_model <- function(
   }
 
   return(experiment)
+}
+
+#' edgeR Differential Expression Model
+#'
+#' @param count_data Count matrix
+#' @param sample_sheet Sample data
+#' @param formula Differential expression formula
+
+.edger_model <- function(
+  count_data,
+  sample_sheet,
+  formula
+) {
+
+  ## Check inputs.
+  assert_that(is.matrix(count_data))
+  assert_that(is.data.frame(sample_sheet))
+  assert_that(is(formula, "formula"))
+
+  ## Differential Expression.
+  de_model <- count_data %>%
+    DGEList(samples=sample_sheet) %>%
+    {.[filterByExpr(.), , keep.lib.sizes=FALSE]} %>%
+    calcNormFactors %>%
+    estimateDisp %>%
+    glmQLFit
+
+  return(de_model)
+
+}
+
+#' DESeq2 Differential Expression Model
+#'
+#' @param count_data Count matrix
+#' @param sample_sheet Sample data
+#' @param formula Differential expression formula
+
+.deseq2_model <- function(
+  count_data,
+  sample_sheet,
+  formula
+) {
+
+  ## Check inputs.
+  assert_that(is.matrix(count_data))
+  assert_that(is.data.frame(sample_sheet))
+  assert_that(is(formula, "formula"))
+
+  ## Differential expression.
+  de_model <- count_data %>%
+    DESeqDataSetFromMatrix(colData=sample_sheet, design=formula) %>%
+    DESeq
+
+  return(de_model)
 }
 
 #' Analyze Differential Expression

@@ -50,7 +50,9 @@ NULL
 
 NULL
 
-#' @importFrom edgeR DGEList calcNormFactors cpm filterByExpr
+#' @importFrom edgeR
+#'   DGEList calcNormFactors cpm filterByExpr
+#'   estimateDisp glmQLFit
 #' @importFrom DESeq2
 #'   DESeqDataSetFromMatrix estimateSizeFactors
 #'   DESeq lfcShrink results rlog counts
