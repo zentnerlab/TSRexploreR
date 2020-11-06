@@ -7,9 +7,12 @@
 differential_expression(
   experiment,
   data_type = c("tss", "tsr", "tss_features", "tsr_features"),
-  compare_groups,
+  comparison_name,
+  comparison_type,
+  comparison,
   fdr_cutoff = 0.05,
-  log2fc_cutoff = 1
+  log2fc_cutoff = 1,
+  shrink_lfc = TRUE
 )
 }
 \arguments{
@@ -17,11 +20,19 @@ differential_expression(
 
 \item{data_type}{Whether the input was generated from TSSs, TSRs, or features}
 
-\item{compare_groups}{Vector of length two of the two groups from which to find differential TSRs}
+\item{comparison_name}{The name given to the comparison when stored back into the tsr explore robject.}
+
+\item{comparison_type}{For DEseq2 either 'contrast' or 'name'.
+For edgeR either 'contrast' or 'coef'.}
+
+\item{comparison}{For edgeR either the coefficients or contrasts.
+For DESeq2 the contrast or name.}
 
 \item{fdr_cutoff}{FDR cutoff}
 
 \item{log2fc_cutoff}{Log2 fold change cutoff}
+
+\item{shrink_lfc}{For DESeq2 whether the Log2 Fold Changes are shrunk (TRUE) or left alone (FALSE).}
 }
 \value{
 tibble of differential TSRs

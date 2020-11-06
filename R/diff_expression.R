@@ -15,18 +15,18 @@
 
 fit_de_model <- function(
   experiment,
+  formula,
   data_type=c("tss", "tsr", "tss_features", "tsr_features"),
-  samples,
-  formula= ~ condition,
+  samples="all",
   method="DESeq2"
 ) {
 
   ## Input checks.
   assert_that(is(experiment, "tsr_explorer"))
   data_type <- match.arg(str_to_lower(data_type), c("tss", "tsr", "tss_features", "tsr_features"))
-  assert_that(is.character(samples) && length(samples) >= 6)
+  assert_that(is.character(samples) && (all(samples == "all") || length(samples) >= 6))
   assert_that(is(formula, "formula"))
-  method <- match.arg(method, c("deseq2", "edger"))
+  method <- match.arg(str_to_lower(method), c("deseq2", "edger"))
 
   ## Design table.
   sample_sheet <- copy(experiment@meta_data$sample_sheet)
@@ -42,6 +42,7 @@ fit_de_model <- function(
   ## Ensure rows of sample sheet match columns of count matrix.
   sample_sheet <- sample_sheet[
     match(rownames(sample_sheet), colnames(sample_data)),
+    , drop=FALSE
   ]
 
   ## Build the DE modle.
@@ -54,16 +55,12 @@ fit_de_model <- function(
   ## Store model in tsrexplorer object.
   if (data_type == "tss") {
     experiment@diff_features$TSSs$model <- fitted_model
-    experiment@diff_features$TSSs$design <- design
   } else if (data_type == "tsr") {
     experiment@diff_features$TSRs$model <- fitted_model
-    experiment@diff_features$TSRs$design <- design
   } else if (data_type == "tss_features") {
     experiment@diff_features$TSS_features$model <- fitted_model
-    experiment@diff_features$TSS_features$design <- design
   } else if (data_type == "tsr_features") {
     experiment@diff_features$TSR_features$model <- fitted_model
-    experiment@diff_features$TSR_features$design <- design
   }
 
   return(experiment)
@@ -86,13 +83,16 @@ fit_de_model <- function(
   assert_that(is.data.frame(sample_sheet))
   assert_that(is(formula, "formula"))
 
+  ## Design matrix.
+  design <- model.matrix(formula, data=sample_sheet)
+
   ## Differential Expression.
   de_model <- count_data %>%
     DGEList(samples=sample_sheet) %>%
-    {.[filterByExpr(.), , keep.lib.sizes=FALSE]} %>%
+    {.[filterByExpr(., design), , keep.lib.sizes=FALSE]} %>%
     calcNormFactors %>%
-    estimateDisp %>%
-    glmQLFit
+    estimateDisp(design) %>%
+    glmQLFit(design)
 
   return(de_model)
 
@@ -133,10 +133,15 @@ fit_de_model <- function(
 #'
 #' @param experiment tsrexplorer object with edgeR differential expression model from fit_edger_model
 #' @param data_type Whether the input was generated from TSSs, TSRs, or features
-#' @param compare_groups Vector of length two of the two groups from which to find differential TSRs
+#' @param comparison_name The name given to the comparison when stored back into the tsr explore robject.
+#' @param comparison_type For DEseq2 either 'contrast' or 'name'.
+#'   For edgeR either 'contrast' or 'coef'.
+#' @param comparison For edgeR either the coefficients or contrasts.
+#'   For DESeq2 the contrast or name.
 #' @param fdr_cutoff FDR cutoff
 #' @param log2fc_cutoff Log2 fold change cutoff
-#'
+#' @param shrink_lfc For DESeq2 whether the Log2 Fold Changes are shrunk (TRUE) or left alone (FALSE).
+#' 
 #' @return tibble of differential TSRs
 #'
 #' @rdname differential_expression-function
@@ -146,90 +151,78 @@ fit_de_model <- function(
 differential_expression <- function(
   experiment,
   data_type=c("tss", "tsr", "tss_features", "tsr_features"),
-  compare_groups,
+  comparison_name,
+  comparison_type,
+  comparison,
   fdr_cutoff=0.05,
-  log2fc_cutoff=1
+  log2fc_cutoff=1,
+  shrink_lfc=TRUE
 ) {
 
   ## Input checks.
   assert_that(is(experiment, "tsr_explorer"))
   data_type <- match.arg(str_to_lower(data_type), c("tss", "tsr", "tss_features", "tsr_features"))
-  assert_that(is.character(compare_groups) && length(compare_groups) == 2)
+  assert_that(is.string(comparison_name))
+  comparison_type <- match.arg(
+    str_to_lower(comparison_type),
+    c("name", "contrast", "coef")
+  )
+  assert_that(is.vector(comparison))
   assert_that(is.numeric(log2fc_cutoff) && log2fc_cutoff >= 0)
   assert_that(is.numeric(fdr_cutoff) && fdr_cutoff > 0)
-  
+  assert_that(is.flag(shrink_lfc))
+
   ## Grab appropriate model.
-  if (data_type == "tss") {
-    edger_model <- experiment@diff_features$TSSs$model
-    edger_design <- experiment@diff_features$TSSs$design
-    original_ranges <- rowRanges(experiment@counts$TSSs$matrix)
-  } else if (data_type == "tsr") {
-    edger_model <- experiment@diff_features$TSRs$model
-    edger_design <- experiment@diff_features$TSRs$design
-    original_ranges <- rowRanges(experiment@counts$TSRs$matrix)
-  } else if (data_type == "tss_features") {
-    edger_model <- experiment@diff_features$TSS_features$model
-    edger_design <- experiment@diff_features$TSS_features$design
-  } else if (data_type == "tsr_features") {
-    edger_model <- experiment@diff_features$TSR_features$model
-    edger_design <- experiment@diff_features$TSR_features$design
+  de_model <- switch(
+    data_type,
+    "tss"=experiment@diff_features$TSSs$model,
+    "tsr"=experiment@diff_features$TSRs$model,
+    "tss_features"=experiment@diff_features$TSS_features$model,
+    "tsr_features"=experiment@diff_features$TSR_features$model
+  )
+
+  ## Retrieve the DE method.
+  de_method <- case_when(
+    is(de_model, "DESeqDataSet") ~ "deseq2",
+    is(de_model, "DGEGLM") ~ "edger"
+  )
+
+  ## Run differential expression.
+  de_args <- list()
+  if (de_method == "edger") {
+    de_args[[comparison_type]] <- comparison
+    de_results <- do.call(glmQLFTest, c(list(de_model), de_args))
+  } else if (de_method == "deseq2") {
+    if (shrink_lfc) {
+      de_args <- list(type="apeglm", coef=comparison)
+      de_results <- do.call(lfcShrink, c(list(de_model), de_args))
+    } else {
+      de_args[[comparison_type]] <- comparison
+      de_results <- do.call(results, c(list(de_model), de_args))
+    }
   }
 
-  ## Set up contrasts.
-  comparison_levels <- edger_design %>%
-    pull(groups) %>%
-    levels
+  ## Get table of results.
+  de_results <- as.data.table(de_results, keep.rownames="feature")
 
-  comparison_contrast <- comparison_levels %>%
-    map_dbl(function(x) {
-      if (x == compare_groups[1]) {
-        return_value <- -1
-      } else if (x == compare_groups[2]) {
-        return_value <- 1
-      } else {
-        return_value <- 0
-      }
-      return(return_value)
-    })
-
-  ## Differential expression analysis.
-  diff_expression <- glmQLFTest(edger_model, contrast=comparison_contrast)
-  diff_expression <- as.data.table(diff_expression$table, keep.rownames="FHASH")
-
-  setnames(diff_expression, old="logFC", new="log2FC")
-
-  comparison_name <- str_c(compare_groups[1], "_vs_", compare_groups[2])
-  diff_expression[, c("FDR", "sample") := list(
-    p.adjust(PValue, "fdr"), comparison_name
-  )][, DE := case_when(
-    log2FC >= log2fc_cutoff & FDR <= fdr_cutoff ~ "up",
-    log2FC <= -log2fc_cutoff & FDR <= fdr_cutoff ~ "down",
-    TRUE ~ "unchanged"
-  )][]
-
-  ## Merge in the annotation information from the original matrix.
-  comparison_name <- str_c(compare_groups[1], "_vs_", compare_groups[2])
-
-  if (data_type %in% c("tss", "tsr")) {
-    original <- as.data.table(original_ranges)
-    original[, FHASH := names(original_ranges)]
-
-    diff_expression <- merge(diff_expression, original, by="FHASH")
-    diff_expression <- sort(as_granges(diff_expression))
-    diff_expression <- as.data.table(diff_expression)
-  } else if (data_type %in% c("tss_features", "tsr_features")) {
-    setnames(diff_expression, old=1, new="feature")[]
+  if (de_method == "deseq2") {
+    de_results[, c("baseMean", "lfcSE") := NULL]
+    setnames(de_results, old="log2FoldChange", new="log2FC")
+  } else if (de_method == "edger") {
+    de_results[, c("logCPM", "F") := NULL]
+    setnames(de_results, old=c("logFC", "PValue"), new=c("log2FC", "pvalue"))
+    de_results[, padj := p.adjust(pvalue, method="fdr")]
   }
 
   ## Add differential expression data back to tsrexplorer object.
   if (data_type == "tss") {
-    experiment@diff_features$TSSs$results[[comparison_name]] <- diff_expression
+    experiment@diff_features$TSSs$results[[comparison_name]] <- de_results
   } else if (data_type == "tsr") {
-    experiment@diff_features$TSRs$results[[comparison_name]] <- diff_expression
+    experiment@diff_features$TSRs$results[[comparison_name]] <- de_results
   } else if (data_type == "tss_features") {
-    experiment@diff_features$TSS_features$results[[comparison_name]] <- diff_expression
+    experiment@diff_features$TSS_features$results[[comparison_name]] <- de_results
   } else if (data_type == "tsr_features") {
-    experiment@diff_features$TSR_features[[comparison_name]] <- diff_expression
+    experiment@diff_features$TSR_features[[comparison_name]] <- de_results
   }
 
   return(experiment)

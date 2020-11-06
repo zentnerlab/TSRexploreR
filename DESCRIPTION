@@ -47,7 +47,8 @@ Imports:
     plyranges,
     assertthat,
     DESeq2,
-    GenomicAlignments
+    GenomicAlignments,
+    apeglm
 Depends:
     R (>= 3.5.0)
 Suggests:

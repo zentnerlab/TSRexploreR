@@ -56,5 +56,6 @@ NULL
 #' @importFrom DESeq2
 #'   DESeqDataSetFromMatrix estimateSizeFactors
 #'   DESeq lfcShrink results rlog counts
+#' @importFrom apeglm apeglm
 
 NULL

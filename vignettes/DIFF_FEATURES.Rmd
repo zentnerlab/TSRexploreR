@@ -26,9 +26,9 @@ exp <- tsr_explorer(TSSs)
 Adding a sample sheet allows for easier processing downstream.
 
 ```{r message=FALSE}
-sample_sheet <- data.table(
-  tss_name=c(sprintf("S288C_D_%s", seq_len(3)), sprintf("S288C_WT_%s", seq_len(3))),
-  tsr_name=c(sprintf("S288C_D_%s", seq_len(3)), sprintf("S288C_WT_%s", seq_len(3))),
+sample_sheet <- data.frame(
+  sample_name=c(sprintf("S288C_D_%s", seq_len(3)), sprintf("S288C_WT_%s", seq_len(3))),
+  file_1=NA, file_2=NA,
   condition=c(rep("Diamide", 3), rep("Untreated", 3))
 )
 ```
@@ -50,26 +50,13 @@ but all analysis and plots can be generated for the different treatment conditio
 
 ```{r message=FALSE}
 exp <- format_counts(exp, data_type="tss") %>%
-  count_matrix(data_type="tss") %>%
   normalize_counts(data_type="tss") %>%
-  tss_clustering(threshold=3, max_distance=25) %>%
-  associate_with_tsr(use_sample_sheet=TRUE)
+  tss_clustering(threshold=3, max_distance=25)
 ```
 
 ## TSR Correlation and Dimension Reduction
 
 Correlation analysis and dimensionality reduction is a good first step to assess overall differences between samples.
-
-### TMM Normalization
-
-Just as with the normal TSS and TSR analysis, 'TMM' normalization is used for more faithful comparison *between* samples.
-These values will be used for both the correlation and dimensionality reduction plots.
-
-```
-exp <- exp %>%
-  count_matrix(data_type="tsr") %>%
-  normalize_counts(exp, data_type="tsr")
-```
 
 ### Correlation Matrix Plots
 
@@ -77,15 +64,11 @@ After 'TMM' normalizing between the samples, various correlation plots can be ge
 An example is shown here, in which half the plot is a scatter plot, and the other half a heatmap.
 Already one can start to see a difference between the untreated and treated samples.
 
+```{r message=FALSE}
+plot_correlation(exp, data_type="tsr", font_size=2, pt_size=0.4) +
+  ggplot2::theme_bw() +
+  ggplot2::theme(text=element_text(size=3), panel.grid=element_blank())
 ```
-p <- plot_correlation(exp, data_type="tsr", font_size=2, pt_size=0.4) +
-        ggplot2::theme_bw() +
-        ggplot2::theme(text=element_text(size=3), panel.grid=element_blank())
-
-ggsave("diff_tsr_correlation.png", plot=p, device="png", type="cairo", height=3, width=3)
-```
-
-![diff_tsr_corr_plot](../inst/images/diff_tsr_correlation.png)
 
 ### Dimensionality Reduction
 
@@ -93,14 +76,10 @@ Another useful way to check differences between samples (and look at replicate c
 is to generate a dimensionality reduction plot.
 The preferred plot type for this is UMAP for its general robustness, stability, and often better ability to separate points.
 
-```
-p <- plot_reduction(exp, data_type="tsr", size=0.5) +
+```{r message=FALSE}
+plot_reduction(exp, data_type="tsr", size=0.5) +
   ggplot2::theme(text=element_text(size=3), legend.key.size=unit(0.2, "cm"))
-
-ggsave("diff_tsr_reduction.png", plot=p, device="png", type="cairo", height=1.25, width=2)
 ```
-
-![diff_tsr_reduction](../inst/images/diff_tsr_reduction.png)
 
 ## Differential TSRs
 
@@ -113,20 +92,18 @@ The first step is to build an edgeR model that contains the samples and their (r
 This can be done at the TSS, TSR, or feature level. This example will be looking at differential TSRs.
 
 ```
-exp <- fit_edger_model(
-  exp, data_type="tsr",
-  samples=c(
-    "S288C_WT_1", "S288C_WT_2", "S288C_WT_3",
-    "S288C_D_1", "S288C_D_2", "S288C_D_3"
-  ),
-  groups=c(rep("Untreated", 3), rep("Diamide", 3))
-)
+exp <- fit_de_model(exp, data_type="tsr", formula= ~ condition)
 ```
 
 After building the edgeR model, the model can then be used to call differential TSRs.
 
 ```
-exp <- differential_expression(exp, data_type="tsr", compare_groups=c("Untreated", "Diamide"))
+exp <- differential_expression(
+  exp, data_type="tsr",
+  comparison_name="Diamide_vs_Untreated",
+  comparison_type="name",
+  comparison="condition_Untreated_vs_Diamide"
+)
 ```
 ### Annotating Differential Features
 

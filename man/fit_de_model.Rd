@@ -6,20 +6,20 @@
 \usage{
 fit_de_model(
   experiment,
+  formula,
   data_type = c("tss", "tsr", "tss_features", "tsr_features"),
-  samples,
-  formula = ~condition,
+  samples = "all",
   method = "DESeq2"
 )
 }
 \arguments{
 \item{experiment}{tsrexplorer object with TMM-normalized counts}
 
+\item{formula}{DE formula}
+
 \item{data_type}{Whether TSSs, TSRs, or feature counts should be analyzed}
 
 \item{samples}{Vector of sample names to analyze}
-
-\item{formula}{DE formula}
 
 \item{method}{Either 'DESeq2' or 'edgeR'}
 }
