@@ -12,7 +12,7 @@ differential_expression(
   comparison,
   fdr_cutoff = 0.05,
   log2fc_cutoff = 1,
-  shrink_lfc = TRUE
+  shrink_lfc = FALSE
 )
 }
 \arguments{

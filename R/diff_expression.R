@@ -89,7 +89,14 @@ fit_de_model <- function(
   ## Differential Expression.
   de_model <- count_data %>%
     DGEList(samples=sample_sheet) %>%
-    {.[filterByExpr(., design), , keep.lib.sizes=FALSE]} %>%
+    {.[
+      filterByExpr(.,
+        design,
+        min.count=3,
+        min.total.count=9
+      ), ,
+      keep.lib.sizes=FALSE
+    ]} %>%
     calcNormFactors %>%
     estimateDisp(design) %>%
     glmQLFit(design)
@@ -156,7 +163,7 @@ differential_expression <- function(
   comparison,
   fdr_cutoff=0.05,
   log2fc_cutoff=1,
-  shrink_lfc=TRUE
+  shrink_lfc=FALSE
 ) {
 
   ## Input checks.
@@ -198,6 +205,7 @@ differential_expression <- function(
       de_results <- do.call(lfcShrink, c(list(de_model), de_args))
     } else {
       de_args[[comparison_type]] <- comparison
+      de_args[["cooksCutoff"]] <- FALSE
       de_results <- do.call(results, c(list(de_model), de_args))
     }
   }
@@ -206,11 +214,19 @@ differential_expression <- function(
   de_results <- as.data.table(de_results, keep.rownames="feature")
 
   if (de_method == "deseq2") {
-    de_results[, c("baseMean", "lfcSE") := NULL]
-    setnames(de_results, old="log2FoldChange", new="log2FC")
+    de_results[, lfcSE := NULL]
+    setnames(
+      de_results,
+      old=c("log2FoldChange", "baseMean"),
+      new=c("log2FC", "mean_expr")
+    )
   } else if (de_method == "edger") {
-    de_results[, c("logCPM", "F") := NULL]
-    setnames(de_results, old=c("logFC", "PValue"), new=c("log2FC", "pvalue"))
+    de_results[, F := NULL]
+    setnames(
+      de_results,
+      old=c("logFC", "PValue", "logCPM"),
+      new=c("log2FC", "pvalue", "mean_expr")
+    )
     de_results[, padj := p.adjust(pvalue, method="fdr")]
   }
 
