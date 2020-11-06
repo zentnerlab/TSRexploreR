@@ -230,6 +230,16 @@ differential_expression <- function(
     de_results[, padj := p.adjust(pvalue, method="fdr")]
   }
 
+  ## Mark status of each gene.
+  de_results[,
+    de_status := case_when(
+      is.na(padj) | is.na(log2FC) ~ "unchanged",
+      padj > fdr_cutoff | abs(log2fc_cutoff) < log2fc_cutoff ~ "unchanged",
+      padj <= fdr_cutoff & log2FC >= log2fc_cutoff ~ "up",
+      padj <= fdr_cutoff & log2FC <= -log2fc_cutoff ~ "down"
+    )
+  ]
+
   ## Add differential expression data back to tsrexplorer object.
   if (data_type == "tss") {
     experiment@diff_features$TSSs$results[[comparison_name]] <- de_results
