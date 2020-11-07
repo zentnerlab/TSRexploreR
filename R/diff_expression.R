@@ -145,8 +145,6 @@ fit_de_model <- function(
 #'   For edgeR either 'contrast' or 'coef'.
 #' @param comparison For edgeR either the coefficients or contrasts.
 #'   For DESeq2 the contrast or name.
-#' @param fdr_cutoff FDR cutoff
-#' @param log2fc_cutoff Log2 fold change cutoff
 #' @param shrink_lfc For DESeq2 whether the Log2 Fold Changes are shrunk (TRUE) or left alone (FALSE).
 #' 
 #' @return tibble of differential TSRs
@@ -161,8 +159,6 @@ differential_expression <- function(
   comparison_name,
   comparison_type,
   comparison,
-  fdr_cutoff=0.05,
-  log2fc_cutoff=1,
   shrink_lfc=FALSE
 ) {
 
@@ -230,16 +226,6 @@ differential_expression <- function(
     de_results[, padj := p.adjust(pvalue, method="fdr")]
   }
 
-  ## Mark status of each gene.
-  de_results[,
-    de_status := case_when(
-      is.na(padj) | is.na(log2FC) ~ "unchanged",
-      padj > fdr_cutoff | abs(log2fc_cutoff) < log2fc_cutoff ~ "unchanged",
-      padj <= fdr_cutoff & log2FC >= log2fc_cutoff ~ "up",
-      padj <= fdr_cutoff & log2FC <= -log2fc_cutoff ~ "down"
-    )
-  ]
-
   ## Add differential expression data back to tsrexplorer object.
   if (data_type == "tss") {
     experiment@diff_features$TSSs$results[[comparison_name]] <- de_results
@@ -252,6 +238,37 @@ differential_expression <- function(
   }
 
   return(experiment)
+}
+
+#' Mark DE Status
+#'
+#' @param de_results Results of DE
+#' @param log2fc_cutoff Log2FC cutoff value
+#' @param fdr_cutoff FDR cutoff value
+
+.de_status <- function(
+  de_results,
+  log2fc_cutoff,
+  fdr_cutoff
+) {
+
+  ## Check inputs.
+  assert_that(is.data.frame(de_results))
+  assert_that(is.numeric(log2fc_cutoff) && log2fc_cutoff >= 0)
+  assert_that(is.numeric(fdr_cutoff) && (fdr_cutoff > 0 & fdr_cutoff <= 1))
+
+  ## Mark DE status.
+  de_results[,
+    de_status := case_when(
+      is.na(padj) | is.na(log2FC) ~ "unchanged",
+      padj > fdr_cutoff | abs(log2fc_cutoff) < log2fc_cutoff ~ "unchanged",
+      padj <= fdr_cutoff & log2FC >= log2fc_cutoff ~ "up",
+      padj <= fdr_cutoff & log2FC <= -log2fc_cutoff ~ "down"
+    )
+  ][,
+    de_status := factor(de_status, levels=c("up", "unchanged", "down"))
+  ]
+
 }
 
 #' DE Table

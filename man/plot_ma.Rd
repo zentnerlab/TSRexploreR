@@ -9,6 +9,8 @@ plot_ma(
   data_type = c("tss", "tsr", "tss_features", "tsr_features"),
   de_comparisons = "all",
   ncol = 1,
+  log2fc_cutoff = 1,
+  fdr_cutoff = 0.05,
   ...
 )
 }
@@ -20,6 +22,10 @@ plot_ma(
 \item{de_comparisons}{Which differential expression comparisons to plot}
 
 \item{ncol}{Number of columns for the facets}
+
+\item{log2fc_cutoff}{Log2FC cutoff value}
+
+\item{fdr_cutoff}{FDR cutoff value}
 
 \item{...}{Arguments passed to geom_point}
 }

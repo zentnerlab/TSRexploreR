@@ -10,8 +10,6 @@ differential_expression(
   comparison_name,
   comparison_type,
   comparison,
-  fdr_cutoff = 0.05,
-  log2fc_cutoff = 1,
   shrink_lfc = FALSE
 )
 }
@@ -27,10 +25,6 @@ For edgeR either 'contrast' or 'coef'.}
 
 \item{comparison}{For edgeR either the coefficients or contrasts.
 For DESeq2 the contrast or name.}
-
-\item{fdr_cutoff}{FDR cutoff}
-
-\item{log2fc_cutoff}{Log2 fold change cutoff}
 
 \item{shrink_lfc}{For DESeq2 whether the Log2 Fold Changes are shrunk (TRUE) or left alone (FALSE).}
 }
