@@ -1,12 +1,11 @@
-#' DE MA or Volcano Plot
+#' DE MA Plot
 #'
 #' @description
-#' Generate MA or Volcano plot for differential TSRs or Genes (RNA-seq) - confused. I see the MA-plot code but no volcano.
+#' Generate a MA plot for differential TSRs or Genes (RNA-seq) - confused. I see the MA-plot code but no volcano.
 #'
 #' @param experiment tsrexplorer object
 #' @param de_comparisons Which differential expression comparisons to plot
 #' @param data_type Either 'tss', 'tsr', 'tss_features', or 'tsr_features'
-#' @param plot_type Either 'ma' or 'volcano'
 #' @param ncol Number of columns for the facets
 #' @param ... Arguments passed to geom_point
 #'
@@ -17,14 +16,12 @@
 #'
 #' @return ggplot2 object of MA plot.
 #'
-#' @rdname plot_de_validation-function
 #' @export
 
-plot_de_validation <- function(
+plot_ma <- function(
   experiment,
   data_type=c("tss", "tsr", "tss_features", "tsr_features"),
   de_comparisons="all",
-  plot_type="ma",
   ncol=1,
   ...
 ){
@@ -33,15 +30,14 @@ plot_de_validation <- function(
   assert_that(is(experiment, "tsr_explorer"))
   data_type <- match.arg(str_to_lower(data_type), c("tss", "tsr", "tss_features", "tsr_features"))
   assert_that(is.character(de_comparisons))
-  plot_type <- match.arg(str_to_lower(plot_type), c("ma", "volcano"))
   assert_that(is.count(ncol))
 
   ## Get differential expression tables.
   de_samples <- extract_de(experiment, data_type, de_comparisons)
 
   ## Prepare DE data for plotting.
-  de_samples <- rbindlist(de_samples)
-  de_samples[, DE := factor(DE, levels=c("up", "unchanged", "down"))]
+  de_samples <- rbindlist(de_samples, idcol="sample")
+  de_samples[, de_status := factor(de_status, levels=c("up", "unchanged", "down"))]
 
   ## Set sample order if required.
   if (!all(de_comparisons == "all")) {
@@ -49,20 +45,9 @@ plot_de_validation <- function(
   }
 
   ## MA plot of differential expression.
-  if (plot_type == "ma") {
-    p <- ggplot(de_samples, aes(x=.data$logCPM, y=.data$log2FC, color=.data$DE)) +
-      geom_point(...) +
-      theme_bw() +
-      scale_color_viridis_d() +
-      facet_wrap(~ sample, ncol=ncol, scales="free")
-  ## Volcano plot of differential expression.
-  } else if (plot_type == "volcano") {
-    p <- ggplot(de_samples, aes(x=.data$log2FC, y=-log10(.data$FDR))) +
-      geom_point(...) +
-      theme_bw() +
-      scale_color_viridis_d() +
-      facet_wrap(~ sample, ncol=ncol, scales="free")
-  }
+  p <- ggplot(de_samples, aes(x=.data$mean_expr, y=.data$log2FC, color=.data$de_status)) +
+    geom_point(...) +
+    facet_wrap(~ sample, ncol=ncol, scales="free")
 
   return(p)
 }

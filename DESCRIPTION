@@ -70,7 +70,7 @@ Collate:
     'data_export.R'
     'data_import.R'
     'density_plots.R'
-    'diff_exp_analysis.R'
+    'diff_exp_plots.R'
     'diff_expression.R'
     'dim_reduction.R'
     'dinucleotide.R'
