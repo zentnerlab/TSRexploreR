@@ -9,10 +9,6 @@
 #' @param correlation_metric Whether to use Spearman or Pearson correlation
 #'
 #' @return Correlation matrix
-#'
-#' @rdname find_correlation-function
-#'
-#' @export
 
 find_correlation <- function(
   experiment,
@@ -72,6 +68,7 @@ find_correlation <- function(
 #' @param data_type Whether to make scatter plots from TSS, TSR, or RNA-seq & 5' data
 #' @param samples Either 'all' or the names of the samples to plot
 #' @param correlation_metric Whether to use Spearman or Pearson correlation
+#' @param use_normalized Whether to use the normalized (TRUE) or raw (FALSE) counts
 #' @param log2_transform Should the TMM values be log2+1 transformed prior to plotting?
 #' @param font_size The font size for the heatmap tiles
 #' @param cluster_samples Logical whether hierarchical clustering is performed
@@ -127,6 +124,7 @@ plot_correlation <- function(
   data_type=c("tss", "tsr", "tss_features", "tsr_features"),
   samples="all",
   correlation_metric="pearson",
+  use_normalized=TRUE,
   log2_transform=TRUE,
   font_size=12,
   cluster_samples=FALSE,
@@ -145,12 +143,12 @@ plot_correlation <- function(
   assert_that(is.flag(cluster_samples))
   assert_that(is.null(heatmap_colors) | is.character(heatmap_colors))
   assert_that(is.flag(show_values))
+  assert_that(is.flag(use_normalized))
 
   ## Get data from proper slot.
   normalized_counts <- experiment %>%
-    extract_matrix(data_type, samples) %>%
-    assay("normalized") %>%
-    as.data.table
+    extract_counts(data_type, samples) %>%
+    .count_matrix("tss", use_normalized)
   
   sample_names <- colnames(normalized_counts)
 
@@ -166,7 +164,7 @@ plot_correlation <- function(
   ## Log2 + 1 transform data if indicated.
   pre_transformed <- copy(normalized_counts)
   if (log2_transform) {
-    normalized_counts <- normalized_counts[, lapply(.SD, function(x) log2(x + 1))]
+    normalized_counts <- log2(normalized_counts + 1)
   }
 
   ## Correlation Matrix.

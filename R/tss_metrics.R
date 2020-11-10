@@ -91,7 +91,7 @@ mark_dominant <- function(
           score == max(score) &
           score >= threshold
         ),
-        by=TSR_FID
+        by=TSR_FHASH
       ]
 
       return(x)

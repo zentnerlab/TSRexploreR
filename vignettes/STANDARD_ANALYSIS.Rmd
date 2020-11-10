@@ -38,8 +38,8 @@ Adding a sample sheet allows for easier processing downstream.
 
 ```{r message=FALSE}
 sample_sheet <- data.frame(
-  tss_name=sprintf("S288C_WT_%s", seq_len(3)),
-  tsr_name=sprintf("S288C_WT_%s", seq_len(3)),
+  sample_name=sprintf("S288C_WT_%s", seq_len(3)),
+  file_1=NA, file_2=NA,
   condition=rep("Untreated", 3)
 )
 ```
@@ -71,7 +71,6 @@ The next step is to normalize TSS counts using the Counts Per Million (CPM) appr
  This step is optional - if the counts you input were already normalized, this step can be safely skipped.
 
 ```{r message=FALSE}
-exp <- count_matrix(exp, data_type="tss")
 exp <- normalize_counts(exp, data_type="tss")
 ```
 
@@ -320,15 +319,6 @@ exp <- annotate_features(
 ## TSR Correlation
 
 Smiilar to looking at the correlation of TSSs, looking at TSR correlation before further analysis is good practice.
-
-### TMM Normalization
-
-TMM normalization is also used for comparing TSRs.
-
-```{r message=FALSE}
-exp <- count_matrix(exp, data_type="tsr")
-exp <- normalize_counts(exp, data_type="tsr")
-```
 
 ### Correlation Matrix Plots
 

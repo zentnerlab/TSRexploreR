@@ -6,7 +6,7 @@
 \alias{tsr_explorer}
 \title{TSRexplorer Class}
 \usage{
-tsr_explorer(TSSs = NA, TSRs = NA)
+tsr_explorer(TSSs = NA, TSRs = NA, sample_sheet = NULL)
 }
 \arguments{
 \item{TSSs}{Named list of TSS GRanges}

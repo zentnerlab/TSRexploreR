@@ -2,6 +2,7 @@
 #' Import BAMs
 #'
 #' @importFrom GenomicAlignments readGAlignmentPairs readGAlignments
+#' @importFrom Rsamtools ScanBamParam scanBamFlag
 #'
 #' @param experiment tsr explorer object
 #' @param paired Whether the BAMs are paired (TRUE) or unpaired (FALSE)
@@ -149,6 +150,77 @@ tss_aggregate <- function(experiment) {
 
   ## Add samples back.
   experiment@experiment$TSSs <- samples
+
+  return(experiment)
+}
+
+#' Correct G
+#'
+#' @description
+#' Correct overrepresentation of G TSSs
+#'
+#' @param experiment tsr explorer object
+#' @param assembly Fasta assembly of genome or BSgenome object.
+#'
+#' @export
+
+G_correction <- function(
+  experiment,
+  assembly
+) {
+
+  ## Check inputs.
+  assert_that(is(experiment, "tsr_explorer"))
+  assert_that(is.character(assembly) | is(assembly, "BSgenome"))
+
+  ## Prepare assembly.
+  assembly_type <- case_when(
+    is.character(assembly) ~ "file",
+    is(assembly, "BSgenome") ~ "bsgenome"
+  )
+
+  assembly <- switch(
+    assembly_type,
+    "file"=FaFile(assembly),
+    "bsgenome"=assembly
+  )
+
+  ## Get samples.
+  select_samples <- experiment@experiment$TSSs
+
+  ## Retrieve +1 base.
+  select_samples <- map(select_samples, function(x) {
+    x$plus_one <- as.character(getSeq(assembly, x))
+    x <- as.data.table(x)
+    return(x)
+  })
+
+  ## Correct for frequency of soft-clipped Gs and templated Gs.
+  select_samples <- map(select_samples, function(x) {
+
+    # Frequency of soft-clipped Gs.
+    sfreq <- x[, .(count=.N), by=seq_soft]
+    sfreq[, freq := count / sum(count)]
+    sfreq <- sfreq[seq_soft == "G", freq]
+
+    # Correct frequencies.
+    x[
+      plus_one == "G" & n_soft == 0,
+      start := ifelse(
+        rbinom(nrow(x[plus_one == "G" & n_soft == 0]), 1, sfreq) == 1,
+        ifelse(strand == "+", start + 1, start - 1),
+        start
+      )
+    ][,
+      c("end", "plus_one") := list(start, NULL)
+    ]
+
+    return(x)
+  })
+
+  ## Add data back to tsr explorer object.
+  select_samples <- map(select_samples, as_granges)
+  experiment@experiment$TSSs <- select_samples
 
   return(experiment)
 }

@@ -6,7 +6,7 @@
 \usage{
 normalize_counts(
   experiment,
-  data_type = c("tss", "tsr", "tss_features", "tsr_features"),
+  data_type = c("tss", "tss_features"),
   method = "DESeq2",
   threshold = 1,
   n_samples = 1
