@@ -25,6 +25,8 @@ bioconductor-cager \
 bioconductor-tsrchitect \
 bioconductor-gviz \
 bioconductor-rtracklayer
+bioconductor-plyranges
+bioconductor-deseq2
 ```
 
 **Install latest version of tsrexplorer**
