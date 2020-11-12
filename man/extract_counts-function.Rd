@@ -7,7 +7,7 @@
 extract_counts(experiment, data_type, samples, use_normalized = FALSE)
 }
 \arguments{
-\item{experiment}{tsrexplorer object}
+\item{experiment}{TSRexploreR object}
 
 \item{data_type}{Whether to extract TSS or TSR counts}
 
@@ -16,5 +16,5 @@ extract_counts(experiment, data_type, samples, use_normalized = FALSE)
 \item{use_normalized}{Whether CPM values should be returned}
 }
 \description{
-Extract counts from a tsrexplorer object.
+Extract counts from a TSRexploreR object.
 }

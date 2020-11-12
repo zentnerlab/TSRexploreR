@@ -22,7 +22,7 @@ gene_tracks(
 )
 }
 \arguments{
-\item{experiment}{tsrexplorer object}
+\item{experiment}{TSRexploreR object}
 
 \item{genome_annotation}{Genome annotation GTF/GFF file, or TxDb object}
 

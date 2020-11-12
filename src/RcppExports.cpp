@@ -8,7 +8,7 @@ using namespace Rcpp;
 
 // allTheShiftScores
 arma::mat allTheShiftScores(CharacterVector fhash, arma::uvec dists, arma::vec scores, arma::vec sample, int calcP, int nresamp, int ntests);
-RcppExport SEXP _tsrexplorer_allTheShiftScores(SEXP fhashSEXP, SEXP distsSEXP, SEXP scoresSEXP, SEXP sampleSEXP, SEXP calcPSEXP, SEXP nresampSEXP, SEXP ntestsSEXP) {
+RcppExport SEXP _TSRexploreR_allTheShiftScores(SEXP fhashSEXP, SEXP distsSEXP, SEXP scoresSEXP, SEXP sampleSEXP, SEXP calcPSEXP, SEXP nresampSEXP, SEXP ntestsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -25,11 +25,11 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_tsrexplorer_allTheShiftScores", (DL_FUNC) &_tsrexplorer_allTheShiftScores, 7},
+    {"_TSRexploreR_allTheShiftScores", (DL_FUNC) &_TSRexploreR_allTheShiftScores, 7},
     {NULL, NULL, 0}
 };
 
-RcppExport void R_init_tsrexplorer(DllInfo *dll) {
+RcppExport void R_init_TSRexploreR(DllInfo *dll) {
     R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
     R_useDynamicSymbols(dll, FALSE);
 }

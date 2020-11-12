@@ -25,11 +25,11 @@ This plotting function returns a ggplot2 barplot of -1 and +1 dinucleotide frequ
 The results of the 'dinucleotide_frequencies' function are used as input.
 }
 \examples{
-TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="tsrexplorer")
+TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
 TSSs <- readRDS(TSSs)
 tsre_exp <- tsr_explorer(TSSs)
 tsre_exp <- format_counts(tsre_exp, data_type="tss")
-assembly <- system.file("extdata", "S288C_Assembly.fasta", package="tsrexplorer")
+assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
 freqs <- dinucleotide_frequencies(tsre_exp, genome_assembly=assembly)
 plot_dinucleotide_frequencies(freqs)
 

@@ -7,7 +7,7 @@
 add_feature_group(experiment, group_sheet, feature_type)
 }
 \arguments{
-\item{experiment}{tsrexplorer object}
+\item{experiment}{TSRexploreR object}
 
 \item{group_sheet}{Group sheet as tab delimited file or data.frame
 with column 'feature', and other named columns containing feature groups}
@@ -15,5 +15,5 @@ with column 'feature', and other named columns containing feature groups}
 \item{feature_type}{either 'gene' or 'transcript'}
 }
 \description{
-Add gene/transcript group info to a tsrexplorer object.
+Add gene/transcript group info to a TSRexploreR object.
 }

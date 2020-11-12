@@ -3,7 +3,7 @@
 #' @description
 #' Generate MA or Volcano plot for differential TSRs or Genes (RNA-seq) - confused. I see the MA-plot code but no volcano.
 #'
-#' @param experiment tsrexplorer object
+#' @param experiment TSRexploreR object
 #' @param de_comparisons Which differential expression comparisons to plot
 #' @param data_type Either 'tss', 'tsr', 'tss_features', or 'tsr_features'
 #' @param plot_type Either 'ma' or 'volcano'
@@ -71,7 +71,7 @@ plot_de_validation <- function(
 #'
 #' Export DEGs for use in clusterProfiler term enrichment.
 #'
-#' @param experiment tsrexplorer object
+#' @param experiment TSRexploreR object
 #' @param data_type Either 'tss', 'tsr', 'tss_features', or 'tsr_features'
 #' @param de_comparisons The DE comparisons to plot
 #'
@@ -108,7 +108,7 @@ export_for_enrichment <- function(
 #'
 #' Plot number of DE features.
 #'
-#' @param experiment tsrexplorer object
+#' @param experiment TSRexploreR object
 #' @param data_type Either 'tss', 'tsr', 'tss_features', or 'tsr_features'
 #' @param de_comparisons The comparisons to plot
 #' @param ... Additional arguments passed to geom_col

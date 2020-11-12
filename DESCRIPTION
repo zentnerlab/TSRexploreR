@@ -1,4 +1,4 @@
-Package: tsrexplorer
+Package: TSRexploreR
 Title: TSS and TSR Analysis
 Version: 0.1
 Authors@R: 
@@ -47,21 +47,22 @@ Imports:
     plyranges,
     assertthat,
     DESeq2,
-    GenomicAlignments
+    GenomicAlignments,
+    CAGEr
 Depends:
     R (>= 3.5.0)
 Suggests:
     clusterProfiler,
     TSRchitect,
-    CAGEr,
     org.Sc.sgd.db
 RoxygenNote: 7.1.1
 Collate: 
     'RcppExports.R'
+    'TSRexplore.R'
+    'TSRexploreR-package.R'
     'annotate.R'
     'association.R'
     'bam_processing.R'
-    'tsrexplorer.R'
     'convenience_methods.R'
     'correlation.R'
     'data_conditionals.R'
@@ -86,7 +87,6 @@ Collate:
     'thresholding.R'
     'tsr_metrics.R'
     'tsr_plots.R'
-    'tsrexplorer-package.R'
     'tss_clustering.R'
     'tss_metrics.R'
     'tss_shifting.R'

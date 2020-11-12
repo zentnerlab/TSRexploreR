@@ -12,7 +12,7 @@ fit_edger_model(
 )
 }
 \arguments{
-\item{experiment}{tsrexplorer object with TMM-normalized counts}
+\item{experiment}{TSRexploreR object with TMM-normalized counts}
 
 \item{data_type}{Whether TSSs, TSRs, or feature counts should be analyzed}
 

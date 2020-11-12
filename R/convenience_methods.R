@@ -1,68 +1,67 @@
-
 #' Add TSSs
 #'
-#' Convenience function to add TSSs to a tsrexplorer object.
+#' Convenience function to add TSSs to a TSRexploreR object.
 #'
-#' @include tsrexplorer.R
+#' @include TSRexplore.R
 #'
-#' @param tsrexplorer_object tsrexplorer object
+#' @param TSRexploreR_object TSRexploreR object
 #'
 #' @rdname tss_experiment-generic
 #'
 #' @export
 
-setGeneric("tss_experiment", function(tsrexplorer_object) standardGeneric("tss_experiment"))
-setGeneric("tss_experiment<-", function(tsrexplorer_object, value) standardGeneric("tss_experiment<-"))
+setGeneric("tss_experiment", function(TSRexploreR_object) standardGeneric("tss_experiment"))
+setGeneric("tss_experiment<-", function(TSRexploreR_object, value) standardGeneric("tss_experiment<-"))
 
 #' @rdname tss_experiment-generic
 
-setMethod("tss_experiment", signature(tsrexplorer_object="tsr_explorer"),
-  function(tsrexplorer_object) {
-    tsrexplorer_object@experiment$TSSs
+setMethod("tss_experiment", signature(TSRexploreR_object="tsr_explorer"),
+  function(TSRexploreR_object) {
+    TSRexploreR_object@experiment$TSSs
   }
 )
 
-setMethod("tss_experiment<-", signature(tsrexplorer_object="tsr_explorer"),
-  function(tsrexplorer_object, value) {
-    tsrexplorer_object@experiment$TSSs <- value
+setMethod("tss_experiment<-", signature(TSRexploreR_object="tsr_explorer"),
+  function(TSRexploreR_object, value) {
+    TSRexploreR_object@experiment$TSSs <- value
   }
 )
 
 #' Add TSRs
 #'
-#' Convenience function to add TSRs to a tsrexplorer object.
+#' Convenience function to add TSRs to a TSRexploreR object.
 #'
-#' @include tsrexplorer.R
+#' @include TSRexplore.R
 #'
-#' @param tsrexplorer_object tsrexplorer object
+#' @param TSRexploreR_object TSRexploreR object
 #'
 #' @rdname tsr_experiment-generic
 #'
 #' @export
 
-setGeneric("tsr_experiment", function(tsrexplorer_object) standardGeneric("tsr_experiment"))
-setGeneric("tsr_experiment<-", function(tsrexplorer_object, value) standardGeneric("tsr_experiment<-"))
+setGeneric("tsr_experiment", function(TSRexploreR_object) standardGeneric("tsr_experiment"))
+setGeneric("tsr_experiment<-", function(TSRexploreR_object, value) standardGeneric("tsr_experiment<-"))
 
 #' @rdname tsr_experiment-generic
 
-setMethod("tsr_experiment", signature(tsrexplorer_object="tsr_explorer"),
-  function(tsrexplorer_object) {
-    tsrexplorer_object@experiment$TSRs
+setMethod("tsr_experiment", signature(TSRexploreR_object="tsr_explorer"),
+  function(TSRexploreR_object) {
+    TSRexploreR_object@experiment$TSRs
   }
 )
 
-setMethod("tsr_experiment<-", signature(tsrexplorer_object="tsr_explorer"),
-  function(tsrexplorer_object, value) {
-    tsrexplorer_object@experiment$TSRs <- value
+setMethod("tsr_experiment<-", signature(TSRexploreR_object="tsr_explorer"),
+  function(TSRexploreR_object, value) {
+    TSRexploreR_object@experiment$TSRs <- value
   }
 )
 
 #' Extract Counts
 #'
 #' @description
-#' Extract counts from a tsrexplorer object.
+#' Extract counts from a TSRexploreR object.
 #'
-#' @param experiment tsrexplorer object
+#' @param experiment TSRexploreR object
 #' @param data_type Whether to extract TSS or TSR counts
 #' @param samples Names of samples from which to extract counts
 #' @param use_normalized Whether CPM values should be returned
@@ -87,7 +86,7 @@ extract_counts <- function(experiment, data_type, samples, use_normalized=FALSE)
     selected_samples <- experiment@counts$TSR_features$raw[samples]
   }
 
-  ## Return counts as copies so you don't unintentionally overwrite the tsrexplorer object values.
+  ## Return counts as copies so you don't unintentionally overwrite the TSRexploreR object values.
   return_samples <- map(selected_samples, copy)
 
   ## Return CPM score if requested.
@@ -108,7 +107,7 @@ extract_counts <- function(experiment, data_type, samples, use_normalized=FALSE)
 #'
 #' Extract normalized count matrices.
 #'
-#' @param experiment tsrexplorer object
+#' @param experiment TSRexploreR object
 #' @param data_type Whether to extract 'tss', 'tsr', 'tss_features', or 'tsr_features'
 #' @param samples Samples to extract
 #'
@@ -137,7 +136,7 @@ extract_matrix <- function(experiment, data_type, samples) {
 #'
 #' Extract differential expression analysis results.
 #'
-#' @param experiment tsrexplorer object
+#' @param experiment TSRexploreR object
 #' @param data_type Either 'tss', 'tsr', 'tss_features', or 'tsr_features'
 #' @param de_comparisons The comparison sets to extract
 #'
@@ -171,7 +170,7 @@ extract_de <- function(experiment, data_type, de_comparisons="all") {
 #'
 #' Set the content of a slot.
 #'
-#' @param tsre_obj tsrexplorer object
+#' @param tsre_obj TSRexploreR object
 #' @param new_data Data to be added to the slot
 #' @param fill_slot either 'counts' or 'diff_features'
 #' @param data_type Either 'tss', 'tsr', 'tss_features', or 'tsr_features'

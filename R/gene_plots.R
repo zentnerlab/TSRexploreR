@@ -1,10 +1,9 @@
-
 #' Genes/Transcripts Detected
 #'
 #' @description
 #' Get the number of genes or transcripts with an associated unique TSS or TSR
 #'
-#' @param experiment tsrexplorer object with annotated TSSs or TSRs
+#' @param experiment TSRexploreR object with annotated TSSs or TSRs
 #' @param samples Either 'all' or a vector of sample names
 #' @param data_type Whether TSSs or TSRs should be analyzed
 #' @param threshold The number of raw reads required for a TSS or TSR to be considered
@@ -30,11 +29,11 @@
 #' @return DataFrame of detected feature numbers.
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="tsrexplorer")
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
 #' TSSs <- readRDS(TSSs)
 #' tsre_exp <- tsr_explorer(TSSs)
 #' tsre_exp <- format_counts(tsre_exp, data_type="tss")
-#' annotation <- system.file("extdata", "S288C_Annotation.gtf", package="tsrexplorer")
+#' annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
 #' tsre_exp <- annotate_features(
 #'   tsre_exp, annotation_data=annotation,
 #'   data_type="tss", feature_type="transcript"
@@ -165,11 +164,11 @@ detect_features <- function(
 #' @return ggplot2 object of detected feature counts
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="tsrexplorer")
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
 #' TSSs <- readRDS(TSSs)
 #' tsre_exp <- tsr_explorer(TSSs)
 #' tsre_exp <- format_counts(tsre_exp, data_type="tss")
-#' annotation <- system.file("extdata", "S288C_Annotation.gtf", package="tsrexplorer")
+#' annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
 #' tsre_exp <- annotate_features(
 #'   tsre_exp, annotation_data=annotation,
 #'   data_type="tss", feature_type="transcript"

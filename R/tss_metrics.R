@@ -1,10 +1,9 @@
-
 #' Mark Dominant
 #'
 #' @description
 #' Mark TSSs as dominant TSS per TSR or gene, or TSRs as dominant per gene. 
 #'
-#' @param experiment tsrexplorer object with annotated TSSs/TSRs
+#' @param experiment TSRexploreR object with annotated TSSs/TSRs
 #' @param data_type Either 'tss' or 'tsr'
 #' @param threshold Read threshold for TSS/TSRs
 #' @param use_normalized Whether to use normalized counts
@@ -27,7 +26,7 @@
 #' for TSSs, 'gene' can also be specified, which will mark the dominant TSS per gene.  
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="tsrexplorer")
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
 #' TSSs <- readRDS(TSSs)
 #' tsre_exp <- tsr_explorer(TSSs)
 #' tsre_exp <- format_counts(tsre_exp, data_type="tss")
@@ -111,7 +110,7 @@ mark_dominant <- function(
 #'
 #' Get TSS with furthest distance
 #'
-#' @param experiment tsrexplorer object with annotated TSSs
+#' @param experiment TSRexploreR object with annotated TSSs
 #' @param samples Either 'all' or names of sample to analyze
 #' @param threshold Number of reads required for each TSS
 #' @param max_upstream Max upstream distance of TSS to consider

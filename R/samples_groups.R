@@ -1,9 +1,8 @@
-
 #' Sample Sheet
 #'
-#' Add a sample sheet to a tsrexplorer object.
+#' Add a sample sheet to a TSRexploreR object.
 #'
-#' @param experiment tsrexplorer object
+#' @param experiment TSRexploreR object
 #' @param sample_sheet Sample sheet as tab delimited file or data.frame.
 #' Must have columns: 'tss_name' and 'tsr_name', and can have additional
 #'   columns specifying condition, batch, etc.
@@ -36,7 +35,7 @@ add_sample_sheet <- function(
   ## Convert sample sheet to data.table
   if (!is.data.table(sample_sheet)) setDT(sample_sheet)
   
-  ## Add sample sheet to tsrexplorer object.
+  ## Add sample sheet to TSRexploreR object.
   experiment@meta_data$sample_sheet <- sample_sheet
 
   return(experiment)
@@ -44,9 +43,9 @@ add_sample_sheet <- function(
 
 #' Feature Groups
 #'
-#' Add gene/transcript group info to a tsrexplorer object.
+#' Add gene/transcript group info to a TSRexploreR object.
 #'
-#' @param experiment tsrexplorer object
+#' @param experiment TSRexploreR object
 #' @param group_sheet Group sheet as tab delimited file or data.frame
 #' with column 'feature', and other named columns containing feature groups
 #' @param feature_type either 'gene' or 'transcript'
@@ -67,7 +66,7 @@ add_feature_group <- function(experiment, group_sheet, feature_type) {
   ## Convert group sheet to data.table
   group_sheet <- as.data.table(group_sheet)
 
-  ## Add group sheet to tsrexplorer object.
+  ## Add group sheet to TSRexploreR object.
   experiment@meta_data$group_sheet <- group_sheet
   
   return(experiment)

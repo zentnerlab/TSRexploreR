@@ -13,7 +13,7 @@ normalize_counts(
 )
 }
 \arguments{
-\item{experiment}{tsrexplorer object}
+\item{experiment}{TSRexploreR object}
 
 \item{data_type}{Whether TSSs, TSRs, or RNA-seq & 5' feature counts should be normalized}
 
@@ -25,7 +25,7 @@ in this number of samples}
 \item{normalization_method}{Either 'edgeR', 'DESeq2', or 'CPM'}
 }
 \value{
-tsrexplorer object with tmm normalized count matrices
+TSRexploreR object with tmm normalized count matrices
 }
 \description{
 Using edgeR to TMM normalize TSSs or TSRs.
@@ -41,7 +41,7 @@ Features must have greater than or equal to 'threshold' number of raw counts in 
   'n_samples' number of samples to be retained.
 }
 \examples{
-TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="tsrexplorer")
+TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
 TSSs <- readRDS(TSSs)
 tsre_exp <- tsr_explorer(TSSs)
 tsre_exp <- format_counts(tsre_exp, data_type="tss")

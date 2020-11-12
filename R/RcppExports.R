@@ -2,6 +2,6 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 allTheShiftScores <- function(fhash, dists, scores, sample, calcP, nresamp, ntests) {
-    .Call(`_tsrexplorer_allTheShiftScores`, fhash, dists, scores, sample, calcP, nresamp, ntests)
+    .Call(`_TSRexploreR_allTheShiftScores`, fhash, dists, scores, sample, calcP, nresamp, ntests)
 }
 

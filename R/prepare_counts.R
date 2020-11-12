@@ -1,24 +1,23 @@
-
 #' Format Counts
 #'
 #' @description
 #' Format TSS or TSR counts for further analysis. 
 #'
-#' @param experiment tsrexplorer object
+#' @param experiment TSRexploreR object
 #' @param data_type Whether to format TSS or TSR counts 
 #' @param samples Character vector of sample names
 #'
 #' @details
-#' When TSSs or TSRs are first loaded into the tsrexplorer object
+#' When TSSs or TSRs are first loaded into the TSRexploreR object
 #'   they are stored as GRanges objects.
 #' This function converts these into data.table format,
 #'   and adds a few important columns for downstream analysis.
 #'
-#' @return tsrexplorer object with properly formatted features
+#' @return TSRexploreR object with properly formatted features
 #'    in data.table format.
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="tsrexplorer")
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
 #' TSSs <- readRDS(TSSs)
 #' tsre_exp <- tsr_explorer(TSSs)
 #' tsre_exp <- format_counts(tsre_exp, data_type="tss")
@@ -65,7 +64,7 @@ format_counts <- function(
     })
   }
 
-  ## Place counts in proper tsrexplorer object slot.
+  ## Place counts in proper TSRexploreR object slot.
   if (data_type == "tss") {
     experiment@counts$TSSs$raw <- c(experiment@counts$TSSs$raw, raw_counts)
   } else if (data_type == "tsr") {
@@ -80,7 +79,7 @@ format_counts <- function(
 #' Count the number of reads associated with genes or transcripts
 #'   based on the aggregate score of TSSs or TSRs annotated to them.
 #'
-#' @param experiment tsrexplorer object
+#' @param experiment TSRexploreR object
 #' @param data_type Either 'tss' or 'tsr'
 #'
 #' @details
@@ -89,11 +88,11 @@ format_counts <- function(
 #' This allows for an RNA-seq like analysis of gene expression using TSS mapping data.
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="tsrexplorer")
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
 #' TSSs <- readRDS(TSSs)
 #' tsre_exp <- tsr_explorer(TSSs)
 #' tsre_exp <- format_counts(tsre_exp, data_type="tss")
-#' annotation <- system.file("extdata", "S288C_Annotation.gtf", package="tsrexplorer")
+#' annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
 #' tsre_exp <- annotate_features(
 #'   tsre_exp, annotation_data=annotation,
 #'   data_type="tss", feature_type="transcript"
@@ -171,7 +170,7 @@ count_features <- function(
 #'
 #' Generate count matrices for correlation analysis.
 #'
-#' @param experiment tsrexplorer object
+#' @param experiment TSRexploreR object
 #' @param data_type Either 'tss', 'tsr', 'tss_features', or 'tsr_features'
 #' @param samples Character vector of samples to turn into a count matrix
 #'
@@ -183,10 +182,10 @@ count_features <- function(
 #' However, for TSRs, overlapping TSRs between samples are first merged
 #'   to generate consensus TSRs for all considered samples.
 #'
-#' @return tsrexplorer object with added count matrices
+#' @return TSRexploreR object with added count matrices
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="tsrexplorer")
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
 #' TSSs <- readRDS(TSSs)
 #' tsre_exp <- tsr_explorer(TSSs)
 #' tsre_exp <- format_counts(tsre_exp, data_type="tss")

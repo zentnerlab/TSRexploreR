@@ -1,13 +1,12 @@
-
 #' TSS Heatmap Count Matrix
 #'
 #' @description
 #' Generate count matrix to make TSS heatmap.
 #'
-#' @include tsrexplorer.R
+#' @include TSRexplore.R
 #' @include annotate.R
 #'
-#' @param experiment tsrexplorer object with annotated TSSs
+#' @param experiment TSRexploreR object with annotated TSSs
 #' @param samples Either 'all' or a vector of sample names to analyze
 #' @param upstream Bases upstream of plot center
 #' @param downstream Bases downstream of plot center
@@ -40,11 +39,11 @@
 #' @return DataFrame of counts for each gene/transcript and position
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="tsrexplorer")
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
 #' TSSs <- readRDS(TSSs)
 #' tsre_exp <- tsr_explorer(TSSs)
 #' tsre_exp <- format_counts(tsre_exp, data_type="tss")
-#' annotation <- system.file("extdata", "S288C_Annotation.gtf", package="tsrexplorer")
+#' annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
 #' tsre_exp <- annotate_features(
 #'   tsre_exp, annotation_data=annotation,
 #'   data_type="tss", feature_type="transcript"
@@ -158,11 +157,11 @@ tss_heatmap_matrix <- function(
 #' @return ggplot2 object of TSS or TSR heatmap
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="tsrexplorer")
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
 #' TSSs <- readRDS(TSSs)
 #' tsre_exp <- tsr_explorer(TSSs)
 #' tsre_exp <- format_counts(tsre_exp, data_type="tss")
-#' annotation <- system.file("extdata", "S288C_Annotation.gtf", package="tsrexplorer")
+#' annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
 #' tsre_exp <- annotate_features(
 #'   tsre_exp, annotation_data=annotation,
 #'   data_type="tss", feature_type="transcript"
@@ -245,10 +244,10 @@ plot_heatmap <- function(
 #'
 #' Generate count matrix to make TSR heatmap
 #'
-#' @include tsrexplorer.R
+#' @include TSRexplore.R
 #' @include annotate.R
 #'
-#' @param experiment tsrexplorer object with annotated TSRs
+#' @param experiment TSRexploreR object with annotated TSRs
 #' @param samples Either 'all' or a vector of names of samples to analyze
 #' @param upstream Bases upstream to consider
 #' @param downstream bases downstream to consider

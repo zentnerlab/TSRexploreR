@@ -1,10 +1,9 @@
-
 #' Plot TSR Metrics
 #'
 #' Plot selected TSR metrics.
 #'
-#' @param experiment tsrexplorer object with TSR GRanges
-#' @param tsr_metrics Names of metrics in tsrexplorer TSR GRanges to plot
+#' @param experiment TSRexploreR object with TSR GRanges
+#' @param tsr_metrics Names of metrics in TSRexploreR TSR GRanges to plot
 #' @param plot_type Output either a 'violin', 'jitter', 'box', or 'boxjitter' plot (default: violin)
 #' @param samples Either 'all' or a vector of sample names to analyze
 #' @param log2_transform Whether the metric should be log2 + 1 transformed prior to plotting

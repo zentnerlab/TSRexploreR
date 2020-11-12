@@ -5,13 +5,13 @@
 \alias{tss_experiment,tsr_explorer-method}
 \title{Add TSSs}
 \usage{
-tss_experiment(tsrexplorer_object)
+tss_experiment(TSRexploreR_object)
 
-\S4method{tss_experiment}{tsr_explorer}(tsrexplorer_object)
+\S4method{tss_experiment}{tsr_explorer}(TSRexploreR_object)
 }
 \arguments{
-\item{tsrexplorer_object}{tsrexplorer object}
+\item{TSRexploreR_object}{TSRexploreR object}
 }
 \description{
-Convenience function to add TSSs to a tsrexplorer object.
+Convenience function to add TSSs to a TSRexploreR object.
 }

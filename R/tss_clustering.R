@@ -1,10 +1,9 @@
-
 #' TSS Clustering
 #'
 #' @description
 #' Basic distance and threshold-based clustering of TSSs.
 #'
-#' @param experiment tsrexplorer object
+#' @param experiment TSRexploreR object
 #' @param threshold Consider only TSSs with at least this number of raw counts
 #' @param samples Samples for which TSSs should be clustered
 #' @param max_distance Maximum distance between TSSs that can be clustered
@@ -16,10 +15,10 @@
 #'   'threshold' and are less than or equal to 'max_distance'
 #'   from each other.
 #'
-#' @return tsrexplorer object with TSRs
+#' @return TSRexploreR object with TSRs
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="tsrexplorer")
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
 #' TSSs <- readRDS(TSSs)
 #' tsre_exp <- tsr_explorer(TSSs)
 #' tsre_exp <- format_counts(tsre_exp, data_type="tss")
@@ -59,7 +58,7 @@ tss_clustering <- function(
   ## Call TSRs.
   clustered_TSSs <- map(select_samples, .aggr_scores, max_distance)
 
-  ## Add TSRs back to tsrexplorer object.
+  ## Add TSRs back to TSRexploreR object.
   clustered_TSSs <- map(clustered_TSSs, function(x) {
     x <- as.data.table(x)
     x[, FID := seq_len(nrow(x))]

@@ -18,7 +18,7 @@ plot_correlation(
 )
 }
 \arguments{
-\item{experiment}{tsrexplorer object with TMM normalized counts}
+\item{experiment}{TSRexploreR object with TMM normalized counts}
 
 \item{data_type}{Whether to make scatter plots from TSS, TSR, or RNA-seq & 5' data}
 
@@ -71,7 +71,7 @@ Note that the transformation is done after the correlation metric is calculated,
   and is only meant to facilitate  visualization of the results.
 }
 \examples{
-TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="tsrexplorer")
+TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
 TSSs <- readRDS(TSSs)
 tsre_exp <- tsr_explorer(TSSs)
 tsre_exp <- format_counts(tsre_exp, data_type="tss")

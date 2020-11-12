@@ -8,18 +8,18 @@
 \alias{tss_import,CAGEexp-method}
 \title{Import TSSs}
 \usage{
-tss_import(tsrexplorer_obj, object, ...)
+tss_import(TSRexploreR_obj, object, ...)
 
-\S4method{tss_import}{character}(tsrexplorer_obj, object, sep = "\\t", col_names = TRUE)
+\S4method{tss_import}{character}(TSRexploreR_obj, object, sep = "\\t", col_names = TRUE)
 
-\S4method{tss_import}{data.frame}(tsrexplorer_obj, object)
+\S4method{tss_import}{data.frame}(TSRexploreR_obj, object)
 
-\S4method{tss_import}{tssObject}(tsrexplorer_obj, object)
+\S4method{tss_import}{tssObject}(TSRexploreR_obj, object)
 
-\S4method{tss_import}{CAGEexp}(tsrexplorer_obj, object, data_type)
+\S4method{tss_import}{CAGEexp}(TSRexploreR_obj, object, data_type)
 }
 \arguments{
-\item{object}{Object with TSSs to import into tsrexplorer}
+\item{object}{Object with TSSs to import into TSRexploreR}
 
 \item{...}{Additional arguments for classes}
 
@@ -29,7 +29,7 @@ tss_import(tsrexplorer_obj, object, ...)
 
 \item{data_type}{Either "tss", "tsr", or "consensus"}
 
-\item{tsrexplorer}{tsrexplorer object}
+\item{TSRexploreR}{TSRexploreR object}
 }
 \value{
 tsr explorer object with imported TSSs

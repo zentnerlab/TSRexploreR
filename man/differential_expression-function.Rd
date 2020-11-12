@@ -13,7 +13,7 @@ differential_expression(
 )
 }
 \arguments{
-\item{experiment}{tsrexplorer object with edgeR differential expression model from fit_edger_model}
+\item{experiment}{TSRexploreR object with edgeR differential expression model from fit_edger_model}
 
 \item{data_type}{Whether the input was generated from TSSs, TSRs, or features}
 

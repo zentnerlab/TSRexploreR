@@ -19,9 +19,9 @@ plot_tsr_metric(
 )
 }
 \arguments{
-\item{experiment}{tsrexplorer object with TSR GRanges}
+\item{experiment}{TSRexploreR object with TSR GRanges}
 
-\item{tsr_metrics}{Names of metrics in tsrexplorer TSR GRanges to plot}
+\item{tsr_metrics}{Names of metrics in TSRexploreR TSR GRanges to plot}
 
 \item{plot_type}{Output either a 'violin', 'jitter', 'box', or 'boxjitter' plot (default: violin)}
 
