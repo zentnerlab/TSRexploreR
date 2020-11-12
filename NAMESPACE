@@ -2,13 +2,11 @@
 
 export(ShiftScores)
 export(add_feature_counts)
-export(add_feature_group)
 export(add_sample_sheet)
 export(annotate_features)
 export(associate_with_tsr)
 export(count_features)
 export(count_matrix)
-export(cpm_normalize)
 export(de_table)
 export(detect_features)
 export(differential_expression)

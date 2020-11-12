@@ -82,7 +82,7 @@ Collate:
     'package_imports.R'
     'prepare_counts.R'
     'rnaseq.R'
-    'samples_groups.R'
+    'sample_sheet.R'
     'softclip_analysis.R'
     'thresholding.R'
     'tsr_metrics.R'
