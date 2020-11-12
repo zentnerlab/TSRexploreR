@@ -61,7 +61,6 @@ tss_clustering <- function(
   ## Add TSRs back to TSRexploreR object.
   clustered_TSSs <- map(clustered_TSSs, function(x) {
     x <- as.data.table(x)
-    x[, FID := seq_len(nrow(x))]
     x[,
       FHASH := str_c(seqnames, start, end, strand, sep=":"),
       by=seq_len(nrow(x))

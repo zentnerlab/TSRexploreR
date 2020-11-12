@@ -21,7 +21,6 @@
 #' tsre_exp <- cpm_normalize(tsre_exp, data_type="tss")
 #'
 #' @rdname cpm_normalize-function
-#' @export
 
 cpm_normalize <- function(
   experiment,
@@ -97,7 +96,7 @@ cpm_normalize <- function(
 
 normalize_counts <- function(
   experiment,
-  data_type=c("tss", "tsr", "tss_features", "tsr_features"),
+  data_type=c("tss", "tss_features"),
   method="DESeq2",
   threshold=1,
   n_samples=1
@@ -107,31 +106,27 @@ normalize_counts <- function(
   assert_that(is(experiment, "tsr_explorer"))
   data_type <- match.arg(
     str_to_lower(data_type),
-    c("tss", "tsr", "tss_features", "tsr_features")
+    c("tss", "tss_features")
   )
   method <- match.arg(str_to_lower(method), c("edger", "deseq2", "cpm"))
   assert_that(is.count(threshold))
   assert_that(is.count(n_samples))
 
   ## Get selected samples.
-  select_samples <- extract_matrix(experiment, data_type, "all")
+  select_samples <- extract_counts(experiment, data_type, "all")
+
+  ## Generate count matrix from samples.
+  select_samples <- .count_matrix(select_samples, "tss")
 
   ## Filter counts.
-  sample_matrix <- as.data.table(assay(select_samples, "counts"))
-  sample_matrix[, match := rowSums((.SD >= threshold)) >= n_samples]
-  keep_ids <- which(sample_matrix[, match])
-  
-  select_samples <- select_samples[keep_ids, ]
-  filtered_counts <- assay(select_samples, "counts")
+  filtered_counts <- select_samples[
+    rowSums(select_samples >= threshold) >= n_samples,
+  ]
 
   ## If method is DESeq2, prepare coldata.
   if (method == "deseq2") {
     coldata <- experiment@meta_data$sample_sheet
-    coldata <- switch(
-      data_type,
-      "tss"=coldata[match(coldata$tss_name, colnames(filtered_counts)), ],
-      "tsr"=coldata[match(coldata$tsr_name, colnames(filtered_counts)), ]
-    )
+    coldata <- coldata[match(coldata$sample_name, colnames(filtered_counts)), ]
   }
 
   ## Normalize filtered counts.
@@ -142,38 +137,27 @@ normalize_counts <- function(
     "deseq2"=.deseq2_normalize(filtered_counts, coldata)
   )
 
-  ## Create filtered and normalized RangedSummarizedExperiment.
-  assay(select_samples, "normalized") <- normalized_counts
-
-  ## Add normalized count matrix to TSRexploreR object.
-  experiment <- set_count_slot(
-    experiment, select_samples,
-    "counts", data_type, "matrix"
-  )
-
   ## Add normalized counts to sample tables.
-  if (data_type != "tsr") {
-    normalized_counts <- normalized_counts %>%
-      as.data.table(keep.rownames="FHASH") %>%
-      melt(
-        id.vars="FHASH", variable.name="sample",
-        value.name="normalized_score"
-      )
-  
-    sample_tables <- experiment %>%
-      extract_counts(data_type, "all") %>%
-      rbindlist(idcol="sample") %>%
-      {merge(normalized_counts, ., by=c("sample", "FHASH"), all.y=TRUE)} %>%
-      as_granges %>%
-      sort %>%
-      as.data.table %>%
-      split(by="sample", keep.by=FALSE)
-  
-    experiment <- set_count_slot(
-      experiment, sample_tables, "counts",
-      data_type, "raw"
+  normalized_counts <- normalized_counts %>%
+    as.data.table(keep.rownames="FHASH") %>%
+    melt(
+      id.vars="FHASH", variable.name="sample",
+      value.name="normalized_score"
     )
-  }
+
+  sample_tables <- experiment %>%
+    extract_counts(data_type, "all") %>%
+    rbindlist(idcol="sample") %>%
+    {merge(normalized_counts, ., by=c("sample", "FHASH"), all.y=TRUE)} %>%
+    as_granges %>%
+    sort %>%
+    as.data.table %>%
+    split(by="sample", keep.by=FALSE)
+
+  experiment <- set_count_slot(
+    experiment, sample_tables, "counts",
+    data_type, "raw"
+  )
   
   return(experiment)
 }
