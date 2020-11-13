@@ -7,7 +7,7 @@
 set_count_slot(tsre_obj, new_data, fill_slot, data_type, subslot)
 }
 \arguments{
-\item{tsre_obj}{tsrexplorer object}
+\item{tsre_obj}{TSRexploreR object}
 
 \item{new_data}{Data to be added to the slot}
 

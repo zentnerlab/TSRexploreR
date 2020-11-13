@@ -1,6 +1,5 @@
-
 ## usethis namespace: start
-#' @useDynLib tsrexplorer, .registration=TRUE
+#' @useDynLib TSRexploreR, .registration=TRUE
 ## usethis namespace: end
 
 NULL

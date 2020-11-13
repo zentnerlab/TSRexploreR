@@ -1,10 +1,9 @@
-
 #' Density Plots
 #'
 #' @description
 #' Generate density plots of TSSs or TSRs
 #'
-#' @param experiment tsrexplorer object with annotated TSSs
+#' @param experiment TSRexploreR object with annotated TSSs
 #' @param samples Either 'all' to plot all samples or a vector of sample names
 #' @param data_type Whether to plot TSS or TSR density
 #' @param consider_score Whether the score of each TSS or TSR score be considered
@@ -47,11 +46,11 @@
 #' @return ggplot2 object of density plot
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="tsrexplorer")
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
 #' TSSs <- readRDS(TSSs)
 #' tsre_exp <- tsr_explorer(TSSs)
 #' tsre_exp <- format_counts(tsre_exp, data_type="tss")
-#' annotation <- system.file("extdata", "S288C_Annotation.gtf", package="tsrexplorer")
+#' annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
 #' tsre_exp <- annotate_features(
 #'   tsre_exp, annotation_data=annotation,
 #'   data_type="tss", feature_type="transcript"

@@ -1,9 +1,8 @@
-
 #' Generate Correlation Matrix
 #'
 #' Calculate a correlation matrix to assess between-sample concordance of TSSs or TSRs
 #'
-#' @param experiment tsrexplorer object with TMM-normalized counts
+#' @param experiment TSRexploreR object with TMM-normalized counts
 #' @param data_type Whether to make scatter plots from TSS, TSR, or RNA-seq & 5' data
 #' @param samples Either 'all' or the names of the samples to plot
 #' @param correlation_metric Whether to use Spearman or Pearson correlation
@@ -64,7 +63,7 @@ find_correlation <- function(
 #' @importFrom viridis viridis
 #' @importFrom grid gpar grid.text
 #'
-#' @param experiment tsrexplorer object with TMM normalized counts
+#' @param experiment TSRexploreR object with TMM normalized counts
 #' @param data_type Whether to make scatter plots from TSS, TSR, or RNA-seq & 5' data
 #' @param samples Either 'all' or the names of the samples to plot
 #' @param correlation_metric Whether to use Spearman or Pearson correlation
@@ -105,7 +104,7 @@ find_correlation <- function(
 #' @return ggplot2 object of correlation plot
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="tsrexplorer")
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
 #' TSSs <- readRDS(TSSs)
 #' tsre_exp <- tsr_explorer(TSSs)
 #' tsre_exp <- format_counts(tsre_exp, data_type="tss")
@@ -134,7 +133,7 @@ plot_correlation <- function(
 ) {
 
   ## Check inputs.
-  if (!is(experiment, "tsr_explorer")) stop("experiment must be a tsrexplorer object")
+  if (!is(experiment, "tsr_explorer")) stop("experiment must be a TSRexploreR object")
   data_type <- match.arg(data_type, c("tss", "tsr", "tss_features", "tsr_features"))
   assert_that(is.character(samples))
   correlation_metric <- match.arg(correlation_metric, c("pearson", "spearman"))

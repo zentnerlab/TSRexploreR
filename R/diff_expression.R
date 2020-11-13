@@ -1,9 +1,8 @@
-
 #' edgeR Model for DE
 #'
 #' Find differential TSSs, TSRs, or features
 #'
-#' @param experiment tsrexplorer object with TMM-normalized counts
+#' @param experiment TSRexploreR object with TMM-normalized counts
 #' @param data_type Whether TSSs, TSRs, or feature counts should be analyzed
 #' @param samples Vector of sample names to analyze
 #' @param formula DE formula
@@ -52,7 +51,7 @@ fit_de_model <- function(
     "deseq2"=.deseq2_model(sample_data, sample_sheet, formula)
   )
 
-  ## Store model in tsrexplorer object.
+  ## Store model in TSRexploreR object.
   if (data_type == "tss") {
     experiment@diff_features$TSSs$model <- fitted_model
   } else if (data_type == "tsr") {
@@ -138,7 +137,7 @@ fit_de_model <- function(
 #' @importFrom edgeR glmQLFTest
 #' @importFrom purrr map_dbl
 #'
-#' @param experiment tsrexplorer object with edgeR differential expression model from fit_edger_model
+#' @param experiment TSRexploreR object with edgeR differential expression model from fit_edger_model
 #' @param data_type Whether the input was generated from TSSs, TSRs, or features
 #' @param comparison_name The name given to the comparison when stored back into the tsr explore robject.
 #' @param comparison_type For DEseq2 either 'contrast' or 'name'.
@@ -226,7 +225,7 @@ differential_expression <- function(
     de_results[, padj := p.adjust(pvalue, method="fdr")]
   }
 
-  ## Add differential expression data back to tsrexplorer object.
+  ## Add differential expression data back to TSRexploreR object.
   if (data_type == "tss") {
     experiment@diff_features$TSSs$results[[comparison_name]] <- de_results
   } else if (data_type == "tsr") {
@@ -275,7 +274,7 @@ differential_expression <- function(
 #'
 #' Output a table with differential features
 #'
-#' @param experiment tsrexplorer object
+#' @param experiment TSRexploreR object
 #' @param data_type Either 'tss', 'tsr', 'tss_features', or 'tsr_features'
 #' @param de_comparisons The name of the DE comparison
 #' @param de_type A single value or combination of 'up, 'unchanged', and/or 'down' (qq a list?)

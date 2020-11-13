@@ -13,7 +13,7 @@ tss_shift(
 )
 }
 \arguments{
-\item{experiment}{tsrexplorer object}
+\item{experiment}{TSRexploreR object}
 
 \item{compare_samples}{Vector of names of the two TSR samples to compare}
 

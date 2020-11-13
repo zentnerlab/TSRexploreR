@@ -11,12 +11,12 @@ add_feature_counts(
 )
 }
 \arguments{
-\item{experiment}{tsrexplorer object}
+\item{experiment}{TSRexploreR object}
 
 \item{rnaseq_feature_counts}{Raw counts in count matrix form from RNA-seq data}
 
 \item{five_prime_feature_counts}{Raw counts in count matrix form from 5' sequencing data}
 }
 \description{
-Helper function to add RNA-seq and 5' feature count data to tsrexplorer object.
+Helper function to add RNA-seq and 5' feature count data to TSRexploreR object.
 }

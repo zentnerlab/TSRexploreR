@@ -1,4 +1,4 @@
-#' TSRexplorer Class
+#' TSRexploreR Class
 #'
 #' @slot experiment Named lists containing GRanges of TSSs and/or TSRs
 #' @slot counts Named lists of TMM and CPM normalized TSSs and/or TSRs
@@ -31,10 +31,10 @@ setClass(
   )
 )
 
-#' TSRexplorer constructor function.
+#' TSRexploreR constructor function.
 #'
 #' @description
-#' This function generates a new tsrexplorer object for
+#' This function generates a new TSRexploreR object for
 #' detailed analysis of transcription start sites (TSSs)
 #' and TSS clusters, referred to here as transcription
 #' start regions (TSRs).
@@ -44,10 +44,10 @@ setClass(
 #' @param TSSs Named list of TSS GRanges
 #' @param TSRs Named list of TSR GRanges
 #'
-#' @return A tsrexplorer object containing TSSs and/or TSRs
+#' @return A TSRexploreR object containing TSSs and/or TSRs
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="tsrexplorer")
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
 #' TSSs <- readRDS(TSSs)
 #' exp <- tsr_explorer(TSSs)
 #'

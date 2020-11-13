@@ -1,15 +1,14 @@
-
 #' Retrieve Sequences Near TSSs
 #'
 #' @description
 #' Retrieve sequences surrounding TSSs for further plotting
 #'
-#' @include tsrexplorer.R
+#' @include TSRexplore.R
 #'
 #' @importFrom tools file_ext
 #' @importFrom Rsamtools FaFile
 #'
-#' @param experiment tsrexplorer object with TSS GRanges
+#' @param experiment TSRexploreR object with TSS GRanges
 #' @param samples Either "all" or a vector of names of samples to analyze
 #' @param genome_assembly Genome assembly in fasta format or bioconductor BSgenome
 #' @param threshold Keep only TSSs with at least this number of raw counts
@@ -42,11 +41,11 @@
 #' @return DataFrame of sequences surrounding TSSs.
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="tsrexplorer")
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
 #' TSSs <- readRDS(TSSs)
 #' tsre_exp <- tsr_explorer(TSSs)
 #' tsre_exp <- format_counts(tsre_exp, data_type="tss")
-#' assembly <- system.file("extdata", "S288C_Assembly.fasta", package="tsrexplorer")
+#' assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
 #' seqs <- tss_sequences(tsre_exp, genome_assembly=assembly)
 #'
 #' @seealso
@@ -163,11 +162,11 @@ tss_sequences <- function(
 #' @return ggplot2 object with sequence logo
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="tsrexplorer")
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
 #' TSSs <- readRDS(TSSs)
 #' tsre_exp <- tsr_explorer(TSSs)
 #' tsre_exp <- format_counts(tsre_exp, data_type="tss")
-#' assembly <- system.file("extdata", "S288C_Assembly.fasta", package="tsrexplorer")
+#' assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
 #' seqs <- tss_sequences(tsre_exp, genome_assembly=assembly)
 #' plot_sequence_logo(seqs)
 #'
@@ -267,11 +266,11 @@ plot_sequence_logo <- function(
 #' @return ggplot2 object of sequence colormap
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="tsrexplorer")
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
 #' TSSs <- readRDS(TSSs)
 #' tsre_exp <- tsr_explorer(TSSs)
 #' tsre_exp <- format_counts(tsre_exp, data_type="tss")
-#' assembly <- system.file("extdata", "S288C_Assembly.fasta", package="tsrexplorer")
+#' assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
 #' seqs <- tss_sequences(tsre_exp, genome_assembly=assembly)
 #' plot_sequence_colormap(seqs)
 #'

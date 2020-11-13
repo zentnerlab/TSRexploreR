@@ -14,7 +14,7 @@ tss_export(
 )
 }
 \arguments{
-\item{experiment}{tsrexplorer object}
+\item{experiment}{TSRexploreR object}
 
 \item{samples}{Either 'all', or names of samples to export}
 
@@ -48,7 +48,7 @@ The directory to output the files can be set with 'out_dir'.
 If 'diff_tss' is TRUE, only differential TSSs will be output.
 }
 \examples{
-TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="tsrexplorer")
+TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
 TSSs <- readRDS(TSSs)
 tsre_exp <- tsr_explorer(TSSs)
 tsre_exp <- format_counts(tsre_exp, data_type="tss")

@@ -13,7 +13,7 @@ merge_samples(
 )
 }
 \arguments{
-\item{experiment}{tsrexplorer object}
+\item{experiment}{TSRexploreR object}
 
 \item{data_type}{Whether to merge TSSs or TSRs}
 

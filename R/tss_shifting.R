@@ -1,9 +1,8 @@
-
 #' TSS Shifting
 #'
 #' Calculate TSS shifting statistics
 #'
-#' @param experiment tsrexplorer object
+#' @param experiment TSRexploreR object
 #' @param compare_samples Vector of names of the two TSR samples to compare
 #' @param min_distance TSRs less than this distance apart will be merged
 #' @param min_threshold Minimum number of raw counts required in each TSR for both TSR samples
@@ -91,7 +90,7 @@ tss_shift <- function(
   setnames(shifts, "fhash", "FHASH")
   shifts[, FDR := p.adjust(pval, "fdr")]
 
-  ## Merge data back into the tsrexplorer object.
+  ## Merge data back into the TSRexploreR object.
   shift_results <- as.data.table(consensus_tsrs)
   shift_results <- merge(shift_results, shifts, by="FHASH")
 

@@ -2,7 +2,7 @@
 #'
 #' Merge replicates or selected samples.
 #'
-#' @param experiment tsrexplorer object
+#' @param experiment TSRexploreR object
 #' @param data_type Whether to merge TSSs or TSRs
 #' @param merge_replicates If 'TRUE', replicate groups will be merged
 #' @param threshold Filter out TSSs or TSRs below this raw count threshold before merging
@@ -100,12 +100,12 @@ merge_samples <- function(
 #'
 #' @importFrom plyranges join_overlap_left_directed
 #'
-#' @param experiment tsrexplorer object
+#' @param experiment TSRexploreR object
 #' @param use_sample_sheet Whether to use a sample sheet as a key for association of TSS and TSR samples
 #' @param sample_list If 'use_sample_sheet' is FALSE, provide a list with TSR and TSS sample names
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="tsrexplorer")
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
 #' TSSs <- readRDS(TSSs)
 #' tsre_exp <- tsr_explorer(TSSs)
 #' tsre_exp <- format_counts(tsre_exp, data_type="tss")
@@ -130,11 +130,11 @@ merge_samples <- function(
 #'   each TSR sample.
 #' If 'use_sample_sheet' is set to true, a previously added sample sheet will be used to associate
 #'   TSR samples with TSS samples.
-#' The sample sheet can be added to the tsrexplorer object using the 'add_sample_sheet' function.
+#' The sample sheet can be added to the TSRexploreR object using the 'add_sample_sheet' function.
 #' It should have 3 columns: 'replicate_id', 'tss_name', and 'tsr_name'.
 #'
 #'#' @seealso
-#' \code{\link{add_sample_sheet}} to add a sample sheet to the tsrexplorer object.
+#' \code{\link{add_sample_sheet}} to add a sample sheet to the TSRexploreR object.
 #'
 #' @rdname associate_with_tsr-function
 #' @export
@@ -176,7 +176,7 @@ associate_with_tsr <- function(
     ~ .tss_association(experiment, .x, .y)
   )
 
-  ## Add TSSs back to the tsrexplorer object.
+  ## Add TSSs back to the TSRexploreR object.
   associated_TSSs <- purrr::reduce(associated_TSSs, c)
 
   experiment <- set_count_slot(

@@ -13,7 +13,7 @@ fit_de_model(
 )
 }
 \arguments{
-\item{experiment}{tsrexplorer object with TMM-normalized counts}
+\item{experiment}{TSRexploreR object with TMM-normalized counts}
 
 \item{formula}{DE formula}
 

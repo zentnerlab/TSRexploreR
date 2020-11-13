@@ -6,16 +6,16 @@
 \alias{tsr_import,data.frame-method}
 \title{Import TSRs}
 \usage{
-tsr_import(tsrexplorer_obj, object, ...)
+tsr_import(TSRexploreR_obj, object, ...)
 
-\S4method{tsr_import}{character}(tsrexplorer_obj, object)
+\S4method{tsr_import}{character}(TSRexploreR_obj, object)
 
-\S4method{tsr_import}{data.frame}(tsrexplorer_obj, object)
+\S4method{tsr_import}{data.frame}(TSRexploreR_obj, object)
 }
 \arguments{
-\item{tsrexplorer_obj}{tsrexplorer object to which to add TSRs}
+\item{TSRexploreR_obj}{TSRexploreR object to which to add TSRs}
 
-\item{object}{Object with TSRs to import into tsrexplorer}
+\item{object}{Object with TSRs to import into TSRexploreR}
 
 \item{...}{Additional arguments for classes}
 }

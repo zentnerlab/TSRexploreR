@@ -1,4 +1,3 @@
-
 #' Dimensionality Reduction.
 #'
 #' @description
@@ -6,7 +5,7 @@
 #'
 #' @importFrom uwot umap
 #'
-#' @param experiment tsrexplorer object
+#' @param experiment TSRexploreR object
 #' @param data_type Either 'tss', 'tsr', 'tss_features', or 'tsr_features'
 #' @param method 'umap' or 'pca'
 #' @param n_neighbors Nearest neighbors parameter for umap
@@ -28,7 +27,7 @@
 #'   in the UMAP plot. 
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="tsrexplorer")
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
 #' TSSs <- readRDS(TSSs)
 #' tsre_exp <- tsr_explorer(TSSs)
 #' tsre_exp <- format_counts(tsre_exp, data_type="tss")
