@@ -44,7 +44,7 @@ bioconductor-tsrchitect \
 bioconductor-gviz \
 bioconductor-rtracklayer \
 bioconductor-biocgenerics \
-biocodnuctor-plyranges \
+biocodnuctor-plyranges
 
 conda activate TSRexploreR
 ```
