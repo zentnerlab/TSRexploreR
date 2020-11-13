@@ -1,9 +1,8 @@
-
 #' Sample Sheet
 #'
-#' Add a sample sheet to a tsrexplorer object.
+#' Add a sample sheet to a TSRexploreR object.
 #'
-#' @param experiment tsrexplorer object
+#' @param experiment TSRexploreR object
 #' @param sample_sheet Sample sheet as tab delimited file or data.frame.
 #' Must have columns: 'sample_name' 'file_1' and 'file_2', and can have additional
 #'   columns specifying condition, batch, etc.
@@ -40,7 +39,7 @@ add_sample_sheet <- function(
     colnames(sample_sheet)
   ))
 
-  ## Add sample sheet to tsrexplorer object.
+  ## Add sample sheet to TSRexploreR object.
   experiment@meta_data$sample_sheet <- sample_sheet
 
   return(experiment)

@@ -2,35 +2,8 @@
 
 ## Installing TSRexploreR
 
-**Create conda environment**
-```
-conda create -n tsrexplorer -y -c conda-forge -c bioconda \
-r-tidyverse \
-r-data.table \
-r-devtools \
-r-ggseqlogo \
-r-ggally \
-r-cowplot \
-r-uwot \
-r-rcpp \
-bioconductor-genomicranges \
-bioconductor-genomicfeatures \
-bioconductor-biostrings \
-bioconductor-rsamtools \
-bioconductor-chipseeker \
-bioconductor-edger \
-bioconductor-clusterProfiler \
-bioconductor-complexheatmap \
-bioconductor-cager \
-bioconductor-tsrchitect \
-bioconductor-gviz \
-bioconductor-rtracklayer
-```
+see [INSTALL](./INSTALL.md)
 
-**Install latest version of tsrexplorer**
-```
-devtools::install_github("rpolicastro/tsrexplorer", ref = "clean")
-```
 
 ## Using TSRexplorer
 

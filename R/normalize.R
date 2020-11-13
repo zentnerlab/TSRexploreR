@@ -3,7 +3,7 @@
 #' @description
 #' CPM normalize the TSS, TSR, and/or feature counts.
 #'
-#' @param experiment tsrexplorer object
+#' @param experiment TSRexploreR object
 #' @param data_type 'tss', 'tsr', 'tss_features', or 'tsr_features'
 #'
 #' @details
@@ -11,10 +11,10 @@
 #'   allowing comparison between samples for various downstream analyses and plots.
 #' For more quantitative comparisons, TMM normalization is recommended (this should be fleshed out more qq)
 #'
-#' @return tsrexplorer object with CPM values.
+#' @return TSRexploreR object with CPM values.
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="tsrexplorer")
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
 #' TSSs <- readRDS(TSSs)
 #' tsre_exp <- tsr_explorer(TSSs)
 #' tsre_exp <- format_counts(tsre_exp, data_type="tss")
@@ -47,7 +47,7 @@ cpm_normalize <- function(
       return(x)
     })
 
-  ## Add CPM-normalized counts back to tsrexplorer object.
+  ## Add CPM-normalized counts back to TSRexploreR object.
   experiment <- set_count_slot(
     experiment, cpm_counts,
     "counts", data_type, "raw"
@@ -61,7 +61,7 @@ cpm_normalize <- function(
 #' @description
 #' Using edgeR to TMM normalize TSSs or TSRs.
 #'
-#' @param experiment tsrexplorer object
+#' @param experiment TSRexploreR object
 #' @param data_type Whether TSSs, TSRs, or RNA-seq & 5' feature counts should be normalized
 #' @param normalization_method Either 'edgeR', 'DESeq2', or 'CPM'
 #' @param threshold Consider only features with at least this number of raw counts
@@ -78,10 +78,10 @@ cpm_normalize <- function(
 #' Features must have greater than or equal to 'threshold' number of raw counts in at least
 #'   'n_samples' number of samples to be retained.
 #'
-#' @return tsrexplorer object with tmm normalized count matrices
+#' @return TSRexploreR object with tmm normalized count matrices
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="tsrexplorer")
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
 #' TSSs <- readRDS(TSSs)
 #' tsre_exp <- tsr_explorer(TSSs)
 #' tsre_exp <- format_counts(tsre_exp, data_type="tss")

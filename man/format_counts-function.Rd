@@ -7,27 +7,27 @@
 format_counts(experiment, data_type = c("tss", "tsr"), samples = "all")
 }
 \arguments{
-\item{experiment}{tsrexplorer object}
+\item{experiment}{TSRexploreR object}
 
 \item{data_type}{Whether to format TSS or TSR counts}
 
 \item{samples}{Character vector of sample names}
 }
 \value{
-tsrexplorer object with properly formatted features
+TSRexploreR object with properly formatted features
    in data.table format.
 }
 \description{
 Format TSS or TSR counts for further analysis.
 }
 \details{
-When TSSs or TSRs are first loaded into the tsrexplorer object
+When TSSs or TSRs are first loaded into the TSRexploreR object
   they are stored as GRanges objects.
 This function converts these into data.table format,
   and adds a few important columns for downstream analysis.
 }
 \examples{
-TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="tsrexplorer")
+TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
 TSSs <- readRDS(TSSs)
 tsre_exp <- tsr_explorer(TSSs)
 tsre_exp <- format_counts(tsre_exp, data_type="tss")

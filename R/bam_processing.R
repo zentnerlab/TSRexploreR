@@ -1,4 +1,3 @@
-
 #' Import BAMs
 #'
 #' @importFrom GenomicAlignments readGAlignmentPairs readGAlignments

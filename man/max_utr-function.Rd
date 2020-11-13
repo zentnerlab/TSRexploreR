@@ -15,7 +15,7 @@ max_utr(
 )
 }
 \arguments{
-\item{experiment}{tsrexplorer object with annotated TSSs}
+\item{experiment}{TSRexploreR object with annotated TSSs}
 
 \item{samples}{Either 'all' or names of sample to analyze}
 

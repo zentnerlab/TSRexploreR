@@ -3,8 +3,8 @@
 #' @description
 #' Function to import TSSs from various sources.
 #'
-#' @param tsrexplorer tsrexplorer object
-#' @param object Object with TSSs to import into tsrexplorer
+#' @param TSRexploreR TSRexploreR object
+#' @param object Object with TSSs to import into TSRexploreR
 #' @param ... Additional arguments for classes
 #'
 #' @details
@@ -35,7 +35,7 @@
 
 setGeneric(
   "tss_import",
-  function(tsrexplorer_obj, object, ...) standardGeneric("tss_import"),
+  function(TSRexploreR_obj, object, ...) standardGeneric("tss_import"),
   signature="object"
 )
 
@@ -50,7 +50,7 @@ setGeneric(
 
 setMethod("tss_import", signature=signature(object="character"),
   function(
-    tsrexplorer_obj,
+    TSRexploreR_obj,
     object,
     sep="\t",
     col_names=TRUE
@@ -77,9 +77,9 @@ setMethod("tss_import", signature=signature(object="character"),
       }) %>%
       set_names(pull(sample_sheet, sample_name))
 
-    ## Add TSSs to tsrexplorer object.
-    tss_experiment(tsrexplorer_obj) <- imported_data
-    return(tsrexplorer_obj)
+    ## Add TSSs to TSRexploreR object.
+    tss_experiment(TSRexploreR_obj) <- imported_data
+    return(TSRexploreR_obj)
   }
 )
 
@@ -91,11 +91,11 @@ setMethod("tss_import", signature=signature(object="character"),
 
 setMethod("tss_import", signature=signature(object="data.frame"),
   function(
-    tsrexplorer_obj,
+    TSRexploreR_obj,
     object
   ) {
     ## Check inputs.
-    assert_that(is(tsrexplorer_obj, "tsr_explorer"))
+    assert_that(is(TSRexploreR_obj, "tsr_explorer"))
 
     ## Import data.
     imported_data <- sample_sheet %>%
@@ -106,9 +106,9 @@ setMethod("tss_import", signature=signature(object="data.frame"),
       }) %>%
       set_names(pull(sample_sheet, sample_name))
 
-    ## Add TSSs to tsrexplorer object.
-    tss_experiment(tsrexplorer_obj) <- imported_data
-    return(tsrexplorer_obj)
+    ## Add TSSs to TSRexploreR object.
+    tss_experiment(TSRexploreR_obj) <- imported_data
+    return(TSRexploreR_obj)
   }
 )
 
@@ -120,11 +120,11 @@ setMethod("tss_import", signature=signature(object="data.frame"),
 
 setMethod("tss_import", signature(object="tssObject"),
   function(
-    tsrexplorer_obj,
+    TSRexploreR_obj,
     object
   ) {
     ## Check inputs.
-    assert_that(is(tsrexplorer_obj, "tsr_explorer"))
+    assert_that(is(TSRexploreR_obj, "tsr_explorer"))
 
     ## Pull the TSSs out of the TSRchitect tssObject.
     message("...Importing TSSs from TSRchitect object")
@@ -134,20 +134,22 @@ setMethod("tss_import", signature(object="tssObject"),
       as_granges %>%
       set_names(object@sampleNames)
 
-    ## Add TSSs to tsrexplorer object.
-    tss_experiment(tsrexplorer_obj) <- imported_data
-    return(tsrexplorer_obj)
+    ## Add TSSs to TSRexploreR object.
+    tss_experiment(TSRexploreR_obj) <- imported_data
+    return(TSRexploreR_obj)
   }
 )
 
 #' CAGEr object
+#'
+#' @importFrom CAGEr CAGEexp
 #'
 #' @param data_type Either "tss", "tsr", or "consensus"
 #'
 #' @rdname tss_import-generic
 
 setMethod("tss_import", signature(object="CAGEexp"),
-  function(tsrexplorer_obj, object, data_type) {
+  function(TSRexploreR_obj, object, data_type) {
     message("Importing TSSs from CAGEexp object")
 
   if (data_type == "tss") {
@@ -155,7 +157,7 @@ setMethod("tss_import", signature(object="CAGEexp"),
     ## Grab TSS counts from CAGEexp object.
     counts <- as.data.table(CTSStagCount(object))
 
-    ## Format counts for input to tsrexplorer.
+    ## Format counts for input to TSRexploreR.
     sample_names <- discard(colnames(counts), ~ . %in% c("chr", "pos", "strand"))
     counts <- melt(
       counts, variable.name="sample", value.name="score",
@@ -174,8 +176,8 @@ setMethod("tss_import", signature(object="CAGEexp"),
         return(x)
       })
 
-    ## Add counts to tsrexplorer object.
-    tss_experiment(tsrexplorer_obj) <- counts_gr
+    ## Add counts to TSRexploreR object.
+    tss_experiment(TSRexploreR_obj) <- counts_gr
 
   } else if (data_type == "tsr") {
     
@@ -183,7 +185,7 @@ setMethod("tss_import", signature(object="CAGEexp"),
     counts <- tagClusters(object) %>%
       map(as.data.table)
 
-    ## Format counts for input to tsrexplorer.
+    ## Format counts for input to TSRexploreR.
     counts <- counts %>%
       map(function(x) {
         setnames(x, old=c("chr", "tpm"), new=c("seqnames", "score"))
@@ -191,10 +193,10 @@ setMethod("tss_import", signature(object="CAGEexp"),
         return(x)
       })
 
-    ## Add counts to tsrexplorer object.
-    tsr_experiment(tsrexplorer_obj) <- counts
+    ## Add counts to TSRexploreR object.
+    tsr_experiment(TSRexploreR_obj) <- counts
   
-    return(tsrexplorer_obj)
+    return(TSRexploreR_obj)
   }
   }
 )
@@ -204,8 +206,8 @@ setMethod("tss_import", signature(object="CAGEexp"),
 #' @description
 #' Function to import TSRs from various sources.
 #'
-#' @param object Object with TSRs to import into tsrexplorer
-#' @param tsrexplorer_obj tsrexplorer object to which to add TSRs
+#' @param object Object with TSRs to import into TSRexploreR
+#' @param TSRexploreR_obj TSRexploreR object to which to add TSRs
 #' @param ... Additional arguments for classes
 #'
 #' @details
@@ -236,7 +238,7 @@ setMethod("tss_import", signature(object="CAGEexp"),
 
 setGeneric(
   "tsr_import",
-  function(tsrexplorer_obj, object, ...) standardGeneric("tsr_import"),
+  function(TSRexploreR_obj, object, ...) standardGeneric("tsr_import"),
   signature="object"
 )
 
@@ -245,7 +247,7 @@ setGeneric(
 #' @rdname tsr_import-generic
 
 setMethod("tsr_import", signature(object="character"),
-  function(tsrexplorer_obj, object) {
+  function(TSRexploreR_obj, object) {
     ## Prepare sample sheet.
     if (!file.exists(object)) {
       message(paste(object, "does not exist"))
@@ -262,9 +264,9 @@ setMethod("tsr_import", signature(object="character"),
       }) %>%
       set_names(pull(sample_sheet, "sample_name"))
 
-    ## Add TSRs to tsrexplorer object.
-    tsrexplorer_obj@experiment$TSRs <- imported_data
-    return(tsrexplorer_obj)
+    ## Add TSRs to TSRexploreR object.
+    TSRexploreR_obj@experiment$TSRs <- imported_data
+    return(TSRexploreR_obj)
   }
 )
 
@@ -273,7 +275,7 @@ setMethod("tsr_import", signature(object="character"),
 #' @rdname tsr_import-generic
 
 setMethod("tsr_import", signature(object="data.frame"),
-  function(tsrexplorer_obj, object) {
+  function(TSRexploreR_obj, object) {
     ## Import data.
     imported_data <- object %>%
       pmap(function(sample_name, file_1, file_2) {
@@ -282,8 +284,8 @@ setMethod("tsr_import", signature(object="data.frame"),
       }) %>%
       set_names(pull(object, "sample_name"))
 
-    ## Add TSRs to tsrexplorer object.
-    tsrexplorer_obj@experiment$TSRs <- imported_data
-    return(tsrexplorer_obj)
+    ## Add TSRs to TSRexploreR object.
+    TSRexploreR_obj@experiment$TSRs <- imported_data
+    return(TSRexploreR_obj)
   }
 )

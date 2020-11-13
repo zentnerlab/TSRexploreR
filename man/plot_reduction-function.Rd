@@ -15,7 +15,7 @@ plot_reduction(
 )
 }
 \arguments{
-\item{experiment}{tsrexplorer object}
+\item{experiment}{TSRexploreR object}
 
 \item{data_type}{Either 'tss', 'tsr', 'tss_features', or 'tsr_features'}
 
@@ -48,7 +48,7 @@ If a UMAP plot is chosen, there are two parameters available
   in the UMAP plot.
 }
 \examples{
-TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="tsrexplorer")
+TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
 TSSs <- readRDS(TSSs)
 tsre_exp <- tsr_explorer(TSSs)
 tsre_exp <- format_counts(tsre_exp, data_type="tss")

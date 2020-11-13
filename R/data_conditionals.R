@@ -55,14 +55,14 @@
 #'   a categorical value such as TSR shape class.
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="tsrexplorer")
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
 #' TSSs <- readRDS(TSSs)
 #' tsre_exp <- tsr_explorer(TSSs)
 #' tsre_exp <- format_counts(tsre_exp, data_type="tss")
 #' tsre_exp <- tss_clustering(tsre_exp)
 #' tsre_exp <- tsr_metrics(tsre_exp)
 #' conditions <- list(order_by="score", grouping="shape_class")
-#' assembly <- system.file("extdata", "S288C_Assembly.fasta", package="tsrexplorer")
+#' assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
 #' seqs <- tss_sequences(
 #'   tsre_exp, genome_assembly=assembly, threshold=10,
 #'   dominant=TRUE, data_conditions=conditions

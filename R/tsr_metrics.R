@@ -1,9 +1,8 @@
-
 #' TSR Metrics
 #'
 #' Calculate TSR Metrics.
 #'
-#' @param experiment tsrexplorer object
+#' @param experiment TSRexploreR object
 #'
 #' @rdname tsr_metrics-function
 #' @export
@@ -13,7 +12,7 @@ tsr_metrics <- function(experiment) {
   ## Input Checks.
   assert_that(is(experiment, "tsr_explorer"))
 
-  ## Get samples from tsrexplorer object.
+  ## Get samples from TSRexploreR object.
   select_samples <- experiment %>%
     extract_counts("tss", "all") %>%
     rbindlist(idcol="sample")
@@ -64,7 +63,7 @@ tsr_metrics <- function(experiment) {
 
   select_TSRs <- merge(select_TSRs, tsr_metrics, all.x=TRUE)
 
-  ## Add metrics back to tsrexplorer object.
+  ## Add metrics back to TSRexploreR object.
   select_TSRs <- split(select_TSRs, select_TSRs$tsr_sample)
   walk(select_TSRs, function(x) {
     x[, tsr_sample := NULL]

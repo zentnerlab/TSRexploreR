@@ -12,7 +12,7 @@ find_correlation(
 )
 }
 \arguments{
-\item{experiment}{tsrexplorer object with TMM-normalized counts}
+\item{experiment}{TSRexploreR object with TMM-normalized counts}
 
 \item{data_type}{Whether to make scatter plots from TSS, TSR, or RNA-seq & 5' data}
 

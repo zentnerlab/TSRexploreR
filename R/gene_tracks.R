@@ -1,4 +1,3 @@
-
 #' Gene Tracks by Gene
 #'
 #' @description
@@ -8,7 +7,7 @@
 #' @importFrom stringr str_count
 #' @importFrom GenomicFeatures genes transcripts promoters
 #'
-#' @param experiment tsrexplorer object
+#' @param experiment TSRexploreR object
 #' @param genome_annotation Genome annotation GTF/GFF file, or TxDb object
 #' @param feature_name Name of gene or transcript to plot
 #' @param feature_type Either 'gene' or 'transcript'

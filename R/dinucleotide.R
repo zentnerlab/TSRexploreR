@@ -1,12 +1,11 @@
-
 #' Dinucleotide Analysis
 #'
 #' @description
 #' Analysis of -1 and +1 dinucleotide frequencies.
 #'
-#' @include tsrexplorer.R
+#' @include TSRexplore.R
 #'
-#' @param experiment tsrexplorer object with TSS GRanges
+#' @param experiment TSRexploreR object with TSS GRanges
 #' @param samples Either 'all' to plot all samples or a vector of sample names
 #' @param genome_assembly fasta file or BSgenome of genome assembly
 #' @param threshold Raw TSS count threshold
@@ -36,11 +35,11 @@
 #' @return DataFrame with dinucleotide frequencies
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="tsrexplorer")
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
 #' TSSs <- readRDS(TSSs)
 #' tsre_exp <- tsr_explorer(TSSs)
 #' tsre_exp <- format_counts(tsre_exp, data_type="tss")
-#' assembly <- system.file("extdata", "S288C_Assembly.fasta", package="tsrexplorer")
+#' assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
 #' freqs <- dinucleotide_frequencies(tsre_exp, genome_assembly=assembly)
 #'
 #' @seealso
@@ -169,11 +168,11 @@ dinucleotide_frequencies <- function(
 #' @return ggplot2 object of dinucleotide frequencies plot
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="tsrexplorer")
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
 #' TSSs <- readRDS(TSSs)
 #' tsre_exp <- tsr_explorer(TSSs)
 #' tsre_exp <- format_counts(tsre_exp, data_type="tss")
-#' assembly <- system.file("extdata", "S288C_Assembly.fasta", package="tsrexplorer")
+#' assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
 #' freqs <- dinucleotide_frequencies(tsre_exp, genome_assembly=assembly)
 #' plot_dinucleotide_frequencies(freqs)
 #'

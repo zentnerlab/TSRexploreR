@@ -7,12 +7,12 @@
 add_sample_sheet(experiment, sample_sheet)
 }
 \arguments{
-\item{experiment}{tsrexplorer object}
+\item{experiment}{TSRexploreR object}
 
 \item{sample_sheet}{Sample sheet as tab delimited file or data.frame.
 Must have columns: 'sample_name' 'file_1' and 'file_2', and can have additional
   columns specifying condition, batch, etc.}
 }
 \description{
-Add a sample sheet to a tsrexplorer object.
+Add a sample sheet to a TSRexploreR object.
 }

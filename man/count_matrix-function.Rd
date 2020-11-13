@@ -11,14 +11,14 @@ count_matrix(
 )
 }
 \arguments{
-\item{experiment}{tsrexplorer object}
+\item{experiment}{TSRexploreR object}
 
 \item{data_type}{Either 'tss', 'tsr', 'tss_features', or 'tsr_features'}
 
 \item{samples}{Character vector of samples to turn into a count matrix}
 }
 \value{
-tsrexplorer object with added count matrices
+TSRexploreR object with added count matrices
 }
 \description{
 Generate count matrices for correlation analysis.
@@ -32,7 +32,7 @@ However, for TSRs, overlapping TSRs between samples are first merged
   to generate consensus TSRs for all considered samples.
 }
 \examples{
-TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="tsrexplorer")
+TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
 TSSs <- readRDS(TSSs)
 tsre_exp <- tsr_explorer(TSSs)
 tsre_exp <- format_counts(tsre_exp, data_type="tss")

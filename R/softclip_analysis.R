@@ -1,4 +1,3 @@
-
 #' Composition of Softclipped Bases
 #'
 #' @param experiment tsr explorer object

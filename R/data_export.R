@@ -1,10 +1,9 @@
-
 #' Export TSSs
 #'
 #' @description
 #' Export TSSs to tables or bedgraphs
 #'
-#' @param experiment tsrexplorer object
+#' @param experiment TSRexploreR object
 #' @param samples Either 'all', or names of samples to export
 #' @param file_type either 'bedgraph' or 'table'
 #' @param out_dir Output directory for files
@@ -27,7 +26,7 @@
 #' If 'diff_tss' is TRUE, only differential TSSs will be output.
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="tsrexplorer")
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
 #' TSSs <- readRDS(TSSs)
 #' tsre_exp <- tsr_explorer(TSSs)
 #' tsre_exp <- format_counts(tsre_exp, data_type="tss")
@@ -106,7 +105,7 @@ tss_export <- function(
 #' @description
 #' Export TSRs to table or BED
 #'
-#' @param experiment tsrexplorer object
+#' @param experiment TSRexploreR object
 #' @param samples Samples to export ('all' as well? qq)
 #' @param file_type either 'bed' or 'table'
 #' @param out_dir Output directory for files
@@ -128,7 +127,7 @@ tss_export <- function(
 #' If 'diff_tsr' is TRUE, only differential TSRs will be output.
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="tsrexplorer")
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
 #' TSSs <- readRDS(TSSs)
 #' tsre_exp <- tsr_explorer(TSSs)
 #' tsre_exp <- format_counts(tsre_exp, data_type="tss")

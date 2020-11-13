@@ -7,7 +7,7 @@
 associate_with_tsr(experiment, sample_list = NA, use_sample_sheet = FALSE)
 }
 \arguments{
-\item{experiment}{tsrexplorer object}
+\item{experiment}{TSRexploreR object}
 
 \item{sample_list}{If 'use_sample_sheet' is FALSE, provide a list with TSR and TSS sample names}
 
@@ -31,14 +31,14 @@ TSS samples can be associated with TSR samples using a list or sample sheet.
   each TSR sample.
 If 'use_sample_sheet' is set to true, a previously added sample sheet will be used to associate
   TSR samples with TSS samples.
-The sample sheet can be added to the tsrexplorer object using the 'add_sample_sheet' function.
+The sample sheet can be added to the TSRexploreR object using the 'add_sample_sheet' function.
 It should have 3 columns: 'replicate_id', 'tss_name', and 'tsr_name'.
 
 #' @seealso
-\code{\link{add_sample_sheet}} to add a sample sheet to the tsrexplorer object.
+\code{\link{add_sample_sheet}} to add a sample sheet to the TSRexploreR object.
 }
 \examples{
-TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="tsrexplorer")
+TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
 TSSs <- readRDS(TSSs)
 tsre_exp <- tsr_explorer(TSSs)
 tsre_exp <- format_counts(tsre_exp, data_type="tss")

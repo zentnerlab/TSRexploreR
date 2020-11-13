@@ -16,7 +16,7 @@ tsr_heatmap_matrix(
 )
 }
 \arguments{
-\item{experiment}{tsrexplorer object with annotated TSRs}
+\item{experiment}{TSRexploreR object with annotated TSRs}
 
 \item{samples}{Either 'all' or a vector of names of samples to analyze}
 
