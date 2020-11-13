@@ -48,13 +48,13 @@ Imports:
     assertthat,
     DESeq2,
     GenomicAlignments,
-    apeglm
+    apeglm,
+    CAGEr
 Depends:
     R (>= 3.5.0)
 Suggests:
     clusterProfiler,
     TSRchitect,
-    CAGEr,
     org.Sc.sgd.db
 RoxygenNote: 7.1.1
 Collate: 
