@@ -27,18 +27,24 @@ r-ggally \
 r-cowplot \
 r-uwot \
 r-rcpp \
+r-assertthat \
+r-apeglm \
 bioconductor-genomicranges \
 bioconductor-genomicfeatures \
+bioconductor-genomicalignments \
 bioconductor-biostrings \
 bioconductor-rsamtools \
 bioconductor-chipseeker \
 bioconductor-edger \
+bioconductor-deseq2 \
 bioconductor-clusterProfiler \
 bioconductor-complexheatmap \
 bioconductor-cager \
 bioconductor-tsrchitect \
 bioconductor-gviz \
-bioconductor-rtracklayer
+bioconductor-rtracklayer \
+bioconductor-biocgenerics \
+biocodnuctor-plyranges \
 
 conda activate TSRexploreR
 ```
