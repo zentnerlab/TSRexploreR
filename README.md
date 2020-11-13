@@ -2,7 +2,6 @@
 
 ## Installing TSRexploreR
 
-<<<<<<< HEAD
 see [INSTALL](./INSTALL.md)
 
 ## Using TSRexploreR
