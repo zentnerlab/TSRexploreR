@@ -28,7 +28,7 @@ r-cowplot \
 r-uwot \
 r-rcpp \
 r-assertthat \
-r-apeglm \
+bioconductor-apeglm \
 bioconductor-genomicranges \
 bioconductor-genomicfeatures \
 bioconductor-genomicalignments \
@@ -44,7 +44,7 @@ bioconductor-tsrchitect \
 bioconductor-gviz \
 bioconductor-rtracklayer \
 bioconductor-biocgenerics \
-biocodnuctor-plyranges
+bioconductor-plyranges
 
 conda activate TSRexploreR
 ```

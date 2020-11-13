@@ -189,7 +189,10 @@ set_count_slot <- function(
 
   ## Check inputs
   if (!is(tsre_obj, "tsr_explorer")) stop("tsre_obj must be a tsr explorer object")
-  data_type <- match.arg(str_to_lower(data_type), c("tss", "tsr", "tss_features", "tsr_features"))
+  data_type <- match.arg(
+    str_to_lower(data_type),
+    c("tss", "tsr", "tss_features", "tsr_features", "tss_diff", "tsr_diff")
+  )
   subslot <- match.arg(str_to_lower(subslot), c("raw", "matrix", "results"))
 
   ## Convert data type to their slot name.
