@@ -68,7 +68,6 @@ find_correlation <- function(
 #' @param samples Either 'all' or the names of the samples to plot
 #' @param correlation_metric Whether to use Spearman or Pearson correlation
 #' @param use_normalized Whether to use the normalized (TRUE) or raw (FALSE) counts
-#' @param log2_transform Should the TMM values be log2+1 transformed prior to plotting?
 #' @param font_size The font size for the heatmap tiles
 #' @param cluster_samples Logical whether hierarchical clustering is performed
 #'   on samples in rows and columns.
@@ -124,7 +123,6 @@ plot_correlation <- function(
   samples="all",
   correlation_metric="pearson",
   use_normalized=TRUE,
-  log2_transform=TRUE,
   font_size=12,
   cluster_samples=FALSE,
   heatmap_colors=NULL,
@@ -137,7 +135,6 @@ plot_correlation <- function(
   data_type <- match.arg(data_type, c("tss", "tsr", "tss_features", "tsr_features"))
   assert_that(is.character(samples))
   correlation_metric <- match.arg(correlation_metric, c("pearson", "spearman"))
-  assert_that(is.flag(log2_transform))
   assert_that(is.numeric(font_size) && font_size > 0)
   assert_that(is.flag(cluster_samples))
   assert_that(is.null(heatmap_colors) | is.character(heatmap_colors))
@@ -160,11 +157,11 @@ plot_correlation <- function(
     "tsr_features"="#29AF7FFF"
   )
 
-  ## Log2 + 1 transform data if indicated.
-  pre_transformed <- copy(normalized_counts)
-  if (log2_transform) {
-    normalized_counts <- log2(normalized_counts + 1)
-  }
+#  ## Log2 + 1 transform data if indicated.
+#  pre_transformed <- copy(normalized_counts)
+#  if (log2_transform) {
+#    normalized_counts <- log2(normalized_counts + 1)
+#  }
 
   ## Correlation Matrix.
   cor_mat <- cor(normalized_counts, method=correlation_metric)

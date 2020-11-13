@@ -170,8 +170,6 @@ differential_expression <- function(
     c("name", "contrast", "coef")
   )
   assert_that(is.vector(comparison))
-  assert_that(is.numeric(log2fc_cutoff) && log2fc_cutoff >= 0)
-  assert_that(is.numeric(fdr_cutoff) && fdr_cutoff > 0)
   assert_that(is.flag(shrink_lfc))
 
   ## Grab appropriate model.
@@ -224,6 +222,15 @@ differential_expression <- function(
     )
     de_results[, padj := p.adjust(pvalue, method="fdr")]
   }
+
+  ## Split out ranges.
+  de_results[,
+    c("seqnames", "start", "end", "strand") :=
+    tstrsplit(feature, ":")
+  ][,
+    c("start", "end") := lapply(.SD, as.numeric),
+    .SDcols=c("start", "end")
+  ]
 
   ## Add differential expression data back to TSRexploreR object.
   if (data_type == "tss") {

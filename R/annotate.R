@@ -54,7 +54,7 @@ annotate_features <- function(
     is(annotation_data, "character") | is(annotation_data, "TxDb"),
     msg="annotation_data must be an annotation file or TxDb object"
   )
-  data_type <- match.arg(data_type, c("tss", "tsr")) 
+  data_type <- match.arg(data_type, c("tss", "tsr", "tss_diff", "tsr_diff")) 
   feature_type <- match.arg(feature_type, c("gene", "transcript"))
   assert_that(is.count(upstream))
   assert_that(is.count(downstream))

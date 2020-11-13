@@ -102,6 +102,7 @@ plot_volcano <- function(
 
   ## Prepare DE data for plotting.
   de_samples <- rbindlist(de_samples, idcol="sample")
+  .de_status(de_samples, log2fc_cutoff, fdr_cutoff)
   de_samples[, c("de_status", "padj") := list(
     factor(de_status, levels=c("up", "unchanged", "down")),
     -log10(padj)

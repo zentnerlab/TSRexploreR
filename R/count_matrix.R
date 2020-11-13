@@ -32,7 +32,7 @@
     # Prepare reduced ranges for overlap with original ranges.
     setkey(merged_ranges, seqnames, strand, start, end)
     merged_ranges[,
-      FHASH := str_c(seqnames, start, end, strand),
+      FHASH := str_c(seqnames, start, end, strand, sep=":"),
       by=seq_len(nrow(merged_ranges))
     ][,
       width := NULL
@@ -42,11 +42,6 @@
     count_data <- map(count_data, function(x) {
       setkey(x, seqnames, strand, start, end)
       x <- foverlaps(x, merged_ranges)
-      x[,
-        c("FHASH", "i.start", "i.end") := list(
-          i.FHASH, NULL, NULL
-        )
-      ]
       x <- x[, .(score=sum(score)), by=FHASH]
       return(x)
     })
@@ -57,10 +52,7 @@
   count_data <- rbindlist(count_data, idcol="sample")[,
     .(FHASH, sample, score)
   ]
-  count_data <- dcast(count_data, FHASH ~ sample, value.var="score")
-
-  fill_cols <- colnames(count_data)[!colnames(count_data) == "FHASH"]
-  setnafill(count_data, fill=0, cols=fill_cols)
+  count_data <- dcast(count_data, FHASH ~ sample, value.var="score", fill=0)
 
   count_data <- count_data %>%
     column_to_rownames("FHASH") %>%
