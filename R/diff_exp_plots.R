@@ -133,6 +133,8 @@ plot_volcano <- function(
 #' @param experiment TSRexploreR object
 #' @param data_type Either 'tss', 'tsr', 'tss_features', or 'tsr_features'
 #' @param de_comparisons The DE comparisons to plot
+#' @param log2fc_cutoff Log2FC cutoff value
+#' @param fdr_cutoff FDR cutoff value
 #'
 #' @rdname export_for_enrichment-function
 #'
@@ -140,27 +142,30 @@ plot_volcano <- function(
 
 export_for_enrichment <- function(
   experiment,
-  data_type=c("tss", "tsr", "tss_features", "tsr_features"),
-  de_comparisons="all" 
+  data_type=c("tss", "tsr"),
+  de_comparisons="all",
+  log2fc_cutoff=1,
+  fdr_cutoff=0.05
 ) {
   ## Input checks.
   assert_that(is(experiment, "tsr_explorer"))
-  data_type <- match.arg(
-    str_to_lower(data_type),
-    c("tss", "tsr", "tss_features", "tsr_features")
-  )
+  data_type <- match.arg(str_to_lower(data_type), c("tss_diff", "tsr_diff"))
   assert_that(is.character(de_comparisons))
+  assert_that(is.numeric(log2fc_cutoff) && log2fc_cutoff >= 0)
+  assert_that(is.numeric(fdr_cutoff) && (fdr_cutoff > 0 & fdr_cutoff <= 1))
 
   ## Get DE comparisons.
-  de_data <- extract_de(experiment, data_type, de_comparisons)
-  de_data <- rbindlist(de_data)
+  browse()
+  de_samples <- extract_de(experiment, data_type, de_comparisons)
+  de_samples <- rbindlist(de_samples, idcol="sample")
 
-  de_data <- de_data[
-    DE %in% c("up", "down"),
-    .(sample, feature, log2FC, FDR, DE)
-  ]
+  ## Mark de status.
+  .de_status(de_samples, log2fc_cutoff, fdr_cutoff)
+  de_samples[, de_status := factor(
+    de_status, levels=c("up", "unchanged", "down")
+  )]
   
-  return(de_data)
+  return(de_samples)
 }
 
 #' Plot DE Numbers
