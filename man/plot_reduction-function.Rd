@@ -6,11 +6,12 @@
 \usage{
 plot_reduction(
   experiment,
+  samples = "all",
   data_type = c("tss", "tsr", "tss_features", "tsr_features"),
-  method = "umap",
-  n_neighbors = 2,
-  min_dist = 0.1,
   use_normalized = TRUE,
+  remove_var = NULL,
+  center = TRUE,
+  scale = TRUE,
   ...
 )
 }
@@ -19,19 +20,19 @@ plot_reduction(
 
 \item{data_type}{Either 'tss', 'tsr', 'tss_features', or 'tsr_features'}
 
-\item{method}{'umap' or 'pca'}
+\item{remove_var}{Remove features in this bottom fraction}
 
-\item{n_neighbors}{Nearest neighbors parameter for umap}
+\item{center}{center the data}
 
-\item{min_dist}{Minimum distance between points parameter for umap}
+\item{scale}{scale the data}
 
-\item{...}{Additional arguments passed to geom_point}
+\item{...}{Additional arguments passed to PCAtools::biplot}
 }
 \value{
 ggplot2 plot of dimension reduction
 }
 \description{
-Dimensionality reduction plot using PCA or UMAP.
+Dimensionality reduction plot using PCA
 }
 \details{
 This function will generate a dimensionality reduction plot.

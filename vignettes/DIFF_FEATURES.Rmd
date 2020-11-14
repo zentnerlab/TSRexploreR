@@ -78,8 +78,7 @@ is to generate a dimensionality reduction plot.
 The preferred plot type for this is UMAP for its general robustness, stability, and often better ability to separate points.
 
 ```{r message=FALSE}
-plot_reduction(exp, data_type="tsr", size=0.5) +
-  ggplot2::theme(text=element_text(size=3), legend.key.size=unit(0.2, "cm"))
+plot_reduction(exp, data_type="tsr", remove_var=0.25, colby="condition")
 ```
 
 ## Differential TSRs
@@ -137,66 +136,59 @@ plot_volcano(exp, data_type="tsr") +
   theme_bw()
 ```
 
-#### Number of DE TSRs
-#
-#A convenient plot to visualize the number of DE TSRs between the different comparisons.
-#
-#```
-#p <- plot_num_de(exp, data_type="tsr", de_comparisons="Untreated_vs_Diamide") +
-#  ggplot2::theme(text=element_text(size=3), legend.key.size=unit(0.3, "cm"))
-#
-#ggsave("tsr_num_de.png", plot=p, device="png", type="cairo", height=1.5, width=1.25)
-#```
-#![tsr_num_de](../inst/images/tsr_num_de.png)
-#
-### Gene Ontology.
-#
-#Gene ontology enrichment is a good way to uncover the higher order processes that are being changed.
-#The preferred tool for enrichment analysis in R is the clusterProfiler library.
-#tsrexplorer provides a convenient function to export DE features to a format ready for analysis with clusterProfiler.
-#
-#```
-#enrichment_data <- export_for_enrichment(exp, data_type="tsr")
-#
-#library("clusterProfiler")
-#library("org.Sc.sgd.db")
-#
-#go_enrichment <- compareCluster(
-#  geneId ~ sample + DE,
-#  data=enrichment_data,
-#  fun="enrichGO",
-#  OrgDb="org.Sc.sgd.db",
-#  pAdjustMethod="fdr",
-#  ont="BP",
-#  keyType="ENSEMBL"
-#)
-#
-#p <- dotplot(go_enrichment, font.size=4) +
-#  scale_color_viridis_c() +
-#  theme(
-#    text=element_text(size=4),
-#    axis.text.x=element_text(angle=45, hjust=1),
-#    legend.key.size=unit(0.3, "cm")
-#  )
-#
-#ggsave("tsr_enrichment.png", plot=p, device="png", type="cairo", height=3, width=3)
-#
-#```
-#![tsr_enrichment](../inst/images/tsr_enrichment.png)
-#
-### Gene Tracks.
-#
-#You can make gene tracks for genes with differential TSRs.
-#
-#```
-#annotation <- system.file("extdata", "S288C_Annotation.gtf", package="tsrexplorer")
-#
-#png("diff_tsr_tracks.png", units="in", res=300, height=2, width=4, type="cairo")
-#gene_tracks(
-#        experiment, annotation, feature_name="YKR076W", threshold=3, axis_scale=0.25,
-#        samples=c("TSS:S288C_WT_1", "TSR:S288C_WT_1", "TSS:S288C_D_1", "TSR:S288C_D_1"),
-#        ymax=80, tss_colors=viridis::viridis(2), tsr_colors=viridis::viridis(2)
-#)
-#dev.off()
-#```
-#![diff_tsr_tracks](../inst/images/diff_tsr_tracks.png)
+### Number of DE TSRs
+
+A convenient plot to visualize the number of DE TSRs between the different comparisons.
+
+```{r message=FALSE}
+p <- plot_num_de(exp, data_type="tsr", de_comparisons="Diamide_vs_Untreated") +
+  scale_fill_viridis_d() +
+  theme_bw()
+```
+
+## Gene Ontology.
+
+Gene ontology enrichment is a good way to uncover the higher order processes that are being changed.
+The preferred tool for enrichment analysis in R is the clusterProfiler library.
+tsrexplorer provides a convenient function to export DE features to a format ready for analysis with clusterProfiler.
+
+```{r message=FALSE}
+enrichment_data <- export_for_enrichment(exp, data_type="tsr")
+
+library("clusterProfiler")
+library("org.Sc.sgd.db")
+
+go_enrichment <- compareCluster(
+  geneId ~ sample + de_status,
+  data=enrichment_data,
+  fun="enrichGO",
+  OrgDb="org.Sc.sgd.db",
+  pAdjustMethod="fdr",
+  ont="BP",
+  keyType="ENSEMBL"
+)
+
+dotplot(go_enrichment, font.size=4) +
+  scale_color_viridis_c() +
+  theme(axis.text.x=element_text(angle=45, hjust=1))
+
+```
+
+## Gene Tracks.
+
+You can make gene tracks for genes with differential TSRs.
+
+```{r message=FALSE}
+annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
+
+gene_tracks(
+  exp, annotation,
+  feature_name="YKR076W",
+  samples=c(
+    TSS="S288C_WT_1", TSR="S288C_WT_1",
+    TSS="S288C_D_1", TSR="S288C_D_1"
+  ),
+  tss_colors=viridis::viridis(2),
+  tsr_colors=viridis::viridis(2)
+)
+```

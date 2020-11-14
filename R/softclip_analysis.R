@@ -119,7 +119,7 @@ softclip_histogram <- function(
   ]
 
   ## Plot histogram.
-  p <- ggplot(select_samples, aes(.data$n_soft)) +
+  p <- ggplot(select_samples, aes(x=.data$n_soft)) +
     geom_histogram(aes(fill=.data$sample), binwidth=1) +
     facet_wrap(~ sample, ncol=ncol)
 

@@ -6,8 +6,10 @@
 \usage{
 export_for_enrichment(
   experiment,
-  data_type = c("tss", "tsr", "tss_features", "tsr_features"),
-  de_comparisons = "all"
+  data_type = c("tss", "tsr"),
+  de_comparisons = "all",
+  log2fc_cutoff = 1,
+  fdr_cutoff = 0.05
 )
 }
 \arguments{
@@ -16,6 +18,10 @@ export_for_enrichment(
 \item{data_type}{Either 'tss', 'tsr', 'tss_features', or 'tsr_features'}
 
 \item{de_comparisons}{The DE comparisons to plot}
+
+\item{log2fc_cutoff}{Log2FC cutoff value}
+
+\item{fdr_cutoff}{FDR cutoff value}
 }
 \description{
 Export DEGs for use in clusterProfiler term enrichment.
