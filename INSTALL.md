@@ -44,7 +44,8 @@ bioconductor-gviz \
 bioconductor-rtracklayer \
 bioconductor-biocgenerics \
 bioconductor-plyranges \
-bioconductor-pcatools
+bioconductor-pcatools \
+bioconductor-GenomeInfoDb
 
 conda activate TSRexploreR
 ```

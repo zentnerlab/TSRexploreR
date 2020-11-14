@@ -155,7 +155,6 @@ export_for_enrichment <- function(
   assert_that(is.numeric(fdr_cutoff) && (fdr_cutoff > 0 & fdr_cutoff <= 1))
 
   ## Get DE comparisons.
-  browse()
   de_samples <- extract_de(experiment, data_type, de_comparisons)
   de_samples <- rbindlist(de_samples, idcol="sample")
 

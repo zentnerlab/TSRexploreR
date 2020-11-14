@@ -103,14 +103,28 @@ tss_sequences <- function(
   ## Prepare table for sequence retrieval.
   select_samples <- rbindlist(select_samples, idcol="sample")
   select_samples[, tss := start]
+  select_samples <- as_granges(select_samples)
 
-  ## Get sequences.
-  seqs <- select_samples %>%
-    as_granges %>%
+  ## Add chromosome lengths to GRanges.
+  chrm_lengths <- switch(
+    assembly_type,
+    "character"=Rsamtools::seqinfo(genome_assembly),
+    "bsgenome"=GenomeInfoDb::seqinfo(genome_assembly)
+  )
+
+  chrm_lengths <- chrm_lengths[seqlevels(select_samples)]
+  seqlengths(select_samples) <- seqlengths(chrm_lengths)
+
+  ## Expand GRanges and remove out of bound.
+  select_samples <- select_samples %>%
     stretch(distance * 2) %>%
+    {.[-GenomicRanges:::get_out_of_bound_index(.)]}
+
+  ## Retrieve sequences.
+  seqs <- select_samples %>%
     {getSeq(genome_assembly, .)} %>%
     as.data.table %>%
-    {cbind(select_samples, .)}
+    {cbind(as.data.table(select_samples), .)}
       
   setnames(seqs, old="x", new="sequence")
 

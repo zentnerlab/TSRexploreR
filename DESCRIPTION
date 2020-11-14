@@ -49,7 +49,8 @@ Imports:
     GenomicAlignments,
     apeglm,
     CAGEr,
-    PCAtools
+    PCAtools,
+    GenomeInfoDb
 Depends:
     R (>= 3.5.0)
 Suggests:

@@ -153,7 +153,7 @@ The preferred tool for enrichment analysis in R is the clusterProfiler library.
 tsrexplorer provides a convenient function to export DE features to a format ready for analysis with clusterProfiler.
 
 ```{r message=FALSE}
-enrichment_data <- export_for_enrichment(exp, data_type="tsr_diff")
+enrichment_data <- export_for_enrichment(exp, data_type="tsr")
 
 library("clusterProfiler")
 library("org.Sc.sgd.db")
@@ -179,7 +179,7 @@ dotplot(go_enrichment, font.size=4) +
 You can make gene tracks for genes with differential TSRs.
 
 ```{r message=FALSE}
-annotation <- system.file("extdata", "S288C_Annotation.gtf", package="tsrexplorer")
+annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
 
 gene_tracks(
   exp, annotation,
