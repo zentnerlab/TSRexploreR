@@ -13,7 +13,7 @@ exp <- tsr_explorer()
 Prepare sample sheet.
 
 ```{r message=FALSE}
-bam_file <- system.file("extdata", "S288C.bam", package="tsrexplorer")
+bam_file <- system.file("extdata", "S288C.bam", package="TSRexploreR")
 samples <- data.frame(sample_name="S288C", file_1=bam_file)
 ```
 
@@ -29,7 +29,7 @@ exp <- import_bams(
 Plot soft-clipped histogram.
 
 ```{r message=FALSE, fig.height=2, fig.width=3}
-softclip_histogram(experiment) +
+softclip_histogram(exp) +
   theme_bw() +
   scale_fill_viridis_d()
 ```
@@ -37,7 +37,7 @@ softclip_histogram(experiment) +
 Plot softclipped base frequency.
 
 ```{r fig.height=2.5, fig.width=3}
-softclip_composition(experiment) +
+softclip_composition(exp) +
   theme_bw() +
   scale_fill_viridis_d()
 ```
@@ -45,7 +45,7 @@ softclip_composition(experiment) +
 Correct for G content.
 
 ```{r message=FALSE}
-assembly <- system.file("extdata", "S288C_Assembly.fasta", package="tsrexplorer")
+assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
 
 exp <- G_correction(exp, assembly)
 ```
