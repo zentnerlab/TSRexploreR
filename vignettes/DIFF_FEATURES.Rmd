@@ -78,8 +78,7 @@ is to generate a dimensionality reduction plot.
 The preferred plot type for this is UMAP for its general robustness, stability, and often better ability to separate points.
 
 ```{r message=FALSE}
-plot_reduction(exp, data_type="tsr", size=0.5) +
-  ggplot2::theme(text=element_text(size=3), legend.key.size=unit(0.2, "cm"))
+plot_reduction(exp, data_type="tsr", remove_var=0.25, colby="condition")
 ```
 
 ## Differential TSRs

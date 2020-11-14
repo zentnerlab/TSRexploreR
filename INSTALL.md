@@ -25,7 +25,6 @@ r-devtools \
 r-ggseqlogo \
 r-ggally \
 r-cowplot \
-r-uwot \
 r-rcpp \
 r-assertthat \
 bioconductor-apeglm \
@@ -44,7 +43,8 @@ bioconductor-tsrchitect \
 bioconductor-gviz \
 bioconductor-rtracklayer \
 bioconductor-biocgenerics \
-bioconductor-plyranges
+bioconductor-plyranges \
+bioconductor-pcatools
 
 conda activate TSRexploreR
 ```

@@ -38,7 +38,6 @@ Imports:
     GGally,
     S4Vectors,
     SummarizedExperiment,
-    uwot,
     Gviz,
     IRanges,
     data.table,
