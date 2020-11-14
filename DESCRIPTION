@@ -48,7 +48,8 @@ Imports:
     DESeq2,
     GenomicAlignments,
     apeglm,
-    CAGEr
+    CAGEr,
+    PCAtools
 Depends:
     R (>= 3.5.0)
 Suggests:
