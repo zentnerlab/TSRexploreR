@@ -8,6 +8,8 @@ plot_num_de(
   experiment,
   data_type = c("tss", "tsr", "tss_features", "tsr_features"),
   de_comparisons = "all",
+  log2fc_cutoff = 1,
+  fdr_cutoff = 0.05,
   ...
 )
 }
@@ -18,7 +20,11 @@ plot_num_de(
 
 \item{de_comparisons}{The comparisons to plot}
 
+\item{fdr_cutoff}{FDR cutoff value}
+
 \item{...}{Additional arguments passed to geom_col}
+
+\item{logfc_cutoff}{Log2 fold change cutoff}
 }
 \description{
 Plot number of DE features.

@@ -170,6 +170,8 @@ export_for_enrichment <- function(
 #' @param experiment TSRexploreR object
 #' @param data_type Either 'tss', 'tsr', 'tss_features', or 'tsr_features'
 #' @param de_comparisons The comparisons to plot
+#' @param logfc_cutoff Log2 fold change cutoff
+#' @param fdr_cutoff FDR cutoff value
 #' @param ... Additional arguments passed to geom_col
 #'
 #' @rdname plot_num_de-function
@@ -179,6 +181,8 @@ plot_num_de <- function(
   experiment,
   data_type=c("tss", "tsr", "tss_features", "tsr_features"),
   de_comparisons="all",
+  log2fc_cutoff=1,
+  fdr_cutoff=0.05,
   ...
 ) {
 
@@ -189,25 +193,30 @@ plot_num_de <- function(
     c("tss", "tsr", "tss_features", "tsr_features")
   )
   assert_that(is.character(de_comparisons))
+  assert_that(is.numeric(log2fc_cutoff) && log2fc_cutoff >= 0)
+  assert_that(is.numeric(fdr_cutoff) && (fdr_cutoff > 0 & fdr_cutoff <= 1))
 
   ## Get appropriate samples.
   de_samples <- extract_de(experiment, data_type, de_comparisons)
-  de_samples <- rbindlist(de_samples)
+  de_samples <- rbindlist(de_samples, idcol="samples")
+
+  ## Mark DE status.
+  .de_status(de_samples, log2fc_cutoff, fdr_cutoff)
+  de_samples[, de_status := factor(
+    de_status, levels=c("up", "unchanged", "down")
+  )]
 
   ## prepare data for plotting.
-  de_data <- de_samples[, .(count=.N), by=.(sample, DE)]
-  de_data[, DE := factor(DE, levels=c("up", "unchanged", "down"))]
+  de_samples <- de_samples[, .(count=.N), by=.(samples, de_status)]
 
   ## Set sample order if required.
   if (!all(de_comparisons == "all")) {
-    de_samples[, sample := factor(sample, levels=de_comparisons)]
+    de_samples[, samples := factor(samples, levels=de_comparisons)]
   }
 
   ## Plot data.
-  p <- ggplot(de_data, aes(x=.data$sample, y=.data$count, fill=.data$DE)) +
+  p <- ggplot(de_samples, aes(x=.data$samples, y=.data$count, fill=.data$de_status)) +
     geom_col(position="stack", ...) +
-    theme_bw() +
-    scale_fill_viridis_d() +
     theme(axis.text.x=element_text(angle=45, hjust=1))
 
   return(p)
