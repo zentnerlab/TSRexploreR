@@ -43,6 +43,9 @@ setClass(
 #'
 #' @param TSSs Named list of TSS GRanges
 #' @param TSRs Named list of TSR GRanges
+#' @param sample_sheet Sample sheet
+#' @param genome_annotation Genome annotation
+#' @param genome_assembly Genome assembly
 #'
 #' @return A TSRexploreR object containing TSSs and/or TSRs
 #'
@@ -55,7 +58,13 @@ setClass(
 #'
 #' @export
 
-tsr_explorer <- function(TSSs=NA, TSRs=NA, sample_sheet=NULL) {
+tsr_explorer <- function(
+  TSSs=NA,
+  TSRs=NA,
+  sample_sheet=NULL,
+  genome_annotation=NULL,
+  genome_assembly=NULL
+) {
 
   ## Input Check.
   assert_that(
@@ -81,8 +90,8 @@ tsr_explorer <- function(TSSs=NA, TSRs=NA, sample_sheet=NULL) {
 
   if (sample_sheet_type != "none") {
     assert_that(
-      c("sample_name", "file_1", "file_2") %in%
-      colnames(sample_sheet)
+      all(c("sample_name", "file_1", "file_2") %in%
+      colnames(sample_sheet))
     )
   }
 
@@ -92,6 +101,12 @@ tsr_explorer <- function(TSSs=NA, TSRs=NA, sample_sheet=NULL) {
     "dataframe"=as.data.table(sample_sheet),
     "file"=fread(sample_sheet, sep="\t")
   )
+
+  ## Prepare genome assembly.
+  genome_assembly <- .prepare_assembly(genome_assembly)
+
+  ## Prepare genome annotation.
+  genome_annotation <- .prepare_annotation(genome_annotation)
 
   ## Create tsr explorer object.
   tsr_obj <- new(
@@ -105,8 +120,74 @@ tsr_explorer <- function(TSSs=NA, TSRs=NA, sample_sheet=NULL) {
       "TSSs"=list(raw=list()),
       "TSRs"=list(raw=list())
     ),
-    meta_data=list("sample_sheet"=sample_sheet)
+    meta_data=list(
+      "sample_sheet"=sample_sheet,
+      "genome_annotation"=genome_annotation,
+      "genome_assembly"=genome_assembly
+    )
   )
 
   return(tsr_obj)
+}
+
+#' Prepare Genome Annotation
+#'
+#' @param annotation Genome annotation
+#' @param experiment tsr explorer object
+
+.prepare_annotation <- function(annotation, experiment=NULL) {
+
+  ## Get annotation type.
+  anno_type <- case_when(
+    is.null(annotation) & !is.null(experiment) ~ "internal",
+    is.null(annotation) & is.null(experiment) ~ "none",
+    is.character(annotation) ~ "file",
+    is(annotation, "TxDb") ~ "txdb"
+  )
+
+  if(anno_type == "internal") {
+    assert_that(!is.null(experiment@meta_data$genome_annotation))
+  }
+
+  ## Prepare annotation based on type.
+  annotation <- switch(
+    anno_type,
+    "internal"=experiment@meta_data$genome_annotation,
+    "none"=NULL,
+    "file"=makeTxDbFromGFF(annotation),
+    "txdb"=annotation
+  )
+
+  return(annotation)
+
+}
+
+#' Prepare Genome Assembly
+#'
+#' @param assembly Genome assembly
+#' @param experiment tsr explorer object
+
+.prepare_assembly <- function(assembly, experiment=NULL) {
+
+  assembly_type <- case_when(
+    is.null(assembly) & !is.null(experiment) ~ "internal",
+    is.null(assembly) & is.null(experiment) ~ "none",
+    is.character(assembly) ~ "file",
+    is(assembly, "BSgenome") ~ "bsgenome"
+  )
+
+  if (assembly_type == "internal") {
+    assert_that(!is.null(experiment@meta_data$genome_assembly))
+  }
+
+  assembly <-switch(
+    assembly_type,
+    "none"=NULL,
+    "internal"=experiment@meta_data$genome_assembly,
+    "file"=FaFile(assembly),
+    "bsgenome"=assembly
+  )
+
+  return(assembly)
+
 }

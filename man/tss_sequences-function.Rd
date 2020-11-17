@@ -7,7 +7,7 @@
 tss_sequences(
   experiment,
   samples = "all",
-  genome_assembly,
+  genome_assembly = NULL,
   threshold = NULL,
   use_normalized = FALSE,
   distance = 10,

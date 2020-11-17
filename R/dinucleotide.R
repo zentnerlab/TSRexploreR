@@ -50,7 +50,7 @@
 
 dinucleotide_frequencies <- function(
   experiment,
-  genome_assembly,
+  genome_assembly=NULL,
   samples="all",
   threshold=NULL,
   use_normalized=FALSE,
@@ -60,7 +60,10 @@ dinucleotide_frequencies <- function(
 
   ## Check inputs.
   assert_that(is(experiment, "tsr_explorer"))
-  assert_that(is.character(genome_assembly) | is(genome_assembly, "BSgenome"))
+  assert_that(
+    is.null(genome_assembly) || is.character(genome_assembly) ||
+    is(genome_assembly, "BSgenome")
+  )
   assert_that(is.character(samples))
   assert_that(is.null(threshold) || (is.numeric(threshold) && threshold >= 0))
   assert_that(is.flag(use_normalized))
@@ -70,16 +73,7 @@ dinucleotide_frequencies <- function(
   }
 
   ## Load genome assembly.
-  assembly_type <- case_when(
-    is(genome_assembly, "character") ~ "character",
-    is(genome_assembly, "BSgenome") ~ "bsgenome"
-  )
-
-  fasta_assembly <- switch(
-    assembly_type,
-    "character"=FaFile(genome_assembly),
-    "bsgenome"=genome_assembly
-  )
+  fasta_assembly <- .prepare_assembly(genome_assembly, experiment)
 
   ## Get appropriate samples.
   select_samples <- experiment %>%
@@ -102,8 +96,18 @@ dinucleotide_frequencies <- function(
     plyranges::mutate(width=2)
 
   ## Get dinucleotides.
-  seqs <- select_samples %>%
-    {getSeq(fasta_assembly, .)} %>%
+  assembly_type <- case_when(
+    is(fasta_assembly, "BSgenome") ~ "bsgenome",
+    is(fasta_assembly, "FaFile") ~ "fafile"
+  )
+
+  seqs <- switch(
+    assembly_type,
+    "bsgenome"=BSgenome::getSeq(fasta_assembly, select_samples),
+    "fafile"=Rsamtools::getSeq(fasta_assembly, select_samples)
+  )
+
+  seqs <- seqs %>%
     as.data.table %>%
     {cbind(as.data.table(select_samples), .)}
   setnames(seqs, old="x", new="dinucleotide")

@@ -165,7 +165,7 @@ tss_aggregate <- function(experiment) {
 
 G_correction <- function(
   experiment,
-  assembly
+  assembly=NULL
 ) {
 
   ## Check inputs.
@@ -173,15 +173,11 @@ G_correction <- function(
   assert_that(is.character(assembly) | is(assembly, "BSgenome"))
 
   ## Prepare assembly.
-  assembly_type <- case_when(
-    is.character(assembly) ~ "file",
-    is(assembly, "BSgenome") ~ "bsgenome"
-  )
+  assembly <- .prepare_assembly(assembly, experiment)
 
-  assembly <- switch(
-    assembly_type,
-    "file"=FaFile(assembly),
-    "bsgenome"=assembly
+  assembly_type <- case_when(
+    is(assembly, "FaFile") ~ "fafile",
+    is(assembly, "BSgenome") ~ "bsgenome"
   )
 
   ## Get samples.
@@ -189,7 +185,12 @@ G_correction <- function(
 
   ## Retrieve +1 base.
   select_samples <- map(select_samples, function(x) {
-    x$plus_one <- as.character(getSeq(assembly, x))
+    x <- switch(
+      assembly_type,
+      "fafile"=Rsamtools::getSeq(assembly, x),
+      "bsgenome"=BSgenome::getSeq(assembly, x)
+    )
+    x$plus_one <- as.character(x)
     x <- as.data.table(x)
     return(x)
   })

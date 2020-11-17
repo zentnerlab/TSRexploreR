@@ -41,9 +41,9 @@
 
 annotate_features <- function(
   experiment,
-  annotation_data,
   data_type=c("tss", "tsr", "tss_diff", "tsr_diff"),
   feature_type=c("gene", "transcript"),
+  annotation_data=NULL,
   upstream=1000,
   downstream=100
 ) {
@@ -51,7 +51,8 @@ annotate_features <- function(
   ## Check inputs.
   assert_that(is(experiment, "tsr_explorer"))
   assert_that(
-    is(annotation_data, "character") | is(annotation_data, "TxDb"),
+    is.null(annotation_data) ||
+    is(annotation_data, "character") || is(annotation_data, "TxDb"),
     msg="annotation_data must be an annotation file or TxDb object"
   )
   data_type <- match.arg(data_type, c("tss", "tsr", "tss_diff", "tsr_diff")) 
@@ -60,16 +61,7 @@ annotate_features <- function(
   assert_that(is.count(downstream))
 
   ## Load GTF.
-  anno_type <- case_when(
-    is(annotation_data, "character") ~ "character",
-    is(annotation_data, "TxDb") ~ "txdb"
-  )
-
-  genome_annotation <- switch(
-    anno_type,
-    "character"=makeTxDbFromGFF(annotation_data),
-    "txdb"=annotation_data
-  )
+  genome_annotation <- .prepare_annotation(annotation_data, experiment)
 
   ## Grab data from proper slot.
   counts <- switch(data_type,
