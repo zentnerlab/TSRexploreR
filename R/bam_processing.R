@@ -16,7 +16,7 @@
 import_bams <- function(
   experiment,
   paired,
-  sample_sheet=NULL,
+  sample_sheet,
   soft_remove=3,
   proper_pair=NULL,
   remove_secondary=TRUE
@@ -24,6 +24,7 @@ import_bams <- function(
 
   ## Input checks.
   assert_that(is(experiment, "tsr_explorer"))
+  assert_that(is.flag(paired))
   assert_that(
     is.null(sample_sheet) ||
     (is.character(sample_sheet) | is.data.frame(sample_sheet))
@@ -116,8 +117,9 @@ import_bams <- function(
 
   bams <- map(bams, as_granges)
 
-  ## Add GRanges to tsr explorer object.
+  ## Add GRanges and sample sheet to tsr explorer object.
   experiment@experiment$TSSs <- bams
+  experiment@meta_data@sample_sheet <- sample_sheet
 
   return(experiment)
 }
