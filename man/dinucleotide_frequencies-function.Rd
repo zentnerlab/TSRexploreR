@@ -6,7 +6,7 @@
 \usage{
 dinucleotide_frequencies(
   experiment,
-  genome_assembly,
+  genome_assembly = NULL,
   samples = "all",
   threshold = NULL,
   use_normalized = FALSE,

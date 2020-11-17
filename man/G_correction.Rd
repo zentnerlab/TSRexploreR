@@ -4,7 +4,7 @@
 \alias{G_correction}
 \title{Correct G}
 \usage{
-G_correction(experiment, assembly)
+G_correction(experiment, assembly = NULL)
 }
 \arguments{
 \item{experiment}{tsr explorer object}

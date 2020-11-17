@@ -6,8 +6,8 @@
 \usage{
 gene_tracks(
   experiment,
-  genome_annotation,
   feature_name,
+  genome_annotation = NULL,
   feature_type = "gene",
   samples = "all",
   threshold = NULL,
@@ -24,9 +24,9 @@ gene_tracks(
 \arguments{
 \item{experiment}{TSRexploreR object}
 
-\item{genome_annotation}{Genome annotation GTF/GFF file, or TxDb object}
-
 \item{feature_name}{Name of gene or transcript to plot}
+
+\item{genome_annotation}{Genome annotation GTF/GFF file, or TxDb object}
 
 \item{feature_type}{Either 'gene' or 'transcript'}
 

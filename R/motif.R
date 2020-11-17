@@ -58,7 +58,7 @@
 tss_sequences <- function(
   experiment,
   samples="all",
-  genome_assembly,
+  genome_assembly=NULL,
   threshold=NULL,
   use_normalized=FALSE,
   distance=10,
@@ -69,7 +69,10 @@ tss_sequences <- function(
   ## Check inputs.
   assert_that(is(experiment, "tsr_explorer"))
   assert_that(is.character(samples))
-  assert_that(is.character(genome_assembly) || is(genome_assembly, "BSgenome"))
+  assert_that(
+    is.null(genome_assembly) || is.character(genome_assembly) ||
+    is(genome_assembly, "BSgenome")
+  )
   assert_that(is.null(threshold) || (is.numeric(threshold) && threshold >= 0))
   assert_that(is.count(distance))
   assert_that(is.flag(dominant))
@@ -79,16 +82,7 @@ tss_sequences <- function(
   assert_that(is.flag(use_normalized))
 
   ## Open genome assembly.
-  assembly_type <- case_when(
-    is(genome_assembly, "character") ~ "character",
-    is(genome_assembly, "BSgenome") ~ "bsgenome"
-  )
-
-  genome_assembly <- switch(
-    assembly_type,
-    "character"=FaFile(genome_assembly),
-    "bsgenome"=genome_assembly
-  )
+  genome_assembly <- .prepare_assembly(genome_assembly, experiment)
 
   ## Get selected samples.
   select_samples <- experiment %>%
@@ -106,9 +100,14 @@ tss_sequences <- function(
   select_samples <- as_granges(select_samples)
 
   ## Add chromosome lengths to GRanges.
+  assembly_type <- case_when(
+    is(genome_assembly, "BSgenome") ~ "bsgenome",
+    is(genome_assembly, "FaFile") ~ "fafile"
+  )
+
   chrm_lengths <- switch(
     assembly_type,
-    "character"=Rsamtools::seqinfo(genome_assembly),
+    "fafile"=Rsamtools::seqinfo(genome_assembly),
     "bsgenome"=GenomeInfoDb::seqinfo(genome_assembly)
   )
 
@@ -116,13 +115,23 @@ tss_sequences <- function(
   seqlengths(select_samples) <- seqlengths(chrm_lengths)
 
   ## Expand GRanges and remove out of bound.
-  select_samples <- select_samples %>%
-    stretch(distance * 2) %>%
-    {.[-GenomicRanges:::get_out_of_bound_index(.)]}
+  select_samples <- stretch(select_samples, distance * 2)
+
+  out_of_bounds <- select_samples[
+    GenomicRanges:::get_out_of_bound_index(select_samples)
+  ]
+  if (length(out_of_bounds) > 0) {
+    select_samples <- select_samples[-out_of_bounds]
+  }
 
   ## Retrieve sequences.
-  seqs <- select_samples %>%
-    {getSeq(genome_assembly, .)} %>%
+  seqs <- switch(
+    assembly_type,
+    "bsgenome"=BSgenome::getSeq(genome_assembly, select_samples),
+    "fafile"=Rsamtools::getSeq(genome_assembly, select_samples)
+  )
+
+  seqs <- seqs %>%
     as.data.table %>%
     {cbind(as.data.table(select_samples), .)}
       

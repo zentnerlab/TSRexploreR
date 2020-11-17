@@ -16,6 +16,7 @@ There are many ways to import TSSs into TSRexploreR; this vignette uses a named 
 ```{r message=FALSE, warning=FALSE}
 library("TSRexploreR")
 
+# Example TSSs.
 TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
 TSSs <- readRDS(TSSs)
 
@@ -24,27 +25,24 @@ TSSs <- names(TSSs) %>%
   stringr::str_detect("WT") %>%
   purrr::keep(TSSs, .)
 
-exp <- tsr_explorer(TSSs)
-```
+# Genome assembly and annotation.
+assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
+annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
 
-### Sample Sheet
-
-Adding a sample sheet allows for easier downstream processing.
-
-```{r message=FALSE}
+# Sample sheet.
 sample_sheet <- data.frame(
   sample_name=sprintf("S288C_WT_%s", seq_len(3)),
   file_1=NA, file_2=NA,
   condition=rep("Untreated", 3)
 )
-```
 
-```{r echo=FALSE}
-knitr::kable(sample_sheet)
-```
-
-```{r message=FALSE}
-exp <- add_sample_sheet(exp, sample_sheet)
+# Create the TSRexploreR object.
+exp <- tsr_explorer(
+  TSSs,
+  sample_sheet=sample_sheet,
+  genome_annotation=annotation,
+  genome_assembly=assembly
+)
 ```
 
 ## Initial TSS Processing
@@ -74,12 +72,7 @@ After formatting counts and optionally CPM normalizing them, TSSs will be annota
 This function takes either the path and file name of a 'GTF' or 'GFF' file or a 'TxDb' package from bioconductor. The example below uses a 'GTF' file from Ensembl (R64-1-1 Release 99) and annotates each TSS to the beginning of the nearest transcript.
 
 ```{r message=FALSE, warning=FALSE}
-annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
-
-exp <- annotate_features(
-  exp, annotation_data=annotation,
-  data_type="tss", feature_type="transcript"
-)
+exp <- annotate_features(exp, data_type="tss", feature_type="transcript")
 ```
 
 ### Naive Threshold Exploration
@@ -177,9 +170,7 @@ Generating sequence logos around TSSs is a good first step in ascertaining the s
 To generate analyze TSS sequence context, TSRexploreR retrieves sequences centered on TSSs from a 'FASTA' genome assembly or 'BSgenome' object. This example uses the Ensembl R64-1-1 Release 99 FASTA.
 
 ```{r message=FALSE}
-assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
-
-seqs <- tss_sequences(exp, genome_assembly=assembly, threshold=3)
+seqs <- tss_sequences(exp, threshold=3)
 ```
 
 After the sequences are retrieved, the sequence logos can be generated.
@@ -202,9 +193,7 @@ plot_sequence_colormap(seqs, ncol=3) +
 As previously discused, organisms often have a specific TSS sequence context. This function explores the fraction of each potential dinucleotide at the -1/+1 positions of all TSSs, where the +1 position is the TSS.
 
 ```{r message=FALSE}
-assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
-
-frequencies <- dinucleotide_frequencies(exp, genome_assembly=assembly, threshold=3)
+frequencies <- dinucleotide_frequencies(exp, threshold=3)
 
 plot_dinucleotide_frequencies(frequencies, ncol=3) +
   ggplot2::theme(text=element_text(size=6))
@@ -259,12 +248,7 @@ exp <- tsr_metrics(exp)
 It is recommended to annotate TSRs if a genome annotation is available.
 
 ```{r message=FALSE, warning=FALSE}
-annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
-
-exp <- annotate_features(
-  exp, annotation_data=annotation,
-  data_type="tsr", feature_type="transcript"
-)
+exp <- annotate_features(exp, data_type="tsr", feature_type="transcript")
 ```
 
 ## TSR Correlation
@@ -346,11 +330,9 @@ plot_tsr_metric(exp, tsr_metrics=c("score", "width"), log2_transform=TRUE, ncol=
 Most plots in this vignette can be filtered, ordered, grouped, and quantiled by any of the desired metrics. Here is an example of what can be done with the TSS sequence motif plot using TSR metrics. In this plot, only the dominant TSSs of each TSR is considered, and TSSs with a score below 10 are discarded. The plot is then split by the shape class of the TSR. A more detailed guide to advanced plotting can be found here.
 
 ```{r message=FALSE}
-assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
-
 conditions <- list(order_by="score", grouping="shape_class")
 seqs <- tss_sequences(
-  exp, genome_assembly=assembly, threshold=10,
+  exp, threshold=10,
   dominant=TRUE, data_conditions=conditions
 )
 
@@ -363,10 +345,8 @@ Viewing TSSs and/or TSRs in gene tracks can be useful for a variety of reasons. 
 In TSRexploreR, tracks can be created based on a gene/transcript name or genomic coordinates. Additionally, if tracks are generated based on genes/transcripts, the promoter region alone can optionally be displayed.
 
 ```{r message=FALSE}
-annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
-
 gene_tracks(
-  exp, annotation, feature_name="YAL012W",
+  exp, feature_name="YAL012W",
   samples=c(
     TSS="S288C_WT_1", TSR="S288C_WT_1",
     TSS="S288C_WT_2", TSR="S288C_WT_2",

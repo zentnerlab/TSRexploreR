@@ -6,9 +6,9 @@
 \usage{
 annotate_features(
   experiment,
-  annotation_data,
   data_type = c("tss", "tsr", "tss_diff", "tsr_diff"),
   feature_type = c("gene", "transcript"),
+  annotation_data = NULL,
   upstream = 1000,
   downstream = 100
 )
@@ -16,11 +16,11 @@ annotate_features(
 \arguments{
 \item{experiment}{TSRexploreR object with TSS GRanges}
 
-\item{annotation_data}{Path to annotation file or loaded TxDb object}
-
 \item{data_type}{Whether to annotate TSSs or TSRs}
 
 \item{feature_type}{Annotate at the gene or transcript level}
+
+\item{annotation_data}{Path to annotation file or loaded TxDb object}
 
 \item{upstream}{Bases upstream of TSS for 'promoter' annotation}
 

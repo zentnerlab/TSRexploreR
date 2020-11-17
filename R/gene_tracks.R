@@ -29,8 +29,8 @@
 
 gene_tracks <- function(
   experiment,
-  genome_annotation,
   feature_name,
+  genome_annotation=NULL,
   feature_type="gene",
   samples="all",
   threshold=NULL,
@@ -46,7 +46,10 @@ gene_tracks <- function(
 
   ## Input checks.
   assert_that(is(experiment, "tsr_explorer"))
-  assert_that(is.character(genome_annotation) | is(genome_annotation, "TxDb"))
+  assert_that(
+    is.null(genome_annotation) || is.character(genome_annotation) ||
+    is(genome_annotation, "TxDb")
+  )
   assert_that(is.string(feature_name))
   feature_type <- match.arg(str_to_lower(feature_type), c("gene", "transcript"))
   assert_that(is.character(samples))
@@ -65,16 +68,7 @@ gene_tracks <- function(
   assert_that(is.na(ymax) || is.numeric(ymax))
 
   ## Prepare genome annotation.
-  anno_type <- case_when(
-    is(genome_annotation, "character") ~ "character",
-    is(genome_annotation, "TxDb") ~ "txdb"
-  )
-
-  anno <- switch(
-    anno_type,
-    "character"=makeTxDbFromGFF(genome_annotation),
-    "txdb"=genome_annotation
-  )
+  anno <- .prepare_annotation(genome_annotation, experiment)
   
   options(ucscChromosomeNames=FALSE)
 

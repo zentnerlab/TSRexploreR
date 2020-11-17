@@ -6,12 +6,24 @@
 \alias{tsr_explorer}
 \title{TSRexploreR Class}
 \usage{
-tsr_explorer(TSSs = NA, TSRs = NA, sample_sheet = NULL)
+tsr_explorer(
+  TSSs = NA,
+  TSRs = NA,
+  sample_sheet = NULL,
+  genome_annotation = NULL,
+  genome_assembly = NULL
+)
 }
 \arguments{
 \item{TSSs}{Named list of TSS GRanges}
 
 \item{TSRs}{Named list of TSR GRanges}
+
+\item{sample_sheet}{Sample sheet}
+
+\item{genome_annotation}{Genome annotation}
+
+\item{genome_assembly}{Genome assembly}
 }
 \value{
 A TSRexploreR object containing TSSs and/or TSRs
