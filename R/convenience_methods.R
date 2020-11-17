@@ -146,24 +146,32 @@ extract_matrix <- function(experiment, data_type, samples) {
 extract_de <- function(experiment, data_type, de_comparisons="all") {
         
   if (data_type == "tss") {
-    if (de_comparisons == "all") de_comparisons <- names(experiment@diff_features$TSSs$results)
-    de_samples <- experiment@diff_features$TSSs$results[de_comparisons]
-    de <- map(de_samples, copy)
+    if (de_comparisons == "all") {
+      de_samples <- experiment@diff_features$TSSs$results
+    } else {
+      de_samples <- experiment@diff_features$TSSs$results[de_comparisons]
+    }
   } else if (data_type == "tsr") {
-    if (de_comparisons == "all") de_comparisons <- names(experiment@diff_features$TSRs$results)
-    de_samples <- experiment@diff_features$TSRs$results[de_comparisons]
-    de <- map(de_samples, copy)
+    if (de_comparisons == "all") {
+      de_samples <- experiment@diff_features$TSRs$results
+    } else {
+      de_samples <- experiment@diff_features$TSRs$results[de_comparisons]
+    }
   } else if (data_type == "tss_features") {
-    if (de_comparisons == "all") de_comparisons <- names(experiment@diff_features$TSS_features$results)
-    de_samples <- experiment@diff_features$TSS_features$results[de_comparisons]
-    de <- map(de_samples, copy)
+    if (de_comparisons == "all") {
+      de_samples <- experiment@diff_features$TSS_features$results
+    } else {
+      de_samples <- experiment@diff_features$TSS_features$results[de_comparisons]
+    }
   } else if (data_type == "tsr_features") {
-    if (de_comparisons == "all") de_comparisons <- names(experiment@diff_features$TSR_features$results)
-    de_samples <- experiment@diff_features$TSR_features$results[de_comparisons]
-    de <- map(de_samples, copy)
+    if (de_comparisons == "all") {
+      de_samples <- experiment@diff_features$TSR_features$results
+    } else {
+      de_samples <- experiment@diff_features$TSR_features$results[de_comparisons]
+    }
   }
 
-  return(de)
+  return(de_samples)
 }
 
 #' Set slot data.

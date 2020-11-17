@@ -147,9 +147,10 @@ export_for_enrichment <- function(
   log2fc_cutoff=1,
   fdr_cutoff=0.05
 ) {
+
   ## Input checks.
   assert_that(is(experiment, "tsr_explorer"))
-  data_type <- match.arg(str_to_lower(data_type), c("tss_diff", "tsr_diff"))
+  data_type <- match.arg(str_to_lower(data_type), c("tss", "tsr"))
   assert_that(is.character(de_comparisons))
   assert_that(is.numeric(log2fc_cutoff) && log2fc_cutoff >= 0)
   assert_that(is.numeric(fdr_cutoff) && (fdr_cutoff > 0 & fdr_cutoff <= 1))
