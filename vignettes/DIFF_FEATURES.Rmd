@@ -16,29 +16,24 @@ a 1 hour exposure to 1.5 mM Diamide prior to collection of total-RNA.
 Diamide is a reducing agent that damages DNA, and was shown to cause large changes to the transcriptome.
 
 ```{r message=FALSE}
-library("tsrexplorer")
+library("TSRexploreR")
 
+# Load example TSSs.
 TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
 TSSs <- readRDS(TSSs)
 
-exp <- tsr_explorer(TSSs)
-```
-Adding a sample sheet allows for easier processing downstream.
+# Prepare genome annotation.
+annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
 
-```{r message=FALSE}
+# Prepare sample sheet.
 sample_sheet <- data.frame(
   sample_name=c(sprintf("S288C_D_%s", seq_len(3)), sprintf("S288C_WT_%s", seq_len(3))),
   file_1=NA, file_2=NA,
   condition=c(rep("Diamide", 3), rep("Untreated", 3))
 )
-```
 
-```{r echo=FALSE}
-knitr::kable(sample_sheet)
-```
-
-```{r message=FALSE}
-exp <- add_sample_sheet(exp, sample_sheet)
+# Create TSRexploreR object.
+exp <- tsr_explorer(TSSs, sample_sheet=sample_sheet, genome_annotation=annotation)
 ```
 
 ## Processing of TSSs
@@ -110,12 +105,7 @@ exp <- differential_expression(
 The next step is to annotate the differential features.
 
 ```{r message=FALSE}
-annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
-
-exp <- annotate_features(
-  exp, annotation_data=annotation,
-  data_type="tsr_diff", feature_type="transcript"
-)
+exp <- annotate_features(exp, data_type="tsr_diff", feature_type="transcript")
 ```
 
 ### MA Plots
@@ -179,11 +169,8 @@ dotplot(go_enrichment, font.size=4) +
 You can make gene tracks for genes with differential TSRs.
 
 ```{r message=FALSE}
-annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
-
 gene_tracks(
-  exp, annotation,
-  feature_name="YKR076W",
+  exp, feature_name="YKR076W",
   samples=c(
     TSS="S288C_WT_1", TSR="S288C_WT_1",
     TSS="S288C_D_1", TSR="S288C_D_1"
