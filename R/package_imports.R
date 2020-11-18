@@ -25,7 +25,9 @@ NULL
 #' @importFrom rlang .data
 #' @importFrom forcats fct_rev fct_inorder fct_reorder fct_relevel
 #' @importFrom dplyr pull case_when
-#' @importFrom assertthat assert_that is.count is.flag is.string has_name has_attr
+#' @importFrom assertthat
+#'   assert_that is.count is.flag is.string has_name has_attr
+#'   is.readable
 #' @importFrom knitr kable
 
 NULL
@@ -45,7 +47,7 @@ NULL
 #' @importFrom GenomeInfoDb seqnames seqlevels "seqlengths<-"
 #' @importFrom SummarizedExperiment rowRanges SummarizedExperiment rowData
 #'   assay "assay<-"
-#' @importFrom S4Vectors "metadata<-" metadata DataFrame mcols
+#' @importFrom S4Vectors "metadata<-" metadata DataFrame mcols elementMetadata
 
 NULL
 
