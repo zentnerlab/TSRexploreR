@@ -119,7 +119,7 @@ import_bams <- function(
 
   ## Add GRanges and sample sheet to tsr explorer object.
   experiment@experiment$TSSs <- bams
-  experiment@meta_data@sample_sheet <- sample_sheet
+  experiment@meta_data$sample_sheet <- sample_sheet
 
   return(experiment)
 }
