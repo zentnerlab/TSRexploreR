@@ -44,7 +44,7 @@ tss_import <- function(
   assert_that(is(experiment, "tsr_explorer"))
   assert_that(
     is.null(sample_sheet) ||
-    (is.readable(sample_sheet) | is.data.frame(sample_sheet))
+    (is.character(sample_sheet) | is.data.frame(sample_sheet))
   )
   file_type <- match.arg(
     str_to_lower(file_type),
@@ -226,7 +226,7 @@ tsr_import <- function(
   assert_that(is(experiment, "tsr_explorer"))
   assert_that(
     is.null(sample_sheet) ||
-    (is.readable(sample_sheet) | is.data.frame(sample_sheet))
+    (is.character(sample_sheet) | is.data.frame(sample_sheet))
   )
   file_type <- match.arg(
     str_to_lower(file_type),

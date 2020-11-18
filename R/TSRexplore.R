@@ -78,7 +78,7 @@ tsr_explorer <- function(
   assert_that(
     is.null(sample_sheet) ||
     is.data.frame(sample_sheet) ||
-    is.readable(sample_sheet)
+    is.character(sample_sheet)
   )
 
   ## Prepare sample sheet.

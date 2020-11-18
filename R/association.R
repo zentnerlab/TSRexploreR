@@ -36,7 +36,7 @@ merge_samples <- function(
   )
   assert_that(
     is.null(sample_sheet) ||
-    (is.readable(sample_sheet) | is.data.frame(sample_sheet))
+    (is.character(sample_sheet) | is.data.frame(sample_sheet))
   )
   assert_that(is.null(merge_group) || is.string(merge_group))
   assert_that(
