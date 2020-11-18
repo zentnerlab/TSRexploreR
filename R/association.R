@@ -4,6 +4,9 @@
 #'
 #' @param experiment TSRexploreR object
 #' @param data_type Whether to merge TSSs or TSRs
+#' @param sample_sheet Sample sheet
+#' @param merge_group Column in sample sheet to merge by
+#' @param merge_list Named list of samples to merge
 #' @param merge_replicates If 'TRUE', replicate groups will be merged
 #' @param threshold Filter out TSSs or TSRs below this raw count threshold before merging
 #' @param sample_list If merge_replicates is set to 'FALSE',
@@ -15,79 +18,99 @@
 merge_samples <- function(
   experiment,
   data_type=c("tss", "tsr"),
-  threshold=NA,
-  merge_replicates=FALSE,
-  sample_list=NA
+  threshold=NULL,
+  sample_sheet=NULL,
+  merge_group=NULL,
+  merge_list=NULL
 ) {
-  
-  ## Prepare list of samples to be merged.
-  if (merge_replicates) {
-    data_column <- ifelse(data_type == "tss", "tss_name", "tsr_name")
 
-    sample_list <- experiment@meta_data$sample_sheet[type == data_type] %>%
-      split(.$replicate_id) %>%
-      map(~ pull(., name))
+  ## Check inputs.
+  assert_that(is(experiment, "tsr_explorer"))
+  data_type <- match.arg(
+    str_to_lower(data_type),
+    c("tss", "tsr")
+  )
+  assert_that(
+    is.null(threshold) ||
+    (is.numeric(threshold) && threshold >= 0)
+  )
+  assert_that(
+    is.null(sample_sheet) ||
+    (is.readable(sample_sheet) | is.data.frame(sample_sheet))
+  )
+  assert_that(is.null(merge_group) || is.string(merge_group))
+  assert_that(
+    is.null(merge_list) ||
+    (is.list(merge_list) && has_attr(merge_list, "names"))
+  )
+  if (is.null(merge_group) & is.null(merge_list)) {
+    stop("Either 'merge_group' or 'merge_list' must be specified")
+  }
+  if (!is.null(merge_group) & !is.null(merge_list)) {
+    stop("Either 'merge_group' or 'merge_list' must be specified")
+  }
+
+  ## If group is specified prepare sample list.
+  merge_type <- case_when(
+    !is.null(merge_group) ~ "sample_sheet",
+    !is.null(merge_list) ~ "sample_list"
+  )
+
+  if (merge_type == "sample_sheet") {
+    keep <- c("sample_name", merge_group)
+    merge_list <- experiment@meta_data$sample_sheet[, ..keep] %>%
+      split(by=merge_group, keep.by=FALSE) %>%
+      map(`[[`, "sample_name")
   }
 
   ## Merge feature sets.
-  if (data_type == "tss") {
-    merged_samples <- map(sample_list, function(sample_group) {
-      select_samples <- experiment@experiment$TSSs[sample_group]
-      select_samples <- map(select_samples, as.data.table)
+  merged_samples <- map(merge_list, function(x) {
 
-      merged <- rbindlist(select_samples)
-      if (!is.na(threshold)) merged <- merged[score >= threshold]
-      merged <- merged[, .(score=sum(score)), by=.(seqnames, start, end, strand)]
+    # Bind ranges.
+    samples <- experiment %>%
+      extract_counts(data_type, x) %>%
+      rbindlist %>%
+      as_granges
 
-      return(merged)
-    })
-  } else if (data_type == "tsr") {
-    merged_samples <- map(sample_list, function(sample_group) {
-
-      select_samples <- experiment@experiment$TSRs[sample_group]
-      if (!is.na(threshold)) {
-        select_samples <- map(select_samples, ~.x[score(x) >= threshold])
-      }
-
-      tsr_consensus <- select_samples %>%
-        purrr::reduce(c) %>%
-        GenomicRanges::reduce(ignore.strand=FALSE)
-
-      merged <- map(select_samples, function(x) {
-          overlap <- findOverlapPairs(query=tsr_consensus, subject=x)
-          overlap <- as.data.table(overlap)
-      })
-      merged <- rbindlist(merged)[,
-        .(first.seqnames, first.start, first.end,
-        first.strand, second.X.score)
-      ]
-
-      setnames(
-        merged,
-        old=c(
-          "first.seqnames", "first.start", "first.end",
-          "first.strand", "second.X.score"
-        ),
-        new=c("seqnames", "start", "end", "strand", "score")
+    # Merge overlapping ranges.
+    if ("normalized_score" %in% colnames(elementMetadata(samples))) {
+      samples <- reduce_ranges_directed(
+        samples, score=sum(score),
+        normalized_score=sum(normalized_score)
       )
+    } else {
+      samples <- reduce_ranges_directed(samples, score=sum(score))
+    }
 
-      merged <- merged[,
-        .(score=sum(score)),
-        by=.(seqnames, start, end, strand)
-      ]
+    # Sort ranges.
+    samples <- sort(samples)
 
-      return(merged)
-    })
-  }
+    return(samples)
+    
+  })
 
-  ## Convert merged samples to GRanges.
-  merged_samples <- map(merged_samples, as_granges)
-
-  ## Return merged samples.
+  ## Add merged GRanges to experiment slot.
   if (data_type == "tss") {
     experiment@experiment$TSSs <- c(experiment@experiment$TSSs, merged_samples)
   } else if (data_type == "tsr") {
     experiment@experiment$TSRs <- c(experiment@experiment$TSRs, merged_samples)
+  }
+
+  ## Add merged GRanges to count slot.
+  samples <- map(merged_samples, as.data.table)
+  if (data_type == "tss") {
+    experiment@counts$TSSs$raw <- c(experiment@counts$TSSs$raw, merged_samples)
+  } else if (data_type == "tsr") {
+    experiment@counts$TSRs$raw <- c(experiment@counts$TSRs$raw, merged_samples)
+  }
+
+  ## Add sample info to sample sheet.
+  if (!is.null(experiment@meta_data$sample_sheet)) {
+    new_samples <- data.table(sample_name=names(merged_samples))
+    experiment@meta_data$sample_sheet <- rbind(
+      experiment@meta_data$sample_sheet, new_samples,
+      fill=TRUE
+    )
   }
 
   return(experiment)
