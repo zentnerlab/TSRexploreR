@@ -2,34 +2,18 @@
 % Please edit documentation in R/data_import.R
 \name{tss_import}
 \alias{tss_import}
-\alias{tss_import,character-method}
-\alias{tss_import,data.frame-method}
-\alias{tss_import,tssObject-method}
-\alias{tss_import,CAGEexp-method}
 \title{Import TSSs}
 \usage{
-tss_import(TSRexploreR_obj, object, ...)
-
-\S4method{tss_import}{character}(TSRexploreR_obj, object, sep = "\\t", col_names = TRUE)
-
-\S4method{tss_import}{data.frame}(TSRexploreR_obj, object)
-
-\S4method{tss_import}{tssObject}(TSRexploreR_obj, object)
-
-\S4method{tss_import}{CAGEexp}(TSRexploreR_obj, object, data_type)
+tss_import(experiment, sample_sheet = NULL, file_type = "auto", delim = "\\t")
 }
 \arguments{
-\item{object}{Object with TSSs to import into TSRexploreR}
+\item{experiment}{TSRexploreR object}
 
-\item{...}{Additional arguments for classes}
+\item{sample_sheet}{Sample sheet}
 
-\item{sep}{Delimiter for sample_sheet file}
+\item{file_type}{Either 'auto', 'bedgraph', 'bigwig', or 'table'}
 
-\item{col_names}{Logical, whether the sample_sheet file has a header (TRUE) or not (FALSE)}
-
-\item{data_type}{Either "tss", "tsr", or "consensus"}
-
-\item{TSRexploreR}{TSRexploreR object}
+\item{delim}{If the input is a table, use this delimiter}
 }
 \value{
 tsr explorer object with imported TSSs

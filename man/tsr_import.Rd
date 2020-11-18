@@ -2,22 +2,18 @@
 % Please edit documentation in R/data_import.R
 \name{tsr_import}
 \alias{tsr_import}
-\alias{tsr_import,character-method}
-\alias{tsr_import,data.frame-method}
 \title{Import TSRs}
 \usage{
-tsr_import(TSRexploreR_obj, object, ...)
-
-\S4method{tsr_import}{character}(TSRexploreR_obj, object)
-
-\S4method{tsr_import}{data.frame}(TSRexploreR_obj, object)
+tsr_import(experiment, sample_sheet = NULL, file_type = "auto", delim = "\\t")
 }
 \arguments{
-\item{TSRexploreR_obj}{TSRexploreR object to which to add TSRs}
+\item{experiment}{TSRexploreR object}
 
-\item{object}{Object with TSRs to import into TSRexploreR}
+\item{sample_sheet}{Sample sheet}
 
-\item{...}{Additional arguments for classes}
+\item{file_type}{Either 'auto', 'table', or 'bed'}
+
+\item{delim}{If input is a table specify the delimiter}
 }
 \value{
 tsr explorer object with added TSRs.
