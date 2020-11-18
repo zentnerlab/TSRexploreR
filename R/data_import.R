@@ -92,6 +92,11 @@ tss_import <- function(
   ## Add TSSs to TSRexploreR object.
   experiment@experiment$TSSs <- TSSs
 
+  ## Add the sample sheet if provided to the function.
+  if (!is.null(sample_sheet)) {
+    experiment@meta_data$sample_sheet <- sample_sheet
+  }
+
   return(experiment)
 }
 
@@ -267,6 +272,11 @@ tsr_import <- function(
 
   ## Add TSRs to TSRexploreR object.
   experiment@experiment$TSRs <- TSRs
+
+  ## Store in the sample sheet in the object if provided.
+  if (!is.null(sample_sheet)) {
+    experiment@meta_data$sample_sheet <- sample_sheet
+  }
 
   return(experiment)
 
