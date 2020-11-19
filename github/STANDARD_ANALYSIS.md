@@ -2,18 +2,18 @@
 
 A transcription Start Site (TSS) represents the first base position of a given transcript to be transcribed by RNA polymerase. Most genes do not have a single TSS, but rather a collection of TSS positions collectively referred to as a Transcription Start Region (TSR). Variation in TSS selection influences transcription stability and translation as the function of the encoded protein. Furthermore, variations in TSS usage have been observed during organismal development as well as in diseases such as cancer.
 
-TSRexploreR offers a series of analysis and plotting functions that allow deep exploration of TSSs and TSRs. Here, we describe the standard TSRexploreR analysis pipeline, qq
+[TSRexploreR](https://github.com/zentnerlab/TSRexploreR) offers a series of analysis and plotting functions that allow deep exploration of TSSs and TSRs. Here, we describe the standard [TSRexploreR](https://github.com/zentnerlab/TSRexploreR) analysis pipeline.
 
 ## Preparing Data
 
 This example uses a set of *S. cerevisiae* TSSs identified with the STRIPE-seq method.
-There are many ways to import TSSs into TSRexploreR; this vignette uses a named list of GRanges as input into the function that creates the tsrexplorer object.
+There are many ways to import TSSs into [TSRexploreR](https://github.com/zentnerlab/TSRexploreR); this vignette uses a named list of GRanges as input into the function that creates the [TSRexploreR](https://github.com/zentnerlab/TSRexploreR) object.
 
 ```
-library("tsrexplorer")
+library("TSRexploreR")
 library("magrittr")
 
-TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
+TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "TSRexploreR")
 TSSs <- readRDS(TSSs)
 
 # Keep only the 3 WT samples for now.
@@ -26,7 +26,7 @@ exp <- tsr_explorer(TSSs)
 
 ## Initial TSS Processing
 
-After the TSSs are loaded into the tsrexplorer object, a few processing steps are necessary in order to prepare the data for analysis.
+After the TSSs are loaded into the [TSRexploreR](https://github.com/zentnerlab/TSRexploreR) object, a few processing steps are necessary in order to prepare the data for analysis.
 
 ### Format TSSs
 
@@ -46,10 +46,11 @@ exp <- cpm_normalize(exp, data_type = "tss")
 
 ### TSS Annotation
 
-After formatting counts and optionally CPM normalizing them, TSSs will be annotated relative to known features. This function takes either the path and file name of a 'GTF' or 'GFF' file, or a 'TxDb' package from bioconductor. The example below uses a 'GTF' file from Ensembl (R64-1-1 Release 99) and annotates each TSS to the closest transcript.
+After formatting counts and optionally CPM normalizing them, TSSs will be annotated relative to known features. This function takes either the path and file name of a 'GTF' or 'GFF' file, or a 'TxDb' package from [Bioconductor](https://bioconductor.org/).
+The example below uses a 'GTF' file from Ensembl (R64-1-1 Release 99) and annotates each TSS to the closest transcript.
 
 ```
-annotation <- system.file("extdata", "S288C_Annotation.gtf", package = "tsrexplorer")
+annotation <- system.file("extdata", "S288C_Annotation.gtf", package = "TSRexploreR")
 
 exp <- annotate_features(
   exp, annotation_data = annotation,
@@ -82,7 +83,7 @@ Assessing correlation between samples provides information on replicate similari
 
 ### TMM Normalization
 
-For correlation analysis, TSRexploreR uses TMM normalization via the edgeR package.
+For correlation analysis, [TSRexploreR](https://github.com/zentnerlab/TSRexploreR) uses TMM normalization via the edgeR package.
 This method was designed to make comparison **between** samples more efficacious. In the example below, TSSs are retained only if at least one sample has a count of 3 or more reads.
 
 ```
@@ -175,10 +176,10 @@ TSSs tend to occur within certain sequence contexts, and this context can vary b
 
 Generating sequence logos around TSSs is a good preliminary step to better understand the sequence context of TSSs. For example, in *S. cerevisiae* it has been reported that there is a pyrimidine-purine bias in the -1 and +1 positions, respectively. Furthermore, stronger TSSs tend to have an adenine at the -8 position, the loss of which diminishes promoter strength.
 
-To generate analyze TSS sequence context, TSRexploreR retrieves  sequences centered on TSSs from a 'FASTA' genome assembly or 'BSgenome' object. This example uses the Ensembl R64-1-1 Release 99 FASTA.
+To generate analyze TSS sequence context, [TSRexploreR](https://github.com/zentnerlab/TSRexploreR) retrieves  sequences centered on TSSs from a 'FASTA' genome assembly or 'BSgenome' object. This example uses the Ensembl R64-1-1 Release 99 FASTA.
 
 ```
-assembly <- system.file("extdata", "S288C_Assembly.fasta", package = "tsrexplorer")
+assembly <- system.file("extdata", "S288C_Assembly.fasta", package = "TSRexploreR")
 
 seqs <- tss_sequences(exp, genome_assembly = assembly, threshold = 3)
 ```
@@ -213,7 +214,7 @@ ggsave("tss_seq_colormap.png", plot = p, device = "png", type = "cairo", height 
 As previously discused, organisms often have a specific TSS sequence context. This function explores the fraction of each potential dinucleotide at the -1/+1 positions of all TSSs, where the +1 position is the TSS.
 
 ```
-assembly <- system.file("extdata", "S288C_Assembly.fasta", package = "tsrexplorer")
+assembly <- system.file("extdata", "S288C_Assembly.fasta", package = "TSRexploreR")
 
 frequencies <- dinucleotide_frequencies(exp, genome_assembly = assembly, threshold = 3)
 
@@ -231,7 +232,7 @@ Initiation is rarely homogenous. It is generally the case that a gene will have 
 
 ### Distance Clustering
 
-To identify TSRs, TSRexploreR uses a distance clustering method. This approach groups TSSs that pass a certain read threshold and are within a certain distance from one another into TSRs. However, if you have called TSRs using other methods (e.g. Paraclu or RECLU), they can be imported directly.
+To identify TSRs, [TSRexploreR](https://github.com/zentnerlab/TSRexploreR) uses a distance clustering method. This approach groups TSSs that pass a certain read threshold and are within a certain distance from one another into TSRs. However, if you have called TSRs using other methods (e.g. Paraclu or RECLU), they can be imported directly.
 
 ```
 exp <- tss_clustering(exp, threshold = 3, max_distance = 25)
@@ -278,7 +279,7 @@ exp <- cpm_normalize(exp, data_type = "tsr")
 It is recommended to annotate the TSRs if a genome annotation is available.
 
 ```
-annotation <- system.file("extdata", "S288C_Annotation.gtf", package = "tsrexplorer")
+annotation <- system.file("extdata", "S288C_Annotation.gtf", package = "TSRexploreR")
 
 exp <- annotate_features(
         exp, annotation_data = annotation,
@@ -398,7 +399,7 @@ Most plots in this vignette can be filtered, ordered, grouped, and quantiled
 by any of the desired metrics. Here is an example of what can be done with the TSS sequence motif plot using TSR metrics. In this plot, only the dominant TSSs of each TSR is considered, and TSSs with a score below 10 are discarded. The plot is then split by the shape class of the TSR. A more detailed guide to advanced plotting can be found here.
 
 ```
-assembly <- system.file("extdata", "S288C_Assembly.fasta", package = "tsrexplorer")
+assembly <- system.file("extdata", "S288C_Assembly.fasta", package = "TSRexploreR")
 
 conditions <- list(order_by = "score", grouping = "shape_class")
 seqs <- tss_sequences(
@@ -417,11 +418,12 @@ dev.off()
 
 ## Gene Tracks
 
-Vieweing TSSs and/or TSRs in gene tracks can be useful for a variety of reasons. It can make clear which 5' isoforms of a transcript are expressed, hint at potential misannotation of genes, uncover 5' UTR structure, and various other goodies. In TSRexploreR, tracks can be created based on a gene/transcript name or genomic coordinates.
+Vieweing TSSs and/or TSRs in gene tracks can be useful for a variety of reasons. It can make clear which 5' isoforms of a transcript are expressed, hint at potential misannotation of genes, uncover 5' UTR structure, and various other goodies.
+In [TSRexploreR](https://github.com/zentnerlab/TSRexploreR), tracks can be created based on a gene/transcript name or genomic coordinates.
 Additionally, if tracks are generated based on genes/transcripts, the promoter region alone can optionally be displayed.
 
 ```
-annotation <- system.file("extdata", "S288C_Annotation.gtf", package = "tsrexplorer")
+annotation <- system.file("extdata", "S288C_Annotation.gtf", package = "TSRexploreR")
 
 png("gene_track.png", units = "in", res = 300, height = 3.5, width = 4, type = "cairo")
 gene_tracks(

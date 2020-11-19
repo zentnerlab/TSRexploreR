@@ -3,10 +3,10 @@
 Prepare the TSSs for feature counting.
 
 ```
-library("tsrexplorer")
+library("TSRexploreR")
 library("magrittr")
 
-TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
+TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "TSRexploreR")
 TSSs <- readRDS(TSSs)
 
 exp <- tsr_explorer(TSSs)
@@ -16,7 +16,7 @@ exp <- format_counts(exp, data_type = "tss")
 Annotate the TSSs to the nearest transcript.
 
 ```
-annotation <- system.file("extdata", "S288C_Annotation.gtf", package = "tsrexplorer")
+annotation <- system.file("extdata", "S288C_Annotation.gtf", package = "TSRexploreR")
 exp <- annotate_features(
         exp, annotation_data = annotation,
         data_type = "tss", feature_type = "gene"
