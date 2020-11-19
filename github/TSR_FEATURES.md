@@ -3,9 +3,9 @@
 ## Loading TSSs
 
 ```
-library("tsrexplorer")
+library("TSRexploreR")
 
-TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
+TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "TSRexploreR")
 TSSs <- readRDS(TSSs)
 
 # Keep only the 3 WT samples for now.
@@ -52,7 +52,7 @@ exp <- tsr_metrics(exp)
 ## Annotate TSSs
 
 ```
-annotation <- system.file("extdata", "S288C_Annotation.gtf", package = "tsrexplorer")
+annotation <- system.file("extdata", "S288C_Annotation.gtf", package = "TSRexploreR")
 
 exp <- annotate_features(
         exp, annotation_data = annotation,
@@ -63,7 +63,7 @@ exp <- annotate_features(
 ## Annotate TSRs
 
 ```
-annotation <- system.file("extdata", "S288C_Annotation.gtf", package = "tsrexplorer")
+annotation <- system.file("extdata", "S288C_Annotation.gtf", package = "TSRexploreR")
 
 exp <- annotate_features(
         exp, annotation_data = annotation,
