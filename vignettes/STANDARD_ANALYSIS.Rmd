@@ -6,12 +6,14 @@ output: html_document
 
 A transcription Start Site (TSS) represents the position of the first base of a transcript to be transcribed by an RNA polymerase. Most genes do not have a single TSS, but rather a collection of TSS positions collectively referred to as a Transcription Start Region (TSR). Variation in TSS selection influences transcript stability and translation as the function of the encoded protein. Furthermore, variations in TSS usage have been observed during organismal development as well as in diseases such as cancer.
 
-TSRexploreR offers a series of analysis and plotting functions that allow deep exploration of TSSs and TSRs. Here, we describe the standard TSRexploreR analysis pipeline, qq
+[TSRexploreR](https://github.com/zentnerlab/TSRexploreR) offers a series of analysis and plotting functions that allow deep exploration of TSSs and TSRs.
+Here, we describe the standard [TSRexploreR](https://github.com/zentnerlab/TSRexploreR) analysis pipeline, qq
 
 ## Preparing Data
 
 This example uses a set of *S. cerevisiae* TSSs identified with the STRIPE-seq method.
-There are many ways to import TSSs into TSRexploreR; this vignette uses a named list of GRanges as input into the function that creates the tsrexplorer object.
+There are many ways to import TSSs into TSRexploreR;
+this vignette uses a named list of GRanges as input into the function that creates the [TSRexploreR](https://github.com/zentnerlab/TSRexploreR) object.
 
 ```{r message=FALSE, warning=FALSE}
 library("TSRexploreR")
@@ -47,7 +49,7 @@ exp <- tsr_explorer(
 
 ## Initial TSS Processing
 
-After the TSSs are loaded into the tsrexplorer object,
+After the TSSs are loaded into the [TSRexploreR](https://github.com/zentnerlab/TSRexploreR) object,
  a few processing steps are necessary in order to prepare the data for analysis.
 
 ### Format TSSs
