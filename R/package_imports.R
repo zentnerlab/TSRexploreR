@@ -43,7 +43,7 @@ NULL
 
 NULL
 
-#' @importFrom BiocGenerics width start end
+#' @importFrom BiocGenerics width start end "strand<-"
 #' @importFrom GenomeInfoDb seqnames seqlevels "seqlengths<-"
 #' @importFrom SummarizedExperiment rowRanges SummarizedExperiment rowData
 #'   assay "assay<-"

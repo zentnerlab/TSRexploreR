@@ -105,12 +105,9 @@ merge_samples <- function(
   }
 
   ## Add sample info to sample sheet.
-  if (!is.null(experiment@meta_data$sample_sheet)) {
-    new_samples <- data.table(sample_name=names(merged_samples))
-    experiment@meta_data$sample_sheet <- rbind(
-      experiment@meta_data$sample_sheet, new_samples,
-      fill=TRUE
-    )
+  if (is.null(experiment@meta_data$sample_sheet)) {
+    setDT(sample_sheet)
+    experiment@meta_data$sample_sheet <- sample_sheet
   }
 
   return(experiment)

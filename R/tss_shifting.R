@@ -24,7 +24,7 @@ tss_shift <- function(
   assert_that(is.character(compare_samples), length(compare_samples) == 2)
   assert_that(is.count(min_distance))
   assert_that(is.count(min_threshold) && min_threshold > 5)
-  assert_that(is.integer(n_resamples) && n_resamples >= 100)
+  assert_that(is.integer(n_resamples) && n_resamples >= 100L)
   
   ## Get samples to be compared.
   select_samples <- extract_counts(experiment, "tss", compare_samples)
