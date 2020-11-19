@@ -88,19 +88,19 @@ tsr_explorer <- function(
     is.character(sample_sheet) ~ "file"
   )
 
-  if (sample_sheet_type != "none") {
-    assert_that(
-      all(c("sample_name", "file_1", "file_2") %in%
-      colnames(sample_sheet))
-    )
-  }
-
   sample_sheet <- switch(
     sample_sheet_type,
     "none"=NA,
     "dataframe"=as.data.table(sample_sheet),
     "file"=fread(sample_sheet, sep="\t")
   )
+
+  if (sample_sheet_type != "none") {
+    assert_that(
+      all(c("sample_name", "file_1", "file_2") %in%
+      colnames(sample_sheet))
+    )
+  }
 
   ## Prepare genome assembly.
   genome_assembly <- .prepare_assembly(genome_assembly)
