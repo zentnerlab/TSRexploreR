@@ -52,7 +52,21 @@ tss_import <- function(
   )
 
   ## Convert sample sheet to data.table.
-  setDT(sample_sheet)
+  sheet_type <- case_when(
+    is.null(sample_sheet) & !is.null(experiment@meta_data$sample_sheet) ~ "internal",
+    is.null(sample_sheet) & is.null(experiment@meta_data$sample_sheet) ~ "none",
+    is.character(sample_sheet) ~ "file",
+    is.data.frame(sample_sheet) ~ "table"
+  )
+
+  assert_that(sample_sheet != "none")
+
+  sample_sheet <- switch(
+    sheet_type,
+    "internal"=experiment@meta_data$sample_sheet,
+    "file"=fread(sample_sheet, sep="\t", header=TRUE),
+    "table"=as.data.table(sample_sheet)
+  )
 
   ## Try to figure out file type if not specified.
   if (file_type == "auto") {
@@ -235,7 +249,21 @@ tsr_import <- function(
   asert_that(is.string(delim))
 
   ## Convert sample sheet to data.table.
-  setDT(sample_sheet)
+  sheet_type <- case_when(
+    is.null(sample_sheet) & !is.null(experiment@meta_data$sample_sheet) ~ "internal",
+    is.null(sample_sheet) & is.null(experiment@meta_data$sample_sheet) ~ "none",
+    is.character(sample_sheet) ~ "file",
+    is.data.frame(sample_sheet) ~ "table"
+  )
+
+  assert_that(sample_sheet != "none")
+
+  sample_sheet <- switch(
+    sheet_type,
+    "internal"=experiment@meta_data$sample_sheet,
+    "file"=fread(sample_sheet, sep="\t", header=TRUE),
+    "table"=as.data.table(sample_sheet)
+  )
 
   ## Try to figure out file type if not specified.
   if (file_type == "auto") {
