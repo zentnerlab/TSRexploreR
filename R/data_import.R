@@ -50,6 +50,7 @@ tss_import <- function(
     str_to_lower(file_type),
     c("auto", "bigwig", "bedgraph", "table")
   )
+  assert_that(is.string(delim))
 
   ## Convert sample sheet to data.table.
   sheet_type <- case_when(
@@ -59,7 +60,7 @@ tss_import <- function(
     is.data.frame(sample_sheet) ~ "table"
   )
 
-  assert_that(sample_sheet != "none")
+  assert_that(sheet_type != "none")
 
   sample_sheet <- switch(
     sheet_type,
@@ -244,9 +245,9 @@ tsr_import <- function(
   )
   file_type <- match.arg(
     str_to_lower(file_type),
-    c("table", "bed")
+    c("auto", "table", "bed")
   )
-  asert_that(is.string(delim))
+  assert_that(is.string(delim))
 
   ## Convert sample sheet to data.table.
   sheet_type <- case_when(
@@ -256,7 +257,7 @@ tsr_import <- function(
     is.data.frame(sample_sheet) ~ "table"
   )
 
-  assert_that(sample_sheet != "none")
+  assert_that(sheet_type != "none")
 
   sample_sheet <- switch(
     sheet_type,
