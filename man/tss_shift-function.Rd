@@ -6,7 +6,8 @@
 \usage{
 tss_shift(
   experiment,
-  compare_samples,
+  sample_1,
+  sample_2,
   min_distance = 100,
   min_threshold = 10,
   n_resamples = 1000L
@@ -15,7 +16,13 @@ tss_shift(
 \arguments{
 \item{experiment}{TSRexploreR object}
 
-\item{compare_samples}{Vector of names of the two TSR samples to compare}
+\item{sample_1}{First sample to compare.
+Vector with sample name for TSS and TSR,
+with names 'TSS' and 'TSR'}
+
+\item{sample_2}{Second sample to compare.
+Vector with sample name for TSS and TSR,
+with names 'TSS' and 'TSR'}
 
 \item{min_distance}{TSRs less than this distance apart will be merged}
 

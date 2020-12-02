@@ -5,31 +5,22 @@
 \title{Shifting Score}
 \usage{
 ShiftScores(
-  fhash,
-  sample_indicator,
-  distances,
-  scores,
+  tss_table,
+  baseline_level,
   calc_pvalue = TRUE,
   nresamp = 100L,
-  baseline_level = sample_indicator[1],
   nthresh = 2,
   check_sort = TRUE
 )
 }
 \arguments{
-\item{fhash}{fhash of set}
+\item{tss_table}{Table of TSSs perpared for shifting score calculation}
 
-\item{sample_indicator}{The column with the names of the samples to be compared (where is the column from qq)}
-
-\item{distances}{bin positions}
-
-\item{scores}{bin scores}
+\item{baseline_level}{The sample being used as the baseline for calculation}
 
 \item{calc_pvalue}{Whether p-values should be returned for comparisons}
 
 \item{nresamp}{Number of resamplings for the permutation test}
-
-\item{baseline_level}{Control smaple}
 
 \item{nthresh}{Both samples must have at least this number of reads in each TSR}
 
