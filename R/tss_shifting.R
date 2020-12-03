@@ -40,7 +40,7 @@ tss_shift <- function(
   assert_that(is.integer(n_resamples) && n_resamples >= 100L)
   
   ## Retrieve TSSs and TSRs.
-  TSSs <- extract_counts(experiment, "tsr", c(sample_1["TSR"], sample_2["TSR"]))
+  TSSs <- extract_counts(experiment, "tss", c(sample_1["TSS"], sample_2["TSS"]))
   TSRs <- extract_counts(experiment, "tsr", c(sample_1["TSR"], sample_2["TSR"]))
 
   ## Merge TSRs into consensus ranges.
@@ -57,6 +57,7 @@ tss_shift <- function(
   setkey(TSSs, seqnames, strand, start, end)
 
   overlap <- foverlaps(TSSs, consensus_TSRs)
+  overlap <- overlap[!is.na(start)]
 
   ## Filter out TSRs without TSSs in both samples.
   overlap[, count := uniqueN(sample), by=FHASH]
@@ -74,17 +75,17 @@ tss_shift <- function(
 
   ## Calculate the shift scores.
   shifts <- ShiftScores(
-    fhash=overlap$FHASH, sample_indicator=overlap$sample, 
-    distances=overlap$distance, scores=overlap$score,
-    nresamp=n_resamples, baseline_level=sample_1["TSS"],
+    overlap,
+    baseline_level=sample_1["TSS"],
+    nresamp=n_resamples,
     nthresh=min_threshold
   )
 
   setDT(shifts)
   shifts[, FDR := p.adjust(pval, "fdr")]
-  shift_results <- shift_results[order(FDR)]
+  shifts <- shifts[order(FDR)]
 
-  return(shift_results)
+  return(shifts)
 }
 
 #' Shifting Score

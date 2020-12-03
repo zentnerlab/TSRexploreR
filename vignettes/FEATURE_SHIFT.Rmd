@@ -1,7 +1,7 @@
 
 # TSS Shifting
 
-```
+```{r message=FALSE}
 library("TSRexploreR")
 
 TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "TSRexploreR")
@@ -16,7 +16,7 @@ samples <- data.frame(
 )
 ```
 
-```
+```{r message=FALSE, warning=FALSE}
 exp <- tsr_explorer(TSSs, genome_annotation=annotation, sample_sheet=samples) %>%
   format_counts(data_type = "tss") %>%
   tss_clustering(threshold=3) %>%  
@@ -24,10 +24,17 @@ exp <- tsr_explorer(TSSs, genome_annotation=annotation, sample_sheet=samples) %>
   merge_samples(data_type = "tsr", merge_group="condition")
 
 ```
-## Calculate the shifting scores and return as table.
+
+Calculate the shifting scores and return as table.
+
+```{r message=FALSE, warning=FALSE}
 shift_results <- tss_shift(
   exp, sample_1=c(TSS="Untreated", TSR="Untreated"),
-  sample_2=c(TSS="Diamide", TSR="Diamide")
+  sample_2=c(TSS="Diamide", TSR="Diamide"),
   min_distance = 100, min_threshold = 10, n_resamples = 1000L
 )
+```
+
+```{r echo=FALSE}
+knitr::kable(head(shift_results))
 ```
