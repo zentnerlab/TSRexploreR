@@ -51,6 +51,7 @@ tss_shift <- function(
 
   ## Merge TSRs into consensus ranges.
   consensus_TSRs <- TSRs %>%
+    map(as_granges) %>%
     bind_ranges %>%
     GenomicRanges::reduce(min.gapwidth=min_distance, ignore.strand=FALSE) %>%
     as.data.table(key=c("seqnames", "strand", "start", "end"))
@@ -60,9 +61,7 @@ tss_shift <- function(
   consensus_TSRs <- consensus_TSRs[start != end]
 
   ## Prepare TSSs for overlap with consensus ranges.
-  TSSs <- TSSs %>%
-    map(as.data.table) %>%
-    rbindlist(idcol="sample")
+  TSSs <- rbindlist(TSSs, idcol="sample")
   setkey(TSSs, seqnames, strand, start, end)
 
   ## Filter out TSSs below threshold if requested.
