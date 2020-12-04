@@ -9,6 +9,7 @@
 #' @param sample_2 Second sample to compare.
 #'   Vector with sample name for TSS and TSR,
 #'   with names 'TSS' and 'TSR'
+#' @param tss_threshold Whether to filter out TSSs below a threshold
 #' @param min_distance TSRs less than this distance apart will be merged
 #' @param min_threshold Minimum number of raw counts required in each TSR for both TSR samples
 #' @param n_resamples Number of resamplings for permutation test
@@ -20,6 +21,7 @@ tss_shift <- function(
   experiment,
   sample_1,
   sample_2,
+  tss_threshold=NULL,
   min_distance=100,
   min_threshold=10,
   n_resamples=1000L
@@ -34,6 +36,10 @@ tss_shift <- function(
   assert_that(
     (is.character(sample_2) && length(sample_2) == 2) &&
     has_name(sample_2, c("TSS", "TSR"))
+  )
+  assert_that(
+    is.null(tss_threshold) ||
+    (is.numeric(tss_threshold) && tss_threshold >= 0)
   )
   assert_that(is.count(min_distance))
   assert_that(is.count(min_threshold) && min_threshold > 5)
@@ -50,12 +56,21 @@ tss_shift <- function(
     as.data.table(key=c("seqnames", "strand", "start", "end"))
   consensus_TSRs[, FHASH := str_c(seqnames, start, end, strand, sep=":")]
 
-  ## Associate TSSs with consensus ranges.
+  ## Remove consensus ranges width a width of 1.
+  consensus_TSRs <- consensus_TSRs[start != end]
+
+  ## Prepare TSSs for overlap with consensus ranges.
   TSSs <- TSSs %>%
     map(as.data.table) %>%
     rbindlist(idcol="sample")
   setkey(TSSs, seqnames, strand, start, end)
 
+  ## Filter out TSSs below threshold if requested.
+  if (!is.null(tss_threshold)) {
+    TSSs <- TSSs[score >= tss_threshold]
+  }
+
+  # Associate TSSs with consensus ranges.
   overlap <- foverlaps(TSSs, consensus_TSRs)
   overlap <- overlap[!is.na(start)]
 

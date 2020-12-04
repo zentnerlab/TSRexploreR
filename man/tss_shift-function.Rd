@@ -8,6 +8,7 @@ tss_shift(
   experiment,
   sample_1,
   sample_2,
+  tss_threshold = NULL,
   min_distance = 100,
   min_threshold = 10,
   n_resamples = 1000L
@@ -23,6 +24,8 @@ with names 'TSS' and 'TSR'}
 \item{sample_2}{Second sample to compare.
 Vector with sample name for TSS and TSR,
 with names 'TSS' and 'TSR'}
+
+\item{tss_threshold}{Whether to filter out TSSs below a threshold}
 
 \item{min_distance}{TSRs less than this distance apart will be merged}
 
