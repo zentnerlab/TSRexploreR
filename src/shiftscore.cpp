@@ -18,8 +18,10 @@ double ShiftScoreFast(arma::vec x, arma::vec y, int k, int xn, int yn, arma::uve
 arma::vec ShiftScore(arma::sp_mat x, arma::sp_mat y, int calcP, int nresamp){
   // Inputs are sparse vectors of the same length with counts, unnormalized
 
-  int xn = accu(x);
-  int yn = accu(y);
+  double xn = accu(x);
+  double yn = accu(y);
+  // arma::sp_mat _x = x;
+  // arma::sp_mat _y = y;
   
   x /= xn;
   y /= yn;
@@ -36,7 +38,7 @@ arma::vec ShiftScore(arma::sp_mat x, arma::sp_mat y, int calcP, int nresamp){
   
   if(calcP){
     double pp = 0.0;
-    arma::sp_mat pxy = (xn*x + yn*y) / (xn + yn);
+    arma::sp_mat pxy = (x*xn + y*yn) / (xn + yn);
     arma::vec dense_probs = arma::nonzeros(pxy);
     arma::uvec pos_pxy = arma::find(pxy);
 

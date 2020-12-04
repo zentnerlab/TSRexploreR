@@ -172,10 +172,15 @@ ShiftScores <- function(
   )
 
   ## Add the coordinates back to the shifting score.
-  outdf <- out %>%
-    t %>%
-    as_tibble(.name_repair="unique") %>%
-    dplyr::rename(shift_score=1, pval=2)
+  
+  ## altered to avoid warning message on naming
+  out <- t(out)
+  colnames(out) <- c("shift_score", "pval")
+  outdf <- as_tibble(out)
+  # outdf <- out %>%
+  #   t %>%
+  #   as_tibble(.name_repair="unique") %>%
+  #   dplyr::rename(shift_score=1, pval=2)
 
   outdf <- dat %>%
      dplyr::distinct(fhash) %>%
