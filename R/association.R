@@ -97,7 +97,7 @@ merge_samples <- function(
   }
 
   ## Add merged GRanges to count slot.
-  samples <- map(merged_samples, as.data.table)
+  merged_samples <- map(merged_samples, as.data.table)
   if (data_type == "tss") {
     experiment@counts$TSSs$raw <- c(experiment@counts$TSSs$raw, merged_samples)
   } else if (data_type == "tsr") {
