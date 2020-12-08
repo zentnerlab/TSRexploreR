@@ -95,9 +95,15 @@ tss_shift <- function(
     nthresh=min_threshold
   )
 
+  ## p-value correction fo rmultiple comparisons.
   setDT(shifts)
   shifts[, FDR := p.adjust(pval, "fdr")]
   shifts <- shifts[order(FDR)]
+
+  ## Switch signs on shifting score so upstream is negative and
+  ## downstream is positive.
+
+  shifts[, shift_score := shift_score * -1]
 
   return(shifts)
 }
