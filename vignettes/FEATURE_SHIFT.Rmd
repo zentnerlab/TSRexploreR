@@ -29,8 +29,10 @@ Calculate the shifting scores and return as table.
 
 ```{r message=FALSE, warning=FALSE}
 shift_results <- tss_shift(
-  exp, sample_1=c(TSS="Untreated", TSR="Untreated"),
+  exp,
+  sample_1=c(TSS="Untreated", TSR="Untreated"),
   sample_2=c(TSS="Diamide", TSR="Diamide"),
+  comparison_name="Untreated_vs_Diamide",
   min_distance = 100, min_threshold = 10, n_resamples = 1000L
 )
 ```

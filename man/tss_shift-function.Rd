@@ -8,6 +8,7 @@ tss_shift(
   experiment,
   sample_1,
   sample_2,
+  comparison_name,
   tss_threshold = NULL,
   min_distance = 100,
   min_threshold = 10,
@@ -24,6 +25,8 @@ with names 'TSS' and 'TSR'}
 \item{sample_2}{Second sample to compare.
 Vector with sample name for TSS and TSR,
 with names 'TSS' and 'TSR'}
+
+\item{comparison_name}{Name assigned to the results in the tsr explorer object.}
 
 \item{tss_threshold}{Whether to filter out TSSs below a threshold}
 

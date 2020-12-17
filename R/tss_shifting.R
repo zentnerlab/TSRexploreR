@@ -9,6 +9,7 @@
 #' @param sample_2 Second sample to compare.
 #'   Vector with sample name for TSS and TSR,
 #'   with names 'TSS' and 'TSR'
+#' @param comparison_name Name assigned to the results in the tsr explorer object.
 #' @param tss_threshold Whether to filter out TSSs below a threshold
 #' @param min_distance TSRs less than this distance apart will be merged
 #' @param min_threshold Minimum number of raw counts required in each TSR for both TSR samples
@@ -21,6 +22,7 @@ tss_shift <- function(
   experiment,
   sample_1,
   sample_2,
+  comparison_name,
   tss_threshold=NULL,
   min_distance=100,
   min_threshold=10,
@@ -105,7 +107,10 @@ tss_shift <- function(
 
   shifts[, shift_score := shift_score * -1]
 
-  return(shifts)
+  ## Add results to tsrexplorer object.
+  experiment@shifting$results[[comparison_name]] <- shifts
+
+  return(experiment)
 }
 
 #' Shifting Score
