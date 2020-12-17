@@ -12,7 +12,8 @@ tss_shift(
   tss_threshold = NULL,
   min_distance = 100,
   min_threshold = 10,
-  n_resamples = 1000L
+  n_resamples = 1000L,
+  fdr_cutoff = 0.05
 )
 }
 \arguments{
@@ -35,6 +36,8 @@ with names 'TSS' and 'TSR'}
 \item{min_threshold}{Minimum number of raw counts required in each TSR for both TSR samples}
 
 \item{n_resamples}{Number of resamplings for permutation test}
+
+\item{fdr_cutoff}{FDR cutoff for results}
 }
 \description{
 Calculate TSS shifting statistics

@@ -1,6 +1,8 @@
 
 # TSS Shifting
 
+## Prepare Data
+
 ```{r message=FALSE}
 library("TSRexploreR")
 
@@ -25,6 +27,8 @@ exp <- tsr_explorer(TSSs, genome_annotation=annotation, sample_sheet=samples) %>
 
 ```
 
+## Calculate Shifting
+
 Calculate the shifting scores.
 
 ```{r message=FALSE, warning=FALSE}
@@ -37,6 +41,8 @@ exp <- tss_shift(
 )
 ```
 
+## Shifting Plots
+
 Create a shift score rank plot.
 
 ```{r message=FALSE}
@@ -48,5 +54,22 @@ Create a shifting status count plot.
 
 ```{r message=FALSE}
 plot_shift_count(exp) +
+  scale_fill_viridis_d()
+```
+
+## Annotate Shifting
+
+Annotate the shifted ranges.
+
+```{r message=FALSE}
+exp <- annotate_features(exp, data_type="shift", feature_type="transcript")
+```
+
+Plot the genomic distribution.
+
+```{r message=FALSE}
+distribution <- genomic_distribution(exp, data_type="shift")
+
+plot_genomic_distribution(distribution) +
   scale_fill_viridis_d()
 ```

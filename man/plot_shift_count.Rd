@@ -4,14 +4,14 @@
 \alias{plot_shift_count}
 \title{Shift Count Plot}
 \usage{
-plot_shift_count(experiment, samples = "all", fdr_cutoff = 0.05, ncol = 3)
+plot_shift_count(experiment, samples = "all", ncol = 3)
 }
 \arguments{
 \item{samples}{Samples to plot}
 
-\item{fdr_cutoff}{FDR cutoff value}
-
 \item{ncol}{Number of columns}
+
+\item{fdr_cutoff}{FDR cutoff value}
 }
 \description{
 Shift Count Plot

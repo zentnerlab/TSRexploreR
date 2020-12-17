@@ -7,7 +7,6 @@
 plot_shift_rank(
   experiment,
   samples = "all",
-  fdr_cutoff = 0.05,
   score_order = "descending",
   ncol = 3
 )
@@ -16,8 +15,6 @@ plot_shift_rank(
 \item{experiment}{tsrexplorer object}
 
 \item{samples}{Shifting results to plot}
-
-\item{fdr_cutoff}{FDR value cutoff}
 
 \item{score_order}{Either descending or ascending}
 }

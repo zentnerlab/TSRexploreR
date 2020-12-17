@@ -14,6 +14,7 @@
 #' @param min_distance TSRs less than this distance apart will be merged
 #' @param min_threshold Minimum number of raw counts required in each TSR for both TSR samples
 #' @param n_resamples Number of resamplings for permutation test
+#' @param fdr_cutoff FDR cutoff for results
 #'
 #' @rdname tss_shift-function
 #' @export
@@ -26,7 +27,8 @@ tss_shift <- function(
   tss_threshold=NULL,
   min_distance=100,
   min_threshold=10,
-  n_resamples=1000L
+  n_resamples=1000L,
+  fdr_cutoff=0.05
 ){
 
   ## Input checks.
@@ -46,7 +48,11 @@ tss_shift <- function(
   assert_that(is.count(min_distance))
   assert_that(is.count(min_threshold) && min_threshold > 5)
   assert_that(is.integer(n_resamples) && n_resamples >= 100L)
-  
+  assert_that(
+    is.numeric(fdr_cutoff) &&
+    (fdr_cutoff <= 1 & fdr_cutoff > 0)
+  )
+
   ## Retrieve TSSs and TSRs.
   TSSs <- extract_counts(experiment, "tss", c(sample_1["TSS"], sample_2["TSS"]))
   TSRs <- extract_counts(experiment, "tsr", c(sample_1["TSR"], sample_2["TSR"]))
@@ -104,10 +110,13 @@ tss_shift <- function(
 
   ## Switch signs on shifting score so upstream is negative and
   ## downstream is positive.
-
   shifts[, shift_score := shift_score * -1]
 
+  ## Filter out non-significant results.
+  shifts <- shifts[FDR < fdr_cutoff]
+
   ## Add results to tsrexplorer object.
+  shifts[, c("start", "end") := list(as.numeric(start), as.numeric(end))]
   experiment@shifting$results[[comparison_name]] <- shifts
 
   return(experiment)

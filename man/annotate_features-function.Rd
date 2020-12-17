@@ -6,7 +6,7 @@
 \usage{
 annotate_features(
   experiment,
-  data_type = c("tss", "tsr", "tss_diff", "tsr_diff"),
+  data_type = c("tss", "tsr", "tss_diff", "tsr_diff", "shift"),
   feature_type = c("gene", "transcript"),
   annotation_data = NULL,
   upstream = 1000,
