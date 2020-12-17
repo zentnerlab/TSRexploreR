@@ -73,3 +73,19 @@ distribution <- genomic_distribution(exp, data_type="shift")
 plot_genomic_distribution(distribution) +
   scale_fill_viridis_d()
 ```
+
+## Gene Tracks
+
+Gene track of an example result.
+
+```{r message=FALSE}
+gene_tracks(
+  exp, feature_name="YEL039C",
+  samples=c(
+    TSS="Untreated", TSR="Untreated",
+    TSS="Diamide", TSR="Diamide"
+  ),
+  tss_colors=viridis::viridis(2),
+  tsr_colors=viridis::viridis(2)
+)
+```
