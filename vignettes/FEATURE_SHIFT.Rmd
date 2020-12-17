@@ -25,10 +25,10 @@ exp <- tsr_explorer(TSSs, genome_annotation=annotation, sample_sheet=samples) %>
 
 ```
 
-Calculate the shifting scores and return as table.
+Calculate the shifting scores.
 
 ```{r message=FALSE, warning=FALSE}
-shift_results <- tss_shift(
+exp <- tss_shift(
   exp,
   sample_1=c(TSS="Untreated", TSR="Untreated"),
   sample_2=c(TSS="Diamide", TSR="Diamide"),
@@ -37,6 +37,9 @@ shift_results <- tss_shift(
 )
 ```
 
-```{r echo=FALSE}
-knitr::kable(head(shift_results))
+Create a shift score rank plot.
+
+```{r message=FALSE}
+plot_shift_rank(exp) +
+  scale_fill_viridis_c()
 ```
