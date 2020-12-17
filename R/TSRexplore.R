@@ -4,6 +4,7 @@
 #' @slot counts Named lists of TMM and CPM normalized TSSs and/or TSRs
 #' @slot correlation Named lists of correlation values for TSS and/or TSR sets
 #' @slot diff_features Differential features
+#' @slot shifting TSS shifting data
 #' @slot settings Storage location for arguments used in various functions
 #' @slot meta_data Storage for meta_data (what metadata? qq)
 #'
@@ -18,6 +19,7 @@ setClass(
     counts="list",
     correlation="list",
     diff_features="list",
+    shifting="list",
     settings="list",
     meta_data="list"
   ),
@@ -26,6 +28,7 @@ setClass(
     counts=list(),
     correlation=list(),
     diff_features=list(),
+    shifting=list(),
     settings=list(),
     meta_data=list()
   )
@@ -120,6 +123,7 @@ tsr_explorer <- function(
       "TSSs"=list(raw=list()),
       "TSRs"=list(raw=list())
     ),
+    shifting=list(results=list()),
     meta_data=list(
       "sample_sheet"=sample_sheet,
       "genome_annotation"=genome_annotation,

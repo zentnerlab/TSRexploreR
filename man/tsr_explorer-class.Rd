@@ -45,6 +45,8 @@ start regions (TSRs).
 
 \item{\code{diff_features}}{Differential features}
 
+\item{\code{shifting}}{TSS shifting data}
+
 \item{\code{settings}}{Storage location for arguments used in various functions}
 
 \item{\code{meta_data}}{Storage for meta_data (what metadata? qq)}
