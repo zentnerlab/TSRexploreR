@@ -43,3 +43,10 @@ Create a shift score rank plot.
 plot_shift_rank(exp) +
   scale_fill_viridis_c()
 ```
+
+Create a shifting status count plot.
+
+```{r message=FALSE}
+plot_shift_count(exp) +
+  scale_fill_viridis_d()
+```
