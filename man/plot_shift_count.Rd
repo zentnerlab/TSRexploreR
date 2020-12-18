@@ -10,8 +10,6 @@ plot_shift_count(experiment, samples = "all", ncol = 3)
 \item{samples}{Samples to plot}
 
 \item{ncol}{Number of columns}
-
-\item{fdr_cutoff}{FDR cutoff value}
 }
 \description{
 Shift Count Plot
