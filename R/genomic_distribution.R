@@ -49,7 +49,7 @@
 
 genomic_distribution <- function(
   experiment,
-  data_type=c("tss", "tsr"),
+  data_type=c("tss", "tsr", "shift"),
   samples="all",
   threshold=NULL,
   use_normalized=FALSE,
@@ -59,7 +59,7 @@ genomic_distribution <- function(
 
   ## Check inputs.
   assert_that(is(experiment, "tsr_explorer"))
-  data_type <- match.arg(str_to_lower(data_type), c("tss", "tsr"))
+  data_type <- match.arg(str_to_lower(data_type), c("tss", "tsr", "shift"))
   assert_that(is.character(samples))
   assert_that(is.null(threshold) || (is.numeric(threshold) && threshold >= 0))
   assert_that(is.flag(dominant))

@@ -1,6 +1,8 @@
 
 # TSS Shifting
 
+## Prepare Data
+
 ```{r message=FALSE}
 library("TSRexploreR")
 
@@ -25,16 +27,65 @@ exp <- tsr_explorer(TSSs, genome_annotation=annotation, sample_sheet=samples) %>
 
 ```
 
-Calculate the shifting scores and return as table.
+## Calculate Shifting
+
+Calculate the shifting scores.
 
 ```{r message=FALSE, warning=FALSE}
-shift_results <- tss_shift(
-  exp, sample_1=c(TSS="Untreated", TSR="Untreated"),
+exp <- tss_shift(
+  exp,
+  sample_1=c(TSS="Untreated", TSR="Untreated"),
   sample_2=c(TSS="Diamide", TSR="Diamide"),
+  comparison_name="Untreated_vs_Diamide",
   min_distance = 100, min_threshold = 10, n_resamples = 1000L
 )
 ```
 
-```{r echo=FALSE}
-knitr::kable(head(shift_results))
+## Shifting Plots
+
+Create a shift score rank plot.
+
+```{r message=FALSE}
+plot_shift_rank(exp) +
+  scale_fill_viridis_c()
+```
+
+Create a shifting status count plot.
+
+```{r message=FALSE}
+plot_shift_count(exp) +
+  scale_fill_viridis_d()
+```
+
+## Annotate Shifting
+
+Annotate the shifted ranges.
+
+```{r message=FALSE}
+exp <- annotate_features(exp, data_type="shift", feature_type="transcript")
+```
+
+Plot the genomic distribution.
+
+```{r message=FALSE}
+distribution <- genomic_distribution(exp, data_type="shift")
+
+plot_genomic_distribution(distribution) +
+  scale_fill_viridis_d()
+```
+
+## Gene Tracks
+
+Gene track of an example result.
+
+```{r message=FALSE}
+gene_tracks(
+  exp, feature_name="YEL039C",
+  samples=c(
+    TSS="Untreated", TSR="Untreated",
+    TSS="Diamide", TSR="Diamide"
+  ),
+  tss_colors=viridis::viridis(2),
+  tsr_colors=viridis::viridis(2)
+)
 ```

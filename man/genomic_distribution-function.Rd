@@ -6,7 +6,7 @@
 \usage{
 genomic_distribution(
   experiment,
-  data_type = c("tss", "tsr"),
+  data_type = c("tss", "tsr", "shift"),
   samples = "all",
   threshold = NULL,
   use_normalized = FALSE,

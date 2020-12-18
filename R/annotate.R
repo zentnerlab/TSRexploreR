@@ -41,7 +41,7 @@
 
 annotate_features <- function(
   experiment,
-  data_type=c("tss", "tsr", "tss_diff", "tsr_diff"),
+  data_type=c("tss", "tsr", "tss_diff", "tsr_diff", "shift"),
   feature_type=c("gene", "transcript"),
   annotation_data=NULL,
   upstream=1000,
@@ -55,7 +55,7 @@ annotate_features <- function(
     is(annotation_data, "character") || is(annotation_data, "TxDb"),
     msg="annotation_data must be an annotation file or TxDb object"
   )
-  data_type <- match.arg(data_type, c("tss", "tsr", "tss_diff", "tsr_diff")) 
+  data_type <- match.arg(data_type, c("tss", "tsr", "tss_diff", "tsr_diff", "shift")) 
   feature_type <- match.arg(feature_type, c("gene", "transcript"))
   assert_that(is.count(upstream))
   assert_that(is.count(downstream))
@@ -68,7 +68,8 @@ annotate_features <- function(
     "tss"=experiment@counts$TSSs$raw,
     "tsr"=experiment@counts$TSRs$raw,
     "tss_diff"=experiment@diff_features$TSSs$results,
-    "tsr_diff"=experiment@diff_features$TSRs$results
+    "tsr_diff"=experiment@diff_features$TSRs$results,
+    "shift"=experiment@shifting$results
   )
 
   ## Annotate features.
@@ -84,9 +85,11 @@ annotate_features <- function(
   ## Place annotated features back into the TSRexploreR object.
 
   if (data_type %in% c("tss", "tsr")) {
-      experiment <- set_count_slot(experiment, counts_annotated, "counts", data_type, "raw")
+    experiment <- set_count_slot(experiment, counts_annotated, "counts", data_type, "raw")
   } else if (data_type %in% c("tss_diff", "tsr_diff")) {
-      experiment <- set_count_slot(experiment, counts_annotated, "diff_features", data_type, "results")
+    experiment <- set_count_slot(experiment, counts_annotated, "diff_features", data_type, "results")
+  } else if (data_type == "shift") {
+    experiment@shifting$results <- counts_annotated
   }
 
   ## Save annotation settings to the TSRexploreR object.
@@ -95,7 +98,7 @@ annotate_features <- function(
     "upstream"=upstream,
     "downstream"=downstream
   )
-  experiment@settings[["annotation"]] <- anno_settings
+  experiment@settings$annotation <- anno_settings
 
   return(experiment)
 }
