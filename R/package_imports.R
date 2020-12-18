@@ -7,7 +7,7 @@ NULL
 #' @importFrom stringr
 #'   str_detect str_replace str_c str_split str_to_lower
 #'   str_extract str_sub str_pad
-#' @importFrom purrr imap map walk iwalk discard pmap
+#' @importFrom purrr imap map walk iwalk discard pmap map2
 #' @importFrom tidyr pivot_longer replace_na
 #' @importFrom ggplot2
 #'   labs ylab xlab ylim xlim
@@ -36,10 +36,10 @@ NULL
 #' @importFrom GenomicRanges GRanges
 #' @importFrom GenomicFeatures makeTxDbFromGFF
 #' @importFrom plyranges
-#'   as_granges stretch join_overlap_left_directed
-#'   anchor_3p anchor_5p
+#'   as_granges stretch join_overlap_left_directed mutate
+#'   anchor_3p anchor_5p anchor_center
 #'   bind_ranges reduce_ranges_directed
-#' @importFrom Biostrings DNAStringSet getSeq
+#' @importFrom Biostrings DNAStringSet getSeq writeXStringSet
 
 NULL
 
