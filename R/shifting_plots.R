@@ -17,10 +17,6 @@ plot_shift_rank <- function(
   ## Check inputs.
   assert_that(is(experiment, "tsr_explorer"))
   assert_that(is.character(samples))
-  assert_that(
-    is.numeric(fdr_cutoff) &&
-    (fdr_cutoff <= 1 & fdr_cutoff > 0)
-  )
   score_order <- match.arg(
     str_to_lower(score_order),
     c("descending", "ascending")
@@ -61,7 +57,6 @@ plot_shift_rank <- function(
 #'
 #" @param experiment tsr explorer object
 #' @param samples Samples to plot
-#' @param fdr_cutoff FDR cutoff value
 #' @param ncol Number of columns
 #'
 #' @export
@@ -75,10 +70,6 @@ plot_shift_count <- function(
   ## Check inputs.
   assert_that(is(experiment, "tsr_explorer"))
   assert_that(is.character(samples))
-  assert_that(
-    is.numeric(fdr_cutoff) &&
-    (fdr_cutoff > 0 & fdr_cutoff <= 1)
-  )
   assert_that(is.count(ncol))
 
   ## Get samples.
