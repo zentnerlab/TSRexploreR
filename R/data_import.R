@@ -3,9 +3,10 @@
 #' @description
 #' Function to import TSSs from various sources.
 #'
-#' @param TSRexploreR TSRexploreR object
-#' @param object Object with TSSs to import into TSRexploreR
-#' @param ... Additional arguments for classes
+#' @param experiment TSRexploreR object
+#' @param sample_sheet Sample sheet
+#' @param file_type Either 'auto', 'bedgraph', 'bigwig', or 'table'
+#' @param delim If the input is a table, use this delimiter
 #'
 #' @details
 #' TSRexploreR can import TSSs from various sources.
@@ -30,185 +31,179 @@
 #' \code{\link{tss_export}} to export TSSs.
 #' \code{\link{tsr_export}} to export TSRs.
 #'
-#' @rdname tss_import-generic
 #' @export
 
-setGeneric(
-  "tss_import",
-  function(TSRexploreR_obj, object, ...) standardGeneric("tss_import"),
-  signature="object"
-)
+tss_import <- function(
+  experiment,
+  sample_sheet=NULL,
+  file_type="auto",
+  delim="\t"
+) {
 
-#' Bedgraph/bigwig files (sample sheet saved as file) qq sample sheet specifications?
-#'
-#' @param sep Delimiter for sample_sheet file
-#' @param col_names Logical, whether the sample_sheet file has a header (TRUE) or not (FALSE)
-#'
-#' @rdname tss_import-generic
-#'
-#' @export
+  ## Check inputs.
+  assert_that(is(experiment, "tsr_explorer"))
+  assert_that(
+    is.null(sample_sheet) ||
+    (is.character(sample_sheet) | is.data.frame(sample_sheet))
+  )
+  file_type <- match.arg(
+    str_to_lower(file_type),
+    c("auto", "bigwig", "bedgraph", "table")
+  )
+  assert_that(is.string(delim))
 
-setMethod("tss_import", signature=signature(object="character"),
-  function(
-    TSRexploreR_obj,
-    object,
-    sep="\t",
-    col_names=TRUE
-  ) {
+  ## Convert sample sheet to data.table.
+  sheet_type <- case_when(
+    is.null(sample_sheet) & !is.null(experiment@meta_data$sample_sheet) ~ "internal",
+    is.null(sample_sheet) & is.null(experiment@meta_data$sample_sheet) ~ "none",
+    is.character(sample_sheet) ~ "file",
+    is.data.frame(sample_sheet) ~ "table"
+  )
 
-    ## Check inputs.
-    assert_that(is(tsr_explorer, "tsr_explorer"))
-    assert_that(is.string(sep))
-    assert_that(is.flag(col_names))
-  
-    ## Check to see if sample sheet exists.
-    if (!file.exists(object)) {
-      message(str_c(object, "does not exist", sep=" "))
-    }
+  assert_that(sheet_type != "none")
 
-    sample_sheet <- read.delim(object, sep=sep, header=col_names, stringsAsFactors=FALSE)
+  sample_sheet <- switch(
+    sheet_type,
+    "internal"=experiment@meta_data$sample_sheet,
+    "file"=fread(sample_sheet, sep="\t", header=TRUE),
+    "table"=as.data.table(sample_sheet)
+  )
 
-    ## Import data.
-    imported_data <- sample_sheet %>%
-      pmap(function(sample_name, file_1, file_2) {
-        pos <- import(file_1)
-        neg <- import(file_2)
-        imported_data <- sort(c(pos, neg))
-      }) %>%
-      set_names(pull(sample_sheet, sample_name))
+  ## Try to figure out file type if not specified.
+  if (file_type == "auto") {
+    file_ext <- sample_sheet[, .(file_1, file_2)] %>%
+      unlist %>%
+      discard(is.na) %>%
+      str_extract("(?<=\\.)[[:alpha:]]+$") %>%
+      str_to_lower %>%
+      unique
 
-    ## Add TSSs to TSRexploreR object.
-    tss_experiment(TSRexploreR_obj) <- imported_data
-    return(TSRexploreR_obj)
-  }
-)
-
-#' Bedgraph/bigwig files (data.frame)
-#'
-#' @rdname tss_import-generic
-#'
-#' @export
-
-setMethod("tss_import", signature=signature(object="data.frame"),
-  function(
-    TSRexploreR_obj,
-    object
-  ) {
-    ## Check inputs.
-    assert_that(is(TSRexploreR_obj, "tsr_explorer"))
-
-    ## Import data.
-    imported_data <- sample_sheet %>%
-      pmap(function(sample_name, file_1, file_2) {
-        pos <- import(file_1)
-        neg <- import(file_2)
-        imported_data <- sort(c(pos, neg))
-      }) %>%
-      set_names(pull(sample_sheet, sample_name))
-
-    ## Add TSSs to TSRexploreR object.
-    tss_experiment(TSRexploreR_obj) <- imported_data
-    return(TSRexploreR_obj)
-  }
-)
-
-#' TSRchitect object (tssObject)
-#'
-#' @importFrom TSRchitect tssObject
-#'
-#' @rdname tss_import-generic
-
-setMethod("tss_import", signature(object="tssObject"),
-  function(
-    TSRexploreR_obj,
-    object
-  ) {
-    ## Check inputs.
-    assert_that(is(TSRexploreR_obj, "tsr_explorer"))
-
-    ## Pull the TSSs out of the TSRchitect tssObject.
-    message("...Importing TSSs from TSRchitect object")
-    imported_data <- object@tssCountData %>%
-      rename(seqnames=seq, start=TSS, score=nTAGs) %>%
-      mutate("end"=start) %>%
-      as_granges %>%
-      set_names(object@sampleNames)
-
-    ## Add TSSs to TSRexploreR object.
-    tss_experiment(TSRexploreR_obj) <- imported_data
-    return(TSRexploreR_obj)
-  }
-)
-
-#' CAGEr object
-#'
-#' @importFrom CAGEr CAGEexp
-#'
-#' @param data_type Either "tss", "tsr", or "consensus"
-#'
-#' @rdname tss_import-generic
-
-setMethod("tss_import", signature(object="CAGEexp"),
-  function(TSRexploreR_obj, object, data_type) {
-    message("Importing TSSs from CAGEexp object")
-
-  if (data_type == "tss") {
-
-    ## Grab TSS counts from CAGEexp object.
-    counts <- as.data.table(CTSStagCount(object))
-
-    ## Format counts for input to TSRexploreR.
-    sample_names <- discard(colnames(counts), ~ . %in% c("chr", "pos", "strand"))
-    counts <- melt(
-      counts, variable.name="sample", value.name="score",
-      measure.vars=sample_names, fill=0
+    assert_that(
+      is.string(file_ext),
+      msg="All files must have the same file extension."
     )
-    counts <- counts[score > 0]
-    setnames(counts, old=c("chr", "pos"), new=c("seqnames", "start"))
-    counts[, end := start]
-    counts <- split(counts, counts$sample)
 
-    ## Change counts to GRanges objects.
-    counts_gr <- counts %>%
-      map(function(x) {
-        x$sample <- NULL
-        x <- as_granges(x)
-        return(x)
-      })
+    file_type <- case_when(
+      file_ext %in% c("bw", "bigwig") ~ "bigwig",
+      file_ext %in% c("csv", "tsv", "txt") ~ "table",
+      file_ext == "bedgraph" ~ "bedgraph",
+      TRUE ~ "unknown"
+    )
 
-    ## Add counts to TSRexploreR object.
-    tss_experiment(TSRexploreR_obj) <- counts_gr
+    assert_that(
+      file_ext != "unknown",
+      msg=str_c(file_ext, "is an unknown format", sep=" ")
+    )
+  }
 
-  } else if (data_type == "tsr") {
-    
-    ## Get TSR counts from CAGEexp object.
-    counts <- tagClusters(object) %>%
-      map(as.data.table)
-
-    ## Format counts for input to TSRexploreR.
-    counts <- counts %>%
-      map(function(x) {
-        setnames(x, old=c("chr", "tpm"), new=c("seqnames", "score"))
-        x <- as_granges(x)
-        return(x)
-      })
-
-    ## Add counts to TSRexploreR object.
-    tsr_experiment(TSRexploreR_obj) <- counts
+  ## Import TSSs.
+  TSSs <- switch(
+    file_type,
+    "bedgraph"=.import_bedgraphs(sample_sheet),
+    "bigwig"=.import_bigwigs(sample_sheet),
+    "table"=.import_tables(sample_sheet, delim)
+  )
   
-    return(TSRexploreR_obj)
+  ## Add TSSs to TSRexploreR object.
+  experiment@experiment$TSSs <- TSSs
+
+  ## Add the sample sheet if provided to the function.
+  if (!is.null(sample_sheet)) {
+    experiment@meta_data$sample_sheet <- sample_sheet
   }
-  }
-)
+
+  return(experiment)
+}
+
+#' Import tables
+#'
+#' @param sample_sheet Sample sheet
+
+.import_tables <- function(sample_sheet, delim) {
+  samples <- sample_sheet[, .(sample_name, file_1)] %>%
+    split(by="sample_name", keep.by=FALSE) %>%
+    map(function(x) {
+      x <- x %>%
+        as.character %>%
+        fread(sep=delim) %>%
+        as_granges %>%
+        sort
+      return(x)
+    })
+
+  return(samples)
+}
+
+#' Import TSS Bedgraphs
+#'
+#' @param sample_sheet Sample sheet
+
+.import_bedgraphs <- function(sample_sheet) {
+  samples <- sample_sheet[, .(sample_name, file_1, file_2)] %>%
+    split(by="sample_name", keep.by=FALSE) %>%
+    map(function(x) {
+      # Import positive strand.
+      pos=x[, file_1]
+      pos <- import(pos, "bedgraph")
+      strand(pos) <- "+"
+
+      # Import minus strand.
+      neg=x[, file_2]
+      neg <- import(neg, "bedgraph")
+      strand(neg) <- "-"
+
+      # Combine positive and negative strand.
+      combined <- bind_ranges(pos, neg)
+
+      # Sort the ranges.
+      combined <- sort(combined)
+
+      return(combined)
+    })
+
+  return(samples)
+}
+
+#' Import TSS bigwigs.
+#'
+#' @param sample_sheet Sample sheet
+
+.import_bigwigs <- function(sample_sheet) {
+  samples <- sample_sheet[, .(sample_name, file_1, file_2)] %>%
+    split(by="sample_name", keep.by=FALSE) %>%
+    map(function(x) {
+      # Import positive strand.
+      pos=x[, file_1]
+      pos <- import(pos, "bigwig")
+      strand(pos) <- "+"
+
+      # Import minus strand.
+      neg=x[, file_2]
+      neg <- import(neg, "bigwig")
+      strand(neg) <- "-"
+
+      # Combine positive and negative strand.
+      combined <- bind_ranges(pos, neg)
+
+      # Sort the ranges.
+      combined <- sort(combined)
+
+      return(combined)
+    })
+
+  return(samples)
+}
+
 
 #' Import TSRs
 #'
 #' @description
 #' Function to import TSRs from various sources.
 #'
-#' @param object Object with TSRs to import into TSRexploreR
-#' @param TSRexploreR_obj TSRexploreR object to which to add TSRs
-#' @param ... Additional arguments for classes
+#' @param experiment TSRexploreR object
+#' @param sample_sheet Sample sheet
+#' @param file_type Either 'auto', 'table', or 'bed'
+#' @param delim If input is a table specify the delimiter
 #'
 #' @details
 #' TSRexploreR can import TSRs from various sources.
@@ -233,59 +228,104 @@ setMethod("tss_import", signature(object="CAGEexp"),
 #' \code{\link{tss_export}} to export TSSs.
 #' \code{\link{tsr_export}} to export TSRs.
 #'
-#' @rdname tsr_import-generic
 #' @export
 
-setGeneric(
-  "tsr_import",
-  function(TSRexploreR_obj, object, ...) standardGeneric("tsr_import"),
-  signature="object"
-)
+tsr_import <- function(
+  experiment,
+  sample_sheet=NULL,
+  file_type="auto",
+  delim="\t"
+) {
 
-#' Bed files (sample sheet saved as file) 
-#'
-#' @rdname tsr_import-generic
+  ## Check inputs.
+  assert_that(is(experiment, "tsr_explorer"))
+  assert_that(
+    is.null(sample_sheet) ||
+    (is.character(sample_sheet) | is.data.frame(sample_sheet))
+  )
+  file_type <- match.arg(
+    str_to_lower(file_type),
+    c("auto", "table", "bed")
+  )
+  assert_that(is.string(delim))
 
-setMethod("tsr_import", signature(object="character"),
-  function(TSRexploreR_obj, object) {
-    ## Prepare sample sheet.
-    if (!file.exists(object)) {
-      message(paste(object, "does not exist"))
-      stop()
-    } else {
-      sample_sheet <- read.delim(object, sep="\t", header=TRUE, stringsAsFactors=FALSE)
-    }
+  ## Convert sample sheet to data.table.
+  sheet_type <- case_when(
+    is.null(sample_sheet) & !is.null(experiment@meta_data$sample_sheet) ~ "internal",
+    is.null(sample_sheet) & is.null(experiment@meta_data$sample_sheet) ~ "none",
+    is.character(sample_sheet) ~ "file",
+    is.data.frame(sample_sheet) ~ "table"
+  )
 
-    ## Import data.
-    imported_data <- sample_sheet %>%
-      pmap(function(sample_name, file_1, file_2) {
-        imported_data <- import(file_1)
-        return(imported_data)
-      }) %>%
-      set_names(pull(sample_sheet, "sample_name"))
+  assert_that(sheet_type != "none")
 
-    ## Add TSRs to TSRexploreR object.
-    TSRexploreR_obj@experiment$TSRs <- imported_data
-    return(TSRexploreR_obj)
+  sample_sheet <- switch(
+    sheet_type,
+    "internal"=experiment@meta_data$sample_sheet,
+    "file"=fread(sample_sheet, sep="\t", header=TRUE),
+    "table"=as.data.table(sample_sheet)
+  )
+
+  ## Try to figure out file type if not specified.
+  if (file_type == "auto") {
+    file_ext <- sample_sheet[, .(file_1, file_2)] %>%
+      unlist %>%
+      discard(is.na) %>%
+      str_extract("(?<=\\.)[[:alpha:]]+$") %>%
+      str_to_lower %>%
+      unique
+
+    assert_that(
+      is.string(file_ext),
+      msg="All files must have the same file extension."
+    )
+
+    file_type <- case_when(
+      file_ext %in% c("csv", "tsv", "txt") ~ "table",
+      file_ext == "bed" ~ "bed",
+      TRUE ~ "unknown"
+    )
+
+    assert_that(
+      file_ext != "unknown",
+      msg=str_c(file_ext, "is an unknown format", sep=" ")
+    )
   }
-)
 
-#' Bed files (data.frame)
-#'
-#' @rdname tsr_import-generic
+  ## Import TSRs.
+  TSRs <- switch(
+    file_type,
+    "bed"=.import_beds(sample_sheet),
+    "table"=.import_tables(sample_sheet, delim)
+  )
 
-setMethod("tsr_import", signature(object="data.frame"),
-  function(TSRexploreR_obj, object) {
-    ## Import data.
-    imported_data <- object %>%
-      pmap(function(sample_name, file_1, file_2) {
-        imported_data <- import(file_1)
-        return(imported_data)
-      }) %>%
-      set_names(pull(object, "sample_name"))
+  ## Add TSRs to TSRexploreR object.
+  experiment@experiment$TSRs <- TSRs
 
-    ## Add TSRs to TSRexploreR object.
-    TSRexploreR_obj@experiment$TSRs <- imported_data
-    return(TSRexploreR_obj)
+  ## Store in the sample sheet in the object if provided.
+  if (!is.null(sample_sheet)) {
+    experiment@meta_data$sample_sheet <- sample_sheet
   }
-)
+
+  return(experiment)
+
+}
+
+#' Import BEDs.
+#'
+#' @param sample_sheet Sample sheet
+
+.import_beds <- function(sample_sheet) {
+
+  samples <- sample_sheet[, .(sample_name, file_1)] %>%
+    split(by="sample_name", keep.by=FALSE) %>%
+    map(function(x) {
+      x <- x %>%
+        as.character %>%
+        import("bed") %>%
+        sort
+      return(x)
+    })
+
+  return(samples)
+}

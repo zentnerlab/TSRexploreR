@@ -3,102 +3,124 @@
 #' Calculate TSS shifting statistics
 #'
 #' @param experiment TSRexploreR object
-#' @param compare_samples Vector of names of the two TSR samples to compare
+#' @param sample_1 First sample to compare.
+#'   Vector with sample name for TSS and TSR,
+#'   with names 'TSS' and 'TSR'
+#' @param sample_2 Second sample to compare.
+#'   Vector with sample name for TSS and TSR,
+#'   with names 'TSS' and 'TSR'
+#' @param comparison_name Name assigned to the results in the tsr explorer object.
+#' @param tss_threshold Whether to filter out TSSs below a threshold
 #' @param min_distance TSRs less than this distance apart will be merged
 #' @param min_threshold Minimum number of raw counts required in each TSR for both TSR samples
 #' @param n_resamples Number of resamplings for permutation test
+#' @param fdr_cutoff FDR cutoff for results
 #'
 #' @rdname tss_shift-function
 #' @export
 
 tss_shift <- function(
   experiment,
-  compare_samples,
+  sample_1,
+  sample_2,
+  comparison_name,
+  tss_threshold=NULL,
   min_distance=100,
   min_threshold=10,
-  n_resamples=1000L
+  n_resamples=1000L,
+  fdr_cutoff=0.05
 ){
 
   ## Input checks.
   assert_that(is(experiment, "tsr_explorer"))
-  assert_that(is.character(compare_samples), length(compare_samples) == 2)
+  assert_that(
+    (is.character(sample_1) && length(sample_1) == 2) &&
+    has_name(sample_1, c("TSS", "TSR"))
+  )
+  assert_that(
+    (is.character(sample_2) && length(sample_2) == 2) &&
+    has_name(sample_2, c("TSS", "TSR"))
+  )
+  assert_that(
+    is.null(tss_threshold) ||
+    (is.numeric(tss_threshold) && tss_threshold >= 0)
+  )
   assert_that(is.count(min_distance))
   assert_that(is.count(min_threshold) && min_threshold > 5)
-  assert_that(is.integer(n_resamples) && n_resamples >= 100)
-  
-  ## Get samples to be compared.
-  select_samples <- extract_counts(experiment, "tss", compare_samples)
-
-  ## Get consensus TSRs.
-  consensus_tsrs <- rbindlist(select_samples)[, .(tsr_coords)]
-  consensus_tsrs <- unique(consensus_tsrs)
-  consensus_tsrs[,
-    c("seqnames", "start", "end", "strand") :=
-    tstrsplit(tsr_coords, split=":")
-  ]
-
-  consensus_tsrs <- as_granges(consensus_tsrs, keep_mcols=FALSE)
-  consensus_tsrs <- GenomicRanges::reduce(
-    consensus_tsrs, ignore.strand=FALSE, min.gapwidth=min_distance
+  assert_that(is.integer(n_resamples) && n_resamples >= 100L)
+  assert_that(
+    is.numeric(fdr_cutoff) &&
+    (fdr_cutoff <= 1 & fdr_cutoff > 0)
   )
-  
-  consensus_tsrs <- as.data.table(consensus_tsrs)
-  consensus_tsrs[,
-    FHASH := digest(str_c(seqnames, start, end, strand, collapse=":")),
-    by=seq_len(nrow(consensus_tsrs))
-  ]
-  consensus_tsrs <- as_granges(consensus_tsrs)
+  assert_that(is.string(comparison_name))
 
-  ## Associate consensus TSRs with TSSs.
-  tss_data <- rbindlist(select_samples, idcol="sample")[,
-    .(sample, seqnames, start, end, strand, score)
-  ]
-  tss_data <- as_granges(tss_data)
+  ## Retrieve TSSs and TSRs.
+  TSSs <- extract_counts(experiment, "tss", c(sample_1["TSS"], sample_2["TSS"]))
+  TSRs <- extract_counts(experiment, "tsr", c(sample_1["TSR"], sample_2["TSR"]))
 
-  overlap <- findOverlapPairs(query=consensus_tsrs, subject=tss_data)
-  overlap <- as.data.table(overlap)[,
-    .(second.sample, second.X.seqnames, second.X.start, second.X.end,
-    second.X.strand, second.X.score, first.X.FHASH)
-  ]
+  ## Merge TSRs into consensus ranges.
+  consensus_TSRs <- TSRs %>%
+    map(as_granges) %>%
+    bind_ranges %>%
+    GenomicRanges::reduce(min.gapwidth=min_distance, ignore.strand=FALSE) %>%
+    as.data.table(key=c("seqnames", "strand", "start", "end"))
+  consensus_TSRs[, FHASH := str_c(seqnames, start, end, strand, sep=":")]
 
-  setnames(
-    overlap,
-    old=c(
-      "second.sample", "second.X.seqnames", "second.X.start",
-      "second.X.end", "second.X.strand", "second.X.score",
-      "first.X.FHASH"
-    ),
-    new=c("sample", "seqnames", "start", "end", "strand", "score", "FHASH")
-  )
+  ## Remove consensus ranges width a width of 1.
+  consensus_TSRs <- consensus_TSRs[start != end]
+
+  ## Prepare TSSs for overlap with consensus ranges.
+  TSSs <- rbindlist(TSSs, idcol="sample")
+  setkey(TSSs, seqnames, strand, start, end)
+
+  ## Filter out TSSs below threshold if requested.
+  if (!is.null(tss_threshold)) {
+    TSSs <- TSSs[score >= tss_threshold]
+  }
+
+  # Associate TSSs with consensus ranges.
+  overlap <- foverlaps(TSSs, consensus_TSRs)
+  overlap <- overlap[!is.na(start)]
 
   ## Filter out TSRs without TSSs in both samples.
   overlap[, count := uniqueN(sample), by=FHASH]
-  overlap <- overlap[count == 2, .(sample, seqnames, start, end, strand, score, FHASH)]
+  overlap <- overlap[count == 2, .(sample, seqnames, start=i.start, end=i.end, strand, score, FHASH)]
 
   ## Get relative distances of each TSS in a TSR.
   overlap[, distance := ifelse(strand == "+", start - min(start), max(start) - start), by=FHASH]
 
+  ## Prepare table for shifting score calculation.
+  overlap <- overlap %>%
+    as_granges %>%
+    sort %>%
+    as.data.table
+  overlap <- overlap[, .(sample, seqnames, start, end, strand, score, FHASH, distance)]
+
   ## Calculate the shift scores.
   shifts <- ShiftScores(
-    fhash=overlap$FHASH, sample_indicator=overlap$sample, 
-    distances=overlap$distance, scores=overlap$score,
-    nresamp=n_resamples, baseline_level=compare_samples[1],
+    overlap,
+    baseline_level=sample_1["TSS"],
+    nresamp=n_resamples,
     nthresh=min_threshold
   )
 
-  shifts <- as.data.table(shifts)
-  setnames(shifts, "fhash", "FHASH")
+  ## p-value correction fo rmultiple comparisons.
+  setDT(shifts)
   shifts[, FDR := p.adjust(pval, "fdr")]
+  shifts <- shifts[order(FDR)]
 
-  ## Merge data back into the TSRexploreR object.
-  shift_results <- as.data.table(consensus_tsrs)
-  shift_results <- merge(shift_results, shifts, by="FHASH")
+  ## Switch signs on shifting score so upstream is negative and
+  ## downstream is positive.
+  shifts[, shift_score := shift_score * -1]
 
-  ## Return table of results.
-  shift_results[, FHASH := NULL]
-  shift_results <- shift_results[order(FDR)]
+  ## Filter out non-significant results.
+  shifts <- shifts[FDR < fdr_cutoff]
 
-  return(shift_results)
+  ## Add results to tsrexplorer object.
+  shifts[, c("start", "end") := list(as.numeric(start), as.numeric(end))]
+  experiment@shifting$results[[comparison_name]] <- shifts
+
+  return(experiment)
 }
 
 #' Shifting Score
@@ -107,13 +129,10 @@ tss_shift <- function(
 #'
 #' @importFrom Rcpp sourceCpp
 #'
-#' @param fhash fhash of set
-#' @param sample_indicator The column with the names of the samples to be compared (where is the column from qq)
-#' @param distances bin positions
-#' @param scores bin scores
+#' @param tss_table Table of TSSs perpared for shifting score calculation
+#' @param baseline_level The sample being used as the baseline for calculation
 #' @param calc_pvalue Whether p-values should be returned for comparisons
 #' @param nresamp Number of resamplings for the permutation test
-#' @param baseline_level Control smaple
 #' @param nthresh Both samples must have at least this number of reads in each TSR
 #' @param check_sort Check that the input is sorted properly (by fhash? qq)
 #'
@@ -121,36 +140,73 @@ tss_shift <- function(
 #' @export
 
 ShiftScores <- function(
-  fhash, sample_indicator, distances, scores, calc_pvalue=TRUE, 
-  nresamp=100L, baseline_level=sample_indicator[1], nthresh=2,
-  check_sort=TRUE){
-  
-  dat=data.frame(fhash, sample_indicator, distances, scores)
-  if(check_sort) dat=dplyr::arrange(dat, fhash, sample_indicator, distances)
+  tss_table,
+  baseline_level,
+  calc_pvalue=TRUE, 
+  nresamp=100L,
+  nthresh=2,
+  check_sort=TRUE
+){
+
+  dat <- tss_table %>%
+    as_tibble %>%
+    dplyr::select(fhash=FHASH, sample_indicator=sample, distances=distance, scores=score)
   
   # Assumes fhash is consecutive, no regrouping necessary.
   # Assumes there are only two samples.
-  dat=dplyr::mutate(
+  dat <- dplyr::mutate(
     dat, sample_indicator=as.integer(sample_indicator==baseline_level)
   )
-  out_frame=dat %>% dplyr::group_by(fhash,sample_indicator) %>%
-    dplyr::summarise(n=dplyr::n()) %>% 
-    dplyr::summarise(smallest=min(n)) %>%
-    dplyr::mutate(toosmall=smallest < nthresh)
+
+  if(check_sort) dat <- dplyr::arrange(dat, fhash, sample_indicator, distances)
+
+  ## Filter out TSRs where one of samples has too low a score.
+  out_frame <- dat %>%
+    dplyr::group_by(fhash, sample_indicator) %>%
+    dplyr::summarise(sum_score=sum(scores)) %>% 
+    dplyr::mutate(toosmall= sum_score < nthresh)
+
   if(sum(out_frame$toosmall) > 0){
     warning("Some sequences have fewer than nthresh scores for at least one sample. 
             These are ignored and returned as NA.")
   }
-  dat=dplyr::left_join(dat, out_frame) %>% filter(!toosmall)
-  out=with(dat, ## returns a 2 by n_distinct matrix
-             allTheShiftScores(fhash, distances, scores, sample_indicator, 
-                               as.integer(calc_pvalue), as.integer(nresamp), dplyr::n_distinct(fhash))
+
+  dat <- dat %>%
+    dplyr::left_join(out_frame) %>%
+    dplyr::group_by(fhash) %>%
+    dplyr::filter(!any(toosmall)) %>%
+    dplyr::ungroup()
+
+  ## Filter out TSRs where only one sample is present.
+  dat <- dat %>%
+    dplyr::group_by(fhash) %>%
+    dplyr::filter(dplyr::n_distinct(sample_indicator) == 2) %>%
+    dplyr::ungroup()
+
+  ## Calculate the shifting score.
+  out <- with(
+    dat, ## returns a 2 by n_distinct matrix
+    allTheShiftScores(
+      fhash, distances, scores, sample_indicator, 
+      as.integer(calc_pvalue), as.integer(nresamp), dplyr::n_distinct(fhash)
+    )
   )
-  outdf=data.frame(shift_score=out[1,])
-  if(calc_pvalue) outdf$pval=out[2,]
-  outdf=dplyr::bind_cols(
-    outdf, out_frame %>% dplyr::filter(!toosmall) %>% dplyr::select(fhash)
-  )
-  outdf=out_frame %>% dplyr::select(fhash) %>% dplyr::left_join(outdf) 
+
+  ## Add the coordinates back to the shifting score.
+  
+  ## altered to avoid warning message on naming
+  out <- t(out)
+  colnames(out) <- c("shift_score", "pval")
+  outdf <- as_tibble(out)
+  # outdf <- out %>%
+  #   t %>%
+  #   as_tibble(.name_repair="unique") %>%
+  #   dplyr::rename(shift_score=1, pval=2)
+
+  outdf <- dat %>%
+     dplyr::distinct(fhash) %>%
+     dplyr::bind_cols(outdf) %>%
+     tidyr::separate(fhash, into=c("seqnames", "start", "end", "strand"), sep=":")
+
   return(outdf)
 }

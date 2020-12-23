@@ -7,7 +7,7 @@
 import_bams(
   experiment,
   paired,
-  sample_sheet,
+  sample_sheet = NULL,
   soft_remove = 3,
   proper_pair = NULL,
   remove_secondary = TRUE

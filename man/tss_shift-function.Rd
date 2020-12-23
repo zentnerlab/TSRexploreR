@@ -6,22 +6,38 @@
 \usage{
 tss_shift(
   experiment,
-  compare_samples,
+  sample_1,
+  sample_2,
+  comparison_name,
+  tss_threshold = NULL,
   min_distance = 100,
   min_threshold = 10,
-  n_resamples = 1000L
+  n_resamples = 1000L,
+  fdr_cutoff = 0.05
 )
 }
 \arguments{
 \item{experiment}{TSRexploreR object}
 
-\item{compare_samples}{Vector of names of the two TSR samples to compare}
+\item{sample_1}{First sample to compare.
+Vector with sample name for TSS and TSR,
+with names 'TSS' and 'TSR'}
+
+\item{sample_2}{Second sample to compare.
+Vector with sample name for TSS and TSR,
+with names 'TSS' and 'TSR'}
+
+\item{comparison_name}{Name assigned to the results in the tsr explorer object.}
+
+\item{tss_threshold}{Whether to filter out TSSs below a threshold}
 
 \item{min_distance}{TSRs less than this distance apart will be merged}
 
 \item{min_threshold}{Minimum number of raw counts required in each TSR for both TSR samples}
 
 \item{n_resamples}{Number of resamplings for permutation test}
+
+\item{fdr_cutoff}{FDR cutoff for results}
 }
 \description{
 Calculate TSS shifting statistics

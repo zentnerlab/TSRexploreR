@@ -1,18 +1,16 @@
 # CAGEr Integration
 
-The bioconductor library CAGEr has been extensively developed,
-and contains various normalization and clustering scheme options that may be desired.
+The [Bioconductor](https://bioconductor.org/) library [CAGEr](https://bioconductor.org/packages/release/bioc/html/CAGEr.html) has been extensively developed, and contains various normalization and clustering scheme options that may be desired.
 In order to facilitate interoperability, convenience functions have been
-provided with tsrexplorer to import various bits of data.
+provided with [TSRexploreR](https://github.com/zentnerlab/TSRexploreR) to import various bits of data.
 
 ## Preparing Data
 
-This vignette will follow the steps in the CAGEr vignette using the supplied
-*D. rerio* CAGE dervived TSSs and TSRs.
+This vignette will follow the steps in the [CAGEr](https://bioconductor.org/packages/release/bioc/html/CAGEr.html) vignette using the supplied *D. rerio* CAGE dervived TSSs and TSRs.
 
 ### Preparing CAGEexp Object
 
-The first step is to create a CAGEr object and import the data supplied by their package.
+The first step is to create a [CAGEr](https://bioconductor.org/packages/release/bioc/html/CAGEr.html) object and import the data supplied by their package.
 
 ```
 library("CAGEr")
@@ -34,7 +32,7 @@ getCTSS(ce)
 
 ### Normalizing TSS Counts
 
-CAGEr provides the option to normalize TSS counts using a power-law based normalization.
+[CAGEr](https://bioconductor.org/packages/release/bioc/html/CAGEr.html) provides the option to normalize TSS counts using a power-law based normalization.
 
 ```
 normalizeTagCount(
@@ -49,8 +47,7 @@ TSSs can be clustered into TSRs, and various CAGE based TSR metrics can be calcu
 
 ### Clustering TSSs.
 
-CAGEr provides various clustering algorithms, such as nieve distance clustering and
-clustering algorithms such as paraclu. This example uses nieve distance clustering.
+[CAGEr](https://bioconductor.org/packages/release/bioc/html/CAGEr.html) provides various clustering algorithms, such as nieve distance clustering and clustering algorithms such as paraclu. This example uses nieve distance clustering.
 
 ```
 clusterCTSS(

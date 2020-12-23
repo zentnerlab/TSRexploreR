@@ -16,7 +16,7 @@
 import_bams <- function(
   experiment,
   paired,
-  sample_sheet,
+  sample_sheet=NULL,
   soft_remove=3,
   proper_pair=NULL,
   remove_secondary=TRUE
@@ -172,7 +172,10 @@ G_correction <- function(
 
   ## Check inputs.
   assert_that(is(experiment, "tsr_explorer"))
-  assert_that(is.character(assembly) | is(assembly, "BSgenome"))
+  assert_that(
+    is.null(assembly) ||
+    (is.character(assembly) | is(assembly, "BSgenome"))
+  )
 
   ## Prepare assembly.
   assembly <- .prepare_assembly(assembly, experiment)
@@ -187,12 +190,12 @@ G_correction <- function(
 
   ## Retrieve +1 base.
   select_samples <- map(select_samples, function(x) {
-    x <- switch(
+    seq <- switch(
       assembly_type,
       "fafile"=Rsamtools::getSeq(assembly, x),
       "bsgenome"=BSgenome::getSeq(assembly, x)
     )
-    x$plus_one <- as.character(x)
+    x$plus_one <- as.character(seq)
     x <- as.data.table(x)
     return(x)
   })

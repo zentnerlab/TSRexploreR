@@ -1,7 +1,6 @@
-
 # Export Data
 
-tsrexplorer provides flexible options to export TSSs and TSRs.
+[TSRexploreR](https://github.com/zentnerlab/TSRexploreR) provides flexible options to export TSSs and TSRs.
 
 The currently supported export formats are supported"
 
@@ -12,11 +11,11 @@ The currently supported export formats are supported"
 
 TSSs are often saved as bedgraph files split by the positive and minus strands.
 
-We will first prepare an example tsrexplorer object with TSSs we wish to export.
+We will first prepare an example [TSRexploreR](https://github.com/zentnerlab/TSRexploreR) object with TSSs we wish to export.
 
 ```
 # Load two example TSS files.
-TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
+TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "TSRexploreR")
 TSSs <- readRDS(TSSs)[c("S288C_WT_1", "S288C_WT_2")]
 
 # Keep only the TSSs from chromosome I (for example purposes).
@@ -28,7 +27,7 @@ exp <- tsr_explorer(TSSs)
 exp <- format_counts(exp, data_type = "tss")
 ```
 
-Now that we have a tsrexplorer object with TSSs, we can export them as bedgraph files.
+Now that we have a [TSRexploreR](https://github.com/zentnerlab/TSRexploreR) object with TSSs, we can export them as bedgraph files.
 A reminder that they can also be exported as a tabl delimited table.
 
 ```

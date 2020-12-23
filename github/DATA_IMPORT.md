@@ -1,7 +1,6 @@
-
 # Import Data
 
-While tsrexplorer can accept a named list of GRanges as input for both TSSs and TSRs, 
+While [TSRexploreR](https://github.com/zentnerlab/TSRexploreR) can accept a named list of GRanges as input for both TSSs and TSRs, 
 A data import function is provided for convenience to allow compatability between various sources and packages.
 
 The currently supported sources of data input include:
@@ -29,7 +28,7 @@ library("rtracklayer")
 library("purrr")
 
 # Load two example TSS files.
-TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
+TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "TSRexploreR")
 TSSs <- readRDS(TSSs)[c("S288C_WT_1", "S288C_WT_2")]
 
 # Keep only the TSSs from chromosome I (for example purposes).
@@ -56,12 +55,12 @@ sample_sheet <- data.frame(
 )
 ```
 
-Finally, we can import the bedgraphs and add them to the tsrexplorer object.
+Finally, we can import the bedgraphs and add them to the [TSRexploreR](https://github.com/zentnerlab/TSRexploreR) object.
 A reminder that the sample sheet can also be a tab delimited file of the same format as the
 data.frame created above.
 
 ```
-# Initialize empty tsrexplorer object.
+# Initialize empty [TSRexploreR](https://github.com/zentnerlab/TSRexploreR) object.
 exp <- tsr_explorer()
 
 # Import the bedgraphs.
@@ -98,7 +97,7 @@ library("purrr")
 library("magrittr")
 
 # Load two example TSS files.
-TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "tsrexplorer")
+TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "TSRexploreR")
 TSSs <- readRDS(TSSs)[c("S288C_WT_1", "S288C_WT_2")]
 
 # Keep only the TSSs from chromosome I (for example purposes).
@@ -127,7 +126,7 @@ sample_sheet <- data.frame(
         stringsAsFactors = FALSE
 )
 ```
-Finally, we can import the BEDs and add them to the tsrexplorer object.
+Finally, we can import the BEDs and add them to the [TSRexploreR](https://github.com/zentnerlab/TSRexploreR) object.
 A reminder that the sample sheet can also be a tab delimited file of the same format as the
 data.frame created above.
 

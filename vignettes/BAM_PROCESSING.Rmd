@@ -7,23 +7,22 @@ output: html_document
 Create tsrexplorer object.
 
 ```{r message=FALSE}
-exp <- tsr_explorer()
-```
-
-Prepare sample sheet.
-
-```{r message=FALSE}
+# BAM file.
 bam_file <- system.file("extdata", "S288C.bam", package="TSRexploreR")
-samples <- data.frame(sample_name="S288C", file_1=bam_file)
+
+# Genome assembly.
+assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
+
+# Sample sheet.
+samples <- data.frame(sample_name="S288C", file_1=bam_file, file_2=NA)
+
+exp <- tsr_explorer(sample_sheet=samples, genome_assembly=assembly)
 ```
 
 Import BAMs.
 
 ```{r message=FALSE, warning=FALSE}
-exp <- import_bams(
-  exp, paired=TRUE, sample_sheet=samples,
-  proper_pair=TRUE
-)
+exp <- import_bams(exp, paired=TRUE, proper_pair=TRUE)
 ```
 
 Plot soft-clipped histogram.
@@ -45,9 +44,7 @@ softclip_composition(exp) +
 Correct for G content.
 
 ```{r message=FALSE}
-assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
-
-exp <- G_correction(exp, assembly)
+exp <- G_correction(exp)
 ```
 
 Aggregate TSSs by position.

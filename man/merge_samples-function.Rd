@@ -7,9 +7,10 @@
 merge_samples(
   experiment,
   data_type = c("tss", "tsr"),
-  threshold = NA,
-  merge_replicates = FALSE,
-  sample_list = NA
+  threshold = NULL,
+  sample_sheet = NULL,
+  merge_group = NULL,
+  merge_list = NULL
 )
 }
 \arguments{
@@ -18,6 +19,12 @@ merge_samples(
 \item{data_type}{Whether to merge TSSs or TSRs}
 
 \item{threshold}{Filter out TSSs or TSRs below this raw count threshold before merging}
+
+\item{sample_sheet}{Sample sheet}
+
+\item{merge_group}{Column in sample sheet to merge by}
+
+\item{merge_list}{Named list of samples to merge}
 
 \item{merge_replicates}{If 'TRUE', replicate groups will be merged}
 

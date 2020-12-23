@@ -84,6 +84,12 @@ extract_counts <- function(experiment, data_type, samples, use_normalized=FALSE)
   } else if (data_type == "tsr_features") {
     if (all(samples == "all")) samples <- names(experiment@counts$TSR_features$raw)
     selected_samples <- experiment@counts$TSR_features$raw[samples]
+  } else if (data_type == "shift") {
+    if (all(samples == "all")) {
+      selected_samples <- experiment@shifting$results
+    } else {
+      selected_samples <- experiment@hisfting$results[samples]
+    }
   }
 
   ## Return counts as copies so you don't unintentionally overwrite the TSRexploreR object values.

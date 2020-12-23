@@ -4,6 +4,7 @@
 #' @slot counts Named lists of TMM and CPM normalized TSSs and/or TSRs
 #' @slot correlation Named lists of correlation values for TSS and/or TSR sets
 #' @slot diff_features Differential features
+#' @slot shifting TSS shifting data
 #' @slot settings Storage location for arguments used in various functions
 #' @slot meta_data Storage for meta_data (what metadata? qq)
 #'
@@ -18,6 +19,7 @@ setClass(
     counts="list",
     correlation="list",
     diff_features="list",
+    shifting="list",
     settings="list",
     meta_data="list"
   ),
@@ -26,6 +28,7 @@ setClass(
     counts=list(),
     correlation=list(),
     diff_features=list(),
+    shifting=list(),
     settings=list(),
     meta_data=list()
   )
@@ -78,7 +81,7 @@ tsr_explorer <- function(
   assert_that(
     is.null(sample_sheet) ||
     is.data.frame(sample_sheet) ||
-    is.readable(sample_sheet)
+    is.character(sample_sheet)
   )
 
   ## Prepare sample sheet.
@@ -88,19 +91,19 @@ tsr_explorer <- function(
     is.character(sample_sheet) ~ "file"
   )
 
-  if (sample_sheet_type != "none") {
-    assert_that(
-      all(c("sample_name", "file_1", "file_2") %in%
-      colnames(sample_sheet))
-    )
-  }
-
   sample_sheet <- switch(
     sample_sheet_type,
     "none"=NA,
     "dataframe"=as.data.table(sample_sheet),
     "file"=fread(sample_sheet, sep="\t")
   )
+
+  if (sample_sheet_type != "none") {
+    assert_that(
+      all(c("sample_name", "file_1", "file_2") %in%
+      colnames(sample_sheet))
+    )
+  }
 
   ## Prepare genome assembly.
   genome_assembly <- .prepare_assembly(genome_assembly)
@@ -120,6 +123,7 @@ tsr_explorer <- function(
       "TSSs"=list(raw=list()),
       "TSRs"=list(raw=list())
     ),
+    shifting=list(results=list()),
     meta_data=list(
       "sample_sheet"=sample_sheet,
       "genome_annotation"=genome_annotation,
