@@ -5,7 +5,7 @@
 #'
 #' @param experiment TSRexploreR object
 #' @param sample_sheet Sample sheet
-#' @param file_type Either 'auto', 'bedgraph', 'bigwig', or 'table'
+#' @param file_type Either 'auto', 'bedgraph', 'bigwig', 'table', or 'ctss'
 #' @param delim If the input is a table, use this delimiter
 #'
 #' @details
@@ -48,7 +48,7 @@ tss_import <- function(
   )
   file_type <- match.arg(
     str_to_lower(file_type),
-    c("auto", "bigwig", "bedgraph", "table")
+    c("auto", "bigwig", "bedgraph", "table", "ctss")
   )
   assert_that(is.string(delim))
 
@@ -86,6 +86,7 @@ tss_import <- function(
     file_type <- case_when(
       file_ext %in% c("bw", "bigwig") ~ "bigwig",
       file_ext %in% c("csv", "tsv", "txt") ~ "table",
+      file_ext == "ctss" ~ "ctss",
       file_ext == "bedgraph" ~ "bedgraph",
       TRUE ~ "unknown"
     )
@@ -101,7 +102,8 @@ tss_import <- function(
     file_type,
     "bedgraph"=.import_bedgraphs(sample_sheet),
     "bigwig"=.import_bigwigs(sample_sheet),
-    "table"=.import_tables(sample_sheet, delim)
+    "table"=.import_tables(sample_sheet, delim),
+    "ctss"=.import_ctss(sample_sheet)
   )
   
   ## Add TSSs to TSRexploreR object.
@@ -194,6 +196,29 @@ tss_import <- function(
   return(samples)
 }
 
+#' Import CTSSs
+#'
+#' @param sample_sheet sample_sheet
+
+.import_ctss <- function(sample_sheet) {
+  samples <- sample_sheet[, .(sample_name, file_1)] %>%
+    split(by="sample_name", keep.by=FALSE) %>%
+    map(function(x) {
+      x <- x %>%
+        as.character %>%
+        fread(sep="\t", header=FALSE)
+      setnames(
+        x, old=seq_len(4),
+        new=c("seqnames", "start", "strand", "score")
+      )
+      x[, end:=start]
+      x <- sort(as_granges(x))
+
+      return(x)
+    })
+
+  return(samples)
+}
 
 #' Import TSRs
 #'
