@@ -65,7 +65,7 @@ explore_thresholds <- function(
   select_samples <- rbindlist(select_samples, idcol="sample")
 
   ## Get information needed for threshold plot.
-  summarized_data <- map_df(seq(0, max_threshold, steps), function(x) {
+  summarized_data <- map_df(seq(1, max_threshold, steps), function(x) {
     filtered <- select_samples[score >= x]
     filtered[,
       promoter_proximity := ifelse(

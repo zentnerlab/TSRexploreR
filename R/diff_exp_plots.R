@@ -54,7 +54,7 @@ plot_ma <- function(
   }
 
   ## MA plot of differential expression.
-  p <- ggplot(de_samples, aes(x=.data$mean_expr, y=.data$log2FC, color=.data$de_status)) +
+  p <- ggplot(de_samples, aes(x=log2(.data$mean_expr), y=.data$log2FC, color=.data$de_status)) +
     geom_point(...) +
     geom_hline(yintercept=log2fc_cutoff, lty=2) +
     geom_hline(yintercept=-log2fc_cutoff, lty=2) +
