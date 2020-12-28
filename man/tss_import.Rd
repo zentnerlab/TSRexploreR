@@ -11,7 +11,7 @@ tss_import(experiment, sample_sheet = NULL, file_type = "auto", delim = "\\t")
 
 \item{sample_sheet}{Sample sheet}
 
-\item{file_type}{Either 'auto', 'bedgraph', 'bigwig', or 'table'}
+\item{file_type}{Either 'auto', 'bedgraph', 'bigwig', 'table', or 'ctss'}
 
 \item{delim}{If the input is a table, use this delimiter}
 }
