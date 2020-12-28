@@ -5,10 +5,12 @@
 #'
 #' @param experiment TSRexploreR object
 #' @param samples Either 'all', or names of samples to export
-#' @param file_type either 'bedgraph' or 'table'
+#' @param file_type either 'bedgraph', 'table', or 'bigwig'
 #' @param out_dir Output directory for files
 #' @param diff_tss If TRUE will output differential TSSs
 #' @param sep Delimiter for table output
+#' @param genome_assembly If exporting as bigwig the genome
+#'  assembly must be specified
 #'
 #' @details
 #' This function will save TSSs as bedgraphs, or a tab delimited file.
@@ -48,15 +50,23 @@ tss_export <- function(
   file_type="bedgraph",
   out_dir=NA,
   diff_tss=FALSE,
-  sep="\t"
+  sep="\t",
+  genome_assembly=NULL
 ) {
 
   ## Input checks.
   assert_that(is(experiment, "tsr_explorer"))
   assert_that(is.character(samples))
-  file_type <- match.arg(str_to_lower(file_type), c("bedgraph", "table"))
+  file_type <- match.arg(
+    str_to_lower(file_type),
+    c("bedgraph", "table", "bigwig")
+  )
   assert_that(is.na(out_dir) || is.character(out_dir))
   assert_that(is.flag(diff_tss))
+  assert_that(
+    is.null(genome_assembly) || is.character(genome_assembly) ||
+    is(genome_assembly, "BSgenome")
+  )
 
   ## Retrieve samples.
   if (!diff_tss) {
@@ -66,6 +76,27 @@ tss_export <- function(
     if (all(samples == "all")) samples <- names(experiment@diff_features$TSSs$results)
     export_samples <- experiment@diff_features$TSSs$results[samples]
   }
+
+  ## If exporting as bigwig retrieve the seq lengths from the genome object.
+  genome_assembly <- .prepare_assembly(genome_assembly, experiment)
+
+  assembly_type <- case_when(
+    is(genome_assembly, "BSgenome") ~ "bsgenome",
+    is(genome_assembly, "FaFile") ~ "fafile"
+  )
+
+  chrm_lengths <- switch(
+    assembly_type,
+    "fafile"=Rsamtools::seqinfo(genome_assembly),
+    "bsgenome"=GenomeInfoDb::seqinfo(genome_assembly)
+  )
+
+  export_samples <- map(export_samples, function(x) {
+    x <- sort(as_granges(x))
+    chrm_lengths <- chrm_lengths[seqlevels(x)]
+    seqlengths(x) <- seqlengths(chrm_lengths)
+    return(x)
+  })
 
   ## Export files.
   if (file_type == "bedgraph") {
@@ -86,7 +117,7 @@ tss_export <- function(
       )
       export(min_data, min_file, "bedgraph")
     })
-  } else if (data_type == "table") {
+  } else if (file_type == "table") {
     iwalk(export_samples, function(x, y) {
       export_file <- file.path(
         ifelse(is.na(out_dir), getwd(), out_dir),
@@ -96,6 +127,22 @@ tss_export <- function(
         x, export_file, sep=sep, col.names=TRUE,
         row.names=FALSE, quote=FALSE
       )
+    })
+  } else if (file_type == "bigwig") {
+    iwalk(export_samples, function(x, y) {
+      pos_data <- x[strand(x) == "+"]
+      pos_file <- file.path(
+        ifelse(is.na(out_dir), getwd(), out_dir),
+        str_c(y, "_pos.bigwig") 
+      )
+      export(pos_data, pos_file, "bigwig")
+
+      min_data <- x[strand(x) == "-"]
+      min_file <- file.path(
+        ifelse(is.na(out_dir), getwd(), out_dir),
+        str_c(y, "_min.bigwig")
+      )
+      export(min_data, min_file, "bigwig")
     })
   }
 }

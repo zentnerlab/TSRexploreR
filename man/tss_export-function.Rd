@@ -10,7 +10,8 @@ tss_export(
   file_type = "bedgraph",
   out_dir = NA,
   diff_tss = FALSE,
-  sep = "\\t"
+  sep = "\\t",
+  genome_assembly = NULL
 )
 }
 \arguments{
@@ -18,13 +19,16 @@ tss_export(
 
 \item{samples}{Either 'all', or names of samples to export}
 
-\item{file_type}{either 'bedgraph' or 'table'}
+\item{file_type}{either 'bedgraph', 'table', or 'bigwig'}
 
 \item{out_dir}{Output directory for files}
 
 \item{diff_tss}{If TRUE will output differential TSSs}
 
 \item{sep}{Delimiter for table output}
+
+\item{genome_assembly}{If exporting as bigwig the genome
+assembly must be specified}
 }
 \value{
 Either bedgraphs split by strand, or a tabular file.
