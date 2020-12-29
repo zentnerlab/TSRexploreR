@@ -9,9 +9,9 @@
 \arguments{
 \item{de_results}{Results of DE}
 
-\item{log2fc_cutoff}{Log2FC cutoff value}
+\item{log2fc_cutoff}{Values below the |Log2 FC| cutoff will be discarded.}
 
-\item{fdr_cutoff}{FDR cutoff value}
+\item{fdr_cutoff}{Values below the FDR cutoff will be discarded.}
 }
 \description{
 Mark DE Status

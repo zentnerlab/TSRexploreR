@@ -13,15 +13,15 @@ explore_thresholds(
 )
 }
 \arguments{
-\item{experiment}{TSRexploreR object with annotated TSSs}
+\item{experiment}{TSRexploreR object.}
 
 \item{max_threshold}{Thresholds from 1 to max_threshold will be explored}
 
 \item{steps}{Steps to get the threshold values}
 
-\item{samples}{Either "all" or a vector of names of samples to analyze}
+\item{samples}{A vector of sample names to analyze.}
 
-\item{use_normalized}{Whether to use the raw or normalized counts}
+\item{use_normalized}{Whether to use the normalized (TRUE) or raw (FALSE) counts.}
 }
 \value{
 data.frame containing information for each threshold and sample

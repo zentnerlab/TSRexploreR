@@ -15,17 +15,18 @@ detect_features(
 )
 }
 \arguments{
-\item{experiment}{TSRexploreR object with annotated TSSs or TSRs}
+\item{experiment}{TSRexploreR object.}
 
-\item{samples}{Either 'all' or a vector of sample names}
+\item{samples}{A vector of sample names to analyze.}
 
 \item{data_type}{Whether TSSs or TSRs should be analyzed}
 
-\item{threshold}{The number of raw reads required for a TSS or TSR to be considered}
+\item{threshold}{TSSs or TSRs with a score below this value will be discarded.}
 
-\item{dominant}{Whether to consider only the dominant TSS or TSR}
+\item{dominant}{If TRUE will discard any TSSs and/or TSRs that do not have the
+highest score per gene or transcript.}
 
-\item{condition_data}{Apply conditions to data (supports filtering and quantiles/grouping)}
+\item{use_normalized}{Whether to use the normalized (TRUE) or raw (FALSE) counts.}
 }
 \value{
 DataFrame of detected feature numbers.

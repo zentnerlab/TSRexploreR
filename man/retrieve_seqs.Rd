@@ -19,17 +19,18 @@ retrieve_seqs(
 )
 }
 \arguments{
-\item{experiment}{tsr explorer object}
+\item{experiment}{TSRexploreR object.}
 
 \item{data_type}{Either 'tss', 'tsr', or 'shift'}
 
-\item{samples}{Samples to get sequences for}
+\item{samples}{A vector of sample names to analyze.}
 
-\item{genome_assembly}{Genome assembly}
+\item{genome_assembly}{Genome assembly in either a FASTA file or BSgenome object format.}
 
-\item{threshold}{Score threshold for TSSs or TSRs}
+\item{threshold}{TSSs or TSRs with a score below this value will be discarded.}
 
-\item{dominant}{Whether to keep the dominant TSS or TSR}
+\item{dominant}{If TRUE will discard any TSSs and/or TSRs that do not have the
+highest score per gene or transcript.}
 
 \item{fixed_size}{Whether all returned sequences should have the
 same fixed size starting from the center of the ranges}

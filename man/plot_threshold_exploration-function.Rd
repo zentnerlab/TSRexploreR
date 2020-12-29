@@ -9,7 +9,7 @@ plot_threshold_exploration(threshold_data, ncol = 1, point_size = 1, ...)
 \arguments{
 \item{threshold_data}{Tibble of threshold exploration data from explore_thresholds}
 
-\item{ncol}{Number of columns in which to plot data}
+\item{ncol}{Integer specifying the number of columns to arrange multiple plots.}
 
 \item{point_size}{The size of the points on the plot}
 

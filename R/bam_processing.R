@@ -2,9 +2,8 @@
 #'
 #' @importFrom GenomicAlignments readGAlignmentPairs readGAlignments
 #'
-#' @param experiment tsr explorer object
+#' @inheritParams common_params
 #' @param paired Whether the BAMs are paired (TRUE) or unpaired (FALSE)
-#' @param sample sheet to import bams
 #' @param soft_remove Remove read if greater than this number of soft-clipped bases.
 #' @param proper_pair Whether reads should be properly paired for paired end data.
 #'   TRUE by default when data is paired end.
@@ -128,7 +127,7 @@ import_bams <- function(
 #' @description
 #' Aggregate overlapping TSSs into a total sum score.
 #'
-#' @param experiment tsr explorer object
+#' @inheritParams common_params
 #'
 #' @export
 

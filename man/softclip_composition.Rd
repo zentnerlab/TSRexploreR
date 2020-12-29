@@ -7,13 +7,13 @@
 softclip_composition(experiment, samples = "all", n_bases = NULL, ncol = 3)
 }
 \arguments{
-\item{experiment}{tsr explorer object}
+\item{experiment}{TSRexploreR object.}
 
-\item{samples}{Samples to analyze}
+\item{samples}{A vector of sample names to analyze.}
 
 \item{n_bases}{Number of bases from -1 position to keep}
 
-\item{ncol}{number of columns}
+\item{ncol}{Integer specifying the number of columns to arrange multiple plots.}
 }
 \description{
 Composition of Softclipped Bases

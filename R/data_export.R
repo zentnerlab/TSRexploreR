@@ -3,14 +3,11 @@
 #' @description
 #' Export TSSs to tables or bedgraphs
 #'
-#' @param experiment TSRexploreR object
-#' @param samples Either 'all', or names of samples to export
+#' @inheritParams common_params
 #' @param file_type either 'bedgraph', 'table', or 'bigwig'
 #' @param out_dir Output directory for files
 #' @param diff_tss If TRUE will output differential TSSs
 #' @param sep Delimiter for table output
-#' @param genome_assembly If exporting as bigwig the genome
-#'  assembly must be specified
 #'
 #' @details
 #' This function will save TSSs as bedgraphs, or a tab delimited file.
@@ -152,8 +149,7 @@ tss_export <- function(
 #' @description
 #' Export TSRs to table or BED
 #'
-#' @param experiment TSRexploreR object
-#' @param samples Samples to export ('all' as well? qq)
+#' @inheritParams common_params
 #' @param file_type either 'bed' or 'table'
 #' @param out_dir Output directory for files
 #' @param diff_tsr Whether to pull out the differential TSRs (qq again, this is a bit unclear)

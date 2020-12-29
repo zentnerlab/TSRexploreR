@@ -18,15 +18,15 @@ plot_correlation(
 )
 }
 \arguments{
-\item{experiment}{TSRexploreR object with TMM normalized counts}
+\item{experiment}{TSRexploreR object.}
 
 \item{data_type}{Whether to make scatter plots from TSS, TSR, or RNA-seq & 5' data}
 
-\item{samples}{Either 'all' or the names of the samples to plot}
+\item{samples}{A vector of sample names to analyze.}
 
 \item{correlation_metric}{Whether to use Spearman or Pearson correlation}
 
-\item{use_normalized}{Whether to use the normalized (TRUE) or raw (FALSE) counts}
+\item{use_normalized}{Whether to use the normalized (TRUE) or raw (FALSE) counts.}
 
 \item{font_size}{The font size for the heatmap tiles}
 

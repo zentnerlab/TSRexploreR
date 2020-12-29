@@ -3,7 +3,7 @@
 #' @description
 #' CPM normalize the TSS, TSR, and/or feature counts.
 #'
-#' @param experiment TSRexploreR object
+#' @inheritParams common_params
 #' @param data_type 'tss', 'tsr', 'tss_features', or 'tsr_features'
 #'
 #' @details
@@ -56,15 +56,14 @@ cpm_normalize <- function(
   return(experiment)
 }
 
-#' TMM Normalize TSSs or TSRs
+#' Normalize TSSs or TSRs
 #'
 #' @description
-#' Using edgeR to TMM normalize TSSs or TSRs.
+#' edgeR, DESeq2, or CPM normalization of TSSs.
 #'
-#' @param experiment TSRexploreR object
+#' @inheritParams common_params
 #' @param data_type Whether TSSs, TSRs, or RNA-seq & 5' feature counts should be normalized
 #' @param normalization_method Either 'edgeR', 'DESeq2', or 'CPM'
-#' @param threshold Consider only features with at least this number of raw counts
 #' @param n_samples Filter out positions without features meeting the the selected threshold
 #'   in this number of samples
 #'

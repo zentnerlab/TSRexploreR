@@ -7,13 +7,13 @@
 softclip_histogram(experiment, samples = "all", n_bases = NULL, ncol = 3)
 }
 \arguments{
-\item{experiment}{tsr explorer object}
+\item{experiment}{TSRexploreR object.}
 
-\item{samples}{samples to plot}
+\item{samples}{A vector of sample names to analyze.}
 
 \item{n_bases}{Number of bases to plot}
 
-\item{ncol}{Number of columns for plot}
+\item{ncol}{Integer specifying the number of columns to arrange multiple plots.}
 }
 \description{
 Number of soft-clipped bases.

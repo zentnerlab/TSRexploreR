@@ -83,6 +83,7 @@ Collate:
     'motif.R'
     'normalize.R'
     'package_imports.R'
+    'params.R'
     'prepare_counts.R'
     'rnaseq.R'
     'sample_sheet.R'

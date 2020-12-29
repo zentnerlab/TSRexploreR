@@ -7,9 +7,11 @@
 plot_shift_count(experiment, samples = "all", ncol = 3)
 }
 \arguments{
-\item{samples}{Samples to plot}
+\item{experiment}{TSRexploreR object.}
 
-\item{ncol}{Number of columns}
+\item{samples}{A vector of sample names to analyze.}
+
+\item{ncol}{Integer specifying the number of columns to arrange multiple plots.}
 }
 \description{
 Shift Count Plot

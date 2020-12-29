@@ -7,14 +7,8 @@
 #'
 #' @importFrom tools file_ext
 #'
-#' @param experiment TSRexploreR object with TSS GRanges
-#' @param samples Either "all" or a vector of names of samples to analyze
-#' @param genome_assembly Genome assembly in fasta format or bioconductor BSgenome
-#' @param threshold Keep only TSSs with at least this number of raw counts
-#' @param use_normalized Whether to use normalized counts
+#' @inheritParams common_params
 #' @param distance Bases to add on each side of eacg TSS
-#' @param dominant Whether to only consider dominant TSSs
-#' @param data_conditions Condition the data (filter, quantile, and grouping available)
 #'
 #' @details
 #' This function will retrieve the genomic sequence surrounding TSSs for later use in
@@ -167,8 +161,8 @@ tss_sequences <- function(
 #' @importFrom Biostrings consensusMatrix
 #' @importFrom cowplot plot_grid
 #'
+#' @inheritParams common_params
 #' @param tss_sequences Sequences surrounding TSSs generated with tss_sequences
-#' @param ncol Number of columns to plot if quantiles is not set
 #' @param font_size Font size for plots
 #'
 #' @details
@@ -267,8 +261,8 @@ plot_sequence_logo <- function(
 #' @importFrom dplyr bind_cols
 #' @importFrom stringr str_length
 #'
+#' @inheritParams common_params
 #' @param tss_sequences Sequences surrounding TSS generated with tss_sequences
-#' @param ncol Number of columns to plot data if quantiles not specified
 #' @param base_colors Named vector specifying colors for each base
 #' @param text_size Size of text for plots
 #' @param ... Arguments passed to geom_tile

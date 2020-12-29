@@ -17,7 +17,7 @@ tss_shift(
 )
 }
 \arguments{
-\item{experiment}{TSRexploreR object}
+\item{experiment}{TSRexploreR object.}
 
 \item{sample_1}{First sample to compare.
 Vector with sample name for TSS and TSR,
@@ -37,7 +37,7 @@ with names 'TSS' and 'TSR'}
 
 \item{n_resamples}{Number of resamplings for permutation test}
 
-\item{fdr_cutoff}{FDR cutoff for results}
+\item{fdr_cutoff}{Values below the FDR cutoff will be discarded.}
 }
 \description{
 Calculate TSS shifting statistics

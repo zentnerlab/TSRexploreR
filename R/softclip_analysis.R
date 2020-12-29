@@ -1,9 +1,7 @@
 #' Composition of Softclipped Bases
 #'
-#' @param experiment tsr explorer object
-#' @param samples Samples to analyze
+#' @inheritParams common_params
 #' @param n_bases Number of bases from -1 position to keep
-#' @param ncol number of columns
 #'
 #' @export
 
@@ -83,10 +81,8 @@ softclip_composition <- function(
 
 #' Number of soft-clipped bases.
 #'
-#' @param experiment tsr explorer object
-#' @param samples samples to plot
+#' @inheritParams common_params
 #' @param n_bases Number of bases to plot
-#' @param ncol Number of columns for plot
 #'
 #' @export
 

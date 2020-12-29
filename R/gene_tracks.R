@@ -7,18 +7,14 @@
 #' @importFrom stringr str_count
 #' @importFrom GenomicFeatures genes transcripts promoters
 #'
-#' @param experiment TSRexploreR object
-#' @param genome_annotation Genome annotation GTF/GFF file, or TxDb object
+#' @inheritParams common_params
 #' @param feature_name Name of gene or transcript to plot
 #' @param feature_type Either 'gene' or 'transcript'
 #' @param samples Names of samples to plot.
 #'   Append sample names with 'TSS:' or 'TSR:' for TSS and TSR tracks respectively.
-#' @param threshold TSSs and TSRs below threshold are excluded from plotting
-#' @param use_normalized Whether to use normalized counts
 #' @param upstream bases upstream to extend gene or promoter track
 #' @param downstream bases downstream to extend gene or promoter track
 #' @param promoter_only Instead of plotting the entire gene, plot the promoter region
-#' @param use_normalized Use CPM normalized reads or not
 #' @param tss_colors Either a single color value for all TSS tracks, or a vector of colors
 #' @param tsr_colors Either a single color value for all TSR tracks, or a vector of colors
 #' @param axis_scale Relative size scale for axis text and title

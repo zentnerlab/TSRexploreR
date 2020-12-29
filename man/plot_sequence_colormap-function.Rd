@@ -15,7 +15,7 @@ plot_sequence_colormap(
 \arguments{
 \item{tss_sequences}{Sequences surrounding TSS generated with tss_sequences}
 
-\item{ncol}{Number of columns to plot data if quantiles not specified}
+\item{ncol}{Integer specifying the number of columns to arrange multiple plots.}
 
 \item{base_colors}{Named vector specifying colors for each base}
 

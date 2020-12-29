@@ -3,9 +3,8 @@
 #' @description
 #' Format TSS or TSR counts for further analysis. 
 #'
-#' @param experiment TSRexploreR object
+#' @inheritParams common_params
 #' @param data_type Whether to format TSS or TSR counts 
-#' @param samples Character vector of sample names
 #'
 #' @details
 #' When TSSs or TSRs are first loaded into the TSRexploreR object
@@ -78,7 +77,7 @@ format_counts <- function(
 #' Count the number of reads associated with genes or transcripts
 #'   based on the aggregate score of TSSs or TSRs annotated to them.
 #'
-#' @param experiment TSRexploreR object
+#' @inheritParams common_params
 #' @param data_type Either 'tss' or 'tsr'
 #'
 #' @details

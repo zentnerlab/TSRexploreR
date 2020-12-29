@@ -7,7 +7,7 @@
 tss_aggregate(experiment)
 }
 \arguments{
-\item{experiment}{tsr explorer object}
+\item{experiment}{TSRexploreR object.}
 }
 \description{
 Aggregate overlapping TSSs into a total sum score.

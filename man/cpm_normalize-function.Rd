@@ -10,7 +10,7 @@ cpm_normalize(
 )
 }
 \arguments{
-\item{experiment}{TSRexploreR object}
+\item{experiment}{TSRexploreR object.}
 
 \item{data_type}{'tss', 'tsr', 'tss_features', or 'tsr_features'}
 }

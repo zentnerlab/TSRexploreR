@@ -2,7 +2,7 @@
 % Please edit documentation in R/normalize.R
 \name{normalize_counts}
 \alias{normalize_counts}
-\title{TMM Normalize TSSs or TSRs}
+\title{Normalize TSSs or TSRs}
 \usage{
 normalize_counts(
   experiment,
@@ -13,11 +13,11 @@ normalize_counts(
 )
 }
 \arguments{
-\item{experiment}{TSRexploreR object}
+\item{experiment}{TSRexploreR object.}
 
 \item{data_type}{Whether TSSs, TSRs, or RNA-seq & 5' feature counts should be normalized}
 
-\item{threshold}{Consider only features with at least this number of raw counts}
+\item{threshold}{TSSs or TSRs with a score below this value will be discarded.}
 
 \item{n_samples}{Filter out positions without features meeting the the selected threshold
 in this number of samples}
@@ -28,7 +28,7 @@ in this number of samples}
 TSRexploreR object with tmm normalized count matrices
 }
 \description{
-Using edgeR to TMM normalize TSSs or TSRs.
+edgeR, DESeq2, or CPM normalization of TSSs.
 }
 \details{
 The TMM normalization method, employed by edgeR, is designed to reduce the influence of

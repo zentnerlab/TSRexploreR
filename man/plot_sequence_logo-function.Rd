@@ -9,7 +9,7 @@ plot_sequence_logo(tss_sequences, ncol = 1, font_size = 6)
 \arguments{
 \item{tss_sequences}{Sequences surrounding TSSs generated with tss_sequences}
 
-\item{ncol}{Number of columns to plot if quantiles is not set}
+\item{ncol}{Integer specifying the number of columns to arrange multiple plots.}
 
 \item{font_size}{Font size for plots}
 }

@@ -16,9 +16,13 @@ plot_reduction(
 )
 }
 \arguments{
-\item{experiment}{TSRexploreR object}
+\item{experiment}{TSRexploreR object.}
+
+\item{samples}{A vector of sample names to analyze.}
 
 \item{data_type}{Either 'tss', 'tsr', 'tss_features', or 'tsr_features'}
+
+\item{use_normalized}{Whether to use the normalized (TRUE) or raw (FALSE) counts.}
 
 \item{remove_var}{Remove features in this bottom fraction}
 

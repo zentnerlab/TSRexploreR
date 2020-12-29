@@ -2,9 +2,8 @@
 #'
 #' Find differential TSSs, TSRs, or features
 #'
-#' @param experiment TSRexploreR object with TMM-normalized counts
+#' @inheritParams common_params
 #' @param data_type Whether TSSs, TSRs, or feature counts should be analyzed
-#' @param samples Vector of sample names to analyze
 #' @param formula DE formula
 #' @param method Either 'DESeq2' or 'edgeR'
 #'
@@ -67,8 +66,8 @@ fit_de_model <- function(
 
 #' edgeR Differential Expression Model
 #'
+#' @inheritParams common_params
 #' @param count_data Count matrix
-#' @param sample_sheet Sample data
 #' @param formula Differential expression formula
 
 .edger_model <- function(
@@ -106,8 +105,8 @@ fit_de_model <- function(
 
 #' DESeq2 Differential Expression Model
 #'
+#' @inheritParams common_params
 #' @param count_data Count matrix
-#' @param sample_sheet Sample data
 #' @param formula Differential expression formula
 
 .deseq2_model <- function(
@@ -137,7 +136,7 @@ fit_de_model <- function(
 #' @importFrom edgeR glmQLFTest
 #' @importFrom purrr map_dbl
 #'
-#' @param experiment TSRexploreR object with edgeR differential expression model from fit_edger_model
+#' @inheritParams common_params
 #' @param data_type Whether the input was generated from TSSs, TSRs, or features
 #' @param comparison_name The name given to the comparison when stored back into the tsr explore robject.
 #' @param comparison_type For DEseq2 either 'contrast' or 'name'.
@@ -248,9 +247,8 @@ differential_expression <- function(
 
 #' Mark DE Status
 #'
+#' @inheritParams common_params
 #' @param de_results Results of DE
-#' @param log2fc_cutoff Log2FC cutoff value
-#' @param fdr_cutoff FDR cutoff value
 
 .de_status <- function(
   de_results,
@@ -281,7 +279,7 @@ differential_expression <- function(
 #'
 #' Output a table with differential features
 #'
-#' @param experiment TSRexploreR object
+#' @inheritParams common_params
 #' @param data_type Either 'tss', 'tsr', 'tss_features', or 'tsr_features'
 #' @param de_comparisons The name of the DE comparison
 #' @param de_type A single value or combination of 'up, 'unchanged', and/or 'down' (qq a list?)

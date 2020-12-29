@@ -3,12 +3,9 @@
 #' @description
 #' Generate a MA plot for differential TSRs or Genes (RNA-seq) - confused. I see the MA-plot code but no volcano.
 #'
-#' @param experiment TSRexploreR object
+#' @inheritParams common_params
 #' @param de_comparisons Which differential expression comparisons to plot
 #' @param data_type Either 'tss', 'tsr', 'tss_features', or 'tsr_features'
-#' @param ncol Number of columns for the facets
-#' @param log2fc_cutoff Log2FC cutoff value
-#' @param fdr_cutoff FDR cutoff value
 #' @param ... Arguments passed to geom_point
 #'
 #' @details
@@ -66,12 +63,9 @@ plot_ma <- function(
 
 #' DE Volcano Plot
 #'
-#' @param experiment tsr explorer object
+#' @inheritParams common_params
 #' @param data_type either 'tss', 'tsr', 'tss_features', or 'tsr_features'
 #' @param de_comparisons The DE comparisons to plot
-#' @param ncol Number of columns for plot
-#' @param log2fc_cutoff Log2FC cutoff value
-#' @param fdr_cutoff FDR cutoff value
 #' @param ... Arguments passed to geom_point
 #'
 #' @export
@@ -130,11 +124,9 @@ plot_volcano <- function(
 #'
 #' Export DEGs for use in clusterProfiler term enrichment.
 #'
-#' @param experiment TSRexploreR object
+#' @inheritParams common_params
 #' @param data_type Either 'tss', 'tsr', 'tss_features', or 'tsr_features'
 #' @param de_comparisons The DE comparisons to plot
-#' @param log2fc_cutoff Log2FC cutoff value
-#' @param fdr_cutoff FDR cutoff value
 #' @param keep_unchanged If TRUE genes that are labelled unchanged will
 #'   be kept.
 #'
@@ -183,11 +175,9 @@ export_for_enrichment <- function(
 #'
 #' Plot number of DE features.
 #'
-#' @param experiment TSRexploreR object
+#' @inheritParams common_params
 #' @param data_type Either 'tss', 'tsr', 'tss_features', or 'tsr_features'
 #' @param de_comparisons The comparisons to plot
-#' @param logfc_cutoff Log2 fold change cutoff
-#' @param fdr_cutoff FDR cutoff value
 #' @param ... Additional arguments passed to geom_col
 #'
 #' @rdname plot_num_de-function
