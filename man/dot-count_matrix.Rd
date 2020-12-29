@@ -4,12 +4,19 @@
 \alias{.count_matrix}
 \title{Generate Count Matrix.}
 \usage{
-.count_matrix(count_data, data_type = c("tss", "tsr"), use_normalized = FALSE)
+.count_matrix(
+  count_data,
+  data_type = c("tss", "tsr"),
+  use_normalized = FALSE,
+  threshold = NULL
+)
 }
 \arguments{
-\item{count_data}{Names list of counts.}
+\item{count_data}{Named list of counts.}
 
 \item{use_normalized}{Whether to use the normalized (TRUE) or raw (FALSE) counts.}
+
+\item{threshold}{TSSs or TSRs with a score below this value will be discarded.}
 }
 \description{
 Generate Count Matrix.

@@ -162,3 +162,55 @@ plot_threshold_exploration <- function(
 
   return(p)
 }
+
+#' Apply a threshold to TSSs or TSRs
+#'
+#' @inheritParams common_params
+#'
+#' @export
+
+apply_threshold <- function(
+  experiment,
+  threshold,
+  data_type=c("tss", "tsr"),
+  use_normalized=FALSE
+) {
+
+  ## Check inputs.
+  assert_that(is(experiment, "tsr_explorer"))
+  assert_that(is.numeric(threshold) && threshold > 0)
+  data_type <- match.arg(
+    str_to_lower(data_type),
+    c("tss", "tsr")
+  )
+  assert_that(is.flag(use_normalized))
+
+  ## Retrieve selected samples.
+  select_samples <- extract_counts(
+    experiment, data_type,
+    "all", use_normalized
+  )
+
+  ## Filter TSSs or TSRs below the threshold.
+  if (use_normalized) {
+    select_samples <- map(select_samples, function(x) {
+      x <- x[normalized_score >= threshold]
+      return(x)
+    })
+  } else {
+    select_samples <- map(select_samples, function(x) {
+      x <- x[score >= threshold]
+      return(x)
+    })
+  }
+
+  ## Add the data back to the object.
+  if (data_type == "tss") {
+    experiment@counts$TSSs$raw <- select_samples
+  } else if (data_type == "tsr") {
+    experiment@counts$TSRs$raw <- select_samples
+  }
+
+  ## Return the TSRexploreR object.
+  return(experiment)
+}

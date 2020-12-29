@@ -119,6 +119,7 @@ plot_correlation <- function(
   data_type=c("tss", "tsr", "tss_features", "tsr_features"),
   samples="all",
   correlation_metric="pearson",
+  threshold=NULL,
   use_normalized=TRUE,
   font_size=12,
   cluster_samples=FALSE,
@@ -137,6 +138,10 @@ plot_correlation <- function(
   assert_that(is.null(heatmap_colors) | is.character(heatmap_colors))
   assert_that(is.flag(show_values))
   assert_that(is.flag(use_normalized))
+  assert_that(
+    is.null(threshold) ||
+    (is.numeric(threshold) && threshold > 0)
+  )
 
   ## Get data from proper slot.
   normalized_counts <- experiment %>%
