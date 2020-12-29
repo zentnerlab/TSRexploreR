@@ -48,3 +48,45 @@ test_that("TSS Normalization", {
       "FHASH", "normalized_score", "score"
     ))
 })
+
+test_that("TSS annotation", {
+  annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
+  tsre <- tsr_explorer(TSSs["S288C_WT_1"], genome_annotation=annotation) %>%
+    format_counts(data_type="tss")
+
+  expected_columns <- c(
+    "seqnames", "start", "end", "width", "strand", "score", "FHASH", 
+    "annotation", "geneChr", "geneStart", "geneEnd", "geneLength", 
+    "geneStrand", "geneId", "distanceToTSS", "simple_annotations"
+  )
+
+  ## Annotate based on gene.
+  gene_columns <- c(
+    "seqnames", "start", "end", "width", "strand", "score", "FHASH",
+    "annotation", "geneChr", "geneStart", "geneEnd", "geneLength",
+    "geneStrand", "geneId", "distanceToTSS", "simple_annotations"
+  )
+  gene_anno <- annotate_features(tsre, data_type="tss", feature_type="gene")
+  gene_anno@counts$TSSs$raw %>%
+    expect_type("list") %>%
+    expect_length(1) %>%
+    expect_named("S288C_WT_1")
+  gene_anno@counts$TSSs$raw$S288C_WT_1 %>%
+    expect_s3_class("data.table") %>%
+    expect_named(gene_columns)
+
+  ## Annotate based on transcript.
+  tx_columns <- c(
+    "seqnames", "start", "end", "width", "strand", "score", "FHASH", 
+    "annotation", "geneChr", "geneStart", "geneEnd", "geneLength", 
+    "geneStrand", "geneId", "transcriptId", "distanceToTSS", "simple_annotations"
+  )
+  tx_anno <- annotate_features(tsre, data_type="tss", feature_type="transcript")
+  tx_anno@counts$TSSs$raw %>%
+    expect_type("list") %>%
+    expect_length(1) %>%
+    expect_named("S288C_WT_1")
+  tx_anno@counts$TSSs$raw$S288C_WT_1 %>%
+    expect_s3_class("data.table") %>%
+    expect_named(tx_columns)
+})
