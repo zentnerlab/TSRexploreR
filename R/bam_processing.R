@@ -1,7 +1,6 @@
 #' Import BAMs
 #'
 #' @importFrom GenomicAlignments readGAlignmentPairs readGAlignments
-#' @importFrom Rsamtools ScanBamParam scanBamFlag
 #'
 #' @param experiment tsr explorer object
 #' @param paired Whether the BAMs are paired (TRUE) or unpaired (FALSE)
