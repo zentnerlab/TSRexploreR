@@ -135,6 +135,8 @@ plot_volcano <- function(
 #' @param de_comparisons The DE comparisons to plot
 #' @param log2fc_cutoff Log2FC cutoff value
 #' @param fdr_cutoff FDR cutoff value
+#' @param keep_unchanged If TRUE genes that are labelled unchanged will
+#'   be kept.
 #'
 #' @rdname export_for_enrichment-function
 #'
@@ -145,7 +147,8 @@ export_for_enrichment <- function(
   data_type=c("tss", "tsr"),
   de_comparisons="all",
   log2fc_cutoff=1,
-  fdr_cutoff=0.05
+  fdr_cutoff=0.05,
+  keep_unchanged=FALSE
 ) {
 
   ## Input checks.
@@ -161,9 +164,17 @@ export_for_enrichment <- function(
 
   ## Mark de status.
   .de_status(de_samples, log2fc_cutoff, fdr_cutoff)
-  de_samples[, de_status := factor(
-    de_status, levels=c("up", "unchanged", "down")
-  )]
+
+  if (keep_unchanged) {
+    de_samples[, de_status := factor(
+      de_status, levels=c("up", "unchanged", "down")
+    )]
+  } else {
+    de_samples <- de_samples[de_status != "unchanged"]
+    de_samples[, de_status := factor(
+      de_status, levels=c("up", "down")
+    )]
+  }
   
   return(de_samples)
 }
