@@ -110,6 +110,9 @@ normalize_counts <- function(
   method <- match.arg(str_to_lower(method), c("edger", "deseq2", "cpm"))
   assert_that(is.count(threshold))
   assert_that(is.count(n_samples))
+  if (method == "DESeq2") {
+    assert_that(!is.null(experiment@meta_data$sample_sheet))
+  }
 
   ## Get selected samples.
   select_samples <- extract_counts(experiment, data_type, "all")

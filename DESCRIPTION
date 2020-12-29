@@ -56,7 +56,8 @@ Depends:
 Suggests:
     clusterProfiler,
     TSRchitect,
-    org.Sc.sgd.db
+    org.Sc.sgd.db,
+    testthat
 RoxygenNote: 7.1.1
 Collate: 
     'RcppExports.R'
