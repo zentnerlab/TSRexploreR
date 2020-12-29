@@ -57,7 +57,9 @@ Suggests:
     clusterProfiler,
     TSRchitect,
     org.Sc.sgd.db,
-    testthat
+    testthat,
+    TxDb.Scerevisiae.UCSC.sacCer3.sgdGene,
+    BSgenome.Scerevisiae.UCSC.sacCer3
 RoxygenNote: 7.1.1
 Collate: 
     'RcppExports.R'
