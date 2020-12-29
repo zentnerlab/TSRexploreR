@@ -19,7 +19,7 @@ plot_heatmap(
 
 \item{max_value}{Max log2 (+ 1? qq) value at which to truncate heatmap color}
 
-\item{ncol}{Number of columns to use when plotting multiple samples}
+\item{ncol}{Integer specifying the number of columns to arrange multiple plots.}
 
 \item{background_color}{The color of the heatmap background (is this the 0 value? qq)}
 

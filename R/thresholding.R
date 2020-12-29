@@ -4,10 +4,8 @@
 #'
 #' @importFrom purrr map_df
 #'
-#' @param experiment TSRexploreR object with annotated TSSs
-#' @param samples Either "all" or a vector of names of samples to analyze
+#' @inheritParams common_params
 #' @param max_threshold Thresholds from 1 to max_threshold will be explored
-#' @param use_normalized Whether to use the raw or normalized counts
 #' @param steps Steps to get the threshold values
 
 #' @details
@@ -111,8 +109,8 @@ explore_thresholds <- function(
 #'
 #' Make a plot to explore threshold values.
 #'
+#' @inheritParams common_params
 #' @param threshold_data Tibble of threshold exploration data from explore_thresholds
-#' @param ncol Number of columns in which to plot data
 #' @param point_size The size of the points on the plot
 #' @param ... Arguments passed to geom_point
 #'

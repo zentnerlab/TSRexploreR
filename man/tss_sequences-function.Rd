@@ -16,21 +16,22 @@ tss_sequences(
 )
 }
 \arguments{
-\item{experiment}{TSRexploreR object with TSS GRanges}
+\item{experiment}{TSRexploreR object.}
 
-\item{samples}{Either "all" or a vector of names of samples to analyze}
+\item{samples}{A vector of sample names to analyze.}
 
-\item{genome_assembly}{Genome assembly in fasta format or bioconductor BSgenome}
+\item{genome_assembly}{Genome assembly in either a FASTA file or BSgenome object format.}
 
-\item{threshold}{Keep only TSSs with at least this number of raw counts}
+\item{threshold}{TSSs or TSRs with a score below this value will be discarded.}
 
-\item{use_normalized}{Whether to use normalized counts}
+\item{use_normalized}{Whether to use the normalized (TRUE) or raw (FALSE) counts.}
 
 \item{distance}{Bases to add on each side of eacg TSS}
 
-\item{dominant}{Whether to only consider dominant TSSs}
+\item{dominant}{If TRUE will discard any TSSs and/or TSRs that do not have the
+highest score per gene or transcript.}
 
-\item{data_conditions}{Condition the data (filter, quantile, and grouping available)}
+\item{data_conditions}{Apply advanced conditions to the data.}
 }
 \value{
 DataFrame of sequences surrounding TSSs.

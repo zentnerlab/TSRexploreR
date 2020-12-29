@@ -12,11 +12,13 @@ plot_shift_rank(
 )
 }
 \arguments{
-\item{experiment}{tsrexplorer object}
+\item{experiment}{TSRexploreR object.}
 
-\item{samples}{Shifting results to plot}
+\item{samples}{A vector of sample names to analyze.}
 
 \item{score_order}{Either descending or ascending}
+
+\item{ncol}{Integer specifying the number of columns to arrange multiple plots.}
 }
 \description{
 Shifting Rank Plot

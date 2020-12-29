@@ -14,17 +14,17 @@ plot_num_de(
 )
 }
 \arguments{
-\item{experiment}{TSRexploreR object}
+\item{experiment}{TSRexploreR object.}
 
 \item{data_type}{Either 'tss', 'tsr', 'tss_features', or 'tsr_features'}
 
 \item{de_comparisons}{The comparisons to plot}
 
-\item{fdr_cutoff}{FDR cutoff value}
+\item{log2fc_cutoff}{Values below the |Log2 FC| cutoff will be discarded.}
+
+\item{fdr_cutoff}{Values below the FDR cutoff will be discarded.}
 
 \item{...}{Additional arguments passed to geom_col}
-
-\item{logfc_cutoff}{Log2 fold change cutoff}
 }
 \description{
 Plot number of DE features.

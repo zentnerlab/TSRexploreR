@@ -3,8 +3,7 @@
 #' @description
 #' Function to import TSSs from various sources.
 #'
-#' @param experiment TSRexploreR object
-#' @param sample_sheet Sample sheet
+#' @inheritParams common_params
 #' @param file_type Either 'auto', 'bedgraph', 'bigwig', 'table', or 'ctss'
 #' @param delim If the input is a table, use this delimiter
 #'
@@ -119,7 +118,7 @@ tss_import <- function(
 
 #' Import tables
 #'
-#' @param sample_sheet Sample sheet
+#' @inheritParams common_params
 
 .import_tables <- function(sample_sheet, delim) {
   samples <- sample_sheet[, .(sample_name, file_1)] %>%
@@ -138,7 +137,7 @@ tss_import <- function(
 
 #' Import TSS Bedgraphs
 #'
-#' @param sample_sheet Sample sheet
+#' @inheritParams common_params
 
 .import_bedgraphs <- function(sample_sheet) {
   samples <- sample_sheet[, .(sample_name, file_1, file_2)] %>%
@@ -168,7 +167,7 @@ tss_import <- function(
 
 #' Import TSS bigwigs.
 #'
-#' @param sample_sheet Sample sheet
+#' @inheritParams common_params
 
 .import_bigwigs <- function(sample_sheet) {
   samples <- sample_sheet[, .(sample_name, file_1, file_2)] %>%
@@ -198,7 +197,7 @@ tss_import <- function(
 
 #' Import CTSSs
 #'
-#' @param sample_sheet sample_sheet
+#' @inheritParams common_params
 
 .import_ctss <- function(sample_sheet) {
   samples <- sample_sheet[, .(sample_name, file_1)] %>%
@@ -225,8 +224,7 @@ tss_import <- function(
 #' @description
 #' Function to import TSRs from various sources.
 #'
-#' @param experiment TSRexploreR object
-#' @param sample_sheet Sample sheet
+#' @inheritParams common_params
 #' @param file_type Either 'auto', 'table', or 'bed'
 #' @param delim If input is a table specify the delimiter
 #'
@@ -338,7 +336,7 @@ tsr_import <- function(
 
 #' Import BEDs.
 #'
-#' @param sample_sheet Sample sheet
+#' @inheritParams common_params
 
 .import_beds <- function(sample_sheet) {
 

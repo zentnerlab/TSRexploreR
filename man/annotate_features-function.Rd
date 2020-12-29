@@ -14,7 +14,7 @@ annotate_features(
 )
 }
 \arguments{
-\item{experiment}{TSRexploreR object with TSS GRanges}
+\item{experiment}{TSRexploreR object.}
 
 \item{data_type}{Whether to annotate TSSs or TSRs}
 

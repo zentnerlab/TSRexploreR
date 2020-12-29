@@ -6,7 +6,7 @@
 #' @import tibble
 #' @importFrom ChIPseeker annotatePeak
 #'
-#' @param experiment TSRexploreR object with TSS GRanges
+#' @inheritParams common_params
 #' @param annotation_data Path to annotation file or loaded TxDb object
 #' @param data_type Whether to annotate TSSs or TSRs
 #' @param feature_type Annotate at the gene or transcript level

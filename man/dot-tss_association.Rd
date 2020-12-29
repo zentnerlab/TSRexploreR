@@ -7,7 +7,7 @@
 .tss_association(experiment, tss_names, tsr_name)
 }
 \arguments{
-\item{experiment}{tsr explorer object}
+\item{experiment}{TSRexploreR object.}
 
 \item{tss_names}{names of TSSs that will be ssociated with the TSR}
 

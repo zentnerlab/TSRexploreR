@@ -22,18 +22,18 @@ gene_tracks(
 )
 }
 \arguments{
-\item{experiment}{TSRexploreR object}
+\item{experiment}{TSRexploreR object.}
 
 \item{feature_name}{Name of gene or transcript to plot}
 
-\item{genome_annotation}{Genome annotation GTF/GFF file, or TxDb object}
+\item{genome_annotation}{Genome annotation in either a GTF, GFF3, or TxDb object format.}
 
 \item{feature_type}{Either 'gene' or 'transcript'}
 
 \item{samples}{Names of samples to plot.
 Append sample names with 'TSS:' or 'TSR:' for TSS and TSR tracks respectively.}
 
-\item{threshold}{TSSs and TSRs below threshold are excluded from plotting}
+\item{threshold}{TSSs or TSRs with a score below this value will be discarded.}
 
 \item{upstream}{bases upstream to extend gene or promoter track}
 
@@ -41,7 +41,7 @@ Append sample names with 'TSS:' or 'TSR:' for TSS and TSR tracks respectively.}
 
 \item{promoter_only}{Instead of plotting the entire gene, plot the promoter region}
 
-\item{use_normalized}{Use CPM normalized reads or not}
+\item{use_normalized}{Whether to use the normalized (TRUE) or raw (FALSE) counts.}
 
 \item{tss_colors}{Either a single color value for all TSS tracks, or a vector of colors}
 

@@ -13,13 +13,13 @@ mark_dominant(
 )
 }
 \arguments{
-\item{experiment}{TSRexploreR object with annotated TSSs/TSRs}
+\item{experiment}{TSRexploreR object.}
 
 \item{data_type}{Either 'tss' or 'tsr'}
 
-\item{threshold}{Read threshold for TSS/TSRs}
+\item{threshold}{TSSs or TSRs with a score below this value will be discarded.}
 
-\item{use_normalized}{Whether to use normalized counts}
+\item{use_normalized}{Whether to use the normalized (TRUE) or raw (FALSE) counts.}
 
 \item{mark_per}{By default marks dominant TSR per gene, and dominant TSS per TSR.
 TSSs can also be set per as dominant TSS per 'gene'.}

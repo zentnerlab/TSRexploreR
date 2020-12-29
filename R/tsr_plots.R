@@ -2,16 +2,10 @@
 #'
 #' Plot selected TSR metrics.
 #'
-#' @param experiment TSRexploreR object with TSR GRanges
+#' @inheritParams common_params
 #' @param tsr_metrics Names of metrics in TSRexploreR TSR GRanges to plot
 #' @param plot_type Output either a 'violin', 'jitter', 'box', or 'boxjitter' plot (default: violin)
-#' @param samples Either 'all' or a vector of sample names to analyze
 #' @param log2_transform Whether the metric should be log2 + 1 transformed prior to plotting
-#' @param ncol Number of columns to use when plotting multiple samples
-#' @param use_normalized Whether to use the CPM-normalized counts
-#' @param dominant Whether to only consider dominant TSRs
-#' @param threshold Keep only TSRs with at least this number of raw counts
-#' @param data_conditions Condition the data (filter and quantile/group available)
 #' @param ... Arguments passed to ggplot2 plotting functions
 #'
 #' @return ggplot2 object with TSR matrix plotted

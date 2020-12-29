@@ -2,7 +2,7 @@
 #'
 #' Calculate TSS shifting statistics
 #'
-#' @param experiment TSRexploreR object
+#' @inheritParams common_params
 #' @param sample_1 First sample to compare.
 #'   Vector with sample name for TSS and TSR,
 #'   with names 'TSS' and 'TSR'
@@ -14,7 +14,6 @@
 #' @param max_distance TSRs less than this distance apart will be merged
 #' @param min_threshold Minimum number of raw counts required in each TSR for both TSR samples
 #' @param n_resamples Number of resamplings for permutation test
-#' @param fdr_cutoff FDR cutoff for results
 #'
 #' @rdname tss_shift-function
 #' @export

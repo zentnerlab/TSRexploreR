@@ -3,9 +3,7 @@
 #' @description
 #' Basic distance and threshold-based clustering of TSSs.
 #'
-#' @param experiment TSRexploreR object
-#' @param threshold Consider only TSSs with at least this number of raw counts
-#' @param samples Samples for which TSSs should be clustered
+#' @inheritParams common_params
 #' @param max_distance Maximum distance between TSSs that can be clustered
 #'
 #' @details

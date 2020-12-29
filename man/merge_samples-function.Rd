@@ -14,13 +14,15 @@ merge_samples(
 )
 }
 \arguments{
-\item{experiment}{TSRexploreR object}
+\item{experiment}{TSRexploreR object.}
 
 \item{data_type}{Whether to merge TSSs or TSRs}
 
-\item{threshold}{Filter out TSSs or TSRs below this raw count threshold before merging}
+\item{threshold}{TSSs or TSRs with a score below this value will be discarded.}
 
-\item{sample_sheet}{Sample sheet}
+\item{sample_sheet}{A sample sheet data.frame or tab delimited file.
+Must have the columns 'sample_name', 'file_1', and 'file_2'.
+Additional meta-data columns can be added with sample information such as condition and batch.}
 
 \item{merge_group}{Column in sample sheet to merge by}
 

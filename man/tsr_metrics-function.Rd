@@ -7,7 +7,7 @@
 tsr_metrics(experiment)
 }
 \arguments{
-\item{experiment}{TSRexploreR object}
+\item{experiment}{TSRexploreR object.}
 }
 \description{
 Calculate TSR Metrics.

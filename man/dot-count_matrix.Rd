@@ -9,7 +9,7 @@
 \arguments{
 \item{count_data}{Names list of counts.}
 
-\item{use_normalized}{Whether to use normalized counts.}
+\item{use_normalized}{Whether to use the normalized (TRUE) or raw (FALSE) counts.}
 }
 \description{
 Generate Count Matrix.

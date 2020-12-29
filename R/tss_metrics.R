@@ -3,10 +3,8 @@
 #' @description
 #' Mark TSSs as dominant TSS per TSR or gene, or TSRs as dominant per gene. 
 #'
-#' @param experiment TSRexploreR object with annotated TSSs/TSRs
+#' @inheritParams common_params
 #' @param data_type Either 'tss' or 'tsr'
-#' @param threshold Read threshold for TSS/TSRs
-#' @param use_normalized Whether to use normalized counts
 #' @param mark_per By default marks dominant TSR per gene, and dominant TSS per TSR.
 #'   TSSs can also be set per as dominant TSS per 'gene'.
 #'
@@ -110,8 +108,7 @@ mark_dominant <- function(
 #'
 #' Get TSS with furthest distance
 #'
-#' @param experiment TSRexploreR object with annotated TSSs
-#' @param samples Either 'all' or names of sample to analyze
+#' @inheritParams common_params
 #' @param threshold Number of reads required for each TSS
 #' @param max_upstream Max upstream distance of TSS to consider
 #' @param max_downstream Max downstream distance of TSS to consider

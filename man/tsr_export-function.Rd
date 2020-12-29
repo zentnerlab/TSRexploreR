@@ -14,9 +14,9 @@ tsr_export(
 )
 }
 \arguments{
-\item{experiment}{TSRexploreR object}
+\item{experiment}{TSRexploreR object.}
 
-\item{samples}{Samples to export ('all' as well? qq)}
+\item{samples}{A vector of sample names to analyze.}
 
 \item{file_type}{either 'bed' or 'table'}
 

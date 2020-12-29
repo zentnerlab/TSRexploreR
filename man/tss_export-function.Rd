@@ -15,9 +15,9 @@ tss_export(
 )
 }
 \arguments{
-\item{experiment}{TSRexploreR object}
+\item{experiment}{TSRexploreR object.}
 
-\item{samples}{Either 'all', or names of samples to export}
+\item{samples}{A vector of sample names to analyze.}
 
 \item{file_type}{either 'bedgraph', 'table', or 'bigwig'}
 
@@ -27,8 +27,7 @@ tss_export(
 
 \item{sep}{Delimiter for table output}
 
-\item{genome_assembly}{If exporting as bigwig the genome
-assembly must be specified}
+\item{genome_assembly}{Genome assembly in either a FASTA file or BSgenome object format.}
 }
 \value{
 Either bedgraphs split by strand, or a tabular file.

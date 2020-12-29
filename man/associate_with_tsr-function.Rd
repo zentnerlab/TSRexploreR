@@ -7,7 +7,7 @@
 associate_with_tsr(experiment, sample_list = NA, use_sample_sheet = FALSE)
 }
 \arguments{
-\item{experiment}{TSRexploreR object}
+\item{experiment}{TSRexploreR object.}
 
 \item{sample_list}{If 'use_sample_sheet' is FALSE, provide a list with TSR and TSS sample names}
 

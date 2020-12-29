@@ -21,11 +21,11 @@ plot_density(
 )
 }
 \arguments{
-\item{experiment}{TSRexploreR object with annotated TSSs}
+\item{experiment}{TSRexploreR object.}
 
 \item{data_type}{Whether to plot TSS or TSR density}
 
-\item{samples}{Either 'all' to plot all samples or a vector of sample names}
+\item{samples}{A vector of sample names to analyze.}
 
 \item{consider_score}{Whether the score of each TSS or TSR score be considered
 in addition to its unique location.}
@@ -34,15 +34,16 @@ in addition to its unique location.}
 
 \item{downstream}{Bases downstream of plot center}
 
-\item{threshold}{Raw count threshold value for TSSs}
+\item{threshold}{TSSs or TSRs with a score below this value will be discarded.}
 
-\item{ncol}{Number of columns to use for plotting data when quantiles not set}
+\item{ncol}{Integer specifying the number of columns to arrange multiple plots.}
 
-\item{use_normalized}{Whether to use CPM normalized or raw counts if score is considered}
+\item{use_normalized}{Whether to use the normalized (TRUE) or raw (FALSE) counts.}
 
-\item{dominant}{Consider only dominant TSS or TSR}
+\item{dominant}{If TRUE will discard any TSSs and/or TSRs that do not have the
+highest score per gene or transcript.}
 
-\item{data_conditions}{Data conditioning filters}
+\item{data_conditions}{Apply advanced conditions to the data.}
 
 \item{color}{Either 'default' or a valid color format to set plot color}
 

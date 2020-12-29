@@ -1,8 +1,8 @@
 
 #' Generate Count Matrix.
 #'
+#' @inheritParams common_params
 #' @param count_data Names list of counts.
-#' @param use_normalized Whether to use normalized counts.
 
 .count_matrix <- function(
   count_data,

@@ -13,13 +13,13 @@ fit_de_model(
 )
 }
 \arguments{
-\item{experiment}{TSRexploreR object with TMM-normalized counts}
+\item{experiment}{TSRexploreR object.}
 
 \item{formula}{DE formula}
 
 \item{data_type}{Whether TSSs, TSRs, or feature counts should be analyzed}
 
-\item{samples}{Vector of sample names to analyze}
+\item{samples}{A vector of sample names to analyze.}
 
 \item{method}{Either 'DESeq2' or 'edgeR'}
 }
