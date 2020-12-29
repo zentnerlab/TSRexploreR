@@ -188,7 +188,7 @@ tsr_explorer <- function(
 
   ## If assembly is a fasta file make sure it's indexed.
   if (
-    assembly_type == "file" &
+    assembly_type == "file" &&
     !file.exists(str_c(assembly, ".fai"))
   ) {
     indexFa(assembly)
