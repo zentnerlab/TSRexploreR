@@ -173,6 +173,7 @@ tsr_explorer <- function(
 
 .prepare_assembly <- function(assembly, experiment=NULL) {
 
+  ## Set the assembly type based on input.
   assembly_type <- case_when(
     is.null(assembly) & !is.null(experiment) ~ "internal",
     is.null(assembly) & is.null(experiment) ~ "none",
@@ -180,10 +181,20 @@ tsr_explorer <- function(
     is(assembly, "BSgenome") ~ "bsgenome"
   )
 
+  ## Make sure an assembly is in the object if none provided.
   if (assembly_type == "internal") {
     assert_that(!is.null(experiment@meta_data$genome_assembly))
   }
 
+  ## If assembly is a fasta file make sure it's indexed.
+  if (
+    assembly_type == "file" &
+    !file.exists(str_c(assembly, ".fai"))
+  ) {
+    indexFa(assembly)
+  }
+
+  ## Return the appropriate assembly.
   assembly <-switch(
     assembly_type,
     "none"=NULL,

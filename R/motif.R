@@ -6,7 +6,6 @@
 #' @include TSRexplore.R
 #'
 #' @importFrom tools file_ext
-#' @importFrom Rsamtools FaFile
 #'
 #' @param experiment TSRexploreR object with TSS GRanges
 #' @param samples Either "all" or a vector of names of samples to analyze
