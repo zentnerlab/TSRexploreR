@@ -10,7 +10,7 @@ tss_shift(
   sample_2,
   comparison_name,
   tss_threshold = NULL,
-  min_distance = 100,
+  max_distance = 100,
   min_threshold = 10,
   n_resamples = 1000L,
   fdr_cutoff = 0.05
@@ -31,7 +31,7 @@ with names 'TSS' and 'TSR'}
 
 \item{tss_threshold}{Whether to filter out TSSs below a threshold}
 
-\item{min_distance}{TSRs less than this distance apart will be merged}
+\item{max_distance}{TSRs less than this distance apart will be merged}
 
 \item{min_threshold}{Minimum number of raw counts required in each TSR for both TSR samples}
 
