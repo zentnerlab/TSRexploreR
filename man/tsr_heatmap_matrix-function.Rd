@@ -9,7 +9,7 @@ tsr_heatmap_matrix(
   samples = "all",
   upstream = 1000,
   downstream = 1000,
-  threshold = NA,
+  threshold = NULL,
   use_normalized = FALSE,
   dominant = FALSE,
   data_conditions = list(order_by = "score")

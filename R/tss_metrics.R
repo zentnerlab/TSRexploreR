@@ -55,11 +55,17 @@ mark_dominant <- function(
   ## Check inputs.
   assert_that(is(experiment, "tsr_explorer"))
   data_type <- match.arg(str_to_lower(data_type), c("tss", "tsr"))
-  assert_that(is.count(threshold))
+  assert_that(
+    is.null(threshold) ||
+    (is.numeric(threshold) && threshold >= 0)
+  )
   mark_per <- match.arg(str_to_lower(mark_per), c("default", "gene"))
 
   ## Select samples.
   select_samples <- extract_counts(experiment, data_type, "all", use_normalized)
+
+  ## Set threshold to 0 if not supplied.
+  if (is.null(threshold)) threshold <- 0
 
   ## Mark dominant TSS/TSR per gene if requested.
   if (data_type == "tsr" | (data_type == "tss" & mark_per == "gene")) {

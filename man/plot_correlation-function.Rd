@@ -9,6 +9,7 @@ plot_correlation(
   data_type = c("tss", "tsr", "tss_features", "tsr_features"),
   samples = "all",
   correlation_metric = "pearson",
+  threshold = NULL,
   use_normalized = TRUE,
   font_size = 12,
   cluster_samples = FALSE,
@@ -25,6 +26,8 @@ plot_correlation(
 \item{samples}{A vector of sample names to analyze.}
 
 \item{correlation_metric}{Whether to use Spearman or Pearson correlation}
+
+\item{threshold}{TSSs or TSRs with a score below this value will be discarded.}
 
 \item{use_normalized}{Whether to use the normalized (TRUE) or raw (FALSE) counts.}
 
