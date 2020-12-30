@@ -39,7 +39,7 @@ fit_de_model <- function(
 
   ## Ensure rows of sample sheet match columns of count matrix.
   sample_sheet <- sample_sheet[
-    match(rownames(sample_sheet), colnames(sample_data)),
+    match(colnames(sample_data), rownames(sample_sheet)),
     , drop=FALSE
   ]
 
@@ -203,7 +203,11 @@ differential_expression <- function(
   }
 
   ## Get table of results.
-  de_results <- as.data.table(de_results, keep.rownames="feature")
+  if (de_method == "deseq2") {
+    de_results <- as.data.table(de_results, keep.rownames="feature")
+  } else if (de_method == "edger") {
+    de_results <- as.data.table(de_results$table, keep.rownames="feature")
+  }
 
   if (de_method == "deseq2") {
     de_results[, lfcSE := NULL]
