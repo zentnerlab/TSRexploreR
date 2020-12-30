@@ -90,7 +90,9 @@ plot_threshold_exploration(threshold_data, ncol=3, point_size=0.5) +
   scale_color_viridis_c() 
 ```
 
-Looking at the plot, a threshold of three or more reads is a sensible choice: there is a precipitous drop in detected features for a comparatively low gain in promoter-proximal TSS fraction at higher thresholds.
+Looking at the plot, a threshold of three or more reads is a sensible choice:
+  there is a precipitous drop in detected features for a comparatively low gain in promoter-proximal TSS fraction at higher thresholds.
+TSSs will be discarded if no samples have at least 1 TSS at that position with three or more reads.
 
 ```{r message=FALSE}
 exp <- apply_threshold(exp, threshold=3)
@@ -211,7 +213,7 @@ To identify TSRs, TSRexploreR uses a distance clustering method. This approach g
 However, if you have called TSRs using other methods (e.g. Paraclu or RECLU), they can be imported directly.
 
 ```{r message=FALSE}
-exp <- tss_clustering(exp, threshold=3, max_distance=25)
+exp <- tss_clustering(exp, max_distance=25)
 ```
 
 ### Associating TSSs with TSRs

@@ -166,50 +166,46 @@ plot_threshold_exploration <- function(
 #' Apply a threshold to TSSs or TSRs
 #'
 #' @inheritParams common_params
+#' @param n_samples Number of samples threshold must be reached to keep TSS.
+#'   By default set to 1 sample. A NULL value will result in all samples being
+#'   required to have read counts above threshold.
 #'
 #' @export
 
 apply_threshold <- function(
   experiment,
   threshold,
-  data_type=c("tss", "tsr"),
+  n_samples=1,
   use_normalized=FALSE
 ) {
 
   ## Check inputs.
   assert_that(is(experiment, "tsr_explorer"))
   assert_that(is.numeric(threshold) && threshold > 0)
-  data_type <- match.arg(
-    str_to_lower(data_type),
-    c("tss", "tsr")
-  )
+  assert_that(is.null(n_samples) || is.count(n_samples))
   assert_that(is.flag(use_normalized))
 
   ## Retrieve selected samples.
-  select_samples <- extract_counts(
-    experiment, data_type,
-    "all", use_normalized
-  )
+  select_samples <- extract_counts(experiment, "tss", "all", use_normalized)
 
-  ## Filter TSSs or TSRs below the threshold.
-  if (use_normalized) {
-    select_samples <- map(select_samples, function(x) {
-      x <- x[normalized_score >= threshold]
-      return(x)
-    })
+  ## Convert selected samples to count matrix.
+  count_mat <- .count_matrix(select_samples, "tss", use_normalized)
+
+  ## Filter TSSs below threshold.
+  if (!is.null(n_samples)) {
+    count_mat <- count_mat[rowSums(count_mat >= threshold) >= n_samples, ]
   } else {
-    select_samples <- map(select_samples, function(x) {
-      x <- x[score >= threshold]
-      return(x)
-    })
+    count_mat <- count_mat[rowSums(count_mat >= threshold) == ncol(count_mat), ]
   }
+
+  ## Keep only surviving TSSs in each sample.
+  select_samples <- map(select_samples, function(x) {
+    x <- x[FHASH %in% rownames(count_mat)]
+    return(x)
+  })
 
   ## Add the data back to the object.
-  if (data_type == "tss") {
-    experiment@counts$TSSs$raw <- select_samples
-  } else if (data_type == "tsr") {
-    experiment@counts$TSRs$raw <- select_samples
-  }
+  experiment@counts$TSSs$raw <- select_samples
 
   ## Return the TSRexploreR object.
   return(experiment)
