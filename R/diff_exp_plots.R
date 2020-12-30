@@ -178,6 +178,7 @@ export_for_enrichment <- function(
 #' @inheritParams common_params
 #' @param data_type Either 'tss', 'tsr', 'tss_features', or 'tsr_features'
 #' @param de_comparisons The comparisons to plot
+#' @param keep_unchanged Whether to plot the unchanged genes also.
 #' @param ... Additional arguments passed to geom_col
 #'
 #' @rdname plot_num_de-function
@@ -189,6 +190,7 @@ plot_num_de <- function(
   de_comparisons="all",
   log2fc_cutoff=1,
   fdr_cutoff=0.05,
+  keep_unchanged=FALSE,
   ...
 ) {
 
@@ -208,9 +210,14 @@ plot_num_de <- function(
 
   ## Mark DE status.
   .de_status(de_samples, log2fc_cutoff, fdr_cutoff)
-  de_samples[, de_status := factor(
-    de_status, levels=c("up", "unchanged", "down")
-  )]
+  if (keep_unchaged) {
+    de_samples[, de_status := factor(
+      de_status, levels=c("up", "unchanged", "down")
+    )]
+  } else {
+    de_samples <- de_samples[de_status != "unchanged"]
+    de_samples[, de_status := factor(de_status, levels=c("up", "down"))]
+  }
 
   ## prepare data for plotting.
   de_samples <- de_samples[, .(count=.N), by=.(samples, de_status)]
