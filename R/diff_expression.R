@@ -39,7 +39,7 @@ fit_de_model <- function(
 
   ## Ensure rows of sample sheet match columns of count matrix.
   sample_sheet <- sample_sheet[
-    match(rownames(sample_sheet), colnames(sample_data)),
+    match(colnames(sample_data), rownames(sample_sheet)),
     , drop=FALSE
   ]
 
