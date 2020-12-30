@@ -4,7 +4,7 @@
 \alias{.aggr_scores}
 \title{Aggregate Scores}
 \usage{
-.aggr_scores(granges, maxdist)
+.aggr_scores(granges, maxdist, maxwidth)
 }
 \arguments{
 \item{granges}{GRanges}

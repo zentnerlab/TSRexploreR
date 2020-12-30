@@ -5,6 +5,7 @@
 #'
 #' @inheritParams common_params
 #' @param max_distance Maximum distance between TSSs that can be clustered
+#' @param max_width Maximum width of TSR allowed.
 #'
 #' @details
 #' This function clusters TSSs into Transcription Start Regions (TSRs).
@@ -29,7 +30,8 @@ tss_clustering <- function(
   experiment,
   samples="all",
   threshold=NULL,
-  max_distance=25
+  max_distance=25,
+  max_width=NULL
 ) {
 
   ## Check inputs.
@@ -37,6 +39,7 @@ tss_clustering <- function(
   assert_that(is.character(samples))
   assert_that(is.null(threshold) || (is.numeric(threshold) && threshold >= 0))
   assert_that(is.count(max_distance))
+  assert_that(is.null(max_width) || is.count(max_width))
 
   ## Get selected samples.
   select_samples <- experiment %>%
@@ -54,7 +57,7 @@ tss_clustering <- function(
   })
   
   ## Call TSRs.
-  clustered_TSSs <- map(select_samples, .aggr_scores, max_distance)
+  clustered_TSSs <- map(select_samples, .aggr_scores, max_distance, max_width)
 
   ## Add TSRs back to TSRexploreR object.
   clustered_TSSs <- map(clustered_TSSs, function(x) {
@@ -90,40 +93,76 @@ tss_clustering <- function(
 #' @param granges GRanges
 #' @param maxdist Maximum distance to cluster
 
-.aggr_scores <- function(granges, maxdist) {
+.aggr_scores <- function(granges, maxdist, maxwidth) {
 
   ## Check inputs.
   assert_that(is(granges, "GRanges"))
   assert_that(is.count(maxdist) | maxdist == 0)
 
-  ## Cluster TSSs within 'max_distance'
-  clustered <- GenomicRanges::reduce(
-    granges, with.revmap=TRUE,
-    min.gapwidth=maxdist + 1
-  )
+  ## Get TSSs within max distance.
+  reduced <- granges %>%
+    stretch(maxdist * 2) %>%
+    reduce_ranges_directed
 
-  ## Get aggregate sum of scores.
-  if (any(colnames(mcols(granges)) == "normalized_score")) {
-    cluster_info <- aggregate(
-      granges, mcols(clustered)$revmap, 
-      score=sum(score),
-      normalized_score=sum(normalized_score),
-      n_unique=length(score)
-    )
+  granges <- as.data.table(granges, key=c("seqnames", "strand", "start", "end"))
+  reduced <- as.data.table(reduced, key=c("seqnames", "strand", "start", "end"))
+
+  overlaps <- foverlaps(reduced, granges)
+
+  ## Calculate aggregate score and number of unique TSSs per TSR.
+  if ("normalized_score" %in% colnames(overlaps)) {
+    overlaps <- overlaps[,
+      .(
+        start=min(start), end=max(end), score=sum(score), n_unique=.N,
+        normalized_score=sum(normalized_score)
+      ),
+      by=.(seqnames, strand, i.start, i.end)
+    ]
   } else {
-    cluster_info <- aggregate(
-      granges, mcols(clustered)$revmap,
-      score=sum(score),
-      n_unique=length(score)
-    )
+    overlaps <- overlaps[,
+      .(start=min(start), end=max(end), score=sum(score), n_unique=.N),
+      by=.(seqnames, strand, i.start, i.end)
+    ]
+  }
+  overlaps[, c("i.start", "i.end") := NULL]
+  overlaps <- overlaps %>%
+    as_granges %>%
+    sort %>%
+    as.data.table
+
+  ## If max_width is set remove TSRs that are too wide.
+  if (!is.null(maxwidth)) {
+    overlaps <- overlaps[width <= maxwidth]
   }
 
-  clustered$score <- cluster_info$score
-  clustered$n_unique <- cluster_info$n_unique
-  if (any(colnames(mcols(granges)) == "normalized_score")) {
-    clustered$normalized_score <- cluster_info$normalized_score
-  }
-  clustered$revmap <- NULL
+  return(overlaps)
 
-  return(clustered)
+#  ## Cluster TSSs within 'max_distance'
+#  clustered <- GenomicRanges::reduce(
+#    granges, with.revmap=TRUE,
+#    min.gapwidth=maxdist + 1
+#  )
+#
+#  ## Get aggregate sum of scores.
+#  if (any(colnames(mcols(granges)) == "normalized_score")) {
+#    cluster_info <- aggregate(
+#      granges, mcols(clustered)$revmap, 
+#      score=sum(score),
+#      normalized_score=sum(normalized_score),
+#      n_unique=length(score)
+#    )
+#  } else {
+#    cluster_info <- aggregate(
+#      granges, mcols(clustered)$revmap,
+#      score=sum(score),
+#      n_unique=length(score)
+#    )
+#  }
+#
+#  clustered$score <- cluster_info$score
+#  clustered$n_unique <- cluster_info$n_unique
+#  if (any(colnames(mcols(granges)) == "normalized_score")) {
+#    clustered$normalized_score <- cluster_info$normalized_score
+#  }
+#  clustered$revmap <- NULL
 }
