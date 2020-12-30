@@ -10,6 +10,7 @@ plot_num_de(
   de_comparisons = "all",
   log2fc_cutoff = 1,
   fdr_cutoff = 0.05,
+  keep_unchanged = FALSE,
   ...
 )
 }
@@ -23,6 +24,8 @@ plot_num_de(
 \item{log2fc_cutoff}{Values below the |Log2 FC| cutoff will be discarded.}
 
 \item{fdr_cutoff}{Values below the FDR cutoff will be discarded.}
+
+\item{keep_unchanged}{Whether to plot the unchanged genes also.}
 
 \item{...}{Additional arguments passed to geom_col}
 }
