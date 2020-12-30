@@ -203,7 +203,11 @@ differential_expression <- function(
   }
 
   ## Get table of results.
-  de_results <- as.data.table(de_results, keep.rownames="feature")
+  if (de_method == "deseq2") {
+    de_results <- as.data.table(de_results, keep.rownames="feature")
+  } else if (de_method == "edger") {
+    de_results <- as.data.table(de_results$table, keep.rownames="feature")
+  }
 
   if (de_method == "deseq2") {
     de_results[, lfcSE := NULL]
