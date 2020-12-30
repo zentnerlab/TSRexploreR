@@ -210,7 +210,7 @@ plot_num_de <- function(
 
   ## Mark DE status.
   .de_status(de_samples, log2fc_cutoff, fdr_cutoff)
-  if (keep_unchaged) {
+  if (keep_unchanged) {
     de_samples[, de_status := factor(
       de_status, levels=c("up", "unchanged", "down")
     )]
