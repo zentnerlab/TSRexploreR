@@ -46,7 +46,59 @@ test_that("Differential TSSs", {
     comparison_type="contrast",
     comparison=c(1, -1)
   )
+  edger_tsre@diff_features$TSSs$results %>%
+    expect_length(1) %>%
+    expect_type("list") %>%
+    expect_named("Diamide_vs_Untreated")
   edger_tsre@diff_features$TSSs$results$Diamide_vs_Untreated %>%
+    expect_s3_class("data.table") %>%
+    expect_named(edger_columns)
+})
+
+test_that("Differential TSRs", {
+  tsre <- tsr_explorer(TSSs, sample_sheet=sample_sheet) %>%
+    format_counts(data_type="tss") %>%
+    tss_clustering(threshold=3, max_distance=25)
+
+  ## DEseq2.
+  deseq2_columns <- c(
+    "feature", "mean_expr", "log2FC", "stat", "pvalue", "padj",
+    "seqnames", "start", "end", "strand"
+  )
+  deseq2_tsre <- fit_de_model(tsre, data_type="tsr", formula= ~condition, method="DEseq2")
+  expect_s4_class(deseq2_tsre@diff_features$TSRs$model, "DESeqDataSet")
+  deseq2_tsre <- differential_expression(
+    deseq2_tsre, data_type="tsr",
+    comparison_name="Diamide_vs_Untreated",
+    comparison_type="name",
+    comparison="condition_Untreated_vs_Diamide"
+  )
+  deseq2_tsre@diff_features$TSRs$results %>%
+    expect_length(1) %>%
+    expect_type("list") %>%
+    expect_named("Diamide_vs_Untreated")
+  deseq2_tsre@diff_features$TSRs$results$Diamide_vs_Untreated %>%
+    expect_s3_class("data.table") %>%
+    expect_named(deseq2_columns)
+
+  ## edgeR.
+  edger_columns <- c(
+    "feature", "log2FC", "mean_expr", "pvalue", "padj", "seqnames",
+    "start", "end", "strand"
+  )
+  edger_tsre <- fit_de_model(tsre, data_type="tsr", formula= ~condition, method="edgeR")
+  expect_s4_class(edger_tsre@diff_features$TSRs$model, "DGEGLM")
+  edger_tsre <- differential_expression(
+    edger_tsre, data_type="tsr",
+    comparison_name="Diamide_vs_Untreated",
+    comparison_type="contrast",
+    comparison=c(1, -1)
+  )
+  edger_tsre@diff_features$TSRs$results %>%
+    expect_length(1) %>%
+    expect_type("list") %>%
+    expect_named("Diamide_vs_Untreated")
+  edger_tsre@diff_features$TSRs$results$Diamide_vs_Untreated %>%
     expect_s3_class("data.table") %>%
     expect_named(edger_columns)
 })
