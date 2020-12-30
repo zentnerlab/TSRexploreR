@@ -8,17 +8,20 @@ tss_clustering(
   experiment,
   samples = "all",
   threshold = NULL,
-  max_distance = 25
+  max_distance = 25,
+  max_width = NULL
 )
 }
 \arguments{
-\item{experiment}{TSRexploreR object}
+\item{experiment}{TSRexploreR object.}
 
-\item{samples}{Samples for which TSSs should be clustered}
+\item{samples}{A vector of sample names to analyze.}
 
-\item{threshold}{Consider only TSSs with at least this number of raw counts}
+\item{threshold}{TSSs or TSRs with a score below this value will be discarded.}
 
 \item{max_distance}{Maximum distance between TSSs that can be clustered}
+
+\item{max_width}{Maximum width of TSR allowed.}
 }
 \value{
 TSRexploreR object with TSRs

@@ -90,7 +90,13 @@ plot_threshold_exploration(threshold_data, ncol=3, point_size=0.5) +
   scale_color_viridis_c() 
 ```
 
-Looking at the plot, a threshold of three or more reads is a sensible choice: there is a precipitous drop in detected features for a comparatively low gain in promoter-proximal TSS fraction at higher thresholds.
+Looking at the plot, a threshold of three or more reads is a sensible choice:
+  there is a precipitous drop in detected features for a comparatively low gain in promoter-proximal TSS fraction at higher thresholds.
+TSSs will be discarded if no samples have at least 1 TSS at that position with three or more reads.
+
+```{r message=FALSE}
+exp <- apply_threshold(exp, threshold=3)
+```
 
 ## TSS Correlation
 
@@ -118,7 +124,7 @@ As part of the initial TSS processing, TSSs are annotated relative to known feat
 A stacked bar plot can be generated to showcase the fractional distribution of TSSs relative to known features.
 
 ```{r message=FALSE, fig.height=4}
-tss_distribution <- genomic_distribution(exp, data_type="tss", threshold=3)
+tss_distribution <- genomic_distribution(exp, data_type="tss")
 
 plot_genomic_distribution(tss_distribution) +
   scale_fill_viridis_d(direction=-1, name="Annotation")
@@ -129,7 +135,7 @@ plot_genomic_distribution(tss_distribution) +
 The number of features detected and fraction of features with a promoter-proximal TSSs can be displayed as a stacked bar plot or jitter plot.
 
 ```{r message=FALSE, fig.height=4, fig.width=5}
-features <- detect_features(exp, data_type="tss", threshold=3)
+features <- detect_features(exp, data_type="tss")
 
 plot_detected_features(features) +
   scale_fill_viridis_d(direction=-1)
@@ -140,7 +146,7 @@ plot_detected_features(features) +
 Density plots are useful for visualizing where TSSs tend to be located relative to annotated TSSs. The current yeast genome annotation does not contain information on 5' UTRs, so density plots are centered on annotated start codons and it is expected that the maximum density would be slightly upstream of the plot center. Most other organisms have 5' UTR information in their genome annotations, with the UTR length corresponding to the distance between the start codon and the most distal TSS detected. This would result in a centered density plot.
 
 ```{r message=FALSE, fig.height=2, fig.width=6}
-plot_density(exp, data_type="tss", threshold=3, ncol=3)
+plot_density(exp, data_type="tss", ncol=3)
 ```
 
 ### Heatmaps
@@ -149,7 +155,7 @@ While a density plot gives a general overview of TSS distribution relative to an
 
 ```{r message=FALSE}
 tss_matrix <- tss_heatmap_matrix(
-  exp, threshold=3, upstream=250, downstream=250,
+  exp, upstream=250, downstream=250,
   use_normalized=TRUE
 )
 
@@ -167,7 +173,7 @@ Generating sequence logos around TSSs is a good first step in ascertaining the s
 To generate analyze TSS sequence context, TSRexploreR retrieves sequences centered on TSSs from a 'FASTA' genome assembly or 'BSgenome' object. This example uses the Ensembl R64-1-1 Release 99 FASTA.
 
 ```{r message=FALSE}
-seqs <- tss_sequences(exp, threshold=3)
+seqs <- tss_sequences(exp)
 ```
 
 After the sequences are retrieved, the sequence logos can be generated.
@@ -189,7 +195,7 @@ plot_sequence_colormap(seqs, ncol=3)
 As previously discused, organisms often have a specific TSS sequence context. This function explores the fraction of each potential dinucleotide at the -1/+1 positions of all TSSs, where the +1 position is the TSS.
 
 ```{r message=FALSE, fig.height=3, fig.width=6}
-frequencies <- dinucleotide_frequencies(exp, threshold=3)
+frequencies <- dinucleotide_frequencies(exp)
 
 plot_dinucleotide_frequencies(frequencies, ncol=3)
 ```
@@ -207,7 +213,7 @@ To identify TSRs, TSRexploreR uses a distance clustering method. This approach g
 However, if you have called TSRs using other methods (e.g. Paraclu or RECLU), they can be imported directly.
 
 ```{r message=FALSE}
-exp <- tss_clustering(exp, threshold=3, max_distance=25)
+exp <- tss_clustering(exp, max_distance=25)
 ```
 
 ### Associating TSSs with TSRs
@@ -234,7 +240,7 @@ Now that the TSSs have been clustered and associated with TSRs, the TSRs can und
 After TSSs have been associated with TSRs, various metrics describing TSR shape and strength can be computed. First, the dominant TSS (that is, the highest-scoring TSS) within a TSR will be annotated. Then, various shape features such as inter-quantile range, shape index, and balance will be calculated.
 
 ```{r message=FALSE}
-exp <- mark_dominant(exp, data_type="tss", threshold=3)
+exp <- mark_dominant(exp, data_type="tss")
 exp <- tsr_metrics(exp)
 ```
 
@@ -270,7 +276,7 @@ As for TSSs, it is expected that TSRs will be be enriched upstream of annotated 
 A stacked bar plot can be generated to visualize the fractional distribution of TSRs relative to known features.
 
 ```{r message=FALSE, fig.height=3, fig.width=6}
-tsr_distribution <- genomic_distribution(exp, data_type="tsr", threshold=3)
+tsr_distribution <- genomic_distribution(exp, data_type="tsr")
 
 plot_genomic_distribution(tsr_distribution) +
   scale_fill_viridis_d(direction=-1)
@@ -300,7 +306,7 @@ plot_density(exp, data_type="tsr", ncol=3)
 TSR heatmaps provide a global view of TSR distribution relative to annotated start codons or TSSs.
 
 ```{r message=FALSE, fig.height=3, fig.width=8}
-count_matrix <- tsr_heatmap_matrix(exp, threshold=3, upstream=500, downstream=500)
+count_matrix <- tsr_heatmap_matrix(exp, upstream=500, downstream=500)
 
 plot_heatmap(count_matrix, ncol=3, background_color="white")
 ```

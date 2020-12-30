@@ -1,8 +1,7 @@
 
 #' Shifting Rank Plot
 #'
-#' @param experiment tsrexplorer object
-#' @param samples Shifting results to plot
+#' @inheritParams common_params
 #' @param score_order Either descending or ascending
 #'
 #' @export
@@ -55,9 +54,7 @@ plot_shift_rank <- function(
 
 #' Shift Count Plot
 #'
-#" @param experiment tsr explorer object
-#' @param samples Samples to plot
-#' @param ncol Number of columns
+#' @inheritParams common_params
 #'
 #' @export
 

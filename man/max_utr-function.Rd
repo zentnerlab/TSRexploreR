@@ -15,9 +15,9 @@ max_utr(
 )
 }
 \arguments{
-\item{experiment}{TSRexploreR object with annotated TSSs}
+\item{experiment}{TSRexploreR object.}
 
-\item{samples}{Either 'all' or names of sample to analyze}
+\item{samples}{A vector of sample names to analyze.}
 
 \item{threshold}{Number of reads required for each TSS}
 

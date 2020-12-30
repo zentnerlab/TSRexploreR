@@ -3,12 +3,9 @@
 #' @description
 #' Generate a MA plot for differential TSRs or Genes (RNA-seq) - confused. I see the MA-plot code but no volcano.
 #'
-#' @param experiment TSRexploreR object
+#' @inheritParams common_params
 #' @param de_comparisons Which differential expression comparisons to plot
 #' @param data_type Either 'tss', 'tsr', 'tss_features', or 'tsr_features'
-#' @param ncol Number of columns for the facets
-#' @param log2fc_cutoff Log2FC cutoff value
-#' @param fdr_cutoff FDR cutoff value
 #' @param ... Arguments passed to geom_point
 #'
 #' @details
@@ -66,12 +63,9 @@ plot_ma <- function(
 
 #' DE Volcano Plot
 #'
-#' @param experiment tsr explorer object
+#' @inheritParams common_params
 #' @param data_type either 'tss', 'tsr', 'tss_features', or 'tsr_features'
 #' @param de_comparisons The DE comparisons to plot
-#' @param ncol Number of columns for plot
-#' @param log2fc_cutoff Log2FC cutoff value
-#' @param fdr_cutoff FDR cutoff value
 #' @param ... Arguments passed to geom_point
 #'
 #' @export
@@ -130,11 +124,11 @@ plot_volcano <- function(
 #'
 #' Export DEGs for use in clusterProfiler term enrichment.
 #'
-#' @param experiment TSRexploreR object
+#' @inheritParams common_params
 #' @param data_type Either 'tss', 'tsr', 'tss_features', or 'tsr_features'
 #' @param de_comparisons The DE comparisons to plot
-#' @param log2fc_cutoff Log2FC cutoff value
-#' @param fdr_cutoff FDR cutoff value
+#' @param keep_unchanged If TRUE genes that are labelled unchanged will
+#'   be kept.
 #'
 #' @rdname export_for_enrichment-function
 #'
@@ -145,7 +139,8 @@ export_for_enrichment <- function(
   data_type=c("tss", "tsr"),
   de_comparisons="all",
   log2fc_cutoff=1,
-  fdr_cutoff=0.05
+  fdr_cutoff=0.05,
+  keep_unchanged=FALSE
 ) {
 
   ## Input checks.
@@ -161,9 +156,17 @@ export_for_enrichment <- function(
 
   ## Mark de status.
   .de_status(de_samples, log2fc_cutoff, fdr_cutoff)
-  de_samples[, de_status := factor(
-    de_status, levels=c("up", "unchanged", "down")
-  )]
+
+  if (keep_unchanged) {
+    de_samples[, de_status := factor(
+      de_status, levels=c("up", "unchanged", "down")
+    )]
+  } else {
+    de_samples <- de_samples[de_status != "unchanged"]
+    de_samples[, de_status := factor(
+      de_status, levels=c("up", "down")
+    )]
+  }
   
   return(de_samples)
 }
@@ -172,11 +175,10 @@ export_for_enrichment <- function(
 #'
 #' Plot number of DE features.
 #'
-#' @param experiment TSRexploreR object
+#' @inheritParams common_params
 #' @param data_type Either 'tss', 'tsr', 'tss_features', or 'tsr_features'
 #' @param de_comparisons The comparisons to plot
-#' @param logfc_cutoff Log2 fold change cutoff
-#' @param fdr_cutoff FDR cutoff value
+#' @param keep_unchanged Whether to plot the unchanged genes also.
 #' @param ... Additional arguments passed to geom_col
 #'
 #' @rdname plot_num_de-function
@@ -188,6 +190,7 @@ plot_num_de <- function(
   de_comparisons="all",
   log2fc_cutoff=1,
   fdr_cutoff=0.05,
+  keep_unchanged=FALSE,
   ...
 ) {
 
@@ -207,9 +210,14 @@ plot_num_de <- function(
 
   ## Mark DE status.
   .de_status(de_samples, log2fc_cutoff, fdr_cutoff)
-  de_samples[, de_status := factor(
-    de_status, levels=c("up", "unchanged", "down")
-  )]
+  if (keep_unchaged) {
+    de_samples[, de_status := factor(
+      de_status, levels=c("up", "unchanged", "down")
+    )]
+  } else {
+    de_samples <- de_samples[de_status != "unchanged"]
+    de_samples[, de_status := factor(de_status, levels=c("up", "down"))]
+  }
 
   ## prepare data for plotting.
   de_samples <- de_samples[, .(count=.N), by=.(samples, de_status)]

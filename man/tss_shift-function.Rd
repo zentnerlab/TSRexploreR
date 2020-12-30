@@ -10,14 +10,14 @@ tss_shift(
   sample_2,
   comparison_name,
   tss_threshold = NULL,
-  min_distance = 100,
+  max_distance = 100,
   min_threshold = 10,
   n_resamples = 1000L,
   fdr_cutoff = 0.05
 )
 }
 \arguments{
-\item{experiment}{TSRexploreR object}
+\item{experiment}{TSRexploreR object.}
 
 \item{sample_1}{First sample to compare.
 Vector with sample name for TSS and TSR,
@@ -31,13 +31,13 @@ with names 'TSS' and 'TSR'}
 
 \item{tss_threshold}{Whether to filter out TSSs below a threshold}
 
-\item{min_distance}{TSRs less than this distance apart will be merged}
+\item{max_distance}{TSRs less than this distance apart will be merged}
 
 \item{min_threshold}{Minimum number of raw counts required in each TSR for both TSR samples}
 
 \item{n_resamples}{Number of resamplings for permutation test}
 
-\item{fdr_cutoff}{FDR cutoff for results}
+\item{fdr_cutoff}{Values below the FDR cutoff will be discarded.}
 }
 \description{
 Calculate TSS shifting statistics

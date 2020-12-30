@@ -2,9 +2,8 @@
 #'
 #' Calculate a correlation matrix to assess between-sample concordance of TSSs or TSRs
 #'
-#' @param experiment TSRexploreR object with TMM-normalized counts
+#' @inheritParams common_params
 #' @param data_type Whether to make scatter plots from TSS, TSR, or RNA-seq & 5' data
-#' @param samples Either 'all' or the names of the samples to plot
 #' @param correlation_metric Whether to use Spearman or Pearson correlation
 #'
 #' @return Correlation matrix
@@ -63,11 +62,9 @@ find_correlation <- function(
 #' @importFrom viridis viridis
 #' @importFrom grid gpar grid.text
 #'
-#' @param experiment TSRexploreR object with TMM normalized counts
+#' @inheritParams common_params
 #' @param data_type Whether to make scatter plots from TSS, TSR, or RNA-seq & 5' data
-#' @param samples Either 'all' or the names of the samples to plot
 #' @param correlation_metric Whether to use Spearman or Pearson correlation
-#' @param use_normalized Whether to use the normalized (TRUE) or raw (FALSE) counts
 #' @param font_size The font size for the heatmap tiles
 #' @param cluster_samples Logical whether hierarchical clustering is performed
 #'   on samples in rows and columns.
@@ -122,6 +119,7 @@ plot_correlation <- function(
   data_type=c("tss", "tsr", "tss_features", "tsr_features"),
   samples="all",
   correlation_metric="pearson",
+  threshold=NULL,
   use_normalized=TRUE,
   font_size=12,
   cluster_samples=FALSE,
@@ -140,6 +138,10 @@ plot_correlation <- function(
   assert_that(is.null(heatmap_colors) | is.character(heatmap_colors))
   assert_that(is.flag(show_values))
   assert_that(is.flag(use_normalized))
+  assert_that(
+    is.null(threshold) ||
+    (is.numeric(threshold) && threshold > 0)
+  )
 
   ## Get data from proper slot.
   normalized_counts <- experiment %>%

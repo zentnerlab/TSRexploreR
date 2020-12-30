@@ -9,19 +9,23 @@ export_for_enrichment(
   data_type = c("tss", "tsr"),
   de_comparisons = "all",
   log2fc_cutoff = 1,
-  fdr_cutoff = 0.05
+  fdr_cutoff = 0.05,
+  keep_unchanged = FALSE
 )
 }
 \arguments{
-\item{experiment}{TSRexploreR object}
+\item{experiment}{TSRexploreR object.}
 
 \item{data_type}{Either 'tss', 'tsr', 'tss_features', or 'tsr_features'}
 
 \item{de_comparisons}{The DE comparisons to plot}
 
-\item{log2fc_cutoff}{Log2FC cutoff value}
+\item{log2fc_cutoff}{Values below the |Log2 FC| cutoff will be discarded.}
 
-\item{fdr_cutoff}{FDR cutoff value}
+\item{fdr_cutoff}{Values below the FDR cutoff will be discarded.}
+
+\item{keep_unchanged}{If TRUE genes that are labelled unchanged will
+be kept.}
 }
 \description{
 Export DEGs for use in clusterProfiler term enrichment.

@@ -56,7 +56,10 @@ Depends:
 Suggests:
     clusterProfiler,
     TSRchitect,
-    org.Sc.sgd.db
+    org.Sc.sgd.db,
+    testthat,
+    TxDb.Scerevisiae.UCSC.sacCer3.sgdGene,
+    BSgenome.Scerevisiae.UCSC.sacCer3
 RoxygenNote: 7.1.1
 Collate: 
     'RcppExports.R'
@@ -83,6 +86,7 @@ Collate:
     'motif.R'
     'normalize.R'
     'package_imports.R'
+    'params.R'
     'prepare_counts.R'
     'rnaseq.R'
     'sample_sheet.R'

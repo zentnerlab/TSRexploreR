@@ -15,19 +15,20 @@ genomic_distribution(
 )
 }
 \arguments{
-\item{experiment}{TSRexploreR object with annotated TSRs}
+\item{experiment}{TSRexploreR object.}
 
 \item{data_type}{Whether to get distribution of TSSs or TSRs}
 
-\item{samples}{Either "all" or a vector of sample names}
+\item{samples}{A vector of sample names to analyze.}
 
-\item{threshold}{Raw count threshold for a TSS or TSR to be considered}
+\item{threshold}{TSSs or TSRs with a score below this value will be discarded.}
 
-\item{use_normalized}{Whether normalized or raw counts should be used}
+\item{use_normalized}{Whether to use the normalized (TRUE) or raw (FALSE) counts.}
 
-\item{dominant}{Whether only the dominant TSS per gene or TSR should be considered}
+\item{dominant}{If TRUE will discard any TSSs and/or TSRs that do not have the
+highest score per gene or transcript.}
 
-\item{data_conditions}{Apply conditions to data (supports filtering and quantiles/grouping)}
+\item{data_conditions}{Apply advanced conditions to the data.}
 }
 \value{
 DataFrame with TSS or TSR genomic distribution stats

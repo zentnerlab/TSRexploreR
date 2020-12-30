@@ -2,7 +2,7 @@
 #'
 #' Calculate TSR Metrics.
 #'
-#' @param experiment TSRexploreR object
+#' @inheritParams common_params
 #'
 #' @rdname tsr_metrics-function
 #' @export

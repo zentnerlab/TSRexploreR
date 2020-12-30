@@ -7,7 +7,9 @@
 .import_tables(sample_sheet, delim)
 }
 \arguments{
-\item{sample_sheet}{Sample sheet}
+\item{sample_sheet}{A sample sheet data.frame or tab delimited file.
+Must have the columns 'sample_name', 'file_1', and 'file_2'.
+Additional meta-data columns can be added with sample information such as condition and batch.}
 }
 \description{
 Import tables

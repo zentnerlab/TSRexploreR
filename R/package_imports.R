@@ -40,6 +40,7 @@ NULL
 #'   anchor_3p anchor_5p anchor_center
 #'   bind_ranges reduce_ranges_directed
 #' @importFrom Biostrings DNAStringSet getSeq writeXStringSet
+#' @importFrom Rsamtools indexFa FaFile ScanBamParam scanBamFlag
 
 NULL
 

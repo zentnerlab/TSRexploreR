@@ -3,18 +3,12 @@
 #' @description
 #' Generate density plots of TSSs or TSRs
 #'
-#' @param experiment TSRexploreR object with annotated TSSs
-#' @param samples Either 'all' to plot all samples or a vector of sample names
+#' @inheritParams common_params
 #' @param data_type Whether to plot TSS or TSR density
 #' @param consider_score Whether the score of each TSS or TSR score be considered
 #'   in addition to its unique location.
 #' @param upstream Bases upstream of plot center
 #' @param downstream Bases downstream of plot center
-#' @param threshold Raw count threshold value for TSSs
-#' @param ncol Number of columns to use for plotting data when quantiles not set
-#' @param use_normalized Whether to use CPM normalized or raw counts if score is considered
-#' @param dominant Consider only dominant TSS or TSR
-#' @param data_conditions Data conditioning filters
 #' @param color Either 'default' or a valid color format to set plot color
 #' @param ... Arguments passed to geom_density
 #'

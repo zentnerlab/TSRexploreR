@@ -2,13 +2,11 @@
 #'
 #' Merge replicates or selected samples.
 #'
-#' @param experiment TSRexploreR object
+#' @inheritParams common_params
 #' @param data_type Whether to merge TSSs or TSRs
-#' @param sample_sheet Sample sheet
 #' @param merge_group Column in sample sheet to merge by
 #' @param merge_list Named list of samples to merge
 #' @param merge_replicates If 'TRUE', replicate groups will be merged
-#' @param threshold Filter out TSSs or TSRs below this raw count threshold before merging
 #' @param sample_list If merge_replicates is set to 'FALSE',
 #' specify what samples to merge in list format.
 #'
@@ -120,7 +118,7 @@ merge_samples <- function(
 #'
 #' @importFrom plyranges join_overlap_left_directed
 #'
-#' @param experiment TSRexploreR object
+#' @inheritParams common_params
 #' @param use_sample_sheet Whether to use a sample sheet as a key for association of TSS and TSR samples
 #' @param sample_list If 'use_sample_sheet' is FALSE, provide a list with TSR and TSS sample names
 #'
@@ -208,7 +206,7 @@ associate_with_tsr <- function(
 
 #' TSS Association
 #'
-#' @param experiment tsr explorer object
+#' @inheritParams common_params
 #' @param tss_names names of TSSs that will be ssociated with the TSR
 #' @param tsr_name name of TSR that TSSs will be associated with
 

@@ -6,14 +6,9 @@
 #' @include TSRexplore.R
 #' @include annotate.R
 #'
-#' @param experiment TSRexploreR object with annotated TSSs
-#' @param samples Either 'all' or a vector of sample names to analyze
+#' @inheritParams common_params
 #' @param upstream Bases upstream of plot center
 #' @param downstream Bases downstream of plot center
-#' @param threshold Raw count threshold value
-#' @param use_normalized Whether to use CPM-normalized counts
-#' @param dominant Whether to only consider dominant TSSs
-#' @param data_conditions Condition the data (filter, order, and quantile/group available)
 #'
 #' @details
 #' This function makes a count matrix for each gene or transcript with detected features
@@ -140,9 +135,9 @@ tss_heatmap_matrix <- function(
 #'
 #' @importFrom purrr keep
 #'
+#' @inheritParams common_params
 #' @param heatmap_matrix TSS or TSR heatmap matrix from tss_heatmap_matrix ot tsr_heatmap_matrix
 #' @param max_value Max log2 (+ 1? qq) value at which to truncate heatmap color
-#' @param ncol Number of columns to use when plotting multiple samples
 #' @param background_color The color of the heatmap background (is this the 0 value? qq)
 #' @param low_color The low value gradient color
 #' @param high_color The high value gradient color
@@ -247,14 +242,9 @@ plot_heatmap <- function(
 #' @include TSRexplore.R
 #' @include annotate.R
 #'
-#' @param experiment TSRexploreR object with annotated TSRs
-#' @param samples Either 'all' or a vector of names of samples to analyze
+#' @inheritParams common_params
 #' @param upstream Bases upstream to consider
 #' @param downstream bases downstream to consider
-#' @param threshold Raw count threshold value
-#' @param use_normalized Whether to use CPM-normalized counts
-#' @param dominant Whether to only consider dominant TSRs
-#' @param data_conditions Condition the data (filter and quantile/group available)
 #'
 #' @return Matrix of counts for each gene/transcript and position
 #'
@@ -267,7 +257,7 @@ tsr_heatmap_matrix <- function(
   samples="all",
   upstream=1000,
   downstream=1000,
-  threshold=NA,
+  threshold=NULL,
   use_normalized=FALSE,
   dominant=FALSE,
   data_conditions=list(order_by="score")

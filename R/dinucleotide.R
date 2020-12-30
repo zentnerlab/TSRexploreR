@@ -5,13 +5,7 @@
 #'
 #' @include TSRexplore.R
 #'
-#' @param experiment TSRexploreR object with TSS GRanges
-#' @param samples Either 'all' to plot all samples or a vector of sample names
-#' @param genome_assembly fasta file or BSgenome of genome assembly
-#' @param threshold Raw TSS count threshold
-#' @param use_normalized Whether to use normalized counts
-#' @param dominant Consider only dominant TSSs
-#' @param data_conditions Condition the data
+#' @inheritParams common_params
 #'
 #' @details
 #' It has been shown in many organisms that particular base preferences exist at the
@@ -160,8 +154,8 @@ dinucleotide_frequencies <- function(
 #' @description
 #' Plot results from dinucleotide analysis
 #'
+#' @inheritParams common_params
 #' @param dinucleotide_frequencies tibble from dinucleotide_frequencies analysis
-#' @param ncol Number of columns to plot if quantiles are not specified
 #' @param ... Arguments passed to geom_col
 #'
 #' @details

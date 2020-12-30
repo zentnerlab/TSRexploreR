@@ -3,12 +3,8 @@
 #' @description
 #' Get the number of genes or transcripts with an associated unique TSS or TSR
 #'
-#' @param experiment TSRexploreR object with annotated TSSs or TSRs
-#' @param samples Either 'all' or a vector of sample names
+#' @inheritParams common_params
 #' @param data_type Whether TSSs or TSRs should be analyzed
-#' @param threshold The number of raw reads required for a TSS or TSR to be considered
-#' @param dominant Whether to consider only the dominant TSS or TSR
-#' @param condition_data Apply conditions to data (supports filtering and quantiles/grouping)
 #'
 #' @details
 #' This function will return either the number of genes or transcripts with

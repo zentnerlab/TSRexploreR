@@ -3,13 +3,8 @@
 #' @description
 #' Get genomic distribution of TSSs and TSRs
 #'
-#' @param experiment TSRexploreR object with annotated TSRs
-#' @param samples Either "all" or a vector of sample names
+#' @inheritParams common_params
 #' @param data_type Whether to get distribution of TSSs or TSRs
-#' @param threshold Raw count threshold for a TSS or TSR to be considered
-#' @param dominant Whether only the dominant TSS per gene or TSR should be considered
-#' @param data_conditions Apply conditions to data (supports filtering and quantiles/grouping)
-#' @param use_normalized Whether normalized or raw counts should be used
 #'
 #' @details
 #' This function summarizes the distribution of TSSs or TSRs relative

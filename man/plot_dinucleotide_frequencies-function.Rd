@@ -9,7 +9,7 @@ plot_dinucleotide_frequencies(dinucleotide_frequencies, ncol = 1, ...)
 \arguments{
 \item{dinucleotide_frequencies}{tibble from dinucleotide_frequencies analysis}
 
-\item{ncol}{Number of columns to plot if quantiles are not specified}
+\item{ncol}{Integer specifying the number of columns to arrange multiple plots.}
 
 \item{...}{Arguments passed to geom_col}
 }

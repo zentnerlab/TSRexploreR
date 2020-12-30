@@ -2,7 +2,7 @@
 #'
 #' Calculate TSS shifting statistics
 #'
-#' @param experiment TSRexploreR object
+#' @inheritParams common_params
 #' @param sample_1 First sample to compare.
 #'   Vector with sample name for TSS and TSR,
 #'   with names 'TSS' and 'TSR'
@@ -11,10 +11,9 @@
 #'   with names 'TSS' and 'TSR'
 #' @param comparison_name Name assigned to the results in the tsr explorer object.
 #' @param tss_threshold Whether to filter out TSSs below a threshold
-#' @param min_distance TSRs less than this distance apart will be merged
+#' @param max_distance TSRs less than this distance apart will be merged
 #' @param min_threshold Minimum number of raw counts required in each TSR for both TSR samples
 #' @param n_resamples Number of resamplings for permutation test
-#' @param fdr_cutoff FDR cutoff for results
 #'
 #' @rdname tss_shift-function
 #' @export
@@ -25,7 +24,7 @@ tss_shift <- function(
   sample_2,
   comparison_name,
   tss_threshold=NULL,
-  min_distance=100,
+  max_distance=100,
   min_threshold=10,
   n_resamples=1000L,
   fdr_cutoff=0.05
@@ -45,7 +44,7 @@ tss_shift <- function(
     is.null(tss_threshold) ||
     (is.numeric(tss_threshold) && tss_threshold >= 0)
   )
-  assert_that(is.count(min_distance))
+  assert_that(is.count(max_distance))
   assert_that(is.count(min_threshold) && min_threshold > 5)
   assert_that(is.integer(n_resamples) && n_resamples >= 100L)
   assert_that(
@@ -62,7 +61,7 @@ tss_shift <- function(
   consensus_TSRs <- TSRs %>%
     map(as_granges) %>%
     bind_ranges %>%
-    GenomicRanges::reduce(min.gapwidth=min_distance, ignore.strand=FALSE) %>%
+    GenomicRanges::reduce(min.gapwidth=max_distance, ignore.strand=FALSE) %>%
     as.data.table(key=c("seqnames", "strand", "start", "end"))
   consensus_TSRs[, FHASH := str_c(seqnames, start, end, strand, sep=":")]
 

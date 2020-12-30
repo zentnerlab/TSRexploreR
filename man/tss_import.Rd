@@ -7,11 +7,13 @@
 tss_import(experiment, sample_sheet = NULL, file_type = "auto", delim = "\\t")
 }
 \arguments{
-\item{experiment}{TSRexploreR object}
+\item{experiment}{TSRexploreR object.}
 
-\item{sample_sheet}{Sample sheet}
+\item{sample_sheet}{A sample sheet data.frame or tab delimited file.
+Must have the columns 'sample_name', 'file_1', and 'file_2'.
+Additional meta-data columns can be added with sample information such as condition and batch.}
 
-\item{file_type}{Either 'auto', 'bedgraph', 'bigwig', or 'table'}
+\item{file_type}{Either 'auto', 'bedgraph', 'bigwig', 'table', or 'ctss'}
 
 \item{delim}{If the input is a table, use this delimiter}
 }

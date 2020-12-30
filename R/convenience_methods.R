@@ -61,10 +61,8 @@ setMethod("tsr_experiment<-", signature(TSRexploreR_object="tsr_explorer"),
 #' @description
 #' Extract counts from a TSRexploreR object.
 #'
-#' @param experiment TSRexploreR object
+#' @inheritParams common_params
 #' @param data_type Whether to extract TSS or TSR counts
-#' @param samples Names of samples from which to extract counts
-#' @param use_normalized Whether CPM values should be returned
 #'
 #' @rdname extract_counts-function
 #' @export
@@ -142,7 +140,7 @@ extract_matrix <- function(experiment, data_type, samples) {
 #'
 #' Extract differential expression analysis results.
 #'
-#' @param experiment TSRexploreR object
+#' @inheritParams common_params
 #' @param data_type Either 'tss', 'tsr', 'tss_features', or 'tsr_features'
 #' @param de_comparisons The comparison sets to extract
 #'

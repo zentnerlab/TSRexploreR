@@ -4,10 +4,8 @@
 #'
 #' @importFrom purrr map_df
 #'
-#' @param experiment TSRexploreR object with annotated TSSs
-#' @param samples Either "all" or a vector of names of samples to analyze
+#' @inheritParams common_params
 #' @param max_threshold Thresholds from 1 to max_threshold will be explored
-#' @param use_normalized Whether to use the raw or normalized counts
 #' @param steps Steps to get the threshold values
 
 #' @details
@@ -111,8 +109,8 @@ explore_thresholds <- function(
 #'
 #' Make a plot to explore threshold values.
 #'
+#' @inheritParams common_params
 #' @param threshold_data Tibble of threshold exploration data from explore_thresholds
-#' @param ncol Number of columns in which to plot data
 #' @param point_size The size of the points on the plot
 #' @param ... Arguments passed to geom_point
 #'
@@ -163,4 +161,52 @@ plot_threshold_exploration <- function(
     facet_wrap(. ~ sample, ncol=ncol)
 
   return(p)
+}
+
+#' Apply a threshold to TSSs or TSRs
+#'
+#' @inheritParams common_params
+#' @param n_samples Number of samples threshold must be reached to keep TSS.
+#'   By default set to 1 sample. A NULL value will result in all samples being
+#'   required to have read counts above threshold.
+#'
+#' @export
+
+apply_threshold <- function(
+  experiment,
+  threshold,
+  n_samples=1,
+  use_normalized=FALSE
+) {
+
+  ## Check inputs.
+  assert_that(is(experiment, "tsr_explorer"))
+  assert_that(is.numeric(threshold) && threshold > 0)
+  assert_that(is.null(n_samples) || is.count(n_samples))
+  assert_that(is.flag(use_normalized))
+
+  ## Retrieve selected samples.
+  select_samples <- extract_counts(experiment, "tss", "all", use_normalized)
+
+  ## Convert selected samples to count matrix.
+  count_mat <- .count_matrix(select_samples, "tss", use_normalized)
+
+  ## Filter TSSs below threshold.
+  if (!is.null(n_samples)) {
+    count_mat <- count_mat[rowSums(count_mat >= threshold) >= n_samples, ]
+  } else {
+    count_mat <- count_mat[rowSums(count_mat >= threshold) == ncol(count_mat), ]
+  }
+
+  ## Keep only surviving TSSs in each sample.
+  select_samples <- map(select_samples, function(x) {
+    x <- x[FHASH %in% rownames(count_mat)]
+    return(x)
+  })
+
+  ## Add the data back to the object.
+  experiment@counts$TSSs$raw <- select_samples
+
+  ## Return the TSRexploreR object.
+  return(experiment)
 }

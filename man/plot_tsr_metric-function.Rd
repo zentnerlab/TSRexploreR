@@ -19,25 +19,26 @@ plot_tsr_metric(
 )
 }
 \arguments{
-\item{experiment}{TSRexploreR object with TSR GRanges}
+\item{experiment}{TSRexploreR object.}
 
 \item{tsr_metrics}{Names of metrics in TSRexploreR TSR GRanges to plot}
 
 \item{plot_type}{Output either a 'violin', 'jitter', 'box', or 'boxjitter' plot (default: violin)}
 
-\item{samples}{Either 'all' or a vector of sample names to analyze}
+\item{samples}{A vector of sample names to analyze.}
 
 \item{log2_transform}{Whether the metric should be log2 + 1 transformed prior to plotting}
 
-\item{ncol}{Number of columns to use when plotting multiple samples}
+\item{ncol}{Integer specifying the number of columns to arrange multiple plots.}
 
-\item{use_normalized}{Whether to use the CPM-normalized counts}
+\item{use_normalized}{Whether to use the normalized (TRUE) or raw (FALSE) counts.}
 
-\item{dominant}{Whether to only consider dominant TSRs}
+\item{dominant}{If TRUE will discard any TSSs and/or TSRs that do not have the
+highest score per gene or transcript.}
 
-\item{threshold}{Keep only TSRs with at least this number of raw counts}
+\item{threshold}{TSSs or TSRs with a score below this value will be discarded.}
 
-\item{data_conditions}{Condition the data (filter and quantile/group available)}
+\item{data_conditions}{Apply advanced conditions to the data.}
 
 \item{...}{Arguments passed to ggplot2 plotting functions}
 }

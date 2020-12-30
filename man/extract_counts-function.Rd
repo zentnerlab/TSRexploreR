@@ -7,13 +7,13 @@
 extract_counts(experiment, data_type, samples, use_normalized = FALSE)
 }
 \arguments{
-\item{experiment}{TSRexploreR object}
+\item{experiment}{TSRexploreR object.}
 
 \item{data_type}{Whether to extract TSS or TSR counts}
 
-\item{samples}{Names of samples from which to extract counts}
+\item{samples}{A vector of sample names to analyze.}
 
-\item{use_normalized}{Whether CPM values should be returned}
+\item{use_normalized}{Whether to use the normalized (TRUE) or raw (FALSE) counts.}
 }
 \description{
 Extract counts from a TSRexploreR object.

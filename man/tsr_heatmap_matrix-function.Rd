@@ -9,28 +9,29 @@ tsr_heatmap_matrix(
   samples = "all",
   upstream = 1000,
   downstream = 1000,
-  threshold = NA,
+  threshold = NULL,
   use_normalized = FALSE,
   dominant = FALSE,
   data_conditions = list(order_by = "score")
 )
 }
 \arguments{
-\item{experiment}{TSRexploreR object with annotated TSRs}
+\item{experiment}{TSRexploreR object.}
 
-\item{samples}{Either 'all' or a vector of names of samples to analyze}
+\item{samples}{A vector of sample names to analyze.}
 
 \item{upstream}{Bases upstream to consider}
 
 \item{downstream}{bases downstream to consider}
 
-\item{threshold}{Raw count threshold value}
+\item{threshold}{TSSs or TSRs with a score below this value will be discarded.}
 
-\item{use_normalized}{Whether to use CPM-normalized counts}
+\item{use_normalized}{Whether to use the normalized (TRUE) or raw (FALSE) counts.}
 
-\item{dominant}{Whether to only consider dominant TSRs}
+\item{dominant}{If TRUE will discard any TSSs and/or TSRs that do not have the
+highest score per gene or transcript.}
 
-\item{data_conditions}{Condition the data (filter and quantile/group available)}
+\item{data_conditions}{Apply advanced conditions to the data.}
 }
 \value{
 Matrix of counts for each gene/transcript and position

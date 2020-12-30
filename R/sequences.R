@@ -1,12 +1,8 @@
 
 #' Retrieve Sequences
 #'
-#' @param experiment tsr explorer object
-#' @param samples Samples to get sequences for
+#' @inheritParams common_params
 #' @param data_type Either 'tss', 'tsr', or 'shift'
-#' @param genome_assembly Genome assembly
-#' @param threshold Score threshold for TSSs or TSRs
-#' @param dominant Whether to keep the dominant TSS or TSR
 #' @param fixed_size Whether all returned sequences should have the
 #'   same fixed size starting from the center of the ranges
 #' @param extend_upstream Distance to extend ranges upstream

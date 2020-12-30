@@ -10,21 +10,24 @@ tss_export(
   file_type = "bedgraph",
   out_dir = NA,
   diff_tss = FALSE,
-  sep = "\\t"
+  sep = "\\t",
+  genome_assembly = NULL
 )
 }
 \arguments{
-\item{experiment}{TSRexploreR object}
+\item{experiment}{TSRexploreR object.}
 
-\item{samples}{Either 'all', or names of samples to export}
+\item{samples}{A vector of sample names to analyze.}
 
-\item{file_type}{either 'bedgraph' or 'table'}
+\item{file_type}{either 'bedgraph', 'table', or 'bigwig'}
 
 \item{out_dir}{Output directory for files}
 
 \item{diff_tss}{If TRUE will output differential TSSs}
 
 \item{sep}{Delimiter for table output}
+
+\item{genome_assembly}{Genome assembly in either a FASTA file or BSgenome object format.}
 }
 \value{
 Either bedgraphs split by strand, or a tabular file.

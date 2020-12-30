@@ -3,10 +3,8 @@
 #' @description
 #' Mark TSSs as dominant TSS per TSR or gene, or TSRs as dominant per gene. 
 #'
-#' @param experiment TSRexploreR object with annotated TSSs/TSRs
+#' @inheritParams common_params
 #' @param data_type Either 'tss' or 'tsr'
-#' @param threshold Read threshold for TSS/TSRs
-#' @param use_normalized Whether to use normalized counts
 #' @param mark_per By default marks dominant TSR per gene, and dominant TSS per TSR.
 #'   TSSs can also be set per as dominant TSS per 'gene'.
 #'
@@ -57,11 +55,17 @@ mark_dominant <- function(
   ## Check inputs.
   assert_that(is(experiment, "tsr_explorer"))
   data_type <- match.arg(str_to_lower(data_type), c("tss", "tsr"))
-  assert_that(is.count(threshold))
+  assert_that(
+    is.null(threshold) ||
+    (is.numeric(threshold) && threshold >= 0)
+  )
   mark_per <- match.arg(str_to_lower(mark_per), c("default", "gene"))
 
   ## Select samples.
   select_samples <- extract_counts(experiment, data_type, "all", use_normalized)
+
+  ## Set threshold to 0 if not supplied.
+  if (is.null(threshold)) threshold <- 0
 
   ## Mark dominant TSS/TSR per gene if requested.
   if (data_type == "tsr" | (data_type == "tss" & mark_per == "gene")) {
@@ -110,8 +114,7 @@ mark_dominant <- function(
 #'
 #' Get TSS with furthest distance
 #'
-#' @param experiment TSRexploreR object with annotated TSSs
-#' @param samples Either 'all' or names of sample to analyze
+#' @inheritParams common_params
 #' @param threshold Number of reads required for each TSS
 #' @param max_upstream Max upstream distance of TSS to consider
 #' @param max_downstream Max downstream distance of TSS to consider
