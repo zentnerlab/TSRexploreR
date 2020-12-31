@@ -130,7 +130,7 @@ tss_sequences <- function(
 
   ## Order samples if required.
   if (!all(samples == "all")) {
-    seqs[, sample := factor(seqs, levels=samples)]
+    seqs[, sample := factor(sample, levels=samples)]
   }
   
   ## Generate and return DataFrame.
