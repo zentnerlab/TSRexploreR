@@ -4,10 +4,14 @@
 \alias{iq_range}
 \title{Interquartile Range}
 \usage{
-iq_range(tss_table)
+iq_range(tss_table, iqr_upper, iqr_lower)
 }
 \arguments{
 \item{tss_table}{data.table of TSSs}
+
+\item{iqr_upper}{Upper IQR cutoff value.}
+
+\item{iqr_lower}{Lower IQR cutoff value.}
 }
 \description{
 Calculate IQR.
