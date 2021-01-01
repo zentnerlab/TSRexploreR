@@ -221,14 +221,7 @@ exp <- tss_clustering(exp, max_distance=25)
 TSRexploreR provides great flexibility for working with TSSs and TSRs. After TSRs are called or imported, TSSs can be assigned to TSRs they overlap with. In this example, TSSs are associated with the TSRs detected above using distance clustering. However, this function could also be used to associate TSSs with TSRs called elsewhere or a merged/consensus TSR set.
 
 ```{r message=FALSE}
-exp <- associate_with_tsr(
-  exp, use_sample_sheet=FALSE,
-  sample_list=list(
-    "S288C_WT_1"="S288C_WT_1",
-    "S288C_WT_2"="S288C_WT_2",
-    "S288C_WT_3"="S288C_WT_3"
-  )
-)
+exp <- associate_with_tsr(exp)
 ```
 
 ## Initial TSR Processing

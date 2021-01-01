@@ -44,3 +44,21 @@ test_that("Proper handling of TSR ranges.", {
       "strand", "score", "n_unique", "FHASH"
     ))
 })
+
+test_that("Association of TSRs with TSSs", {
+  tsre <- tsr_explorer(TSSs["S288C_WT_1"]) %>%
+    format_counts(data_type="tss") %>%
+    tss_clustering(threshold=3, max_distance=25) %>%
+    associate_with_tsr
+
+  tsre@counts$TSSs$raw %>%
+    expect_type("list") %>%
+    expect_length(1) %>%
+    expect_named("S288C_WT_1")
+  tsre@counts$TSSs$raw$S288C_WT_1 %>%
+    expect_s3_class("data.table") %>%
+    expect_named(c(
+      "seqnames", "start", "end", "width", "strand", "TSR_width", 
+      "TSR_score", "TSR_n_unique", "TSR_FHASH", "score", "FHASH"
+    ))
+})

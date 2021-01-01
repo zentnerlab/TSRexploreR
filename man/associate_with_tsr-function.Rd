@@ -4,14 +4,13 @@
 \alias{associate_with_tsr}
 \title{Associate TSSs}
 \usage{
-associate_with_tsr(experiment, sample_list = NA, use_sample_sheet = FALSE)
+associate_with_tsr(experiment, sample_list = NULL)
 }
 \arguments{
 \item{experiment}{TSRexploreR object.}
 
-\item{sample_list}{If 'use_sample_sheet' is FALSE, provide a list with TSR and TSS sample names}
-
-\item{use_sample_sheet}{Whether to use a sample sheet as a key for association of TSS and TSR samples}
+\item{sample_list}{List with TSRs as names and TSSs as vector.
+If NULL will associate TSSs with TSRs of same name.}
 }
 \description{
 Associate TSSs with TSRs
