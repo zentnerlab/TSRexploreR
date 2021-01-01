@@ -119,8 +119,8 @@ merge_samples <- function(
 #' @importFrom plyranges join_overlap_left_directed
 #'
 #' @inheritParams common_params
-#' @param use_sample_sheet Whether to use a sample sheet as a key for association of TSS and TSR samples
-#' @param sample_list If 'use_sample_sheet' is FALSE, provide a list with TSR and TSS sample names
+#' @param sample_list List with TSRs as names and TSSs as vector.
+#'   If NULL will associate TSSs with TSRs of same name.
 #'
 #' @examples
 #' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
@@ -159,86 +159,75 @@ merge_samples <- function(
 
 associate_with_tsr <- function(
   experiment,
-  sample_list=NA,
-  use_sample_sheet=FALSE
+  sample_list=NULL
 ) {
 
   ## Check inputs.
   assert_that(is(experiment, "tsr_explorer"))
-  assert_that(is.flag(use_sample_sheet))
-
-  if (
-    (!use_sample_sheet && all(is.na(sample_list))) |
-    (use_sample_sheet && all(!is.na(sample_list)))
-  ) {
-    stop("a sample list or sample sheet must be specified")
-  }
-  if (
-    !use_sample_sheet && (!is(sample_list, "list") ||
-    is.null(names(sample_list)))
+  assert_that(
+    is.null(sample_list) ||
+    (is.list(sample_list) && has_attr(sample_list, "names"))
   )
-  {
-    stop("sample_list must be a named list")
+
+  ## Get TSSs.
+  if (!is.null(sample_list)) {
+    tss <- map(sample_list, function(samples) {
+      map(samples, ~extract_counts(experiment, "tss", .x, FALSE))
+    })
+  } else {
+    tss <- experiment@counts$TSSs$raw %>%
+      imap(~purrr::set_names(list(.x), .y))
   }
 
-  ## Grab sample sheet if being used.
-  if (use_sample_sheet) {
-    samples <- experiment@meta_data$sample_sheet
-    sample_list <- as.list(samples$tss_name)
-    sample_list <- magrittr::set_names(sample_list, samples$tsr_name)
+  ## get TSRs.
+  if (!is.null(sample_list)) {
+    tsr <- map(
+      sample_list,
+      ~extract_counts(experiment, "tsr", .x, FALSE)
+    )
+  } else {
+    tsr <- copy(experiment@counts$TSRs$raw)
   }
-  
+
   ## Associate TSSs with TSRs.
-  associated_TSSs <- imap(
-    sample_list,
-    ~ .tss_association(experiment, .x, .y)
-  )
+  tss <- imap(tsr, function(tsr, tsr_name) {
+    tsr[, tsr_sample := tsr_name]
+    setkey(tsr, seqnames, strand, start, end)
+    tss <- tss[[tsr_name]]
+    tss <- map(tss, function(x) {
+      setkey(x, seqnames, strand, start, end)
+      overlap <- foverlaps(x, tsr)
+      overlap[, c("start", "end") := NULL]
+      setnames(
+        overlap,
+        old=c(
+          "width", "n_unique", "FHASH", "i.start", "i.end",
+          "i.width", "i.FHASH", "score", "i.score"
+        ),
+        new=c(
+          "tsr_width", "tsr_n_unique", "TSR_FHASH", "start",
+          "end", "width", "FHASH", "tsr_score", "score"
+        )
+      )
+      if (any(colnames(x) == "normalized_score")) {
+        setnames(
+          overlap,
+          old=c("normalized_score", "i.normalized_score"),
+          new=c("tsr_normalized_score", "normalized_score")
+        )
+      }
+      overlap <- overlap %>%
+        as_granges %>%
+        sort %>%
+        as.data.table
+      return(overlap)
+    })
+  })
+  tss <- flatten(tss)
 
   ## Add TSSs back to the TSRexploreR object.
-  associated_TSSs <- purrr::reduce(associated_TSSs, c)
-
   experiment <- set_count_slot(
-    experiment, associated_TSSs,
-    "counts", "tss", "raw"
+    experiment, tss, "counts", "tss", "raw"
   )
   return(experiment)
-}
-
-#' TSS Association
-#'
-#' @inheritParams common_params
-#' @param tss_names names of TSSs that will be ssociated with the TSR
-#' @param tsr_name name of TSR that TSSs will be associated with
-
-.tss_association <- function(
-  experiment,
-  tss_names,
-  tsr_name
-) {
-
-  # Make GRanges of TSSs.
-  tss_gr <- extract_counts(experiment, "tss", tss_names) %>%
-    rbindlist(idcol="sample") %>%
-    as_granges
-
-  # Make GRanges of TSRs.
-  tsr_set <- extract_counts(experiment, "tsr", tsr_name) %>%
-    rbindlist(idcol="tsr_sample")
-
-  tsr_gr <- tsr_set
-  setnames(
-    tsr_gr,
-    old=c("FHASH", "width", "score", "n_unique"),
-    new=c("TSR_FHASH", "tsr_width", "tsr_score", "tsr_n_unique")
-  )
-  tsr_gr <- as_granges(tsr_gr)
-
-  ## Associate TSSs with overlapping TSRs
-  overlapping <- tss_gr %>%
-    join_overlap_left_directed(tsr_gr) %>%
-    as.data.table %>%
-    split(by="sample", keep.by=FALSE)
-
-  return(overlapping)
-
 }

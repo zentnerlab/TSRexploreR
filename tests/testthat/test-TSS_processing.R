@@ -48,3 +48,44 @@ test_that("TSS Normalization", {
       "FHASH", "normalized_score", "score"
     ))
 })
+
+test_that("Dominant TSS", {
+  tsre <- TSSs["S288C_WT_1"] %>%
+    tsr_explorer(genome_annotation=annotation) %>%
+    format_counts(data_type="tss") %>%
+    annotate_features(data_type="tss") %>%
+    tss_clustering(threshold=3, max_distance=25) %>%
+    associate_with_tsr %>%
+    annotate_features(data_type="tsr")
+
+  ## Dominant TSS per TSR.
+  tss_tsr <- mark_dominant(tsre, data_type="tss")
+  tss_tsr@counts$TSSs$raw %>%
+    expect_length(1) %>%
+    expect_type("list") %>%
+    expect_named("S288C_WT_1")
+  tss_tsr@counts$TSSs$raw$S288C_WT_1 %>%
+    expect_s3_class("data.table") %>%
+    {expect_true("dominant" %in% colnames(.))}
+
+  ## Dominant TSS per gene.
+  tss_gene <- mark_dominant(tsre, mark_per="gene", data_type="tss")
+  tss_gene@counts$TSSs$raw %>%
+    expect_length(1) %>%
+    expect_type("list") %>%
+    expect_named("S288C_WT_1")
+  tss_gene@counts$TSSs$raw$S288C_WT_1 %>%
+    expect_s3_class("data.table") %>%
+    {expect_true("dominant" %in% colnames(.))}
+
+  ## Dominant TSR per gene.
+  tsr_gene <- mark_dominant(tsre, data_type="tsr")
+  tsr_gene@counts$TSRs$raw %>%
+    expect_length(1) %>%
+    expect_type("list") %>%
+    expect_named("S288C_WT_1")
+  tsr_gene@counts$TSRs$raw$S288C_WT_1 %>%
+    expect_s3_class("data.table") %>%
+    {expect_true("dominant" %in% colnames(.))}
+
+})
