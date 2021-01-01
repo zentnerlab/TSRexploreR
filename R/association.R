@@ -186,11 +186,12 @@ associate_with_tsr <- function(
       ~extract_counts(experiment, "tsr", .x, FALSE)
     )
   } else {
-    tsr <- experiment@counts$TSRs$raw
+    tsr <- copy(experiment@counts$TSRs$raw)
   }
 
   ## Associate TSSs with TSRs.
   tss <- imap(tsr, function(tsr, tsr_name) {
+    tsr[, tsr_sample := tsr_name]
     setkey(tsr, seqnames, strand, start, end)
     tss <- tss[[tsr_name]]
     tss <- map(tss, function(x) {
@@ -204,15 +205,15 @@ associate_with_tsr <- function(
           "i.width", "i.FHASH", "score", "i.score"
         ),
         new=c(
-          "TSR_width", "TSR_n_unique", "TSR_FHASH", "start",
-          "end", "width", "FHASH", "TSR_score", "score"
+          "tsr_width", "tsr_n_unique", "TSR_FHASH", "start",
+          "end", "width", "FHASH", "tsr_score", "score"
         )
       )
       if (any(colnames(x) == "normalized_score")) {
         setnames(
           overlap,
           old=c("normalized_score", "i.normalized_score"),
-          new=c("TSR_normalized_score", "normalized_score")
+          new=c("tsr_normalized_score", "normalized_score")
         )
       }
       overlap <- overlap %>%
