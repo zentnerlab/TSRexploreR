@@ -9,6 +9,7 @@
 #' @inheritParams common_params
 #' @param upstream Bases upstream of plot center
 #' @param downstream Bases downstream of plot center
+#' @param ... Arguments passed to ComplexHeatmap
 #'
 #' @details
 #' This function makes a count matrix for each gene or transcript with detected features
@@ -50,10 +51,9 @@
 #' \code{\link{plot_heatmap}} to plot the heatmap.
 #' \code{\link{tsr_heatmap_matrix}} to generate the TSR matrix data for plotting.
 #'
-#' @rdname tss_heatmap_matrix-function
 #' @export
 
-tss_heatmap_matrix <- function(
+plot_tss_heatmap <- function(
   experiment,
   samples="all",
   upstream=1000,
@@ -61,7 +61,8 @@ tss_heatmap_matrix <- function(
   threshold=NULL,
   use_normalized=FALSE,
   dominant=FALSE,
-  data_conditions=list(order_by="score")
+  data_conditions=list(order_by="score"),
+  ...
 ) {
 
   ## Check inputs.
@@ -88,9 +89,9 @@ tss_heatmap_matrix <- function(
     })
 
   ## Apply conditions to data.
-  if (all(!is.na(data_conditions))) {
-    annotated_tss <- do.call(group_data, c(list(signal_data=annotated_tss), data_conditions))
-  }
+  #if (all(!is.na(data_conditions))) {
+  #  annotated_tss <- do.call(group_data, c(list(signal_data=annotated_tss), data_conditions))
+  #}
 
   ## Rename feature column.
   annotated_tss <- rbindlist(annotated_tss, idcol="sample")
@@ -103,29 +104,51 @@ tss_heatmap_matrix <- function(
   )
 
   ## Format for plotting.
-  groupings <- any(names(data_conditions) %in% c("quantile_by", "grouping"))
+  #groupings <- any(names(data_conditions) %in% c("quantile_by", "grouping"))
+  #
+  #if(any(names(annotated_tss) == "plot_order")) {
+  #  annotated_tss[, feature := fct_reorder(factor(feature), plot_order)]
+  #}
 
-  if(any(names(annotated_tss) == "plot_order")) {
-    annotated_tss[, feature := fct_reorder(factor(feature), plot_order)]
-  }
-  annotated_tss[, distanceToTSS := factor(distanceToTSS, levels=seq(-upstream, downstream, 1))]
+  ## Create matrix.
+  annotated_tss <- annotated_tss[, .(sample, score, distanceToTSS, feature)]
 
-  ## Order samples if required.
-  if (!all(samples == "all")) {
-    annotated_tss[, sample := factor(sample, levels=samples)]
-  }
+  # Cross-join so that all TSS distances are generated.
+  tss_mat <- annotated_tss[
+    CJ(sample=sample, feature=feature, distanceToTSS=seq(-upstream, downstream, 1), unique=TRUE),
+    , on=.(sample, feature, distanceToTSS)
+  ]
+  setnafill(tss_mat, col="score", fill=0)
+  tss_mat[,
+    distanceToTSS := factor(distanceToTSS, levels=seq(-upstream, downstream, 1))
+  ]
+  # Long to wide format for ComplexHeatmap matrix.
+  tss_mat <- dcast(tss_mat, sample + feature ~ distanceToTSS, value.var="score")
+  # Make factors for splitting plot later.
+  sample_data <- unique(tss_mat[["sample"]])
+  sample_data <- map(sample_data, ~rep(.x, length(seq(-upstream, downstream, 1))))
+  sample_data <- purrr::reduce(sample_data, c)
+  # Split samples and convert to matrix.
+  tss_mat <- split(tss_mat, by="sample", keep.by=FALSE)
+  tss_mat <- map(tss_mat, ~as.matrix(column_to_rownames(.x, "feature")))
+  tss_mat <- purrr::reduce(tss_mat, cbind)
 
+  ## Plot heatmap.
+  p <- tss_mat %>%
+    {log2(. + 1)} %>%
+    Heatmap(
+      cluster_rows=FALSE, show_row_dend=FALSE,
+      cluster_columns=FALSE, show_column_dend=FALSE,
+      show_row_names=FALSE, show_column_names=FALSE,
+      col=viridis::viridis(100),
+      column_split=sample_data,
+      name="log2 score",
+      use_raster=TRUE,
+      raster_device="png",
+      ...
+    )
 
-  ## Return a DataFrame
-  tss_df <- annotated_tss[, .(sample, distanceToTSS, score, feature)]
-  tss_df <- DataFrame(tss_df)
-  metadata(tss_df)$threshold <- threshold
-  metadata(tss_df)$groupings <- groupings
-  metadata(tss_df)$use_normalized <- use_normalized
-  metadata(tss_df)$dominant <- dominant
-  metadata(tss_df)$promoter <- c(upstream, downstream)
-
-  return(tss_df)
+  return(p)
 }
 
 #' Plot Heatmap
