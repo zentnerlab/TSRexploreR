@@ -143,8 +143,6 @@ plot_tss_heatmap <- function(
       col=viridis::viridis(100),
       column_split=sample_data,
       name="log2 score",
-      use_raster=TRUE,
-      raster_device="png",
       ...
     )
 
@@ -193,7 +191,6 @@ plot_tss_heatmap <- function(
 #' \code{\link{tsr_heatmap_matrix}} to generate the TSR matrix data for plotting.
 #'
 #' @rdname plot_heatmap-function
-#' @export
 
 plot_heatmap <- function(
   heatmap_matrix,
@@ -268,14 +265,13 @@ plot_heatmap <- function(
 #' @inheritParams common_params
 #' @param upstream Bases upstream to consider
 #' @param downstream bases downstream to consider
+#' @param ... Additional arguments passed to Heatmap
 #'
 #' @return Matrix of counts for each gene/transcript and position
 #'
-#' @rdname tsr_heatmap_matrix-function
-#'
 #' @export
 
-tsr_heatmap_matrix <- function(
+plot_tsr_heatmap <- function(
   experiment,
   samples="all",
   upstream=1000,
@@ -283,7 +279,8 @@ tsr_heatmap_matrix <- function(
   threshold=NULL,
   use_normalized=FALSE,
   dominant=FALSE,
-  data_conditions=list(order_by="score")
+  data_conditions=list(order_by="score"),
+  ...
 ) {
 
   ## Check inputs.
@@ -301,6 +298,7 @@ tsr_heatmap_matrix <- function(
     extract_counts("tsr", samples, use_normalized) %>%
     preliminary_filter(dominant, threshold)
 
+  ## Rename feature ID.
   walk(annotated_tsr, function(x) {
     setnames(x,
       old=ifelse(
@@ -312,9 +310,9 @@ tsr_heatmap_matrix <- function(
   })
 
   ## Apply conditions to data.
-  if (all(!is.na(data_conditions))) {
-    annotated_tsr <- do.call(group_data, c(list(signal_data=annotated_tsr), data_conditions))
-  }
+  #if (all(!is.na(data_conditions))) {
+  #  annotated_tsr <- do.call(group_data, c(list(signal_data=annotated_tsr), data_conditions))
+  #}
 
   ## Prepare data for plotting.
   annotated_tsr <- rbindlist(annotated_tsr, idcol="sample")
@@ -325,40 +323,64 @@ tsr_heatmap_matrix <- function(
       seq_len(.N)
     )
   ]
+  annotated_tsr <- annotated_tsr[,
+    .(sample, feature, tsr_id, startDist, endDist, score)
+  ]
 
-  ## Put TSR score for entire range of TSR (put it where? qq).
+  ## Put TSR score for entire range of TSR.
   new_ranges <- annotated_tsr[,
-    .(sample, seqnames, start, end, strand,
+    .(sample, feature, score,
     distanceToTSS=seq(as.numeric(startDist), as.numeric(endDist), 1)),
-                by=tsr_id
+    by=tsr_id
   ]
   new_ranges[, tsr_id := NULL]
-  setkeyv(new_ranges, c("sample", "seqnames", "start", "end", "strand"))
+  new_ranges <- new_ranges[distanceToTSS >= -upstream & distanceToTSS <= downstream]
 
-  annotated_tsr[, distanceToTSS := NULL]
-  setkeyv(annotated_tsr, c("sample", "seqnames", "start", "end", "strand"))
-  annotated_tsr <- merge(new_ranges, annotated_tsr, all.x=TRUE)[
-    dplyr::between(distanceToTSS, -upstream, downstream)
+  ## Create put score of 0 for ranges without TSR.
+  new_ranges <- new_ranges[
+    CJ(sample=sample, feature=feature, distanceToTSS=seq(-upstream, downstream, 1), unique=TRUE),
+    , on=.(sample, feature, distanceToTSS)
   ]
+  setnafill(new_ranges, cols="score", fill=0)
+
+  ## Create matrix.
+  new_ranges[, distanceToTSS := factor(distanceToTSS, levels=seq(-upstream, downstream, 1))]
+  new_ranges <- dcast(new_ranges, sample + feature ~ distanceToTSS, value.var="score")
+
+  # Make factors for splitting plot later.
+  sample_data <- new_ranges[["sample"]] %>%
+    unique %>%
+    map(~rep(.x, length(seq(-upstream, downstream, 1)))) %>%
+    purrr::reduce(c)
+
+  tsr_mat <- new_ranges %>%
+    split(by="sample", keep.by=FALSE) %>%
+    map(~column_to_rownames(.x, "feature") %>% as.matrix) %>%
+    purrr::reduce(cbind)
+
+  ## Generate heatmap.
+  p <- tsr_mat %>%
+    {log2(. + 1)} %>%
+    Heatmap(
+      cluster_rows=FALSE, show_row_dend=FALSE,
+      cluster_columns=FALSE, show_column_dend=FALSE,
+      show_row_names=FALSE, show_column_names=FALSE,
+      col=viridis::viridis(100),
+      column_split=sample_data,
+      name="log2 score",
+      ...
+    )
+
+  return(p)
 
   ## Format for plotting.
-  if(any(names(annotated_tsr) == "plot_order")) {
-    annotated_tsr[, feature := fct_reorder(factor(feature), plot_order)]
-  }
-  annotated_tsr[, distanceToTSS := factor(distanceToTSS, levels=seq(-upstream, downstream, 1))]
-
+  #if(any(names(annotated_tsr) == "plot_order")) {
+  #  annotated_tsr[, feature := fct_reorder(factor(feature), plot_order)]
+  #}
+  #annotated_tsr[, distanceToTSS := factor(distanceToTSS, levels=seq(-upstream, downstream, 1))]
+  #
   ## Order samples if required.
-  if (!all(samples == "all")) {
-    annotated_tsr[, sample := factor(sample, levels=samples)]
-  }
-
-  ## Return DataFrame
-  tsr_df <- annotated_tsr[, .(sample, distanceToTSS, score, feature)]
-  tsr_df <- DataFrame(tsr_df)
-  metadata(tsr_df)$threshold <- threshold
-  metadata(tsr_df)$groupings <- any(names(data_conditions) == "grouping")
-  metadata(tsr_df)$use_normalized <- use_normalized
-  metadata(tsr_df)$promoter <- c(upstream, downstream)
-
-  return(tsr_df)
+  #if (!all(samples == "all")) {
+  #  annotated_tsr[, sample := factor(sample, levels=samples)]
+  #}
 }

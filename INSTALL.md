@@ -28,6 +28,7 @@ r-cowplot \
 r-rcpp \
 r-assertthat \
 r-testthat \
+r-cairo \
 bioconductor-apeglm \
 bioconductor-genomicranges \
 bioconductor-genomicfeatures \
