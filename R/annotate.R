@@ -125,9 +125,11 @@ annotate_features <- function(
       tssRegion=c(-upstream, downstream),
       TxDb=annotation_data,
       sameStrand=TRUE,
-      level=feature_type
+      level=feature_type,
+      verbose=FALSE
     ) %>%
     as.data.table
+  annotated[, geneStrand := ifelse(geneStrand == 1, "+", "-")]
 
   ## Create a column iwth simplified annotations.
   annotated[,
@@ -137,6 +139,14 @@ annotate_features <- function(
       str_detect(annotation, pattern="Intron") ~ "Intron",
       str_detect(annotation, pattern="Downstream") ~ "Downstream",
       annotation == "Distal Intergenic" ~ "Intergenic"
+    )
+  ]
+
+  ## Mark antisense features.
+  annotated[,
+    simple_annotations := ifelse(
+      simple_annotations != "Intergenic" & strand != geneStrand,
+      "Antisense", simple_annotations
     )
   ]
 

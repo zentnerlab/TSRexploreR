@@ -32,6 +32,8 @@ Additional meta-data columns can be added with sample information such as condit
 \item{dominant}{If TRUE will discard any TSSs and/or TSRs that do not have the
 highest score per gene or transcript.}
 
+\item{exclude_antisense}{Remove antisense TSSs/TSRs prior to analysis.}
+
 \item{data_conditions}{Apply advanced conditions to the data.}
 }
 \description{

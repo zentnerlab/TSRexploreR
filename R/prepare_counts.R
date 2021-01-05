@@ -127,7 +127,7 @@ count_features <- function(
   sample_data <- sample_data %>%
     map(function(x) {
       feature_scores <- x[
-        !simple_annotations %in% c("Downstream", "Intergenic"),
+        !simple_annotations %in% c("Downstream", "Intergenic", "Antisense"),
         .(feature_score=sum(score)),
         by=eval(anno_type)
       ]

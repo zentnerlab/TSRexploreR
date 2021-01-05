@@ -69,6 +69,7 @@ plot_density <- function(
   ncol=1,
   use_normalized=FALSE,
   dominant=FALSE,
+  exclude_antisense=TRUE,
   data_conditions=NA,
   color="default",
   ...
@@ -88,6 +89,7 @@ plot_density <- function(
   if (all(!is.na(data_conditions)) && !is(data_conditions, "list")) {
     stop("data_conditions should be a list of values")
   }
+  assert_that(is.flag(exclude_antisense))
 
   ## Assign color type.
   color_type <- case_when(
@@ -102,6 +104,9 @@ plot_density <- function(
     preliminary_filter(dominant, threshold)
 
   sample_data <- map(sample_data, ~ .x[dplyr::between(distanceToTSS, -upstream, downstream)])
+
+  ## Remove antisense TSSs/TSRs if requested.
+  sample_data <- map(sample_data, ~ .x[simple_annotations != "Antisense"])
 
   ## Condition data.
   if (all(!is.na(data_conditions))) {

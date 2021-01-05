@@ -154,12 +154,11 @@ plot_density(exp, data_type="tss", ncol=3)
 While a density plot gives a general overview of TSS distribution relative to annotated start codons or TSSs, information may be lost in the process due to the aggregate nature of this type of plot. To get a less condensed view of the data, it can be useful to generate a heatmap of TSS positions relative to all features. However, as TSS are single points and may be sparsely distributed, it can be somewhat difficult to visualize them as a heatmap.
 
 ```{r message=FALSE}
-tss_matrix <- tss_heatmap_matrix(
-  exp, upstream=250, downstream=250,
-  use_normalized=TRUE
+plot_heatmap(
+  exp, data_type="tss",
+  upstream=250, downstream=250,
+  use_raster=TRUE, raster_device="CairoPNG"
 )
-
-plot_heatmap(tss_matrix, ncol=3, background_color="white")
 ```
 
 ## Sequence Analysis
@@ -213,7 +212,7 @@ To identify TSRs, TSRexploreR uses a distance clustering method. This approach g
 However, if you have called TSRs using other methods (e.g. Paraclu or RECLU), they can be imported directly.
 
 ```{r message=FALSE}
-exp <- tss_clustering(exp, max_distance=25)
+exp <- tss_clustering(exp, threshold=3, max_distance=25)
 ```
 
 ### Associating TSSs with TSRs
@@ -299,9 +298,11 @@ plot_density(exp, data_type="tsr", ncol=3)
 TSR heatmaps provide a global view of TSR distribution relative to annotated start codons or TSSs.
 
 ```{r message=FALSE, fig.height=3, fig.width=8}
-count_matrix <- tsr_heatmap_matrix(exp, upstream=500, downstream=500)
-
-plot_heatmap(count_matrix, ncol=3, background_color="white")
+plot_heatmap(
+  exp, data_type="tsr",
+  upstream=500, downstream=500,
+  use_raster=TRUE, raster_device="CairoPNG"
+)
 ```
 
 ## TSR Metrics and Shape

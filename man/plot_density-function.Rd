@@ -15,6 +15,7 @@ plot_density(
   ncol = 1,
   use_normalized = FALSE,
   dominant = FALSE,
+  exclude_antisense = TRUE,
   data_conditions = NA,
   color = "default",
   ...
@@ -42,6 +43,8 @@ in addition to its unique location.}
 
 \item{dominant}{If TRUE will discard any TSSs and/or TSRs that do not have the
 highest score per gene or transcript.}
+
+\item{exclude_antisense}{Remove antisense TSSs/TSRs prior to analysis.}
 
 \item{data_conditions}{Apply advanced conditions to the data.}
 
