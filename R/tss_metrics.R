@@ -49,7 +49,8 @@ mark_dominant <- function(
   data_type=c("tss", "tsr"),
   threshold=NULL,
   use_normalized=FALSE,
-  mark_per="default"
+  mark_per="default",
+  exclude_antisense=TRUE
 ) {
 
   ## Check inputs.
@@ -67,6 +68,13 @@ mark_dominant <- function(
   ## Set threshold to 0 if not supplied.
   if (is.null(threshold)) threshold <- 0
 
+  ## Mark whether antisense should be excluded
+  anno_remove <- ifelse(
+    exclude_antisense,
+    c("Downstream", "Intergenic", "Antisense"),
+    c("Downstream", "Intergenic")
+  )
+
   ## Mark dominant TSS per gene if requested.
   if (data_type == "tss" & mark_per == "gene") {
     dominant <- map(select_samples, function(x) {
@@ -74,7 +82,7 @@ mark_dominant <- function(
         !is.na(TSR_FHASH),
         dominant := (
           score == max(score) &
-          !simple_annotations %in% c("Downstream", "Intergenic") &
+          !simple_annotations %in% anno_remove &
           score >= threshold
         ),
         by=eval(ifelse(
@@ -91,7 +99,7 @@ mark_dominant <- function(
       x[,
         dominant := (
           score == max(score) &
-          !simple_annotations %in% c("Downstream", "Intergenic") &
+          !simple_annotations %in% anno_remove &
           score >= threshold
         ),
         by=eval(ifelse(

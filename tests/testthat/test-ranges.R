@@ -58,7 +58,7 @@ test_that("Association of TSRs with TSSs", {
   tsre@counts$TSSs$raw$S288C_WT_1 %>%
     expect_s3_class("data.table") %>%
     expect_named(c(
-      "seqnames", "start", "end", "width", "strand", "TSR_width", 
-      "TSR_score", "TSR_n_unique", "TSR_FHASH", "score", "FHASH"
+      "seqnames", "start", "end", "width", "strand", "tsr_width", "tsr_score",
+      "tsr_n_unique", "TSR_FHASH", "tsr_sample", "score", "FHASH"
     ))
 })

@@ -15,6 +15,7 @@
 #' @param fdr_cutoff Values below the FDR cutoff will be discarded.
 #' @param dominant If TRUE will discard any TSSs and/or TSRs that do not have the
 #'   highest score per gene or transcript.
+#' @param exclude_antisense Remove antisense TSSs/TSRs prior to analysis.
 #' @param data_conditions Apply advanced conditions to the data.
 
 common_params <- function(x) NULL
