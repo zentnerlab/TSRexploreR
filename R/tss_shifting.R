@@ -1,6 +1,6 @@
 #' TSS Shifting
 #'
-#' Calculate TSS shifting statistics
+#' Analyze TSS shifts within a consensus TSR set.
 #'
 #' @inheritParams common_params
 #' @param sample_1 First sample to compare.
@@ -9,12 +9,33 @@
 #' @param sample_2 Second sample to compare.
 #'   Vector with sample name for TSS and TSR,
 #'   with names 'TSS' and 'TSR'
-#' @param comparison_name Name assigned to the results in the tsr explorer object.
-#' @param tss_threshold Whether to filter out TSSs below a threshold
-#' @param max_distance TSRs less than this distance apart will be merged
-#' @param min_threshold Minimum number of raw counts required in each TSR for both TSR samples
-#' @param n_resamples Number of resamplings for permutation test
+#' @param comparison_name Name assigned to the results in the TSRexploreR object.
+#' @param tss_threshold Whether to filter out TSSs below a given raw count threshold.
+#' @param max_distance TSRs less than this distance apart will be merged.
+#' @param min_threshold Minimum number of raw counts required in each TSR for both TSR samples.
+#' @param n_resamples Number of resamplings for permutation test.
 #'
+#' @examples
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
+#' TSSs <- readRDS(TSSs)
+#' exp <- tsr_explorer(TSSs)
+#' annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
+#' samples <- data.frame(sample_name = c(sprintf("S288C_D_%s", seq_len(3)), 
+#'                       sprintf("S288C_WT_%s", seq_len(3))),
+#'                       file_1=NA, file_2=NA,
+#'                       condition=c(rep("Diamide", 3), rep("Untreated", 3)))
+#' exp <- tsr_explorer(TSSs, genome_annotation=annotation, sample_sheet=samples) %>%
+#'   format_counts(data_type="tss") %>%
+#'   tss_clustering(threshold=3) %>%  
+#'   merge_samples(data_type="tss", merge_group="condition") %>%
+#'   merge_samples(data_type="tsr", merge_group="condition")
+#' exp <- tss_shift(exp, sample_1=c(TSS="Untreated", TSR="Untreated"),
+#'                                  sample_2=c(TSS="Diamide", TSR="Diamide"),
+#'                  comparison_name="Untreated_vs_Diamide",
+#'                  min_distance=100, min_threshold=10, n_resamples=1000L)
+#'
+
+
 #' @rdname tss_shift-function
 #' @export
 
