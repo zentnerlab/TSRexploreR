@@ -50,7 +50,8 @@ Imports:
     apeglm,
     CAGEr,
     PCAtools,
-    GenomeInfoDb
+    GenomeInfoDb,
+    Cairo
 Depends:
     R (>= 3.5.0)
 Suggests:

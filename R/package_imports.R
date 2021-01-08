@@ -7,7 +7,9 @@ NULL
 #' @importFrom stringr
 #'   str_detect str_replace str_c str_split str_to_lower
 #'   str_extract str_sub str_pad
-#' @importFrom purrr imap map walk iwalk discard pmap map2
+#' @importFrom purrr
+#'   imap map walk iwalk discard pmap map2 flatten
+#'   map_chr
 #' @importFrom tidyr pivot_longer replace_na
 #' @importFrom ggplot2
 #'   labs ylab xlab ylim xlim

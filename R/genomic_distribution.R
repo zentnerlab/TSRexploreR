@@ -68,7 +68,7 @@ genomic_distribution <- function(
   walk(selected_samples, function(x) {
     x[, simple_annotations := factor(
       simple_annotations,
-      levels=c("Promoter", "Exon", "Intron", "Downstream", "Intergenic")
+      levels=c("Promoter", "Exon", "Intron", "Downstream", "Intergenic", "Antisense")
     )]
   })
 

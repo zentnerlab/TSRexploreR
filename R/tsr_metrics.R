@@ -3,14 +3,23 @@
 #' Calculate TSR Metrics.
 #'
 #' @inheritParams common_params
+#' @param iqr_lower Lower IQR cutoff value.
+#' @param iqr_upper Upper IQR cutoff value.
 #'
 #' @rdname tsr_metrics-function
 #' @export
 
-tsr_metrics <- function(experiment) {
+tsr_metrics <- function(
+  experiment,
+  iqr_lower=0.10,
+  iqr_upper=0.90
+) {
 
   ## Input Checks.
   assert_that(is(experiment, "tsr_explorer"))
+  assert_that(is.numeric(iqr_lower) && (iqr_lower > 0 & iqr_lower < 1))
+  assert_that(is.numeric(iqr_upper) && (iqr_upper > 0 & iqr_upper < 1))
+  assert_that(iqr_lower < iqr_upper)
 
   ## Get samples from TSRexploreR object.
   select_samples <- experiment %>%
@@ -36,7 +45,7 @@ tsr_metrics <- function(experiment) {
   select_samples <- merge(select_samples, pb, all.x=TRUE)
 
   ## Calculate IQR.
-  iqr <- iq_range(select_samples)
+  iqr <- iq_range(select_samples, iqr_upper, iqr_lower)
   setkeyv(iqr, keys)
   select_samples <- merge(select_samples, iqr, all.x=TRUE)
 
@@ -179,11 +188,12 @@ peak_balance <- function(tss_table) {
 #' Calculate IQR.
 #'
 #' @param tss_table data.table of TSSs
+#' @inheritParams tsr_metrics
 #'
 #' @rdname iq_range-function
 #' @export
 
-iq_range <- function(tss_table) {
+iq_range <- function(tss_table, iqr_upper, iqr_lower) {
   
   ## Get TSS positions relative to TSR midpoints.
   tss_position <- tss_table[
@@ -208,7 +218,7 @@ iq_range <- function(tss_table) {
   ]
 
   iqr_results <- tss_position[
-    dplyr::between(ecdf, 0.1, 0.9)
+    dplyr::between(ecdf, iqr_lower, iqr_upper)
   ][,
     .(iqr_min=min(cum_sum),
     iqr_max=max(cum_sum),

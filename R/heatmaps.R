@@ -6,7 +6,7 @@
 #' @include TSRexplore.R
 #' @include annotate.R
 #'
-#' @inheritParams common_params
+#' @param annotated_data Annotated data.table
 #' @param upstream Bases upstream of plot center
 #' @param downstream Bases downstream of plot center
 #'
@@ -49,83 +49,37 @@
 #' \code{\link{annotate_features}} to annotate the TSSs or TSRs.
 #' \code{\link{plot_heatmap}} to plot the heatmap.
 #' \code{\link{tsr_heatmap_matrix}} to generate the TSR matrix data for plotting.
-#'
-#' @rdname tss_heatmap_matrix-function
-#' @export
 
-tss_heatmap_matrix <- function(
-  experiment,
-  samples="all",
+.tss_heatmap <- function(
+  annotated_data,
   upstream=1000,
-  downstream=1000,
-  threshold=NULL,
-  use_normalized=FALSE,
-  dominant=FALSE,
-  data_conditions=list(order_by="score")
+  downstream=1000
 ) {
 
-  ## Check inputs.
-  assert_that(is(experiment, "tsr_explorer"))
-  assert_that(is.character(samples))
-  assert_that(is.count(upstream))
-  assert_that(is.count(downstream))
-  assert_that(is.null(threshold) || (is.numeric(threshold) && threshold >= 0))
-  assert_that(is.flag(use_normalized))
-  assert_that(is.flag(dominant))
-  if (all(!is.na(data_conditions)) && !is(data_conditions, "list")) {
-    stop("data_conditions must be a list of values")
-  }
+  ## Create matrix.
+  annotated_data <- annotated_data[, .(sample, score, distanceToTSS, feature)]
 
-  ## Get requested samples.
-  annotated_tss <- experiment %>%
-    extract_counts("tss", samples, use_normalized) %>%
-    preliminary_filter(dominant, threshold)
+  # Cross-join so that all TSS distances are generated.
+  tss_mat <- annotated_data[
+    CJ(sample=sample, feature=feature, distanceToTSS=seq(-upstream, downstream, 1), unique=TRUE),
+    , on=.(sample, feature, distanceToTSS)
+  ]
+  setnafill(tss_mat, col="score", fill=0)
+  tss_mat[,
+    distanceToTSS := factor(distanceToTSS, levels=seq(-upstream, downstream, 1))
+  ]
+  # Long to wide format for ComplexHeatmap matrix.
+  tss_mat <- dcast(tss_mat, sample + feature ~ distanceToTSS, value.var="score")
+  # Make factors for splitting plot later.
+  sample_data <- unique(tss_mat[["sample"]])
+  sample_data <- map(sample_data, ~rep(.x, length(seq(-upstream, downstream, 1))))
+  sample_data <- purrr::reduce(sample_data, c)
+  # Split samples and convert to matrix.
+  tss_mat <- split(tss_mat, by="sample", keep.by=FALSE)
+  tss_mat <- map(tss_mat, ~as.matrix(column_to_rownames(.x, "feature")))
+  tss_mat <- purrr::reduce(tss_mat, cbind)
 
-  annotated_tss <- annotated_tss %>%
-    map(function(x) {
-      x <- x[distanceToTSS >= -upstream & distanceToTSS <= downstream]
-      return(x)
-    })
-
-  ## Apply conditions to data.
-  if (all(!is.na(data_conditions))) {
-    annotated_tss <- do.call(group_data, c(list(signal_data=annotated_tss), data_conditions))
-  }
-
-  ## Rename feature column.
-  annotated_tss <- rbindlist(annotated_tss, idcol="sample")
-  setnames(annotated_tss,
-    old=ifelse(
-      experiment@settings$annotation[, feature_type] == "transcript",
-      "transcriptId", "geneId"
-    ),
-    new="feature"
-  )
-
-  ## Format for plotting.
-  groupings <- any(names(data_conditions) %in% c("quantile_by", "grouping"))
-
-  if(any(names(annotated_tss) == "plot_order")) {
-    annotated_tss[, feature := fct_reorder(factor(feature), plot_order)]
-  }
-  annotated_tss[, distanceToTSS := factor(distanceToTSS, levels=seq(-upstream, downstream, 1))]
-
-  ## Order samples if required.
-  if (!all(samples == "all")) {
-    annotated_tss[, sample := factor(sample, levels=samples)]
-  }
-
-
-  ## Return a DataFrame
-  tss_df <- annotated_tss[, .(sample, distanceToTSS, score, feature)]
-  tss_df <- DataFrame(tss_df)
-  metadata(tss_df)$threshold <- threshold
-  metadata(tss_df)$groupings <- groupings
-  metadata(tss_df)$use_normalized <- use_normalized
-  metadata(tss_df)$dominant <- dominant
-  metadata(tss_df)$promoter <- c(upstream, downstream)
-
-  return(tss_df)
+  return(list(mat=tss_mat, samps=sample_data))
 }
 
 #' Plot Heatmap
@@ -136,12 +90,9 @@ tss_heatmap_matrix <- function(
 #' @importFrom purrr keep
 #'
 #' @inheritParams common_params
-#' @param heatmap_matrix TSS or TSR heatmap matrix from tss_heatmap_matrix ot tsr_heatmap_matrix
-#' @param max_value Max log2 (+ 1? qq) value at which to truncate heatmap color
-#' @param background_color The color of the heatmap background (is this the 0 value? qq)
-#' @param low_color The low value gradient color
-#' @param high_color The high value gradient color
-#' @param ... Arguments passed to geom_tile
+#' @param upstream Bases upstream to consider
+#' @param downstream bases downstream to consider
+#' @param ... Additional arguments passed to Heatmap
 #'
 #' @details
 #' This plotting function generates a ggplot2 heatmap of TSS or TSR signal
@@ -173,94 +124,16 @@ tss_heatmap_matrix <- function(
 #' @export
 
 plot_heatmap <- function(
-  heatmap_matrix,
-  max_value=5,
-  ncol=1, 
-  background_color="#F0F0F0",
-  low_color="#56B1F7",
-  high_color="#132B43",
-  ...
-) {
-
-  ## Check inputs.
-  assert_that(is(heatmap_matrix, "DataFrame"))
-  assert_that(is.numeric(max_value) && max_value > 2)
-  assert_that(is.count(ncol))
-  assert_that(is.string(background_color))
-  assert_that(is.string(low_color))
-  assert_that(is.string(high_color))
-
-  ## Extract some info from the heatmap matrix.
-  upstream <- metadata(heatmap_matrix)$promoter[1]
-  downstream <- metadata(heatmap_matrix)$promoter[2]
-  groupings <- metadata(heatmap_matrix)$groupings
-
-  ## Convert to data.table, log2 transform scores, and then truncate values above 'max_value'.
-  heatmap_mat <- as.data.table(heatmap_matrix)
-  heatmap_mat[, score := ifelse(log2(score) > max_value, max_value, log2(score))]
-
-  ## Plot heatmap.
-  p <- ggplot(heatmap_mat, aes(x=.data$distanceToTSS, y=.data$feature, fill=log2(.data$score))) +
-    geom_raster() +
-    geom_vline(xintercept=upstream, color="black", linetype="dashed", size=0.1) +
-    theme_minimal() +
-    scale_x_discrete(
-      breaks=seq(-upstream, downstream, 1) %>% keep(~ (./100) %% 1 == 0),
-      labels=seq(-upstream, downstream, 1) %>% keep(~ (./100) %% 1 == 0)
-    ) +
-    scale_fill_continuous(
-      limits=c(0, max_value),
-      breaks=seq(0, max_value, 1),
-      labels=c(seq(0, max_value - 1, 1), paste0(">=", max_value)),
-      name="Log2(Score)",
-      low=low_color,
-      high=high_color
-    ) +
-    theme(
-      axis.text.x=element_text(angle=45, hjust=1),
-      panel.spacing=unit(1.5, "lines"),
-      axis.text.y=element_blank(),
-      axis.ticks.y=element_blank(),
-      panel.grid=element_blank(),
-      panel.background=element_rect(fill=background_color, color="black")
-    ) +
-    labs(x="Position", y="Feature")
-
-  if (metadata(heatmap_matrix)$groupings) {
-    p <- p + facet_wrap(grouping ~ sample, scales="free")
-  } else {
-    p <- p + facet_wrap(. ~ sample, ncol=ncol)
-  }
-
-  return(p)
-}
-
-#' TSR Heatmap Count Matrix
-#'
-#' Generate count matrix to make TSR heatmap
-#'
-#' @include TSRexplore.R
-#' @include annotate.R
-#'
-#' @inheritParams common_params
-#' @param upstream Bases upstream to consider
-#' @param downstream bases downstream to consider
-#'
-#' @return Matrix of counts for each gene/transcript and position
-#'
-#' @rdname tsr_heatmap_matrix-function
-#'
-#' @export
-
-tsr_heatmap_matrix <- function(
   experiment,
   samples="all",
+  data_type=c("tss", "tsr"),
   upstream=1000,
   downstream=1000,
   threshold=NULL,
   use_normalized=FALSE,
   dominant=FALSE,
-  data_conditions=list(order_by="score")
+  data_conditions=list(order_by="score"),
+  ...
 ) {
 
   ## Check inputs.
@@ -271,14 +144,21 @@ tsr_heatmap_matrix <- function(
   assert_that(is.null(threshold) || (is.numeric(threshold) && threshold >= 0))
   assert_that(is.flag(use_normalized))
   assert_that(is.flag(dominant))
-  if (all(!is.na(data_conditions)) && !is(data_conditions, "list")) stop("data_conditions must in list form")
-  
+  if (all(!is.na(data_conditions)) && !is(data_conditions, "list")) {
+    stop("data_conditions must be a list of values")
+  }
+  data_type <- match.arg(str_to_lower(data_type), c("tss", "tsr"))
+
   ## Get requested samples.
-  annotated_tsr <- experiment %>%
-    extract_counts("tsr", samples, use_normalized) %>%
+  annotated <- experiment %>%
+    extract_counts(data_type, samples, use_normalized) %>%
     preliminary_filter(dominant, threshold)
 
-  walk(annotated_tsr, function(x) {
+  ## Remove antisense TSSs/TSRs.
+  annotated <- map(annotated, ~.x[simple_annotations != "Antisense"])
+
+  ## Rename feature ID.
+  walk(annotated, function(x) {
     setnames(x,
       old=ifelse(
         experiment@settings$annotation[, feature_type] == "transcript",
@@ -287,55 +167,89 @@ tsr_heatmap_matrix <- function(
       new="feature"
     )
   })
+  annotated <- rbindlist(annotated, idcol="sample")
 
-  ## Apply conditions to data.
-  if (all(!is.na(data_conditions))) {
-    annotated_tsr <- do.call(group_data, c(list(signal_data=annotated_tsr), data_conditions))
-  }
+  ## Create the count matrix.
+  count_mat <- switch(
+    data_type,
+    "tss"=.tss_heatmap(annotated, upstream, downstream),
+    "tsr"=.tsr_heatmap(annotated, upstream, downstream)
+  )
+
+  ## Create heatmap.
+  p <- count_mat[["mat"]] %>%
+    {log2(. + 1)} %>%
+    Heatmap(
+      cluster_rows=FALSE, show_row_dend=FALSE,
+      cluster_columns=FALSE, show_column_dend=FALSE,
+      show_row_names=FALSE, show_column_names=FALSE,
+      col=viridis::viridis(100),
+      column_split=count_mat[["samps"]],
+      name="log2 score",
+      ...
+    )
+
+  return(p)
+
+}
+
+#' TSR Heatmap Count Matrix
+#'
+#' Generate count matrix to make TSR heatmap
+#'
+#' @include TSRexplore.R
+#' @include annotate.R
+#'
+#' @param annotated_data Annotated data.table
+#' @param upstream Bases upstream to consider
+#' @param downstream bases downstream to consider
+#'
+#' @return Matrix of counts for each gene/transcript and position
+
+.tsr_heatmap <- function(
+  annotated_data,
+  upstream=1000,
+  downstream=1000
+) {
 
   ## Prepare data for plotting.
-  annotated_tsr <- rbindlist(annotated_tsr, idcol="sample")
-  annotated_tsr[,
+  annotated_data[,
     c("startDist", "endDist", "tsr_id") := list(
-      ifelse(strand == "+", start - geneStart, -(end - geneEnd)),
-      ifelse(strand == "+", end - geneStart, -(start - geneEnd)),
+      ifelse(strand == "+", start - geneStart, (geneEnd - end)),
+      ifelse(strand == "+", end - geneStart, (geneEnd - start)),
       seq_len(.N)
     )
   ]
-
-  ## Put TSR score for entire range of TSR (put it where? qq).
-  new_ranges <- annotated_tsr[,
-    .(sample, seqnames, start, end, strand,
+  ## Put TSR score for entire range of TSR.
+  new_ranges <- annotated_data[,
+    .(sample, feature, score,
     distanceToTSS=seq(as.numeric(startDist), as.numeric(endDist), 1)),
-                by=tsr_id
+    by=tsr_id
   ]
   new_ranges[, tsr_id := NULL]
-  setkeyv(new_ranges, c("sample", "seqnames", "start", "end", "strand"))
+  new_ranges <- new_ranges[distanceToTSS >= -upstream & distanceToTSS <= downstream]
 
-  annotated_tsr[, distanceToTSS := NULL]
-  setkeyv(annotated_tsr, c("sample", "seqnames", "start", "end", "strand"))
-  annotated_tsr <- merge(new_ranges, annotated_tsr, all.x=TRUE)[
-    dplyr::between(distanceToTSS, -upstream, downstream)
+  ## Put score of 0 for ranges without TSR.
+  new_ranges <- new_ranges[
+    CJ(sample=sample, feature=feature, distanceToTSS=seq(-upstream, downstream, 1), unique=TRUE),
+    , on=.(sample, feature, distanceToTSS)
   ]
+  setnafill(new_ranges, cols="score", fill=0)
 
-  ## Format for plotting.
-  if(any(names(annotated_tsr) == "plot_order")) {
-    annotated_tsr[, feature := fct_reorder(factor(feature), plot_order)]
-  }
-  annotated_tsr[, distanceToTSS := factor(distanceToTSS, levels=seq(-upstream, downstream, 1))]
+  ## Create matrix.
+  new_ranges[, distanceToTSS := factor(distanceToTSS, levels=seq(-upstream, downstream, 1))]
+  new_ranges <- dcast(new_ranges, sample + feature ~ distanceToTSS, value.var="score")
 
-  ## Order samples if required.
-  if (!all(samples == "all")) {
-    annotated_tsr[, sample := factor(sample, levels=samples)]
-  }
+  # Make factors for splitting plot later.
+  sample_data <- new_ranges[["sample"]] %>%
+    unique %>%
+    map(~rep(.x, length(seq(-upstream, downstream, 1)))) %>%
+    purrr::reduce(c)
 
-  ## Return DataFrame
-  tsr_df <- annotated_tsr[, .(sample, distanceToTSS, score, feature)]
-  tsr_df <- DataFrame(tsr_df)
-  metadata(tsr_df)$threshold <- threshold
-  metadata(tsr_df)$groupings <- any(names(data_conditions) == "grouping")
-  metadata(tsr_df)$use_normalized <- use_normalized
-  metadata(tsr_df)$promoter <- c(upstream, downstream)
+  tsr_mat <- new_ranges %>%
+    split(by="sample", keep.by=FALSE) %>%
+    map(~column_to_rownames(.x, "feature") %>% as.matrix) %>%
+    purrr::reduce(cbind)
 
-  return(tsr_df)
+  return(list(mat=tsr_mat, samps=sample_data))
 }

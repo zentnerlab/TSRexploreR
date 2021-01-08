@@ -9,7 +9,8 @@ mark_dominant(
   data_type = c("tss", "tsr"),
   threshold = NULL,
   use_normalized = FALSE,
-  mark_per = "default"
+  mark_per = "default",
+  exclude_antisense = TRUE
 )
 }
 \arguments{
@@ -23,6 +24,8 @@ mark_dominant(
 
 \item{mark_per}{By default marks dominant TSR per gene, and dominant TSS per TSR.
 TSSs can also be set per as dominant TSS per 'gene'.}
+
+\item{exclude_antisense}{Remove antisense TSSs/TSRs prior to analysis.}
 }
 \value{
 tsr exlorer object with dominant status added to TSSs or TSRs.
