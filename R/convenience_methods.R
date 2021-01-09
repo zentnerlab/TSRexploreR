@@ -111,9 +111,9 @@ extract_counts <- function(experiment, data_type, samples, use_normalized=FALSE)
 #'
 #' Extract normalized count matrices.
 #'
-#' @param experiment TSRexploreR object
-#' @param data_type Whether to extract 'tss', 'tsr', 'tss_features', or 'tsr_features'
-#' @param samples Samples to extract
+#' @param experiment TSRexploreR object.
+#' @param data_type Whether to extract 'tss', 'tsr', 'tss_features', or 'tsr_features'.
+#' @param samples Samples to extract.
 #'
 #' @rdname extract_matrix-function
 #' @export
@@ -141,8 +141,8 @@ extract_matrix <- function(experiment, data_type, samples) {
 #' Extract differential expression analysis results.
 #'
 #' @inheritParams common_params
-#' @param data_type Either 'tss', 'tsr', 'tss_features', or 'tsr_features'
-#' @param de_comparisons The comparison sets to extract
+#' @param data_type Either 'tss', 'tsr', 'tss_features', or 'tsr_features'.
+#' @param de_comparisons The comparison sets to extract.
 #'
 #' @rdname extract_de-function
 #' @export
@@ -178,15 +178,15 @@ extract_de <- function(experiment, data_type, de_comparisons="all") {
   return(de_samples)
 }
 
-#' Set slot data.
+#' Set Slot Data
 #'
 #' Set the content of a slot.
 #'
-#' @param tsre_obj TSRexploreR object
-#' @param new_data Data to be added to the slot
-#' @param fill_slot either 'counts' or 'diff_features'
-#' @param data_type Either 'tss', 'tsr', 'tss_features', or 'tsr_features'
-#' @param subslot Either 'raw', 'matrix', or 'results'
+#' @param tsre_obj TSRexploreR object.
+#' @param new_data Data to be added to the slot.
+#' @param fill_slot Either 'counts' or 'diff_features'.
+#' @param data_type Either 'tss', 'tsr', 'tss_features', or 'tsr_features'.
+#' @param subslot Either 'raw', 'matrix', or 'results'.
 #'
 #' @rdname set_slot-function
 #' @export
@@ -200,14 +200,14 @@ set_count_slot <- function(
 ) {
 
   ## Check inputs
-  if (!is(tsre_obj, "tsr_explorer")) stop("tsre_obj must be a tsr explorer object")
+  if (!is(tsre_obj, "tsr_explorer")) stop("tsre_obj must be a TSRexploreR object.")
   data_type <- match.arg(
     str_to_lower(data_type),
     c("tss", "tsr", "tss_features", "tsr_features", "tss_diff", "tsr_diff")
   )
   subslot <- match.arg(str_to_lower(subslot), c("raw", "matrix", "results"))
 
-  ## Convert data type to their slot name.
+  ## Convert data type to slot name.
   data_type <- switch(
     data_type,
     "tss"="TSSs",
@@ -218,7 +218,7 @@ set_count_slot <- function(
     "tsr_features"="TSR_features"
   )
 
-  ## Fill the slot
+  ## Fill the slot.
   slot(tsre_obj, fill_slot)[[data_type]][[subslot]] <- new_data
   return(tsre_obj)
 }

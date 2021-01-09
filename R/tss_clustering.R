@@ -4,24 +4,23 @@
 #' Basic distance and threshold-based clustering of TSSs.
 #'
 #' @inheritParams common_params
-#' @param max_distance Maximum distance between TSSs that can be clustered
-#' @param max_width Maximum width of TSR allowed.
+#' @param max_distance Maximum allowable distance between TSSs for clustering.
+#' @param max_width Maximum allowable TSR width.
 #'
 #' @details
-#' This function clusters TSSs into Transcription Start Regions (TSRs).
+#' This function clusters TSSs into Transcription Start Regions (TSRs). TSSs are 
+#' clustered if their score is greater than or equal to 'threshold' and are less 
+#' than or equal to 'max_distance' from each other. The clustered TSSs cannot
+#' encompass more than 'max_width' bases.
 #'
-#' TSSs are clustered if their score is greater than or equal to
-#'   'threshold' and are less than or equal to 'max_distance'
-#'   from each other.
-#'
-#' @return TSRexploreR object with TSRs
+#' @return TSRexploreR object with TSRs.
 #'
 #' @examples
 #' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
 #' TSSs <- readRDS(TSSs)
-#' tsre_exp <- tsr_explorer(TSSs)
-#' tsre_exp <- format_counts(tsre_exp, data_type="tss")
-#' tsre_exp <- tss_clustering(tsre_exp)
+#' exp <- tsr_explorer(TSSs)
+#' exp <- format_counts(exp, data_type="tss")
+#' exp <- tss_clustering(exp)
 #'
 #' @rdname tss_clustering-function
 #' @export
@@ -56,7 +55,7 @@ tss_clustering <- function(
     return(x)
   })
   
-  ## Call TSRs.
+  ## Cluster TSSs into TSRs.
   clustered_TSSs <- map(select_samples, .aggr_scores, max_distance, max_width)
 
   ## Add TSRs back to TSRexploreR object.
@@ -90,8 +89,8 @@ tss_clustering <- function(
 
 #' Aggregate Scores
 #'
-#' @param granges GRanges
-#' @param maxdist Maximum distance to cluster
+#' @param granges GRanges.
+#' @param maxdist Maximum distance to cluster.
 
 .aggr_scores <- function(granges, maxdist, maxwidth) {
 
@@ -130,7 +129,7 @@ tss_clustering <- function(
     sort %>%
     as.data.table
 
-  ## If max_width is set remove TSRs that are too wide.
+  ## If max_width is set, remove TSRs that are too wide.
   if (!is.null(maxwidth)) {
     overlaps <- overlaps[width <= maxwidth]
   }

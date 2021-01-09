@@ -1,13 +1,13 @@
-#' edgeR Model for DE
+#' Model for differential feature analysis
 #'
-#' Find differential TSSs, TSRs, or features
+#' Find differential TSSs, TSRs, or genes/transcripts.
 #'
 #' @inheritParams common_params
-#' @param data_type Whether TSSs, TSRs, or feature counts should be analyzed
-#' @param formula DE formula
-#' @param method Either 'DESeq2' or 'edgeR'
+#' @param data_type Whether TSS, TSR, or gene/transcript counts should be analyzed.
+#' @param formula DE formula.
+#' @param method Either 'DESeq2' or 'edgeR'.
 #'
-#' @return DGEList object with fitted model
+#' @return DGEList object with fitted model.
 #'
 #' @export
 
@@ -32,7 +32,7 @@ fit_de_model <- function(
   assert_that(all(all.vars(formula) %in% colnames(sample_sheet)))
   sample_sheet <- column_to_rownames(sample_sheet, "sample_name")
 
-  ## Grab data from appropriate slot and convert to count matrix.
+  ## Get data from appropriate slot and convert to count matrix.
   sample_data <- experiment %>%
     extract_counts(data_type, samples) %>%
     .count_matrix(data_type)
@@ -43,7 +43,7 @@ fit_de_model <- function(
     , drop=FALSE
   ]
 
-  ## Build the DE modle.
+  ## Build the DE model.
   fitted_model <- switch(
     method,
     "edger"=.edger_model(sample_data, sample_sheet, formula),
@@ -67,8 +67,8 @@ fit_de_model <- function(
 #' edgeR Differential Expression Model
 #'
 #' @inheritParams common_params
-#' @param count_data Count matrix
-#' @param formula Differential expression formula
+#' @param count_data Count matrix.
+#' @param formula Differential expression formula.
 
 .edger_model <- function(
   count_data,
@@ -106,8 +106,8 @@ fit_de_model <- function(
 #' DESeq2 Differential Expression Model
 #'
 #' @inheritParams common_params
-#' @param count_data Count matrix
-#' @param formula Differential expression formula
+#' @param count_data Count matrix.
+#' @param formula Differential expression formula.
 
 .deseq2_model <- function(
   count_data,
@@ -128,24 +128,22 @@ fit_de_model <- function(
   return(de_model)
 }
 
-#' Analyze Differential Expression
+#' Analyze Differential Features
 #'
-#' Find differential TSSs, TSRs, or features from edgeR model
+#' Find differential TSSs, TSRs, or features from edgeR or DESeq2 model.
 #'
 #' @importFrom SummarizedExperiment rowData
 #' @importFrom edgeR glmQLFTest
 #' @importFrom purrr map_dbl
 #'
 #' @inheritParams common_params
-#' @param data_type Whether the input was generated from TSSs, TSRs, or features
-#' @param comparison_name The name given to the comparison when stored back into the tsr explore robject.
-#' @param comparison_type For DEseq2 either 'contrast' or 'name'.
-#'   For edgeR either 'contrast' or 'coef'.
-#' @param comparison For edgeR either the coefficients or contrasts.
-#'   For DESeq2 the contrast or name.
-#' @param shrink_lfc For DESeq2 whether the Log2 Fold Changes are shrunk (TRUE) or left alone (FALSE).
+#' @param data_type Whether the input was generated from TSSs, TSRs, or genes/transcripts
+#' @param comparison_name The name given to the comparison when stored back into the TSRexploreR object.
+#' @param comparison_type For DEseq2, either 'contrast' or 'name'. For edgeR, either 'contrast' or 'coef'.
+#' @param comparison For DESeq2, the contrast or name. For edgeR, the coefficients or contrasts.
+#' @param shrink_lfc For DESeq2, whether the log2 fold changes are shrunk (TRUE) or not (FALSE).
 #' 
-#' @return tibble of differential TSRs
+#' @return tibble of differential TSRs.
 #'
 #' @rdname differential_expression-function
 #'
@@ -171,7 +169,7 @@ differential_expression <- function(
   assert_that(is.vector(comparison))
   assert_that(is.flag(shrink_lfc))
 
-  ## Grab appropriate model.
+  ## Get appropriate model.
   de_model <- switch(
     data_type,
     "tss"=experiment@diff_features$TSSs$model,
@@ -252,7 +250,7 @@ differential_expression <- function(
 #' Mark DE Status
 #'
 #' @inheritParams common_params
-#' @param de_results Results of DE
+#' @param de_results Results of DE.
 
 .de_status <- function(
   de_results,
