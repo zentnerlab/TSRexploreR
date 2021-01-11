@@ -4,26 +4,25 @@
 #' Function to import TSSs from various sources.
 #'
 #' @inheritParams common_params
-#' @param file_type Either 'auto', 'bedgraph', 'bigwig', 'table', or 'ctss'
-#' @param delim If the input is a table, use this delimiter
+#' @param file_type Either 'auto', 'bedgraph', 'bigwig', 'table', or 'ctss'.
+#' @param delim Delimiter for tabular input.
 #'
 #' @details
-#' TSRexploreR can import TSSs from various sources.
-#' Currently bedgraphs, bigwigs, and TSRchitect tssObjects are supported.
+#' TSRexploreR can import TSSs from various file formats. Currently, these are bedGraphs, 
+#' bigWigs, CTSS files, delimited tables, and TSRchitect tssObjects.
 #'
-#' To import bedgraphs or bigwigs, a sample sheet must first be created.
-#' The sample sheet can be a data.frame or tabular file.
-#' It should have three columns: sample_name, file_1, and file_2.
-#' sample_name specifies the sample name that will be added for that TSS in the
-#'   tsr explorer object.
-#' file_1 and file_2 should be the path to the two bedgraphs or bigwigs,
-#'   which are usually separated by strand.
+#' To import TSSs from files, a sample sheet must first be created. The sample 
+#' sheet can be a data.frame or tabular file. It should have three columns: 
+#' sample_name, file_1, and file_2. sample_name specifies the sample name that 
+#' will be added for that TSS in the TSRexploreR object. For bedGraphs and bigWigs,
+#' file_1 and file_2 should be the paths to the plus and minus strand TSS files. For
+#' CTSS or tabular import, file_1 should be the path to the file, and file_2can be 
+#' left blank or filled with NA values.
 #'
-#' To import TSSs directly from a TSRchitect tssObject,
-#'   the TSRchitect workflow must first be run up to the
-#'   'processTSS' step.
+#' To import TSSs directly from a TSRchitect tssObject, the TSRchitect workflow 
+#' must first be run up to the 'processTSS' step.
 #'
-#' @return tsr explorer object with imported TSSs
+#' @return TSRexploreR object with imported TSSs.
 #'
 #' @seealso
 #' \code{\link{tsr_import}} to import TSRs.
@@ -225,26 +224,23 @@ tss_import <- function(
 #' Function to import TSRs from various sources.
 #'
 #' @inheritParams common_params
-#' @param file_type Either 'auto', 'table', or 'bed'
-#' @param delim If input is a table specify the delimiter
+#' @param file_type Either 'auto', 'table', or 'bed'.
+#' @param delim Delimiter for tabular input.
 #'
 #' @details
-#' TSRexploreR can import TSRs from various sources.
-#' Currently beds and TSRchitect tssObjects are supported.
+#' TSRexploreR can import TSRs from various sources. Currently, these are BED files,
+#' delimited tables, and TSRchitect tssObjects.
 #'
-#' To import beds, a sample sheet must first be created.
-#' The sample sheet can be a data.frame or tabular file.
-#' It should have three columns: sample_name, file_1, and file_2.
-#' sample_name specifies the sample name that will be added for that TSR in the
-#'   tsr explorer object.
-#' file_1 should be the path to the bed file,
-#'   and file_2 can be left blank or filled with NA values.
+#' To import TSRs from files, a sample sheet must first be created. The sample sheet can 
+#' be a data.frame or tabular file. It should have three columns: sample_name, file_1, 
+#' and file_2. sample_name specifies the sample name that will be added for that 
+#' TSR in the TSRexploreR object. file_1 should be the path to the file, and 
+#' file_2 can be left blank or filled with NA values.
 #'
-#' To import TSRs directly from a TSRchitect tssObject,
-#'   the TSRchitect workflow must first be run up to the
-#'   'determineTSR' step.
+#' To import TSRs directly from a TSRchitect tssObject, the TSRchitect workflow must 
+#' first be run up to the 'determineTSR' step.
 #'
-#' @return tsr explorer object with added TSRs.
+#' @return TSRexploreR object with added TSRs.
 #'
 #' @seealso
 #' \code{\link{tss_import}} to import TSSs.

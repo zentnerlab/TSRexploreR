@@ -1,17 +1,16 @@
-#' DE MA Plot
+#' MA Plot
 #'
 #' @description
-#' Generate a MA plot for differential TSRs or Genes (RNA-seq) - confused. I see the MA-plot code but no volcano.
+#' Generate an MA plot for differential TSSs, TSRs, or genes/transcripts.
 #'
 #' @inheritParams common_params
-#' @param de_comparisons Which differential expression comparisons to plot
-#' @param data_type Either 'tss', 'tsr', 'tss_features', or 'tsr_features'
-#' @param ... Arguments passed to geom_point
+#' @param de_comparisons Character vector of differential expression comparisons to plot.
+#' @param data_type Either 'tss', 'tsr', 'tss_features', or 'tsr_features'.
+#' @param ... Arguments passed to geom_point.
 #'
 #' @details
-#' This function generates an MA plot of the results from
-#'   differential analysis of TSSs, TSRs, or features.
-#' It is returned as a ggplot2 object.
+#' This function generates an MA plot of the results from differential analysis of 
+#' TSSs, TSRs, or genes/transcripts. 
 #'
 #' @return ggplot2 object of MA plot.
 #'
@@ -63,10 +62,13 @@ plot_ma <- function(
 
 #' DE Volcano Plot
 #'
+#' @description
+#' Generate a volcano plot for differential TSSs, TSRs, or genes/transcripts.
+#'
 #' @inheritParams common_params
-#' @param data_type either 'tss', 'tsr', 'tss_features', or 'tsr_features'
-#' @param de_comparisons The DE comparisons to plot
-#' @param ... Arguments passed to geom_point
+#' @param data_type either 'tss', 'tsr', 'tss_features', or 'tsr_features'.
+#' @param de_comparisons Character vector of differential expression comparisons to plot.
+#' @param ... Arguments passed to geom_point.
 #'
 #' @export
 
@@ -122,13 +124,14 @@ plot_volcano <- function(
 
 #' Export to clusterProfiler
 #'
-#' Export DEGs for use in clusterProfiler term enrichment.
+#' Export differential features for use in clusterProfiler term enrichment.
 #'
 #' @inheritParams common_params
-#' @param data_type Either 'tss', 'tsr', 'tss_features', or 'tsr_features'
-#' @param de_comparisons The DE comparisons to plot
-#' @param keep_unchanged If TRUE genes that are labelled unchanged will
-#'   be kept.
+#' @param data_type Whether to export genes associated with differential TSSs or
+#'   TSRs.
+#' @param de_comparisons Character vector of differential expression comparisons to export.
+#' @param keep_unchanged Logical for inclusion of genes not significantly changed in
+#'   the exported list.
 #'
 #' @rdname export_for_enrichment-function
 #'
@@ -176,10 +179,10 @@ export_for_enrichment <- function(
 #' Plot number of DE features.
 #'
 #' @inheritParams common_params
-#' @param data_type Either 'tss', 'tsr', 'tss_features', or 'tsr_features'
-#' @param de_comparisons The comparisons to plot
-#' @param keep_unchanged Whether to plot the unchanged genes also.
-#' @param ... Additional arguments passed to geom_col
+#' @param data_type Either 'tss', 'tsr', 'tss_features', or 'tsr_features'.
+#' @param de_comparisons Character vector of differential expression comparisons to plot.
+#' @param keep_unchanged Whether to include unchanged features in the plot.
+#' @param ... Additional arguments passed to geom_col.
 #'
 #' @rdname plot_num_de-function
 #' @export
@@ -219,7 +222,7 @@ plot_num_de <- function(
     de_samples[, de_status := factor(de_status, levels=c("up", "down"))]
   }
 
-  ## prepare data for plotting.
+  ## Prepare data for plotting.
   de_samples <- de_samples[, .(count=.N), by=.(samples, de_status)]
 
   ## Set sample order if required.

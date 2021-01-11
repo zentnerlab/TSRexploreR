@@ -3,12 +3,22 @@
 #' Plot selected TSR metrics.
 #'
 #' @inheritParams common_params
-#' @param tsr_metrics Names of metrics in TSRexploreR TSR GRanges to plot
-#' @param plot_type Output either a 'violin', 'jitter', 'box', or 'boxjitter' plot (default: violin)
-#' @param log2_transform Whether the metric should be log2 + 1 transformed prior to plotting
-#' @param ... Arguments passed to ggplot2 plotting functions
+#' @param tsr_metrics Names of metrics in TSRexploreR TSR GRanges to plot.
+#' @param plot_type Output either a 'violin', 'jitter', 'box', or 'boxjitter' plot.
+#' @param log2_transform Whether the metric should be log2 + 1 transformed prior to plotting.
+#' @param ... Arguments passed to ggplot2 plotting functions.
 #'
-#' @return ggplot2 object with TSR matrix plotted
+#' @return ggplot2 object with TSR matrix plotted.
+#' 
+#' @details 
+#' A set of functions to control data structure for plotting are included. 'use_normalized' 
+#' will use  normalized scores, which only matters if 'consider_score' is TRUE.
+#' 'threshold' defines the minimum number of raw counts a TSS or TSR must have to be 
+#' considered. dominant' specifies whether only the dominant TSS or TSR (determined
+#' using the 'mark_dominant' function) is considered. For TSSs, this can be either 
+#' dominant TSS per TSR or gene/transcript, and for TSRs it is the dominant TSR 
+#' per gene/transcript. 'data_conditionals' can be used to filter, quantile, order, 
+#' and/or group data for plotting.
 #'
 #' @rdname plot_tsr_metric-function
 #'
@@ -96,7 +106,6 @@ plot_tsr_metric <- function(
   if (!all(samples == "all")) {
     selected_data[, sample := factor(sample, levels=samples)]
   }
-
 
   ## Make plot of selected TSR metric(s).
   p <- ggplot(selected_data, aes(x=.data$sample, y=.data$value))
