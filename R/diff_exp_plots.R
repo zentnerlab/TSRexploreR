@@ -132,6 +132,8 @@ plot_volcano <- function(
 #' @param de_comparisons Character vector of differential expression comparisons to export.
 #' @param keep_unchanged Logical for inclusion of genes not significantly changed in
 #'   the exported list.
+#' @param Vector of annotation categories to keep.
+#'   If NULL no filtering by annotation type occurs.
 #'
 #' @rdname export_for_enrichment-function
 #'
@@ -143,7 +145,8 @@ export_for_enrichment <- function(
   de_comparisons="all",
   log2fc_cutoff=1,
   fdr_cutoff=0.05,
-  keep_unchanged=FALSE
+  keep_unchanged=FALSE,
+  anno_categories=NULL
 ) {
 
   ## Input checks.
@@ -152,14 +155,22 @@ export_for_enrichment <- function(
   assert_that(is.character(de_comparisons))
   assert_that(is.numeric(log2fc_cutoff) && log2fc_cutoff >= 0)
   assert_that(is.numeric(fdr_cutoff) && (fdr_cutoff > 0 & fdr_cutoff <= 1))
+  assert_that(is.flag(keep_unchanged))
+  assert_that(is.null(anno_categories) || is.character(anno_categories))
 
   ## Get DE comparisons.
   de_samples <- extract_de(experiment, data_type, de_comparisons)
   de_samples <- rbindlist(de_samples, idcol="sample")
 
+  ## Keep only selected annotation categories if provided.
+  if (!is.null(anno_categories)) {
+    de_samples <- de_samples[simple_annotations %in% anno_categories]
+  }
+
   ## Mark de status.
   .de_status(de_samples, log2fc_cutoff, fdr_cutoff)
 
+  ## Remove unchanged if requested and set factor levels.
   if (keep_unchanged) {
     de_samples[, de_status := factor(
       de_status, levels=c("up", "unchanged", "down")
