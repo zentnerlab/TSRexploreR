@@ -70,7 +70,7 @@ plot_shift_count <- function(
   assert_that(is.count(ncol))
 
   ## Get samples.
-  if (samples == "all") {
+  if (all(samples == "all")) {
     samples <- experiment@shifting$results
   } else {
     samples <- experiment@shifting$results[samples]

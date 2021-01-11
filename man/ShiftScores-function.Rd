@@ -2,7 +2,7 @@
 % Please edit documentation in R/tss_shifting.R
 \name{ShiftScores}
 \alias{ShiftScores}
-\title{Shifting Score}
+\title{Shift Score}
 \usage{
 ShiftScores(
   tss_table,
@@ -14,18 +14,18 @@ ShiftScores(
 )
 }
 \arguments{
-\item{tss_table}{Table of TSSs perpared for shifting score calculation}
+\item{tss_table}{Table of TSSs prepared for shifting score calculation.}
 
-\item{baseline_level}{The sample being used as the baseline for calculation}
+\item{baseline_level}{The sample being used as the baseline for calculation.}
 
-\item{calc_pvalue}{Whether p-values should be returned for comparisons}
+\item{calc_pvalue}{Whether p-values should be returned for comparisons.}
 
-\item{nresamp}{Number of resamplings for the permutation test}
+\item{nresamp}{Number of resamplings for permutation test.}
 
-\item{nthresh}{Both samples must have at least this number of reads in each TSR}
+\item{nthresh}{Minimum number of raw counts required in each TSR for both samples.}
 
-\item{check_sort}{Check that the input is sorted properly (by fhash? qq)}
+\item{check_sort}{Check that the input is sorted properly.}
 }
 \description{
-Calculate shifting scores and associated permutation test p-values.
+Calculate shift scores and associated permutation test p-values.
 }

@@ -9,15 +9,15 @@ common_params(x)
 \arguments{
 \item{experiment}{TSRexploreR object.}
 
-\item{genome_assembly}{Genome assembly in either a FASTA file or BSgenome object format.}
+\item{genome_assembly}{Genome assembly in FASTA or BSgenome format.}
 
-\item{genome_annotation}{Genome annotation in either a GTF, GFF3, or TxDb object format.}
+\item{genome_annotation}{Genome annotation in GTF, GFF3, or TxDb format.}
 
 \item{sample_sheet}{A sample sheet data.frame or tab delimited file.
 Must have the columns 'sample_name', 'file_1', and 'file_2'.
 Additional meta-data columns can be added with sample information such as condition and batch.}
 
-\item{threshold}{TSSs or TSRs with a score below this value will be discarded.}
+\item{threshold}{TSSs or TSRs with a score below this value will not be considered.}
 
 \item{samples}{A vector of sample names to analyze.}
 
@@ -25,12 +25,12 @@ Additional meta-data columns can be added with sample information such as condit
 
 \item{ncol}{Integer specifying the number of columns to arrange multiple plots.}
 
-\item{log2fc_cutoff}{Values below the |Log2 FC| cutoff will be discarded.}
+\item{log2fc_cutoff}{Differential features not meeting this |Log2 FC| threshold will not be considered.}
 
-\item{fdr_cutoff}{Values below the FDR cutoff will be discarded.}
+\item{fdr_cutoff}{Differential features not meeting this significance threshold will not be considered.}
 
-\item{dominant}{If TRUE will discard any TSSs and/or TSRs that do not have the
-highest score per gene or transcript.}
+\item{dominant}{If TRUE, will only consider the highest-scoring TSS per gene, transcript, or TSR or 
+highest-scoring TSR per gene or transcript.}
 
 \item{exclude_antisense}{Remove antisense TSSs/TSRs prior to analysis.}
 

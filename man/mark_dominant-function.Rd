@@ -16,49 +16,47 @@ mark_dominant(
 \arguments{
 \item{experiment}{TSRexploreR object.}
 
-\item{data_type}{Either 'tss' or 'tsr'}
+\item{data_type}{Whether to mark dominant TSSs or TSRs.}
 
-\item{threshold}{TSSs or TSRs with a score below this value will be discarded.}
+\item{threshold}{TSSs or TSRs with a score below this value will not be considered.}
 
 \item{use_normalized}{Whether to use the normalized (TRUE) or raw (FALSE) counts.}
 
-\item{mark_per}{By default marks dominant TSR per gene, and dominant TSS per TSR.
+\item{mark_per}{By default, the function marks dominant TSR per gene, and dominant TSS per TSR.
 TSSs can also be set per as dominant TSS per 'gene'.}
 
 \item{exclude_antisense}{Remove antisense TSSs/TSRs prior to analysis.}
 }
 \value{
-tsr exlorer object with dominant status added to TSSs or TSRs.
+TSRexploreR object with dominant status added to TSSs or TSRs.
 }
 \description{
-Mark TSSs as dominant TSS per TSR or gene, or TSRs as dominant per gene.
+Mark TSSs as dominant per TSR or gene/transcript, or TSRs as dominant per gene/transcript.
 }
 \details{
-This function marks which TSSs are dominant per TSR or gene,
-  or which TSR is dominant per gene.
-Analysis of dominant features may help to cut through the noise to get
-  information such as the primary 5' UTR, sequence features associated with the
-  the strongest TSS, and other related questions.
+This function marks which TSSs are dominant per TSR or gene, or which TSR is
+dominant per gene. Analysis of dominant features may help to cut through the 
+noise to get information such as the length of the primary 5' UTR and sequence
+features associated with the the strongest TSS.
 
-Setting a 'threshold' will only mark a TSS or TSR as dominant if their score
-   is greater than or equal to the threshold.
+Setting a 'threshold' will only mark a TSS or TSR as dominant if its score 
+is greater than or equal to the threshold.
 
-'mark_per' controls the behavior of the function.
-For TSSs 'default' will mark dominant TSS per TSR, and for TSRs the dominant
-  TSR per gene is marked.
-for TSSs, 'gene' can also be specified, which will mark the dominant TSS per gene.
+'mark_per' controls the behavior of the function. For TSSs 'default' will mark,
+dominant TSS per TSR, and for TSRs the dominant TSR per gene is marked. For TSSs, 
+'gene' can also be specified, which will mark the dominant TSS per gene.
 }
 \examples{
 TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
 TSSs <- readRDS(TSSs)
-tsre_exp <- tsr_explorer(TSSs)
-tsre_exp <- format_counts(tsre_exp, data_type="tss")
-tsre_exp <- tss_clustering(tsre_exp)
-tsre_exp <- associate_with_tsr(tsre_exp, sample_list=list(
+exp <- tsr_explorer(TSSs)
+exp <- format_counts(exp, data_type="tss")
+exp <- tss_clustering(exp)
+exp <- associate_with_tsr(exp, sample_list=list(
   "S288C_WT_1"="S288C_WT_1", "S288C_WT_2"="S288C_WT_2", "S288C_WT_3"="S288C_WT_3",
   "S288C_D_1"="S288C_D_1", "S288C_D_2"="S288C_D_2", "S288C_D_3"="S288C_D_3"
 ))
-tsre_exp <- mark_dominant(tsre_exp, data_type="tss")
+exp <- mark_dominant(exp, data_type="tss")
 
 }
 \seealso{

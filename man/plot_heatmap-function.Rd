@@ -26,12 +26,12 @@ plot_heatmap(
 
 \item{downstream}{bases downstream to consider}
 
-\item{threshold}{TSSs or TSRs with a score below this value will be discarded.}
+\item{threshold}{TSSs or TSRs with a score below this value will not be considered.}
 
 \item{use_normalized}{Whether to use the normalized (TRUE) or raw (FALSE) counts.}
 
-\item{dominant}{If TRUE will discard any TSSs and/or TSRs that do not have the
-highest score per gene or transcript.}
+\item{dominant}{If TRUE, will only consider the highest-scoring TSS per gene, transcript, or TSR or 
+highest-scoring TSR per gene or transcript.}
 
 \item{data_conditions}{Apply advanced conditions to the data.}
 

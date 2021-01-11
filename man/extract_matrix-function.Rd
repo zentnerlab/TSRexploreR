@@ -7,11 +7,11 @@
 extract_matrix(experiment, data_type, samples)
 }
 \arguments{
-\item{experiment}{TSRexploreR object}
+\item{experiment}{TSRexploreR object.}
 
-\item{data_type}{Whether to extract 'tss', 'tsr', 'tss_features', or 'tsr_features'}
+\item{data_type}{Whether to extract 'tss', 'tsr', 'tss_features', or 'tsr_features'.}
 
-\item{samples}{Samples to extract}
+\item{samples}{Samples to extract.}
 }
 \description{
 Extract normalized count matrices.

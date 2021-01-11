@@ -7,9 +7,9 @@
 .calculate_distribution(selected_samples, groupings)
 }
 \arguments{
-\item{selected_samples}{Samples to analyze}
+\item{selected_samples}{Samples to analyze.}
 
-\item{groupings}{Whether data is grouped}
+\item{groupings}{Whether data is grouped.}
 }
 \description{
 Calculate Genomic Distribution

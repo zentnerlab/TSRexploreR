@@ -19,12 +19,12 @@ detect_features(
 
 \item{samples}{A vector of sample names to analyze.}
 
-\item{data_type}{Whether TSSs or TSRs should be analyzed}
+\item{data_type}{Whether TSSs or TSRs should be analyzed.}
 
-\item{threshold}{TSSs or TSRs with a score below this value will be discarded.}
+\item{threshold}{TSSs or TSRs with a score below this value will not be considered.}
 
-\item{dominant}{If TRUE will discard any TSSs and/or TSRs that do not have the
-highest score per gene or transcript.}
+\item{dominant}{If TRUE, will only consider the highest-scoring TSS per gene, transcript, or TSR or 
+highest-scoring TSR per gene or transcript.}
 
 \item{use_normalized}{Whether to use the normalized (TRUE) or raw (FALSE) counts.}
 }
@@ -32,38 +32,36 @@ highest score per gene or transcript.}
 DataFrame of detected feature numbers.
 }
 \description{
-Get the number of genes or transcripts with an associated unique TSS or TSR
+Get the number of genes or transcripts with an associated unique TSS or TSR.
 }
 \details{
-This function will return either the number of genes or transcripts with
- an associated unique TSS or TSR.
-Information on whether the feature has a promoter-proximal TSS or TSR is included
-  in the output for plotting purposes.
+This function will returnthe number of genes or transcripts with an associated 
+unique TSS or TSR. Information on whether the feature has a promoter-proximal 
+TSS or TSR is included in the output for plotting purposes.
 
-A set of functions to control data structure for plotting are included.
-'threshold' will define the minimum number of reads a TSS or TSR
- must have to be considered.
-'dominant' specifies whether only the dominant TSS or TSR is considered 
-  from the 'mark_dominant' function.
-For TSSs this can be either dominant per TSR or gene, and for TSRs
-  it is just the dominant TSR per gene.
-'data_conditions' allows for the advanced filtering, ordering, and grouping
-  of data.
+A set of functions to control data structure for plotting are included. 'use_normalized' 
+will use  normalized scores, which only matters if 'consider_score' is TRUE.
+'threshold' defines the minimum number of raw counts a TSS or TSR must have to be 
+considered. dominant' specifies whether only the dominant TSS or TSR (determined
+using the 'mark_dominant' function) is considered. For TSSs, this can be either 
+dominant TSS per TSR or gene/transcript, and for TSRs it is the dominant TSR 
+per gene/transcript. 'data_conditionals' can be used to filter, quantile, order, 
+and/or group data for plotting.
 }
 \examples{
 TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
 TSSs <- readRDS(TSSs)
-tsre_exp <- tsr_explorer(TSSs)
-tsre_exp <- format_counts(tsre_exp, data_type="tss")
+exp <- tsr_explorer(TSSs)
+exp <- format_counts(exp, data_type="tss")
 annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
-tsre_exp <- annotate_features(
-  tsre_exp, annotation_data=annotation,
+exp <- annotate_features(
+  exp, annotation_data=annotation,
   data_type="tss", feature_type="transcript"
 )
-detected <- detect_features(tsre_exp, data_type="tss")
+detected <- detect_features(exp, data_type="tss")
 
 }
 \seealso{
 \code{\link{annotate_features}} to annotate the TSSs and TSRs.
-\code{\link{plot_detected_features}} to plot detected features.
+\code{\link{plot_detected_features}} to plot numbers of detected features.
 }

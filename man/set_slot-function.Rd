@@ -2,20 +2,20 @@
 % Please edit documentation in R/convenience_methods.R
 \name{set_count_slot}
 \alias{set_count_slot}
-\title{Set slot data.}
+\title{Set Slot Data}
 \usage{
 set_count_slot(tsre_obj, new_data, fill_slot, data_type, subslot)
 }
 \arguments{
-\item{tsre_obj}{TSRexploreR object}
+\item{tsre_obj}{TSRexploreR object.}
 
-\item{new_data}{Data to be added to the slot}
+\item{new_data}{Data to be added to the slot.}
 
-\item{fill_slot}{either 'counts' or 'diff_features'}
+\item{fill_slot}{Either 'counts' or 'diff_features'.}
 
-\item{data_type}{Either 'tss', 'tsr', 'tss_features', or 'tsr_features'}
+\item{data_type}{Either 'tss', 'tsr', 'tss_features', or 'tsr_features'.}
 
-\item{subslot}{Either 'raw', 'matrix', or 'results'}
+\item{subslot}{Either 'raw', 'matrix', or 'results'.}
 }
 \description{
 Set the content of a slot.

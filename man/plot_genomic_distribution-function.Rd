@@ -7,10 +7,10 @@
 plot_genomic_distribution(genomic_distribution)
 }
 \arguments{
-\item{genomic_distribution}{Dataframe of TSS or TSR genomic distributions from tsr_genomic_distribution}
+\item{genomic_distribution}{Dataframe of TSS or TSR genomic distributions from tsr_genomic_distribution.}
 }
 \value{
-ggplot2 object with TSS or TSR genomic distribution plot
+ggplot2 object with TSS or TSR genomic distribution plot.
 }
 \description{
 Plot genomic distribution of TSSs or TSRs.
@@ -19,23 +19,23 @@ Plot genomic distribution of TSSs or TSRs.
 This plotting function will create a stacked barplot of genomic feature types for each sample.
 The underlying data used for plotting comes from the 'genomic_distribution' function.
 Genomic features include exons, introns, intergenic, downstream and promoter regions.
-The promoter region is user defined when annotating the TSSs or TSRs.
+The promoter region is user-defined during annotation.
 }
 \examples{
 TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
 TSSs <- readRDS(TSSs)
-tsre_exp <- tsr_explorer(TSSs)
-tsre_exp <- format_counts(tsre_exp, data_type="tss")
+exp <- tsr_explorer(TSSs)
+exp <- format_counts(exp, data_type="tss")
 annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
-tsre_exp <- annotate_features(
-  tsre_exp, annotation_data=annotation,
+exp <- annotate_features(
+  exp, annotation_data=annotation,
   data_type="tss", feature_type="transcript"
 )
-genomic_dist <- genomic_distribution(tsre_exp, data_type="tss")
+genomic_dist <- genomic_distribution(exp, data_type="tss")
 plot_genomic_distribution(genomic_dist)
 
 }
 \seealso{
-\code{\link{annotate_features}} to annotate TSSs or TSRs to genomic features.
-  \code{\link{genomic_distribution}} to prepare the annotated features for plotting.
+\code{\link{annotate_features}} to annotate TSSs or TSRs.
+  \code{\link{genomic_distribution}} to prepare annotated TSSs or TSRs for plotting.
 }

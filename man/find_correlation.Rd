@@ -14,15 +14,15 @@ find_correlation(
 \arguments{
 \item{experiment}{TSRexploreR object.}
 
-\item{data_type}{Whether to make scatter plots from TSS, TSR, or RNA-seq & 5' data}
+\item{data_type}{Whether to make scatter plots from TSS, TSR, or RNA-seq & 5' data.}
 
 \item{samples}{A vector of sample names to analyze.}
 
-\item{correlation_metric}{Whether to use Spearman or Pearson correlation}
+\item{correlation_metric}{Whether to use Spearman or Pearson correlation.}
 }
 \value{
 Correlation matrix
 }
 \description{
-Calculate a correlation matrix to assess between-sample concordance of TSSs or TSRs
+Calculate a correlation matrix to assess between-sample concordance of TSSs or TSRs.
 }
