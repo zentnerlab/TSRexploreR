@@ -4,6 +4,7 @@
 #' Generate gene tracks in GViz by gene name.
 #'
 #' @importFrom Gviz GeneRegionTrack DataTrack AnnotationTrack plotTracks
+#'   GenomeAxisTrack
 #' @importFrom stringr str_count
 #' @importFrom GenomicFeatures genes transcripts promoters
 #'
@@ -19,6 +20,8 @@
 #' @param tsr_colors Either a single color value for all TSR tracks, or a vector of colors.
 #' @param axis_scale Relative size scale for axis text and title.
 #' @param ymax Maximum value on y-axis for all TSS tracks.
+#' @param anno_pos Genome annotation and axis track position.
+#'   Either 'top' or 'bottom'.
 #'
 #' @rdname gene_tracks-function
 #' @export
@@ -37,7 +40,8 @@ gene_tracks <- function(
   tss_colors="black",
   tsr_colors="black",
   axis_scale=0.25,
-  ymax=NA
+  ymax=NA,
+  anno_pos="top"
 ) {
 
   ## Input checks.
@@ -62,6 +66,10 @@ gene_tracks <- function(
   assert_that(is.character(tsr_colors))
   assert_that(is.numeric(axis_scale) && axis_scale > 0)
   assert_that(is.na(ymax) || is.numeric(ymax))
+  anno_pos <- match.arg(
+    str_to_lower(anno_pos),
+    c("top", "bottom")
+  )
 
   ## Prepare genome annotation.
   anno <- .prepare_annotation(genome_annotation, experiment)
@@ -203,7 +211,20 @@ gene_tracks <- function(
   })
 
   tracks <- purrr::flatten(tracks)
-  tracks <- c(list("genome_track"=genome_track), tracks)
+
+  if (anno_pos == "top") {
+    tracks <- c(
+      list("axis_track"=GenomeAxisTrack()),
+      list("genome_track"=genome_track),
+      tracks
+    )
+  } else if (anno_pos == "bottom") {
+    tracks <- c(
+      tracks,
+      list("genome_track"=genome_track),
+      list("axis_track"=GenomeAxisTrack())
+    )
+  }
 
   plotTracks(
     tracks,

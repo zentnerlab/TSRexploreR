@@ -18,7 +18,8 @@ gene_tracks(
   tss_colors = "black",
   tsr_colors = "black",
   axis_scale = 0.25,
-  ymax = NA
+  ymax = NA,
+  anno_pos = "top"
 )
 }
 \arguments{
@@ -50,6 +51,9 @@ for TSS and TSR tracks, respectively.}
 \item{axis_scale}{Relative size scale for axis text and title.}
 
 \item{ymax}{Maximum value on y-axis for all TSS tracks.}
+
+\item{anno_pos}{Genome annotation and axis track position.
+Either 'top' or 'bottom'.}
 }
 \description{
 Generate gene tracks in GViz by gene name.
