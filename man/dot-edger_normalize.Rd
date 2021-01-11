@@ -2,7 +2,7 @@
 % Please edit documentation in R/normalize.R
 \name{.edger_normalize}
 \alias{.edger_normalize}
-\title{edgeR Normalize}
+\title{edgeR Normalization}
 \usage{
 .edger_normalize(count_matrix)
 }
@@ -10,5 +10,5 @@
 \item{count_matrix}{count matrix}
 }
 \description{
-edgeR Normalize
+edgeR Normalization
 }

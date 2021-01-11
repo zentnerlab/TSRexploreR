@@ -7,11 +7,11 @@
 .count_features(sample_data, data_type, groupings)
 }
 \arguments{
-\item{sample_data}{Sample data}
+\item{sample_data}{Sample data.}
 
-\item{data_type}{Type of data}
+\item{data_type}{Type of data.}
 
-\item{groupings}{Whether there is a grouping variable}
+\item{groupings}{Whether there is a grouping variable.}
 }
 \description{
 Calculate Feature Counts

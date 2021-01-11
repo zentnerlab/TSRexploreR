@@ -23,7 +23,6 @@ r-tidyverse \
 r-data.table \
 r-devtools \
 r-ggseqlogo \
-r-ggally \
 r-cowplot \
 r-rcpp \
 r-assertthat \

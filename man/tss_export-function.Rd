@@ -19,43 +19,43 @@ tss_export(
 
 \item{samples}{A vector of sample names to analyze.}
 
-\item{file_type}{either 'bedgraph', 'table', or 'bigwig'}
+\item{file_type}{Either 'bedgraph', 'table', or 'bigwig'.}
 
-\item{out_dir}{Output directory for files}
+\item{out_dir}{Output directory for files.}
 
-\item{diff_tss}{If TRUE will output differential TSSs}
+\item{diff_tss}{If TRUE, will output differential TSSs.}
 
-\item{sep}{Delimiter for table output}
+\item{sep}{Delimiter for tabular output.}
 
-\item{genome_assembly}{Genome assembly in either a FASTA file or BSgenome object format.}
+\item{genome_assembly}{Genome assembly in FASTA or BSgenome format.}
 }
 \value{
-Either bedgraphs split by strand, or a tabular file.
+Either bedGraphs or bigWigs split by strand, or a table.
 }
 \description{
-Export TSSs to tables or bedgraphs
+Export TSSs to bedGraph, bigWig, or table format.
 }
 \details{
-This function will save TSSs as bedgraphs, or a tab delimited file.
+This function will save TSSs as bedGraphs, bigWigs, or a delimited table
 
-'file_type' controls what the TSSs will be output as.
-'bedgraph' will result in each sample being saved as two bedgraph files,
-  one for each strand.
-'table' will output a file with the delimiter specified by the 'sep' argument.
-The resulting table will have all columns added to the TSSs data
-  in the tsr explorer object, such as various metrics.
+'file_type' controls what the TSSs will be output as. 'bedgraph' will result 
+in each sample being saved as two bedGraph files, one for each strand. The 
+'bigwig' argument provides a similar result. 'table' will output a file with 
+the delimiter specified by the 'sep' argument. The resulting table will have 
+all columns added to the TSSs data in the TSRexploreR object, such as annotation
+information.
 
-The directory to output the files can be set with 'out_dir'.
-  A value of NA will save the files to the working directory by default.
+The directory to output the files can be set with 'out_dir'. A value of NA will 
+save the files to the working directory.
 
 If 'diff_tss' is TRUE, only differential TSSs will be output.
 }
 \examples{
 TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
 TSSs <- readRDS(TSSs)
-tsre_exp <- tsr_explorer(TSSs)
-tsre_exp <- format_counts(tsre_exp, data_type="tss")
-tss_export(tsre_exp)
+exp <- tsr_explorer(TSSs)
+exp <- format_counts(exp, data_type="tss")
+tss_export(exp)
 
 }
 \seealso{

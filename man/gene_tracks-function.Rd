@@ -2,7 +2,7 @@
 % Please edit documentation in R/gene_tracks.R
 \name{gene_tracks}
 \alias{gene_tracks}
-\title{Gene Tracks by Gene}
+\title{Gene Tracks}
 \usage{
 gene_tracks(
   experiment,
@@ -24,32 +24,32 @@ gene_tracks(
 \arguments{
 \item{experiment}{TSRexploreR object.}
 
-\item{feature_name}{Name of gene or transcript to plot}
+\item{feature_name}{Name of gene or transcript to plot.}
 
-\item{genome_annotation}{Genome annotation in either a GTF, GFF3, or TxDb object format.}
+\item{genome_annotation}{Genome annotation in GTF, GFF3, or TxDb format.}
 
 \item{feature_type}{Either 'gene' or 'transcript'}
 
-\item{samples}{Names of samples to plot.
-Append sample names with 'TSS:' or 'TSR:' for TSS and TSR tracks respectively.}
+\item{samples}{Names of samples to plot. Append sample names with 'TSS:' or 'TSR:' 
+for TSS and TSR tracks, respectively.}
 
-\item{threshold}{TSSs or TSRs with a score below this value will be discarded.}
+\item{threshold}{TSSs or TSRs with a score below this value will not be considered.}
 
-\item{upstream}{bases upstream to extend gene or promoter track}
+\item{upstream}{Bases upstream to extend gene or promoter track.}
 
-\item{downstream}{bases downstream to extend gene or promoter track}
+\item{downstream}{Bases downstream to extend gene or promoter track.}
 
-\item{promoter_only}{Instead of plotting the entire gene, plot the promoter region}
+\item{promoter_only}{Instead of plotting the entire gene, plot only the promoter region.}
 
 \item{use_normalized}{Whether to use the normalized (TRUE) or raw (FALSE) counts.}
 
-\item{tss_colors}{Either a single color value for all TSS tracks, or a vector of colors}
+\item{tss_colors}{Either a single color value for all TSS tracks, or a vector of colors.}
 
-\item{tsr_colors}{Either a single color value for all TSR tracks, or a vector of colors}
+\item{tsr_colors}{Either a single color value for all TSR tracks, or a vector of colors.}
 
-\item{axis_scale}{Relative size scale for axis text and title}
+\item{axis_scale}{Relative size scale for axis text and title.}
 
-\item{ymax}{Maximum value on Y axis for all TSS tracks}
+\item{ymax}{Maximum value on y-axis for all TSS tracks.}
 }
 \description{
 Generate gene tracks in GViz by gene name.

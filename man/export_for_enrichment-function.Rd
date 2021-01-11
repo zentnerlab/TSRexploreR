@@ -16,17 +16,18 @@ export_for_enrichment(
 \arguments{
 \item{experiment}{TSRexploreR object.}
 
-\item{data_type}{Either 'tss', 'tsr', 'tss_features', or 'tsr_features'}
+\item{data_type}{Whether to export genes associated with differential TSSs or
+TSRs.}
 
-\item{de_comparisons}{The DE comparisons to plot}
+\item{de_comparisons}{Character vector of differential expression comparisons to export.}
 
-\item{log2fc_cutoff}{Values below the |Log2 FC| cutoff will be discarded.}
+\item{log2fc_cutoff}{Differential features not meeting this |Log2 FC| threshold will not be considered.}
 
-\item{fdr_cutoff}{Values below the FDR cutoff will be discarded.}
+\item{fdr_cutoff}{Differential features not meeting this significance threshold will not be considered.}
 
-\item{keep_unchanged}{If TRUE genes that are labelled unchanged will
-be kept.}
+\item{keep_unchanged}{Logical for inclusion of genes not significantly changed in
+the exported list.}
 }
 \description{
-Export DEGs for use in clusterProfiler term enrichment.
+Export differential features for use in clusterProfiler term enrichment.
 }

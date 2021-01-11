@@ -21,30 +21,40 @@ plot_tsr_metric(
 \arguments{
 \item{experiment}{TSRexploreR object.}
 
-\item{tsr_metrics}{Names of metrics in TSRexploreR TSR GRanges to plot}
+\item{tsr_metrics}{Names of metrics in TSRexploreR TSR GRanges to plot.}
 
-\item{plot_type}{Output either a 'violin', 'jitter', 'box', or 'boxjitter' plot (default: violin)}
+\item{plot_type}{Output either a 'violin', 'jitter', 'box', or 'boxjitter' plot.}
 
 \item{samples}{A vector of sample names to analyze.}
 
-\item{log2_transform}{Whether the metric should be log2 + 1 transformed prior to plotting}
+\item{log2_transform}{Whether the metric should be log2 + 1 transformed prior to plotting.}
 
 \item{ncol}{Integer specifying the number of columns to arrange multiple plots.}
 
 \item{use_normalized}{Whether to use the normalized (TRUE) or raw (FALSE) counts.}
 
-\item{dominant}{If TRUE will discard any TSSs and/or TSRs that do not have the
-highest score per gene or transcript.}
+\item{dominant}{If TRUE, will only consider the highest-scoring TSS per gene, transcript, or TSR or 
+highest-scoring TSR per gene or transcript.}
 
-\item{threshold}{TSSs or TSRs with a score below this value will be discarded.}
+\item{threshold}{TSSs or TSRs with a score below this value will not be considered.}
 
 \item{data_conditions}{Apply advanced conditions to the data.}
 
-\item{...}{Arguments passed to ggplot2 plotting functions}
+\item{...}{Arguments passed to ggplot2 plotting functions.}
 }
 \value{
-ggplot2 object with TSR matrix plotted
+ggplot2 object with TSR matrix plotted.
 }
 \description{
 Plot selected TSR metrics.
+}
+\details{
+A set of functions to control data structure for plotting are included. 'use_normalized' 
+will use  normalized scores, which only matters if 'consider_score' is TRUE.
+'threshold' defines the minimum number of raw counts a TSS or TSR must have to be 
+considered. dominant' specifies whether only the dominant TSS or TSR (determined
+using the 'mark_dominant' function) is considered. For TSSs, this can be either 
+dominant TSS per TSR or gene/transcript, and for TSRs it is the dominant TSR 
+per gene/transcript. 'data_conditionals' can be used to filter, quantile, order, 
+and/or group data for plotting.
 }

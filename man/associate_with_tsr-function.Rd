@@ -10,7 +10,7 @@ associate_with_tsr(experiment, sample_list = NULL)
 \item{experiment}{TSRexploreR object.}
 
 \item{sample_list}{List with TSRs as names and TSSs as vector.
-If NULL will associate TSSs with TSRs of same name.}
+If NULL will associate TSSs with TSRs from the sample of the same name.}
 }
 \description{
 Associate TSSs with TSRs
@@ -19,7 +19,7 @@ Associate TSSs with TSRs
 TSRexploreR provides many options for the import and merging of TSSs and TSRs.
 Because of this, TSS samples must be associated with TSR samples after TSR import,
   TSR merging, or TSS clustering using this function.
-This adds an extra workflow step, but provides more analytical flexibility (qq meaning what?).
+This adds an extra workflow step, but provides more analytical flexibility.
 Each TSS with genomic coordinates overlapping those of a TSR in the specified TSR sample
   will be linked to that TSR.
 TSSs not overlapping a TSR in the specified sample will not be associated with any TSR.
@@ -27,24 +27,21 @@ TSSs not overlapping a TSR in the specified sample will not be associated with a
 TSS samples can be associated with TSR samples using a list or sample sheet.
 'sample_list' should be a named list of character vectors, with the names being the TSR
   sample names and the character vectors as the TSS samples(s) that should be associated with
-  each TSR sample.
-If 'use_sample_sheet' is set to true, a previously added sample sheet will be used to associate
-  TSR samples with TSS samples.
-The sample sheet can be added to the TSRexploreR object using the 'add_sample_sheet' function.
-It should have 3 columns: 'replicate_id', 'tss_name', and 'tsr_name'.
-
-#' @seealso
-\code{\link{add_sample_sheet}} to add a sample sheet to the TSRexploreR object.
+  each TSR sample. If no sample list is provided, the function will automatically associate
+  TSSs with the TSRs from the sample of the same name.
 }
 \examples{
 TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
 TSSs <- readRDS(TSSs)
-tsre_exp <- tsr_explorer(TSSs)
-tsre_exp <- format_counts(tsre_exp, data_type="tss")
-tsre_exp <- tss_clustering(tsre_exp)
-tsre_exp <- associate_with_tsr(tsre_exp, sample_list=list(
+exp <- tsr_explorer(TSSs)
+exp <- format_counts(exp, data_type="tss")
+exp <- tss_clustering(exp)
+exp <- associate_with_tsr(exp, sample_list=list(
   "S288C_WT_1"="S288C_WT_1", "S288C_WT_2"="S288C_WT_2", "S288C_WT_3"="S288C_WT_3",
   "S288C_D_1"="S288C_D_1", "S288C_D_2"="S288C_D_2", "S288C_D_3"="S288C_D_3"
 ))
+
+#' @seealso
+\code{\link{add_sample_sheet}} to add a sample sheet to the TSRexploreR object.
 
 }

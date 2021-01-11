@@ -35,7 +35,6 @@ Imports:
     Biostrings,
     ChIPseeker,
     edgeR,
-    GGally,
     S4Vectors,
     SummarizedExperiment,
     Gviz,

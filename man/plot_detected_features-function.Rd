@@ -7,36 +7,36 @@
 plot_detected_features(detected_features, ...)
 }
 \arguments{
-\item{detected_features}{DataFrame of detected feature counts from detect_features}
+\item{detected_features}{DataFrame of detected feature counts from detect_features.}
 
-\item{...}{Arguments passed to geom_col}
+\item{...}{Arguments passed to geom_col.}
 }
 \value{
-ggplot2 object of detected feature counts
+ggplot2 object of detected feature counts.
 }
 \description{
 Plot number of features detected per sample.
 }
 \details{
-This plotting function returns a stacked bar-plot showing the number of
-  features detected with and without a promoter proximal TSS or TSR.
-The information is first prepared using the 'detect_features' function.
+This plotting function returns a stacked barplot showing the number of
+features detected with and without a promoter proximal TSS or TSR. The information 
+is first prepared using the 'detect_features' function.
 }
 \examples{
 TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
 TSSs <- readRDS(TSSs)
-tsre_exp <- tsr_explorer(TSSs)
-tsre_exp <- format_counts(tsre_exp, data_type="tss")
+exp <- tsr_explorer(TSSs)
+exp <- format_counts(exp, data_type="tss")
 annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
-tsre_exp <- annotate_features(
-  tsre_exp, annotation_data=annotation,
+exp <- annotate_features(
+  exp, annotation_data=annotation,
   data_type="tss", feature_type="transcript"
 )
-detected <- detect_features(tsre_exp, data_type="tss")
+detected <- detect_features(exp, data_type="tss")
 plot_detected_features(detected)
 
 }
 \seealso{
 \code{\link{annotate_features}} to annotate the TSSs or TSRs.
-\code{\link{detect_features}} to first detect feature numbers.
+\code{\link{detect_features}} to determine numbers of detected features.
 }

@@ -7,9 +7,9 @@
 .aggr_scores(granges, maxdist, maxwidth)
 }
 \arguments{
-\item{granges}{GRanges}
+\item{granges}{GRanges.}
 
-\item{maxdist}{Maximum distance to cluster}
+\item{maxdist}{Maximum distance to cluster.}
 }
 \description{
 Aggregate Scores
