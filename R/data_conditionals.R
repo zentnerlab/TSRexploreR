@@ -1,3 +1,109 @@
+#' Data Conditions Input
+#'
+#' @param data_filters Filter data by columns.
+#' @param data_ordering Ordering object with order settings.
+#'   See ?ordering for more information.
+#' @param data_quantiling Quantiling object with quantile settings.
+#'   See ?quantiling for more information.
+#' @param data_grouping If quantiles not set,
+#'   split data by the specified categorical variable.
+#'
+#' @export
+
+conditions <- function(
+  data_filters=NULL,
+  data_ordering=ordering(),
+  data_quantiling=quantiling(),
+  data_grouping=NULL
+) {
+
+  data_filters <- enquo(data_filters)
+  if (quo_is_null(data_filters)) data_filters <- NULL
+
+  conds <- list(
+    filters=data_filters,
+    ordering=data_ordering,
+    quantiling=data_quantiling,
+    grouping=data_grouping
+  )
+
+  return(conds)  
+
+}
+
+#' Ordering
+#'
+#' @param ... Variables to order by.
+#'   Wrap varaible name in desc() for descending order (like in dplyr::arrange).
+#' @param samples Names of samples to order by aggregate score.
+#' @param If more than one sample is selected feature values
+#'   are aggregated using this function.
+#'
+#' @export
+
+ordering <- function(
+  ...,
+  .samples=NULL,
+  .aggr_fun=mean
+) {
+
+  ord <- enquos(...)
+
+  if (length(ord) == 0) {
+    ord <- NULL
+  } else {
+    ord <- list(
+      ordering=ord,
+      samples=.samples,
+      aggr_fun=.aggr_fun
+    )
+  }
+
+  return(ord)
+}
+
+#' Quantiling
+#'
+#' @param by Continuous metric for calculating quantiles.
+#' @param n Number of quantiles to calculate for continuous metric.
+#' @param samples Samples to use when setting quantiles.
+#' @param descending Order quantiles in descending order.
+#' @param aggr_fun Function to aggregate scores if more than one sample selected.
+#'
+#' @export
+
+quantiling <- function(
+    by=NULL,
+    n=NULL,
+    samples=NULL,
+    descending=TRUE,
+    aggr_fun=mean
+){
+
+  ## Check inputs.
+  assert_that(is.null(by) || is.character(by))
+  assert_that(is.null(n) || is.count(n))
+  assert_that(is.null(samples) || is.character(samples))
+  assert_that(is.flag(descending))
+  assert_that(is.function(aggr_fun))
+
+  ## Return NULL or list of values.
+  if (is.null(by)) {
+    quantiling <- NULL
+  } else {
+    quantiling <- list(
+      by=by,
+      n=n,
+      samples=samples,
+      descending=descending,
+      aggr_fun=aggr_fun
+    )
+  }
+
+  return(quantiling)
+
+}
+
 #' Data Conditionals
 #'
 #' @description
@@ -6,18 +112,7 @@
 #' @importFrom dplyr dense_rank ntile desc
 #'
 #' @param signal_data TSS or TSR data.
-#' @param quantile_by Continuous metric for calculating quantiles.
-#' @param n_quantiles Number of quantiles to calculate for continuous metric.
-#' @param quantile_samples Samples to use when setting quantiles.
-#' @param quantile_group Group these features and quantile based on aggregate mean of feature.
-#' @param quantile_direction Order quantiles in 'descending' or 'ascending' order of values.
-#' @param order_by Metric to order data by.
-#' @param order_group Features will be aggregated by this group before ordering.
-#' @param order_direction Whether the values should be ordered in
-#'   'ascending' or 'descending' order.
-#' @param order_samples Names of samples to order by.
-#' @param filters Logical string to subset/filter data by.
-#' @param grouping If quantiles not set, split data by the specified categorical variable.
+#' @param conditions List of conditions.
 #'
 #' @details
 #' It may be desirable to analyze certain subsets of TSSs or TSRs, or split the data 
@@ -68,117 +163,182 @@
 #' @rdname group_data-function
 #' @export
 
-group_data <- function(
-  signal_data, filters=NA,
-  order_by=NA, order_direction="descending",
-  order_samples=NA, order_group=NA,
-  quantile_by=NA, n_quantiles=NA,
-  quantile_samples=NA, quantile_group=NA,
-  quantile_direction="descending",
-  grouping=NA
+condition_data <- function(
+  signal_data,
+  data_conditions
 ) {
   
-  ## Filter the data if required  
-  if (!is.na(filters)) {
-    signal_data <- map(signal_data, function(x) {
-      x <- subset(x, eval(parse(text=filters)))
-      return(x)
-    })
+  ## Filter the data if required.
+  if (!is.null(data_conditions$filters)) {
+    signal_data <- .filter_data(signal_data, data_conditions$filters)
   }
 
-  ## Order the data for plotting if required.
-  if (!is.na(order_by)) {
-    if (is.na(order_group)) order_group <- "FHASH"
-
-    order_dataset <- rbindlist(signal_data, idcol="sample")[,
-      c("sample", ..order_by, ..order_group)
-    ]
-
-    order_dataset <- dcast(
-      order_dataset, as.formula(str_c("sample ~ ", order_group)),
-      value.var=order_by, fun.aggregate=mean,
-      fill=ifelse(order_direction == "descending", -Inf, Inf)
-    )
-
-    order_dataset <- melt(
-      order_dataset, id.vars="sample",
-      variable.name=order_group, value.name=order_by
-    )
-
-    if (!is.na(order_samples)) {
-      order_dataset <- order_dataset[sample %in% order_samples]
-    }
-
-    order_dataset <- order_dataset[, .(order_by=mean(get(order_by))), by=order_group]
-    setnames(order_dataset, old="order_by", new=order_by)
-
-    if (order_direction == "ascending") {
-      order_dataset[, plot_order := dense_rank(desc(order_dataset[[order_by]]))]
-    } else if (order_direction == "descending") {
-      order_dataset[, plot_order := dense_rank(order_dataset[[order_by]])]
-    }
-
-    order_dataset[, c(order_by) := NULL]
-
-    signal_data <- map(signal_data, function(x) {
-        x <- merge(x, order_dataset, by=order_group, all.x=TRUE)
-        return(x)
-      })
+  ## Ordering the data if required.
+  if (!is.null(data_conditions$ordering)) {
+    signal_data <- .order_data(signal_data, data_conditions$ordering)
   }
 
-  ## Quantile the metric if required.
-  if (!is.na(quantile_by)) {
-    if (is.na(quantile_group)) quantile_group <- "FHASH"
-  
-    quantile_dataset <- rbindlist(signal_data, idcol="sample")[,
-      c("sample", ..quantile_by, ..quantile_group)
-    ]
-
-    quantile_dataset <- dcast(
-      quantile_dataset, as.formula(str_c("sample ~ ", quantile_group)),
-      value.var=quantile_by, fun.aggregate=mean,
-      fill=ifelse(quantile_direction == "descending", -Inf, Inf)
-    )
-
-    quantile_dataset <- melt(
-      quantile_dataset, id.vars="sample",
-      variable.name=quantile_group, value.name=quantile_by
-    )
-
-    if (!is.na(quantile_samples)) {
-      quantile_dataset <- quantile_dataset[sample %in% quantile_samples]
-    }
-
-    quantile_dataset <- quantile_dataset[, .(quantile_by=mean(get(quantile_by))), by=quantile_group]
-    setnames(quantile_dataset, old="quantile_by", new=quantile_by)
-    
-    if (quantile_direction == "ascending") {
-      quantile_dataset[, grouping := ntile(desc(quantile_dataset[[quantile_by]]), n_quantiles)]
-    } else if (quantile_direction == "descending") {
-      quantile_dataset[, grouping := ntile(quantile_dataset[[quantile_by]], n_quantiles)]
-    }
-
-    quantile_dataset[, c(quantile_by) := NULL]
-
-    signal_data <- map(signal_data, function(x) {
-      x <- merge(x, quantile_dataset, by=quantile_group, all.x=TRUE)
-      return(x)
-    })
+  ## Quantiling the data if required.
+  if (!is.null(data_conditions$quantiling)) {
+    signal_data <- .quantile_data(signal_data, data_conditions$quantiling)
   }
 
-  ## If not using quantiles, split by a categorical value.
-  if (!is.na(grouping) && is.na(quantile_by)) {
-    signal_data <- map(signal_data, function(x) {
-      x <- x[!is.na(x[[grouping]])]
-
-      x[, grouping := x[[grouping]]]
-
-      return(x)
-    })
+  ## Grouping the data if required.
+  ## Modifies the tables in place.
+  if (!is.null(data_conditions$grouping)) {
+    .group_data(signal_data, data_conditions$grouping)
   }
 
   ## Return the signal data.
   return(signal_data)
+}
+
+#' Filtering
+#'
+#' @param signal_data List of TSSs or TSRs
+#' @param filters Quosure containing filters
+
+.filter_data <- function(
+  signal_data,
+  filters
+) {
+  signal_data <- map(signal_data, ~dplyr::filter(.x, !!filters))
+  return(signal_data)
+}
+
+#' Ordering
+#'
+#' @param signal_data List of TSSs or TSRs
+#' @param ordering List of ordering parameters
+
+.order_data <- function(
+  signal_data,
+  ordering
+) {
+
+  ## Create consensus ranges with aggregated scores.
+  signal_data <- rbindlist(signal_data, idcol="sample")
+  setkey(signal_data, seqnames, strand, start, end)
+
+  ord <- .create_consensus(signal_data, ordering)
+  
+  ## Arrange the aggregated features and add numeric ordering.
+  ord <- dplyr::arrange(ord, !!!ordering$ordering)
+  setDT(ord)
+  ord[, row_order := .I]
+  ord <- ord[, .(CFHASH, row_order)]
+  ord[, c("seqnames", "start", "end", "strand") :=
+    tstrsplit(CFHASH, split=":", fixed=TRUE, type.convert=TRUE)
+  ]
+  ord[, CFHASH := NULL]
+
+  ## Merge the row order into the original data.
+  setkey(ord, seqnames, strand, start, end)
+  signal_data <- foverlaps(ord, signal_data)
+  signal_data[, c("i.start", "i.end") := NULL]
+
+  ## Return the signal data.
+  signal_data <- split(signal_data, by="sample", keep.by=FALSE)
+  return(signal_data)
+  
+}
+
+#' Quantiling
+#'
+#' @param signal_data list of TSSs or TSRs
+#' @param quantiling list of quantiling parameters
+
+.quantile_data <- function(
+  signal_data,
+  quantiling
+) {
+
+  ## Create consensus ranges with aggregated scores.
+  signal_data <- rbindlist(signal_data, idcol="sample")
+  setkey(signal_data, seqnames, strand, start, end)
+
+  ord <- .create_consensus(signal_data, quantiling)
+
+  ## quantile the aggregated features.
+  if (quantiling$descending) {
+    ord[, row_quantile := ntile(desc(ord[[quantiling$by]]), n=quantiling$n)]
+  } else {
+    ord[, row_quantile := ntile(ord[[quantiling$by]], n=quantiling$n)]
+  }
+
+  ord <- ord[, .(CFHASH, row_quantile)]
+  ord[, c("seqnames", "start", "end", "strand") :=
+    tstrsplit(CFHASH, split=":", fixed=TRUE, type.convert=TRUE)
+  ]
+  ord[, CFHASH := NULL]
+
+  ## Merge the row order into the original data.
+  setkey(ord, seqnames, strand, start, end)
+  signal_data <- foverlaps(ord, signal_data)
+  signal_data[, c("i.start", "i.end") := NULL]
+
+  ## Return the signal data.
+  signal_data <- split(signal_data, by="sample", keep.by=FALSE)
+  return(signal_data)
+
+}
+
+#' Group Data
+#'
+#' @param signal_data TSS or TSR data
+#' @param conditions List of conditions
+
+.group_data <- function(
+  signal_data,
+  conditions
+) {
+  walk(signal_data, function(x) {
+    x[, row_groups := x[[conditions$grouping]]]
+  })
+}
+
+#' Create Consensus Ranges
+#'
+#' @param signal_data TSS or TSR data
+#' @param conditions Either ordering or quantiling conditions
+
+.create_consensus <- function(
+  signal_data,
+  conditions
+) {
+
+  ## Reduce ranges of samples into consensus ranges.
+  cranges <- signal_data %>%
+    as_granges %>%
+    reduce_ranges_directed %>%
+    as.data.table(key=c("seqnames", "strand", "start", "end"))
+  cranges[, CFHASH := str_c(seqnames, start, end, strand, sep=":")]
+
+  ## Filter out samples not being used to calculate ordering.
+  if (!is.null(conditions$samples)) {
+    ord <- signal_data[samples %in% conditions$samples]
+  } else {
+    ord <- signal_data
+  }
+  setkey(ord, seqnames, strand, start, end)
+
+  ## Merge consensus ranges into ranges used for ordering.
+  ord <- foverlaps(cranges, ord)
+  ord[, c(
+    "i.start", "i.end", "i.width", "seqnames",
+    "strand", "start", "end", "FHASH"
+  ) := NULL]
+
+  ## Aggregate numeric features.
+  numeric_cols <- colnames(ord)[sapply(ord, is.numeric)]
+
+  ord <- ord[,
+    lapply(.SD, conditions$aggr_fun),
+    by=CFHASH,
+    .SDcol=numeric_cols
+  ]
+
+  return(ord)
 }
 
 #' Preliminary Filter
