@@ -31,7 +31,7 @@ NULL
 #'   assert_that is.count is.flag is.string has_name has_attr
 #'   is.readable
 #' @importFrom knitr kable
-#' @importFrom rlang enquo enquos quo_is_null "!!" "!!!"
+#' @importFrom rlang enquo enquos quo_is_null "!!" "!!!" quo_text
 
 NULL
 

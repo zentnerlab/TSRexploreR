@@ -66,7 +66,7 @@ plot_density <- function(
   use_normalized=FALSE,
   dominant=FALSE,
   exclude_antisense=TRUE,
-  data_conditions=NA,
+  data_conditions=NULL,
   color="default",
   ...
 ) {
@@ -82,9 +82,7 @@ plot_density <- function(
   assert_that(is.count(ncol))
   assert_that(is.flag(use_normalized))
   assert_that(is.flag(dominant))
-  if (all(!is.na(data_conditions)) && !is(data_conditions, "list")) {
-    stop("data_conditions should be a list of values")
-  }
+  assert_that(is.null(data_conditions) || is.list(data_conditions))
   assert_that(is.flag(exclude_antisense))
 
   ## Assign color type.
@@ -105,9 +103,7 @@ plot_density <- function(
   sample_data <- map(sample_data, ~ .x[simple_annotations != "Antisense"])
 
   ## Condition data.
-  if (all(!is.na(data_conditions))) {
-    sample_data <- do.call(group_data, c(list(signal_data=sample_data), data_conditions))
-  }
+  sample_data <- condition_data(sample_data, data_conditions)
 
   ## Update data if score is to be considered in addition to unique position.
   sample_data <- rbindlist(sample_data, idcol="sample")
@@ -119,8 +115,6 @@ plot_density <- function(
   }
 
   ## Plot densities.
-  groupings <- any(names(data_conditions) %in% c("quantile_by", "grouping"))
-
   p <- ggplot(sample_data, aes(.data$distanceToTSS)) +
     geom_density(fill=color_type, color=color_type, ...) +
     labs(
@@ -129,10 +123,13 @@ plot_density <- function(
     ) +
     theme_bw()
 
-  if (groupings) {
-    p <- p + facet_grid(fct_rev(factor(grouping)) ~ sample)
+  if (!is.null(data_conditions$grouping)) {
+    p <- p + facet_grid(row_groups ~ sample)
+  } else if (!is.null(data_conditions$quantiling)) {
+    p <- p + facet_grid(row_quantile ~ sample)
   } else {
     p <- p + facet_wrap(~ sample, ncol=ncol)
   }
+
   return(p)
 }

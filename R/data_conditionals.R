@@ -20,6 +20,13 @@ conditions <- function(
   data_filters <- enquo(data_filters)
   if (quo_is_null(data_filters)) data_filters <- NULL
 
+  data_grouping <- enquo(data_grouping)
+  if (quo_is_null(data_grouping)) {
+    data_grouping <- NULL
+  } else {
+    data_grouping <- quo_text(data_grouping)
+  }
+
   conds <- list(
     filters=data_filters,
     ordering=data_ordering,
@@ -81,18 +88,20 @@ quantiling <- function(
 ){
 
   ## Check inputs.
-  assert_that(is.null(by) || is.character(by))
   assert_that(is.null(n) || is.count(n))
   assert_that(is.null(samples) || is.character(samples))
   assert_that(is.flag(descending))
   assert_that(is.function(aggr_fun))
 
+  ## Quosure for by column.
+  by <- enquo(by)
+
   ## Return NULL or list of values.
-  if (is.null(by)) {
+  if (quo_is_null(by)) {
     quantiling <- NULL
   } else {
     quantiling <- list(
-      by=by,
+      by=quo_text(by),
       n=n,
       samples=samples,
       descending=descending,
