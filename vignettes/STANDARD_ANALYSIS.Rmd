@@ -194,9 +194,7 @@ plot_sequence_colormap(seqs, ncol=3)
 As previously discused, organisms often have a specific TSS sequence context. This function explores the fraction of each potential dinucleotide at the -1/+1 positions of all TSSs, where the +1 position is the TSS.
 
 ```{r message=FALSE, fig.height=3, fig.width=6}
-frequencies <- dinucleotide_frequencies(exp)
-
-plot_dinucleotide_frequencies(frequencies, ncol=3)
+plot_dinucleotide_frequencies(exp)
 ```
 
 ## Clustering TSSs
