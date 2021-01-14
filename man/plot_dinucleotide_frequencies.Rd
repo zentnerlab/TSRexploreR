@@ -12,6 +12,7 @@ plot_dinucleotide_frequencies(
   use_normalized = FALSE,
   dominant = FALSE,
   data_conditions = NULL,
+  ncol = 3,
   ...
 )
 }
@@ -30,6 +31,8 @@ plot_dinucleotide_frequencies(
 highest-scoring TSR per gene or transcript.}
 
 \item{data_conditions}{Apply advanced conditions to the data.}
+
+\item{ncol}{Integer specifying the number of columns to arrange multiple plots.}
 
 \item{...}{Arguments passed to geom_col}
 }

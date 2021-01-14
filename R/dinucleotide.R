@@ -50,6 +50,7 @@ plot_dinucleotide_frequencies <- function(
   use_normalized=FALSE,
   dominant=FALSE,
   data_conditions=NULL,
+  ncol=3,
   ...
 ) {
 
@@ -153,7 +154,7 @@ plot_dinucleotide_frequencies <- function(
 .calculate_freqs <- function(seqs, grouping_status) {
 
   ## Get the dinucleotide frequencies.
-  if (grouping == "none") {
+  if (grouping_status == "none") {
     freqs <- seqs[,
       .(count=.N), by=.(sample, dinucleotide)
     ][,
