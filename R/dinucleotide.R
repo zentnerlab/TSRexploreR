@@ -128,7 +128,7 @@ plot_dinucleotide_frequencies <- function(
 
   ## PLot dinucleotide frequencies.
   p <- ggplot(freqs, aes(x=.data$dinucleotide, y=.data$freqs)) +
-    geom_col(width=0.5, aes(fill=.data$freqs))+#, ...) +
+    geom_col(width=0.5, aes(fill=.data$freqs), ...) +
     theme_bw() +
     coord_flip() +
     labs(
@@ -179,8 +179,6 @@ plot_dinucleotide_frequencies <- function(
 #' Plot results from dinucleotide analysis
 #'
 #' @inheritParams common_params
-#' @param dinucleotide_frequencies tibble from dinucleotide_frequencies analysis
-#' @param ... Arguments passed to geom_col
 #'
 #' @details
 #' This plotting function returns a ggplot2 barplot of -1 and +1 dinucleotide frequencies, 
@@ -201,59 +199,4 @@ plot_dinucleotide_frequencies <- function(
 #' @seealso
 #' \code{\link{dinucleotide_frequencies}} to calculate the dinucleotide frequencies.
 
-plot_dinucleotide_freqs <- function(
-  dinucleotide_frequencies,
-  ncol=1,
-  ...
-) {
-
-  ## Check inputs.
-  assert_that(is(dinucleotide_frequencies, "DataFrame"))
-  assert_that(is.count(ncol))
-
-  ## Pull out some info from the dataframe.
-  groupings <- metadata(dinucleotide_frequencies)$groupings
-
-  ## Convert dataframe to data.table.
-  freqs <- as.data.table(dinucleotide_frequencies)
-  
-  ## Set factor order for dinucleotides.
-  if (!groupings) {
-    freqs <- freqs[,
-      .(sample, count, freqs, mean_freqs=mean(freqs)),
-      by=dinucleotide
-    ]
-  } else {
-    freqs <- freqs[,
-      .(sample, count, freqs, grouping, mean_freqs=mean(freqs)),
-      by=dinucleotide
-    ]
-  }
-
-  freqs[,
-    rank := dense_rank(mean_freqs)
-  ][,
-    dinucleotide := fct_reorder(factor(dinucleotide), rank)
-  ][,
-    c("mean_freqs", "rank") := NULL
-  ]
-
-  ## Plot dinucleotide frequencies.
-
-  p <- ggplot(freqs, aes(x=.data$dinucleotide, y=.data$freqs)) +
-    geom_col(width=0.5, aes(fill=.data$freqs), ...) +
-    theme_bw() +
-    coord_flip() +
-    labs(
-      x="Dinucleotide",
-      y="Frequency"
-    )
-
-  if (groupings) {
-    p <- p + facet_wrap(grouping ~ sample)
-  } else {
-    p <- p + facet_wrap(~ sample, ncol=ncol)
-  }
-
-  return(p)
-}
+plot_dinucleotide_freqs <- function(x) NULL

@@ -4,14 +4,7 @@
 \alias{plot_dinucleotide_freqs}
 \title{Plot Dinucleotide Frequencies}
 \usage{
-plot_dinucleotide_freqs(dinucleotide_frequencies, ncol = 1, ...)
-}
-\arguments{
-\item{dinucleotide_frequencies}{tibble from dinucleotide_frequencies analysis}
-
-\item{ncol}{Integer specifying the number of columns to arrange multiple plots.}
-
-\item{...}{Arguments passed to geom_col}
+plot_dinucleotide_freqs(x)
 }
 \value{
 ggplot2 object of dinucleotide frequencies plot
