@@ -124,9 +124,7 @@ As part of the initial TSS processing, TSSs are annotated relative to known feat
 A stacked bar plot can be generated to showcase the fractional distribution of TSSs relative to known features.
 
 ```{r message=FALSE, fig.height=4}
-tss_distribution <- genomic_distribution(exp, data_type="tss")
-
-plot_genomic_distribution(tss_distribution) +
+plot_genomic_distribution(exp, data_type="tss") +
   scale_fill_viridis_d(direction=-1, name="Annotation")
 ```
 
@@ -264,9 +262,7 @@ As for TSSs, it is expected that TSRs will be be enriched upstream of annotated 
 A stacked bar plot can be generated to visualize the fractional distribution of TSRs relative to known features.
 
 ```{r message=FALSE, fig.height=3, fig.width=6}
-tsr_distribution <- genomic_distribution(exp, data_type="tsr")
-
-plot_genomic_distribution(tsr_distribution) +
+plot_genomic_distribution(exp, data_type="tsr") +
   scale_fill_viridis_d(direction=-1)
 ```
 
