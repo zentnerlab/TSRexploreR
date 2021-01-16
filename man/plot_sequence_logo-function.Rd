@@ -4,14 +4,46 @@
 \alias{plot_sequence_logo}
 \title{Generate Sequence Logo}
 \usage{
-plot_sequence_logo(tss_sequences, ncol = 1, font_size = 6)
+plot_sequence_logo(
+  experiment,
+  samples = "all",
+  genome_assembly = NULL,
+  threshold = NULL,
+  use_normalized = FALSE,
+  distance = 10,
+  dominant = FALSE,
+  data_conditions = NULL,
+  ncol = 1,
+  font_size = 6,
+  base_colors = c(A = "#109649", C = "#255C99", G = "#F7B32C", T = "#D62839"),
+  ...
+)
 }
 \arguments{
-\item{tss_sequences}{Sequences surrounding TSSs generated with tss_sequences}
+\item{experiment}{TSRexploreR object.}
+
+\item{samples}{A vector of sample names to analyze.}
+
+\item{genome_assembly}{Genome assembly in FASTA or BSgenome format.}
+
+\item{threshold}{TSSs or TSRs with a score below this value will not be considered.}
+
+\item{use_normalized}{Whether to use the normalized (TRUE) or raw (FALSE) counts.}
+
+\item{distance}{Bases to add on each side of eacg TSS}
+
+\item{dominant}{If TRUE, will only consider the highest-scoring TSS per gene, transcript, or TSR or 
+highest-scoring TSR per gene or transcript.}
+
+\item{data_conditions}{Apply advanced conditions to the data.}
 
 \item{ncol}{Integer specifying the number of columns to arrange multiple plots.}
 
 \item{font_size}{Font size for plots}
+
+\item{base_colors}{Colors for each base.}
+
+\item{...}{Arguments passed to ggseqlogo.}
 }
 \value{
 ggplot2 object with sequence logo

@@ -4,7 +4,7 @@
 \alias{.group_data}
 \title{Group Data}
 \usage{
-.group_data(signal_data, conditions)
+.group_data(signal_data, grouping)
 }
 \arguments{
 \item{signal_data}{TSS or TSR data}

@@ -195,6 +195,7 @@ condition_data <- function(
   ## Grouping the data if required.
   ## Modifies the tables in place.
   if (!is.null(data_conditions$grouping)) {
+    walk(signal_data, setDT)
     .group_data(signal_data, data_conditions$grouping)
   }
 
@@ -299,10 +300,10 @@ condition_data <- function(
 
 .group_data <- function(
   signal_data,
-  conditions
+  grouping
 ) {
   walk(signal_data, function(x) {
-    x[, row_groups := x[[conditions$grouping]]]
+    x[, row_groups := x[[grouping]]]
   })
 }
 

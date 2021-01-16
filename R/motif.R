@@ -44,11 +44,8 @@
 #' @seealso
 #' \code{\link{plot_sequence_logo}} to make sequence logos.
 #' \code{\link{plot_sequence_colormap}} to make sequence color maps.
-#'
-#' @rdname tss_sequences-function
-#' @export
 
-tss_sequences <- function(
+.tss_sequences <- function(
   experiment,
   samples="all",
   genome_assembly=NULL,
@@ -56,7 +53,7 @@ tss_sequences <- function(
   use_normalized=FALSE,
   distance=10,
   dominant=FALSE,
-  data_conditions=list(order_by="score")
+  data_conditions=NULL
 ) {
 
   ## Check inputs.
@@ -69,10 +66,7 @@ tss_sequences <- function(
   assert_that(is.null(threshold) || (is.numeric(threshold) && threshold >= 0))
   assert_that(is.count(distance))
   assert_that(is.flag(dominant))
-  if (all(!is.na(data_conditions)) && !is(data_conditions, "list")) {
-    stop("data_conditions must be a list of values")
-  }
-  assert_that(is.flag(use_normalized))
+  assert_that(is.null(data_conditions) || is.list(data_conditions))
 
   ## Open genome assembly.
   genome_assembly <- .prepare_assembly(genome_assembly, experiment)
@@ -82,10 +76,8 @@ tss_sequences <- function(
     extract_counts("tss", samples, use_normalized) %>%
     preliminary_filter(dominant, threshold)
 
-  ## Condition the data.
-  if (all(!is.na(data_conditions))) {
-    select_samples <- do.call(group_data, c(list(signal_data=select_samples), data_conditions))
-  }
+  ## Apply data conditions.
+  select_samples <- condition_data(select_samples, data_conditions)
 
   ## Prepare table for sequence retrieval.
   select_samples <- rbindlist(select_samples, idcol="sample")
@@ -133,22 +125,6 @@ tss_sequences <- function(
     seqs[, sample := factor(sample, levels=samples)]
   }
   
-  ## Generate and return DataFrame.
-  groupings <- any(names(data_conditions) %in% c("quantile_by", "grouping"))
-  
-  keep_cols <- c(
-    "sample", "FHASH", "grouping",
-    "plot_order", "tss", "sequence", "score"
-  )
-  keep_cols <- keep_cols[keep_cols %in% colnames(seqs)]
-  seqs <- seqs[, ..keep_cols]
-  
-  seqs <- DataFrame(seqs)
-  metadata(seqs)$groupings <- groupings
-  metadata(seqs)$threshold <- threshold
-  metadata(seqs)$distance <- distance
-  metadata(seqs)$dominant <- dominant
-
   return(seqs)
 }
 
@@ -162,8 +138,10 @@ tss_sequences <- function(
 #' @importFrom cowplot plot_grid
 #'
 #' @inheritParams common_params
-#' @param tss_sequences Sequences surrounding TSSs generated with tss_sequences
+#' @param distance Bases to add on each side of eacg TSS
 #' @param font_size Font size for plots
+#' @param base_colors Colors for each base.
+#' @param ... Arguments passed to ggseqlogo.
 #'
 #' @details
 #' This plotting function uses the ggseqlogo library to make sequence logos
@@ -192,27 +170,67 @@ tss_sequences <- function(
 #' @export
 
 plot_sequence_logo <- function(
-  tss_sequences,
+  experiment,
+  samples="all",
+  genome_assembly=NULL,
+  threshold=NULL,
+  use_normalized=FALSE,
+  distance=10,
+  dominant=FALSE,
+  data_conditions=NULL,
   ncol=1,
-  font_size=6
+  font_size=6,
+  base_colors=c(
+    A="#109649", C="#255C99",
+    G="#F7B32C", T="#D62839"
+  ),
+  ...
 ) {
 
   ## Check inputs.
-  assert_that(is(tss_sequences, "DataFrame"))
+  assert_that(is(experiment, "tsr_explorer"))
+  assert_that(is.character(samples))
+  assert_that(
+    is.null(genome_assembly) || is.character(genome_assembly) ||
+    is(genome_assembly, "BSgenome")
+  )
+  assert_that(is.null(threshold) || (is.numeric(threshold) && threshold >= 0))
+  assert_that(is.count(distance))
+  assert_that(is.flag(dominant))
+  assert_that(is.null(data_conditions) || is.list(data_conditions))
   assert_that(is.count(ncol))
   assert_that(is.numeric(font_size) && font_size > 0)
+  assert_that(
+    is.character(base_colors) &&
+    all(c("A", "T", "G", "C") %in% names(base_colors))
+  )
 
-  ## Get some info used to pull sequencs.
-  distance <- metadata(tss_sequences)$distance
-  groupings <- metadata(tss_sequences)$groupings
+  ## Get sequences.
+  tss_sequences <- .tss_sequences(
+    experiment,
+    samples,
+    genome_assembly,
+    threshold,
+    use_normalized,
+    distance,
+    dominant,
+    data_conditions
+  )
+
+  ## Store status of data conditions.
+  grouping_status <- case_when(
+    !is.null(data_conditions$quantiling) ~ "row_quantile",
+    !is.null(data_conditions$grouping) ~ "row_groups",
+    TRUE ~ "none"
+  )
 
   ## Grab sequences from input.
-  if (!groupings) {
+  if (grouping_status == "none") {
     sequences <- tss_sequences %>%
-      as.data.table %>%
       split(.$sample) %>%
       map(function(x) {x[["sequence"]]})
   } else {
+    setnames(tss_sequences, old=grouping_status, new="grouping")
     sequences <- tss_sequences %>%
       as.data.table %>%
       split(.$grouping) %>%
@@ -226,12 +244,15 @@ plot_sequence_logo <- function(
   viridis_bases <- make_col_scheme(
     chars=c("A", "C", "G", "T"),
     groups=c("A", "C", "G", "T"),
-    cols=c("#431352", "#34698c", "#44b57b", "#fde540")
+    cols=base_colors[match(
+      c("A", "C", "G", "T"),
+      names(base_colors)
+    )]
   )
 
   ## Make sequence logo.
-  if (!groupings) {
-    p <- ggseqlogo(sequences, ncol=ncol) +
+  if (grouping_status == "none") {
+    p <- ggseqlogo(sequences, ncol=ncol, ...) +
       theme(text=element_text(size=font_size)) #+
       #scale_x_continuous(
       # breaks=c(1, distance, distance + 1, (distance * 2) + 1),
@@ -240,7 +261,7 @@ plot_sequence_logo <- function(
   } else {
     p <- rev(sequences) %>%
       map(function(x) {
-        ggseqlogo(x, ncol=ncol) +
+        ggseqlogo(x, ncol=ncol, ...) +
           theme(text=element_text(size=font_size)) #+
           #scale_x_continuous(
           # breaks=c(1, distance, distance + 1, (distance * 2) + 1),
