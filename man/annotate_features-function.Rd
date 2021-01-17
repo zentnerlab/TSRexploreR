@@ -2,11 +2,11 @@
 % Please edit documentation in R/annotate.R
 \name{annotate_features}
 \alias{annotate_features}
-\title{Annotate Data}
+\title{Annotate Features}
 \usage{
 annotate_features(
   experiment,
-  data_type = c("tss", "tsr", "tss_diff", "tsr_diff"),
+  data_type = c("tss", "tsr", "tss_diff", "tsr_diff", "shift"),
   feature_type = c("gene", "transcript"),
   annotation_data = NULL,
   upstream = 1000,
@@ -14,17 +14,17 @@ annotate_features(
 )
 }
 \arguments{
-\item{experiment}{TSRexploreR object with TSS GRanges}
+\item{experiment}{TSRexploreR object.}
 
-\item{data_type}{Whether to annotate TSSs or TSRs}
+\item{data_type}{Whether to annotate TSSs or TSRs.}
 
-\item{feature_type}{Annotate at the gene or transcript level}
+\item{feature_type}{Whether to annotate at the gene or transcript level.}
 
-\item{annotation_data}{Path to annotation file or loaded TxDb object}
+\item{annotation_data}{Path to annotation file or loaded TxDb object.}
 
-\item{upstream}{Bases upstream of TSS for 'promoter' annotation}
+\item{upstream}{Bases upstream of TSS for 'promoter' annotation.}
 
-\item{downstream}{Bases downstream of TSS for 'promoter' annotation}
+\item{downstream}{Bases downstream of TSS for 'promoter' annotation.}
 }
 \value{
 TSRexploreR object with annotated features
@@ -45,11 +45,11 @@ Furthermore, the size of the promoter region can be defined using
 \examples{
 TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
 TSSs <- readRDS(TSSs)
-tsre_exp <- tsr_explorer(TSSs)
-tsre_exp <- format_counts(tsre_exp, data_type="tss")
+exp <- tsr_explorer(TSSs)
+exp <- format_counts(tsre, data_type="tss")
 annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
-tsre_exp <- annotate_features(
-  tsre_exp, annotation_data=annotation,
+exp <- annotate_features(
+  exp, annotation_data=annotation,
   data_type="tss", feature_type="transcript"
 )
 

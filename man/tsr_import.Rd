@@ -7,35 +7,34 @@
 tsr_import(experiment, sample_sheet = NULL, file_type = "auto", delim = "\\t")
 }
 \arguments{
-\item{experiment}{TSRexploreR object}
+\item{experiment}{TSRexploreR object.}
 
-\item{sample_sheet}{Sample sheet}
+\item{sample_sheet}{A sample sheet data.frame or tab delimited file.
+Must have the columns 'sample_name', 'file_1', and 'file_2'.
+Additional meta-data columns can be added with sample information such as condition and batch.}
 
-\item{file_type}{Either 'auto', 'table', or 'bed'}
+\item{file_type}{Either 'auto', 'table', or 'bed'.}
 
-\item{delim}{If input is a table specify the delimiter}
+\item{delim}{Delimiter for tabular input.}
 }
 \value{
-tsr explorer object with added TSRs.
+TSRexploreR object with added TSRs.
 }
 \description{
 Function to import TSRs from various sources.
 }
 \details{
-TSRexploreR can import TSRs from various sources.
-Currently beds and TSRchitect tssObjects are supported.
+TSRexploreR can import TSRs from various sources. Currently, these are BED files,
+delimited tables, and TSRchitect tssObjects.
 
-To import beds, a sample sheet must first be created.
-The sample sheet can be a data.frame or tabular file.
-It should have three columns: sample_name, file_1, and file_2.
-sample_name specifies the sample name that will be added for that TSR in the
-  tsr explorer object.
-file_1 should be the path to the bed file,
-  and file_2 can be left blank or filled with NA values.
+To import TSRs from files, a sample sheet must first be created. The sample sheet can 
+be a data.frame or tabular file. It should have three columns: sample_name, file_1, 
+and file_2. sample_name specifies the sample name that will be added for that 
+TSR in the TSRexploreR object. file_1 should be the path to the file, and 
+file_2 can be left blank or filled with NA values.
 
-To import TSRs directly from a TSRchitect tssObject,
-  the TSRchitect workflow must first be run up to the
-  'determineTSR' step.
+To import TSRs directly from a TSRchitect tssObject, the TSRchitect workflow must 
+first be run up to the 'determineTSR' step.
 }
 \seealso{
 \code{\link{tss_import}} to import TSSs.

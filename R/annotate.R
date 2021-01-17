@@ -1,4 +1,4 @@
-#' Annotate Data
+#' Annotate Features
 #'
 #' @description
 #' Use the ChIPseeker package to annotate TSSs or TSRs relative to known genes or transcripts.
@@ -6,12 +6,12 @@
 #' @import tibble
 #' @importFrom ChIPseeker annotatePeak
 #'
-#' @param experiment TSRexploreR object with TSS GRanges
-#' @param annotation_data Path to annotation file or loaded TxDb object
-#' @param data_type Whether to annotate TSSs or TSRs
-#' @param feature_type Annotate at the gene or transcript level
-#' @param upstream Bases upstream of TSS for 'promoter' annotation
-#' @param downstream Bases downstream of TSS for 'promoter' annotation
+#' @inheritParams common_params
+#' @param annotation_data Path to annotation file or loaded TxDb object.
+#' @param data_type Whether to annotate TSSs or TSRs.
+#' @param feature_type Whether to annotate at the gene or transcript level.
+#' @param upstream Bases upstream of TSS for 'promoter' annotation.
+#' @param downstream Bases downstream of TSS for 'promoter' annotation.
 #'
 #' @details
 #' This function attempts to assign TSSs or TSRs to the nearest genomic feature.
@@ -28,11 +28,11 @@
 #' @examples
 #' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
 #' TSSs <- readRDS(TSSs)
-#' tsre_exp <- tsr_explorer(TSSs)
-#' tsre_exp <- format_counts(tsre_exp, data_type="tss")
+#' exp <- tsr_explorer(TSSs)
+#' exp <- format_counts(tsre, data_type="tss")
 #' annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
-#' tsre_exp <- annotate_features(
-#'   tsre_exp, annotation_data=annotation,
+#' exp <- annotate_features(
+#'   exp, annotation_data=annotation,
 #'   data_type="tss", feature_type="transcript"
 #' )
 #'
@@ -41,7 +41,7 @@
 
 annotate_features <- function(
   experiment,
-  data_type=c("tss", "tsr", "tss_diff", "tsr_diff"),
+  data_type=c("tss", "tsr", "tss_diff", "tsr_diff", "shift"),
   feature_type=c("gene", "transcript"),
   annotation_data=NULL,
   upstream=1000,
@@ -53,9 +53,9 @@ annotate_features <- function(
   assert_that(
     is.null(annotation_data) ||
     is(annotation_data, "character") || is(annotation_data, "TxDb"),
-    msg="annotation_data must be an annotation file or TxDb object"
+    msg="annotation_data must be a GTF/GFF3 annotation file or TxDb object"
   )
-  data_type <- match.arg(data_type, c("tss", "tsr", "tss_diff", "tsr_diff")) 
+  data_type <- match.arg(data_type, c("tss", "tsr", "tss_diff", "tsr_diff", "shift")) 
   feature_type <- match.arg(feature_type, c("gene", "transcript"))
   assert_that(is.count(upstream))
   assert_that(is.count(downstream))
@@ -63,12 +63,13 @@ annotate_features <- function(
   ## Load GTF.
   genome_annotation <- .prepare_annotation(annotation_data, experiment)
 
-  ## Grab data from proper slot.
+  ## Get data from proper slot.
   counts <- switch(data_type,
     "tss"=experiment@counts$TSSs$raw,
     "tsr"=experiment@counts$TSRs$raw,
     "tss_diff"=experiment@diff_features$TSSs$results,
-    "tsr_diff"=experiment@diff_features$TSRs$results
+    "tsr_diff"=experiment@diff_features$TSRs$results,
+    "shift"=experiment@shifting$results
   )
 
   ## Annotate features.
@@ -84,9 +85,11 @@ annotate_features <- function(
   ## Place annotated features back into the TSRexploreR object.
 
   if (data_type %in% c("tss", "tsr")) {
-      experiment <- set_count_slot(experiment, counts_annotated, "counts", data_type, "raw")
+    experiment <- set_count_slot(experiment, counts_annotated, "counts", data_type, "raw")
   } else if (data_type %in% c("tss_diff", "tsr_diff")) {
-      experiment <- set_count_slot(experiment, counts_annotated, "diff_features", data_type, "results")
+    experiment <- set_count_slot(experiment, counts_annotated, "diff_features", data_type, "results")
+  } else if (data_type == "shift") {
+    experiment@shifting$results <- counts_annotated
   }
 
   ## Save annotation settings to the TSRexploreR object.
@@ -95,7 +98,7 @@ annotate_features <- function(
     "upstream"=upstream,
     "downstream"=downstream
   )
-  experiment@settings[["annotation"]] <- anno_settings
+  experiment@settings$annotation <- anno_settings
 
   return(experiment)
 }
@@ -122,11 +125,13 @@ annotate_features <- function(
       tssRegion=c(-upstream, downstream),
       TxDb=annotation_data,
       sameStrand=TRUE,
-      level=feature_type
+      level=feature_type,
+      verbose=FALSE
     ) %>%
     as.data.table
+  annotated[, geneStrand := ifelse(geneStrand == 1, "+", "-")]
 
-  ## Create a column iwth simplified annotations.
+  ## Create a column with simplified annotations.
   annotated[,
     simple_annotations := case_when(
       annotation == "Promoter" ~ "Promoter",
@@ -134,6 +139,14 @@ annotate_features <- function(
       str_detect(annotation, pattern="Intron") ~ "Intron",
       str_detect(annotation, pattern="Downstream") ~ "Downstream",
       annotation == "Distal Intergenic" ~ "Intergenic"
+    )
+  ]
+
+  ## Mark antisense features.
+  annotated[,
+    simple_annotations := ifelse(
+      simple_annotations != "Intergenic" & strand != geneStrand,
+      "Antisense", simple_annotations
     )
   ]
 

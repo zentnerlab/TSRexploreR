@@ -1,45 +1,38 @@
 #' Genomic Distribution
 #'
 #' @description
-#' Get genomic distribution of TSSs and TSRs
+#' Get genomic distribution of TSSs and TSRs.
 #'
-#' @param experiment TSRexploreR object with annotated TSRs
-#' @param samples Either "all" or a vector of sample names
-#' @param data_type Whether to get distribution of TSSs or TSRs
-#' @param threshold Raw count threshold for a TSS or TSR to be considered
-#' @param dominant Whether only the dominant TSS per gene or TSR should be considered
-#' @param data_conditions Apply conditions to data (supports filtering and quantiles/grouping)
-#' @param use_normalized Whether normalized or raw counts should be used
+#' @inheritParams common_params
+#' @param data_type Whether to get distribution of TSSs or TSRs.
 #'
 #' @details
-#' This function summarizes the distribution of TSSs or TSRs relative
-#'   to annotated genomic features (exons, introns, intergenic, 
-#'   downstream and promoter regions.)
-#' The promoter region is user defined when annotating the TSSs or TSRs.
+#' This function summarizes the distribution of TSSs or TSRs relative to annotated 
+#' genomic features (exons, introns, intergenic, downstream, and promoter regions).
+#' The promoter region is user-defined during annotation.
 #'
-#' A set of functions to control data structure for plotting are included.
-#' 'threshold' defines the minimum number of raw counts a TSS or TSR
-#'  must have to be considered.
-#' 'dominant' specifies whether only the dominant TSS or TSR is considered 
-#'   (annotated by the 'mark_dominant' function).
-#' For TSSs this can be either dominant per TSR or gene, and for TSRs
-#'   it is just the dominant TSR per gene.
-#' 'data_conditions' allows for the advanced filtering, ordering, and grouping
-#'   of data.
+#' A set of functions to control data structure for plotting are included. 'use_normalized' 
+#' will use  normalized scores, which only matters if 'consider_score' is TRUE.
+#' 'threshold' defines the minimum number of raw counts a TSS or TSR must have to be 
+#' considered. dominant' specifies whether only the dominant TSS or TSR (determined
+#' using the 'mark_dominant' function) is considered. For TSSs, this can be either 
+#' dominant TSS per TSR or gene/transcript, and for TSRs it is the dominant TSR 
+#' per gene/transcript. 'data_conditionals' can be used to filter, quantile, order, 
+#' and/or group data for plotting.
 #'
-#' @return DataFrame with TSS or TSR genomic distribution stats
+#' @return DataFrame with TSS or TSR genomic distribution stats.
 #'
 #' @examples
 #' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
 #' TSSs <- readRDS(TSSs)
-#' tsre_exp <- tsr_explorer(TSSs)
-#' tsre_exp <- format_counts(tsre_exp, data_type="tss")
+#' exp <- tsr_explorer(TSSs)
+#' exp <- format_counts(exp, data_type="tss")
 #' annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
-#' tsre_exp <- annotate_features(
-#'   tsre_exp, annotation_data=annotation,
+#' exp <- annotate_features(
+#'   exp, annotation_data=annotation,
 #'   data_type="tss", feature_type="transcript"
 #' )
-#' genomic_dist <- genomic_distribution(tsre_exp, data_type="tss")
+#' genomic_dist <- genomic_distribution(exp, data_type="tss")
 #'
 #' @seealso \code{\link{annotate_features}} to annotate TSSs or TSRs.
 #'   \code{\link{plot_genomic_distribution}} to plot the genomic distribution.
@@ -49,7 +42,7 @@
 
 genomic_distribution <- function(
   experiment,
-  data_type=c("tss", "tsr"),
+  data_type=c("tss", "tsr", "shift"),
   samples="all",
   threshold=NULL,
   use_normalized=FALSE,
@@ -59,13 +52,13 @@ genomic_distribution <- function(
 
   ## Check inputs.
   assert_that(is(experiment, "tsr_explorer"))
-  data_type <- match.arg(str_to_lower(data_type), c("tss", "tsr"))
+  data_type <- match.arg(str_to_lower(data_type), c("tss", "tsr", "shift"))
   assert_that(is.character(samples))
   assert_that(is.null(threshold) || (is.numeric(threshold) && threshold >= 0))
   assert_that(is.flag(dominant))
   if (all(!is.na(data_conditions)) && !is(data_conditions, "list")) stop("data_conditions must in list form")
 
-  ## Extract samples.
+  ## Get samples.
   selected_samples <- experiment %>%
     extract_counts(data_type, samples, use_normalized) %>%
     preliminary_filter(dominant, threshold)
@@ -73,7 +66,7 @@ genomic_distribution <- function(
   walk(selected_samples, function(x) {
     x[, simple_annotations := factor(
       simple_annotations,
-      levels=c("Promoter", "Exon", "Intron", "Downstream", "Intergenic")
+      levels=c("Promoter", "Exon", "Intron", "Downstream", "Intergenic", "Antisense")
     )]
   })
 
@@ -104,8 +97,8 @@ genomic_distribution <- function(
 
 #' Calculate Genomic Distribution
 #'
-#' @param selected_samples Samples to analyze
-#' @param groupings Whether data is grouped
+#' @param selected_samples Samples to analyze.
+#' @param groupings Whether data is grouped.
 
 .calculate_distribution <- function(selected_samples, groupings) {
 
@@ -135,31 +128,31 @@ genomic_distribution <- function(
 #'
 #' Plot genomic distribution of TSSs or TSRs.
 #'
-#' @param genomic_distribution Dataframe of TSS or TSR genomic distributions from tsr_genomic_distribution
+#' @param genomic_distribution Dataframe of TSS or TSR genomic distributions from tsr_genomic_distribution.
 #'
 #' @details
 #' This plotting function will create a stacked barplot of genomic feature types for each sample.
 #' The underlying data used for plotting comes from the 'genomic_distribution' function.
 #' Genomic features include exons, introns, intergenic, downstream and promoter regions.
-#' The promoter region is user defined when annotating the TSSs or TSRs.
+#' The promoter region is user-defined during annotation.
 #'
-#' @return ggplot2 object with TSS or TSR genomic distribution plot
+#' @return ggplot2 object with TSS or TSR genomic distribution plot.
 #'
 #' @examples
 #' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
 #' TSSs <- readRDS(TSSs)
-#' tsre_exp <- tsr_explorer(TSSs)
-#' tsre_exp <- format_counts(tsre_exp, data_type="tss")
+#' exp <- tsr_explorer(TSSs)
+#' exp <- format_counts(exp, data_type="tss")
 #' annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
-#' tsre_exp <- annotate_features(
-#'   tsre_exp, annotation_data=annotation,
+#' exp <- annotate_features(
+#'   exp, annotation_data=annotation,
 #'   data_type="tss", feature_type="transcript"
 #' )
-#' genomic_dist <- genomic_distribution(tsre_exp, data_type="tss")
+#' genomic_dist <- genomic_distribution(exp, data_type="tss")
 #' plot_genomic_distribution(genomic_dist)
 #'
-#' @seealso \code{\link{annotate_features}} to annotate TSSs or TSRs to genomic features.
-#'   \code{\link{genomic_distribution}} to prepare the annotated features for plotting.
+#' @seealso \code{\link{annotate_features}} to annotate TSSs or TSRs.
+#'   \code{\link{genomic_distribution}} to prepare annotated TSSs or TSRs for plotting.
 #'
 #' @rdname plot_genomic_distribution-function
 #' @export 
@@ -171,7 +164,7 @@ plot_genomic_distribution <- function(
   ## Check inputs.
   assert_that(is(genomic_distribution, "DataFrame"))
   
-  ## Pull out information from DataFrame.
+  ## Get information from DataFrame.
   genomic_dist <- as_tibble(genomic_distribution, .name_repair="unique")
 
   ## Plot the genomic distribution.

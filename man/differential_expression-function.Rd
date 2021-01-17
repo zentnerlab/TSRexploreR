@@ -2,7 +2,7 @@
 % Please edit documentation in R/diff_expression.R
 \name{differential_expression}
 \alias{differential_expression}
-\title{Analyze Differential Expression}
+\title{Analyze Differential Features}
 \usage{
 differential_expression(
   experiment,
@@ -14,23 +14,21 @@ differential_expression(
 )
 }
 \arguments{
-\item{experiment}{TSRexploreR object with edgeR differential expression model from fit_edger_model}
+\item{experiment}{TSRexploreR object.}
 
-\item{data_type}{Whether the input was generated from TSSs, TSRs, or features}
+\item{data_type}{Whether the input was generated from TSSs, TSRs, or genes/transcripts}
 
-\item{comparison_name}{The name given to the comparison when stored back into the tsr explore robject.}
+\item{comparison_name}{The name given to the comparison when stored back into the TSRexploreR object.}
 
-\item{comparison_type}{For DEseq2 either 'contrast' or 'name'.
-For edgeR either 'contrast' or 'coef'.}
+\item{comparison_type}{For DEseq2, either 'contrast' or 'name'. For edgeR, either 'contrast' or 'coef'.}
 
-\item{comparison}{For edgeR either the coefficients or contrasts.
-For DESeq2 the contrast or name.}
+\item{comparison}{For DESeq2, the contrast or name. For edgeR, the coefficients or contrasts.}
 
-\item{shrink_lfc}{For DESeq2 whether the Log2 Fold Changes are shrunk (TRUE) or left alone (FALSE).}
+\item{shrink_lfc}{For DESeq2, whether the log2 fold changes are shrunk (TRUE) or not (FALSE).}
 }
 \value{
-tibble of differential TSRs
+tibble of differential TSRs.
 }
 \description{
-Find differential TSSs, TSRs, or features from edgeR model
+Find differential TSSs, TSRs, or features from edgeR or DESeq2 model.
 }

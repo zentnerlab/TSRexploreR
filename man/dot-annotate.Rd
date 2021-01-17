@@ -9,13 +9,13 @@
 \arguments{
 \item{sample_table}{Sample table}
 
-\item{upstream}{Bases upstream of TSS for 'promoter' annotation}
+\item{upstream}{Bases upstream of TSS for 'promoter' annotation.}
 
-\item{downstream}{Bases downstream of TSS for 'promoter' annotation}
+\item{downstream}{Bases downstream of TSS for 'promoter' annotation.}
 
-\item{feature_type}{Annotate at the gene or transcript level}
+\item{feature_type}{Whether to annotate at the gene or transcript level.}
 
-\item{annotation_data}{Path to annotation file or loaded TxDb object}
+\item{annotation_data}{Path to annotation file or loaded TxDb object.}
 }
 \description{
 Annotate Features

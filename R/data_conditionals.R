@@ -5,66 +5,60 @@
 #'
 #' @importFrom dplyr dense_rank ntile desc
 #'
-#' @param signal_data TSS or TSR data
-#' @param quantile_by Continuous metric to calculate quantiles (qq??)
-#' @param n_quantiles Number of quantiles to calculate for continuous metric
-#' @param quantile_samples Samples to use when setting quantiles
-#' @param quantile_group Group these features and quantile based on aggregate mean of feature
-#' @param quantile_direction Order quantiles in 'descending' or 'ascending' order of values
-#' @param order_by Metric to order data by
-#' @param order_group Features wil be aggregated by this group before ordering
+#' @param signal_data TSS or TSR data.
+#' @param quantile_by Continuous metric for calculating quantiles.
+#' @param n_quantiles Number of quantiles to calculate for continuous metric.
+#' @param quantile_samples Samples to use when setting quantiles.
+#' @param quantile_group Group these features and quantile based on aggregate mean of feature.
+#' @param quantile_direction Order quantiles in 'descending' or 'ascending' order of values.
+#' @param order_by Metric to order data by.
+#' @param order_group Features will be aggregated by this group before ordering.
 #' @param order_direction Whether the values should be ordered in
-#'   'ascending' or 'descending' order
-#' @param order_samples Names of samples to order by
-#' @param filters Logical string to subset/filter data by
-#' @param grouping If quantiles not set split data by categorical variable
+#'   'ascending' or 'descending' order.
+#' @param order_samples Names of samples to order by.
+#' @param filters Logical string to subset/filter data by.
+#' @param grouping If quantiles not set, split data by the specified categorical variable.
 #'
 #' @details
-#' TSSs and TSRs with different features, such as shape or sequence,
-#'   have been connected with distinct biological functions.
-#' Because of this, it may be desired to analyze certain subsets of TSSs or TSRs,
-#'   or split the data based on various grouping strategies.
-#' This function extends the flexibility of various other functions by adding the
-#'   ability to filter, quantile, order, and/or group data prior to downstream analysis.
+#' It may be desirable to analyze certain subsets of TSSs or TSRs, or split the data 
+#' based on various categorical variables. This function extends the flexibility of 
+#' various other functions by adding the ability to filter, quantile, order, and/or 
+#' group data prior to downstream analysis.
 #'
 #' 'filters' gives you the ability to filter TSSs or TSRs based on any column stored
-#'   in the data.
-#' The filters should be a character in standard R logical statements.
+#' in the data. The filters should be a character in standard R logical statements. 
 #' For example, if you wanted to keep only TSSs from chromosome I with a score greater than
-#'   10, the filter would look like the following: "seqnames == 'chrI' & score > 10".
+#' 10, the filter would be: "seqnames == 'chrI' & score > 10".
 #'
 #' The series of arguments for quantiling allows one to split the data based on the
-#'   quantile of any column with numeric data.
-#' 'quantile_by' is the column to use for calculating quantiles,
-#'   and 'n_quantiles' specifies the number of quantiles to break the data into.
-#' Whether the quantiles are calculated in ascending or descending order
-#'   can be set with 'quantile_direction'.
-#' If you want to use only a subset of samples to calculate the quantiles,
-#'   they can be specified with 'quantile_samples'.
-#' Finally, the data can first be split into subgroups before quantiling,
+#'   quantile of any column with numeric data. 'quantile_by' is the column to use 
+#'   for calculating quantiles, and 'n_quantiles' specifies the number of quantiles 
+#'   to break the data into. Whether the quantiles are calculated in ascending or 
+#'   descending order can be set with 'quantile_direction'. If you want to use only 
+#'   a subset of samples to calculate the quantiles, they can be specified with 'quantile_samples'. 
+#'   Finally, the data can first be split into subgroups before quantiling,
 #'   such as TSR shape class.
 #'
-#' The ordering arguments can be used to control the order at which the TSSs or
-#'   TSRs are plotted.
-#' 'order_by' specifies the numeric column used to generate the order,
-#'   and whether the order is ascending or descending is controlled by 'order_direction'.
+#' The ordering arguments can be used to control the order in which the TSSs or
+#' TSRs are plotted. 'order_by' specifies the numeric column used to generate the order,
+#' and whether the order is ascending or descending is controlled by 'order_direction'.
 #' 'order_group' can be used to first split the data based on some categorical value,
-#'   such as TSR shape class.
+#' such as TSR shape class.
 #'
 #' If quantiles are not specified, 'grouping' may be used to split the data based on
-#'   a categorical value such as TSR shape class.
+#' a categorical value such as TSR shape class.
 #'
 #' @examples
 #' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
 #' TSSs <- readRDS(TSSs)
-#' tsre_exp <- tsr_explorer(TSSs)
-#' tsre_exp <- format_counts(tsre_exp, data_type="tss")
-#' tsre_exp <- tss_clustering(tsre_exp)
-#' tsre_exp <- tsr_metrics(tsre_exp)
+#' exp <- tsr_explorer(TSSs)
+#' exp <- format_counts(exp, data_type="tss")
+#' exp <- tss_clustering(exp)
+#' exp <- tsr_metrics(exp)
 #' conditions <- list(order_by="score", grouping="shape_class")
 #' assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
 #' seqs <- tss_sequences(
-#'   tsre_exp, genome_assembly=assembly, threshold=10,
+#'   exp, genome_assembly=assembly, threshold=10,
 #'   dominant=TRUE, data_conditions=conditions
 #' )
 #' plot_sequence_logo(seqs)
@@ -191,9 +185,9 @@ group_data <- function(
 #'
 #' Preliminary filtering of data
 #'
-#' @param signal_data TSS or TSR data
-#' @param dominant Whether to retain dominant TSS/TSR
-#' @param threshold Raw count threshold for a TSS or TSR to be considered
+#' @param signal_data TSS or TSR data.
+#' @param dominant Whether to use dominant TSS/TSR.
+#' @param threshold Raw count threshold for a TSS or TSR to be considered.
 #'
 #' @rdname preliminary_filter-function
 #' @export

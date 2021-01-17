@@ -6,7 +6,7 @@
 \usage{
 genomic_distribution(
   experiment,
-  data_type = c("tss", "tsr"),
+  data_type = c("tss", "tsr", "shift"),
   samples = "all",
   threshold = NULL,
   use_normalized = FALSE,
@@ -15,53 +15,52 @@ genomic_distribution(
 )
 }
 \arguments{
-\item{experiment}{TSRexploreR object with annotated TSRs}
+\item{experiment}{TSRexploreR object.}
 
-\item{data_type}{Whether to get distribution of TSSs or TSRs}
+\item{data_type}{Whether to get distribution of TSSs or TSRs.}
 
-\item{samples}{Either "all" or a vector of sample names}
+\item{samples}{A vector of sample names to analyze.}
 
-\item{threshold}{Raw count threshold for a TSS or TSR to be considered}
+\item{threshold}{TSSs or TSRs with a score below this value will not be considered.}
 
-\item{use_normalized}{Whether normalized or raw counts should be used}
+\item{use_normalized}{Whether to use the normalized (TRUE) or raw (FALSE) counts.}
 
-\item{dominant}{Whether only the dominant TSS per gene or TSR should be considered}
+\item{dominant}{If TRUE, will only consider the highest-scoring TSS per gene, transcript, or TSR or 
+highest-scoring TSR per gene or transcript.}
 
-\item{data_conditions}{Apply conditions to data (supports filtering and quantiles/grouping)}
+\item{data_conditions}{Apply advanced conditions to the data.}
 }
 \value{
-DataFrame with TSS or TSR genomic distribution stats
+DataFrame with TSS or TSR genomic distribution stats.
 }
 \description{
-Get genomic distribution of TSSs and TSRs
+Get genomic distribution of TSSs and TSRs.
 }
 \details{
-This function summarizes the distribution of TSSs or TSRs relative
-  to annotated genomic features (exons, introns, intergenic, 
-  downstream and promoter regions.)
-The promoter region is user defined when annotating the TSSs or TSRs.
+This function summarizes the distribution of TSSs or TSRs relative to annotated 
+genomic features (exons, introns, intergenic, downstream, and promoter regions).
+The promoter region is user-defined during annotation.
 
-A set of functions to control data structure for plotting are included.
-'threshold' defines the minimum number of raw counts a TSS or TSR
- must have to be considered.
-'dominant' specifies whether only the dominant TSS or TSR is considered 
-  (annotated by the 'mark_dominant' function).
-For TSSs this can be either dominant per TSR or gene, and for TSRs
-  it is just the dominant TSR per gene.
-'data_conditions' allows for the advanced filtering, ordering, and grouping
-  of data.
+A set of functions to control data structure for plotting are included. 'use_normalized' 
+will use  normalized scores, which only matters if 'consider_score' is TRUE.
+'threshold' defines the minimum number of raw counts a TSS or TSR must have to be 
+considered. dominant' specifies whether only the dominant TSS or TSR (determined
+using the 'mark_dominant' function) is considered. For TSSs, this can be either 
+dominant TSS per TSR or gene/transcript, and for TSRs it is the dominant TSR 
+per gene/transcript. 'data_conditionals' can be used to filter, quantile, order, 
+and/or group data for plotting.
 }
 \examples{
 TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
 TSSs <- readRDS(TSSs)
-tsre_exp <- tsr_explorer(TSSs)
-tsre_exp <- format_counts(tsre_exp, data_type="tss")
+exp <- tsr_explorer(TSSs)
+exp <- format_counts(exp, data_type="tss")
 annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
-tsre_exp <- annotate_features(
-  tsre_exp, annotation_data=annotation,
+exp <- annotate_features(
+  exp, annotation_data=annotation,
   data_type="tss", feature_type="transcript"
 )
-genomic_dist <- genomic_distribution(tsre_exp, data_type="tss")
+genomic_dist <- genomic_distribution(exp, data_type="tss")
 
 }
 \seealso{

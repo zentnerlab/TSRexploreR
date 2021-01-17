@@ -1,19 +1,52 @@
 #' TSS Shifting
 #'
-#' Calculate TSS shifting statistics
+#' @description 
+#' Analyze TSS shifts between samples within a consensus TSR set.
 #'
-#' @param experiment TSRexploreR object
+#' @inheritParams common_params
 #' @param sample_1 First sample to compare.
 #'   Vector with sample name for TSS and TSR,
-#'   with names 'TSS' and 'TSR'
+#'   with names 'TSS' and 'TSR'.
 #' @param sample_2 Second sample to compare.
 #'   Vector with sample name for TSS and TSR,
-#'   with names 'TSS' and 'TSR'
-#' @param tss_threshold Whether to filter out TSSs below a threshold
-#' @param min_distance TSRs less than this distance apart will be merged
-#' @param min_threshold Minimum number of raw counts required in each TSR for both TSR samples
-#' @param n_resamples Number of resamplings for permutation test
+#'   with names 'TSS' and 'TSR'.
+#' @param comparison_name Name assigned to the results in the TSRexploreR object.
+#' @param tss_threshold Minimum number of raw counts required at a TSS for it to
+#'   be considered in the shifting analysis.
+#' @param max_distance TSRs less than this distance apart will be merged.
+#' @param min_threshold Minimum number of raw counts required in each TSR for both samples.
+#' @param n_resamples Number of resamplings for permutation test.
 #'
+#' @examples
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
+#' TSSs <- readRDS(TSSs)
+#' exp <- tsr_explorer(TSSs)
+#' annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
+#' samples <- data.frame(sample_name = c(sprintf("S288C_D_%s", seq_len(3)), 
+#'                       sprintf("S288C_WT_%s", seq_len(3))),
+#'                       file_1=NA, file_2=NA,
+#'                       condition=c(rep("Diamide", 3), rep("Untreated", 3)))
+#' exp <- tsr_explorer(TSSs, genome_annotation=annotation, sample_sheet=samples) %>%
+#'   format_counts(data_type="tss") %>%
+#'   tss_clustering(threshold=3) %>%  
+#'   merge_samples(data_type="tss", merge_group="condition") %>%
+#'   merge_samples(data_type="tsr", merge_group="condition")
+#' exp <- tss_shift(exp, sample_1=c(TSS="Untreated", TSR="Untreated"),
+#'                                  sample_2=c(TSS="Diamide", TSR="Diamide"),
+#'                  comparison_name="Untreated_vs_Diamide",
+#'                  min_distance=100, min_threshold=10, n_resamples=1000L)
+#'
+#' @details
+#' This function assesses the difference between TSS distributions from two distinct samples
+#' in a set of consensus TSRs by calculating the earth mover's distance (EMD) between
+#' them. For this approach, we imagine that the two TSS distributions in questions are piles 
+#' of dirt, and ask how much dirt from one pile we would need to move, how far, and in which 
+#' direction, to mimic the distribution of the other sample. The resulting score is between 
+#' -1 and 1, with larger magnitudes indicating larger shifts and the sign indicating direction 
+#' (negative values indicate upstream shifts and positive values indicate downstream shifts). 
+#' The function also calculates a p-value for the null hypothesis that there is no difference 
+#' (EMD = 0) based on a permutation test.
+#' 
 #' @rdname tss_shift-function
 #' @export
 
@@ -21,10 +54,12 @@ tss_shift <- function(
   experiment,
   sample_1,
   sample_2,
+  comparison_name,
   tss_threshold=NULL,
-  min_distance=100,
+  max_distance=100,
   min_threshold=10,
-  n_resamples=1000L
+  n_resamples=1000L,
+  fdr_cutoff=0.05
 ){
 
   ## Input checks.
@@ -41,10 +76,15 @@ tss_shift <- function(
     is.null(tss_threshold) ||
     (is.numeric(tss_threshold) && tss_threshold >= 0)
   )
-  assert_that(is.count(min_distance))
+  assert_that(is.count(max_distance))
   assert_that(is.count(min_threshold) && min_threshold > 5)
   assert_that(is.integer(n_resamples) && n_resamples >= 100L)
-  
+  assert_that(
+    is.numeric(fdr_cutoff) &&
+    (fdr_cutoff <= 1 & fdr_cutoff > 0)
+  )
+  assert_that(is.string(comparison_name))
+
   ## Retrieve TSSs and TSRs.
   TSSs <- extract_counts(experiment, "tss", c(sample_1["TSS"], sample_2["TSS"]))
   TSRs <- extract_counts(experiment, "tsr", c(sample_1["TSR"], sample_2["TSR"]))
@@ -53,7 +93,7 @@ tss_shift <- function(
   consensus_TSRs <- TSRs %>%
     map(as_granges) %>%
     bind_ranges %>%
-    GenomicRanges::reduce(min.gapwidth=min_distance, ignore.strand=FALSE) %>%
+    GenomicRanges::reduce(min.gapwidth=max_distance, ignore.strand=FALSE) %>%
     as.data.table(key=c("seqnames", "strand", "start", "end"))
   consensus_TSRs[, FHASH := str_c(seqnames, start, end, strand, sep=":")]
 
@@ -80,7 +120,7 @@ tss_shift <- function(
   ## Get relative distances of each TSS in a TSR.
   overlap[, distance := ifelse(strand == "+", start - min(start), max(start) - start), by=FHASH]
 
-  ## Prepare table for shifting score calculation.
+  ## Prepare table for shift score calculation.
   overlap <- overlap %>%
     as_granges %>%
     sort %>%
@@ -95,25 +135,37 @@ tss_shift <- function(
     nthresh=min_threshold
   )
 
+  ## p-value correction for multiple comparisons.
   setDT(shifts)
   shifts[, FDR := p.adjust(pval, "fdr")]
   shifts <- shifts[order(FDR)]
 
-  return(shifts)
+  ## Switch signs on shifting score so upstream is negative and
+  ## downstream is positive.
+  shifts[, shift_score := shift_score * -1]
+
+  ## Filter out non-significant results.
+  shifts <- shifts[FDR < fdr_cutoff]
+
+  ## Add results to TSRexploreR object.
+  shifts[, c("start", "end") := list(as.numeric(start), as.numeric(end))]
+  experiment@shifting$results[[comparison_name]] <- shifts
+
+  return(experiment)
 }
 
-#' Shifting Score
+#' Shift Score
 #'
-#' Calculate shifting scores and associated permutation test p-values.
+#' Calculate shift scores and associated permutation test p-values.
 #'
 #' @importFrom Rcpp sourceCpp
 #'
-#' @param tss_table Table of TSSs perpared for shifting score calculation
-#' @param baseline_level The sample being used as the baseline for calculation
-#' @param calc_pvalue Whether p-values should be returned for comparisons
-#' @param nresamp Number of resamplings for the permutation test
-#' @param nthresh Both samples must have at least this number of reads in each TSR
-#' @param check_sort Check that the input is sorted properly (by fhash? qq)
+#' @param tss_table Table of TSSs prepared for shifting score calculation.
+#' @param baseline_level The sample being used as the baseline for calculation.
+#' @param calc_pvalue Whether p-values should be returned for comparisons.
+#' @param nresamp Number of resamplings for permutation test.
+#' @param nthresh Minimum number of raw counts required in each TSR for both samples.
+#' @param check_sort Check that the input is sorted properly.
 #'
 #' @rdname ShiftScores-function
 #' @export
@@ -139,7 +191,7 @@ ShiftScores <- function(
 
   if(check_sort) dat <- dplyr::arrange(dat, fhash, sample_indicator, distances)
 
-  ## Filter out TSRs where one of samples has too low a score.
+  ## Filter out TSRs where one of the samples has too low a score.
   out_frame <- dat %>%
     dplyr::group_by(fhash, sample_indicator) %>%
     dplyr::summarise(sum_score=sum(scores)) %>% 
@@ -162,7 +214,7 @@ ShiftScores <- function(
     dplyr::filter(dplyr::n_distinct(sample_indicator) == 2) %>%
     dplyr::ungroup()
 
-  ## Calculate the shifting score.
+  ## Calculate the shift score.
   out <- with(
     dat, ## returns a 2 by n_distinct matrix
     allTheShiftScores(
@@ -171,9 +223,9 @@ ShiftScores <- function(
     )
   )
 
-  ## Add the coordinates back to the shifting score.
+  ## Add the coordinates back to the shift score.
   
-  ## altered to avoid warning message on naming
+  ## Altered to avoid warning message on naming.
   out <- t(out)
   colnames(out) <- c("shift_score", "pval")
   outdf <- as_tibble(out)

@@ -5,29 +5,37 @@
 \title{Plot Heatmap}
 \usage{
 plot_heatmap(
-  heatmap_matrix,
-  max_value = 5,
-  ncol = 1,
-  background_color = "#F0F0F0",
-  low_color = "#56B1F7",
-  high_color = "#132B43",
+  experiment,
+  samples = "all",
+  data_type = c("tss", "tsr"),
+  upstream = 1000,
+  downstream = 1000,
+  threshold = NULL,
+  use_normalized = FALSE,
+  dominant = FALSE,
+  data_conditions = list(order_by = "score"),
   ...
 )
 }
 \arguments{
-\item{heatmap_matrix}{TSS or TSR heatmap matrix from tss_heatmap_matrix ot tsr_heatmap_matrix}
+\item{experiment}{TSRexploreR object.}
 
-\item{max_value}{Max log2 (+ 1? qq) value at which to truncate heatmap color}
+\item{samples}{A vector of sample names to analyze.}
 
-\item{ncol}{Number of columns to use when plotting multiple samples}
+\item{upstream}{Bases upstream to consider}
 
-\item{background_color}{The color of the heatmap background (is this the 0 value? qq)}
+\item{downstream}{bases downstream to consider}
 
-\item{low_color}{The low value gradient color}
+\item{threshold}{TSSs or TSRs with a score below this value will not be considered.}
 
-\item{high_color}{The high value gradient color}
+\item{use_normalized}{Whether to use the normalized (TRUE) or raw (FALSE) counts.}
 
-\item{...}{Arguments passed to geom_tile}
+\item{dominant}{If TRUE, will only consider the highest-scoring TSS per gene, transcript, or TSR or 
+highest-scoring TSR per gene or transcript.}
+
+\item{data_conditions}{Apply advanced conditions to the data.}
+
+\item{...}{Additional arguments passed to Heatmap}
 }
 \value{
 ggplot2 object of TSS or TSR heatmap

@@ -1,14 +1,15 @@
 #' Import BAMs
+#' 
+#' Import alignment BAM files.
 #'
 #' @importFrom GenomicAlignments readGAlignmentPairs readGAlignments
-#' @importFrom Rsamtools ScanBamParam scanBamFlag
 #'
-#' @param experiment tsr explorer object
-#' @param paired Whether the BAMs are paired (TRUE) or unpaired (FALSE)
-#' @param sample sheet to import bams
-#' @param soft_remove Remove read if greater than this number of soft-clipped bases.
+#' @inheritParams common_params
+#' @param paired Whether the BAMs are paired (TRUE) or unpaired (FALSE).
+#' @param soft_remove Remove read if greater than this number of soft-clipped bases 
+#'   are present at its 5' end.
 #' @param proper_pair Whether reads should be properly paired for paired end data.
-#'   TRUE by default when data is paired end.
+#'   TRUE by default when data is paired-end.
 #' @param remove_seconday Remove non-primary reads.
 #'
 #' @export
@@ -129,7 +130,7 @@ import_bams <- function(
 #' @description
 #' Aggregate overlapping TSSs into a total sum score.
 #'
-#' @param experiment tsr explorer object
+#' @inheritParams common_params
 #'
 #' @export
 
@@ -138,7 +139,7 @@ tss_aggregate <- function(experiment) {
   ## Check inputs.
   assert_that(is(experiment, "tsr_explorer"))
 
-  ## Pull samples out.
+  ## Get samples.
   samples <- experiment@experiment$TSSs
 
   ## Aggregate TSSs.
@@ -149,19 +150,19 @@ tss_aggregate <- function(experiment) {
     return(x)
   })
 
-  ## Add samples back.
+  ## Add samples back to TSRexploreR object.
   experiment@experiment$TSSs <- samples
 
   return(experiment)
 }
 
-#' Correct G
+#' Correct G artifact
 #'
 #' @description
-#' Correct overrepresentation of G TSSs
+#' Correct overrepresentation of 5' G bases added during reverse transcription.
 #'
-#' @param experiment tsr explorer object
-#' @param assembly Fasta assembly of genome or BSgenome object.
+#' @param experiment TSRexploreR object.
+#' @param assembly Genome assembly in FASTA or BSgenome format.
 #'
 #' @export
 
@@ -223,7 +224,7 @@ G_correction <- function(
     return(x)
   })
 
-  ## Add data back to tsr explorer object.
+  ## Add data back to TSRexploreR object.
   select_samples <- map(select_samples, as_granges)
   experiment@experiment$TSSs <- select_samples
 

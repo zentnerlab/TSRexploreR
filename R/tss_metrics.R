@@ -1,43 +1,39 @@
 #' Mark Dominant
 #'
 #' @description
-#' Mark TSSs as dominant TSS per TSR or gene, or TSRs as dominant per gene. 
+#' Mark TSSs as dominant per TSR or gene/transcript, or TSRs as dominant per gene/transcript. 
 #'
-#' @param experiment TSRexploreR object with annotated TSSs/TSRs
-#' @param data_type Either 'tss' or 'tsr'
-#' @param threshold Read threshold for TSS/TSRs
-#' @param use_normalized Whether to use normalized counts
-#' @param mark_per By default marks dominant TSR per gene, and dominant TSS per TSR.
+#' @inheritParams common_params
+#' @param data_type Whether to mark dominant TSSs or TSRs.
+#' @param mark_per By default, the function marks dominant TSR per gene, and dominant TSS per TSR.
 #'   TSSs can also be set per as dominant TSS per 'gene'.
 #'
 #' @details
-#' This function marks which TSSs are dominant per TSR or gene,
-#'   or which TSR is dominant per gene.
-#' Analysis of dominant features may help to cut through the noise to get
-#'   information such as the primary 5' UTR, sequence features associated with the
-#'   the strongest TSS, and other related questions.
+#' This function marks which TSSs are dominant per TSR or gene, or which TSR is
+#' dominant per gene. Analysis of dominant features may help to cut through the 
+#' noise to get information such as the length of the primary 5' UTR and sequence
+#' features associated with the the strongest TSS.
 #'
-#' Setting a 'threshold' will only mark a TSS or TSR as dominant if their score
-#'    is greater than or equal to the threshold.
+#' Setting a 'threshold' will only mark a TSS or TSR as dominant if its score 
+#' is greater than or equal to the threshold.
 #'
-#' 'mark_per' controls the behavior of the function.
-#' For TSSs 'default' will mark dominant TSS per TSR, and for TSRs the dominant
-#'   TSR per gene is marked.
-#' for TSSs, 'gene' can also be specified, which will mark the dominant TSS per gene.  
+#' 'mark_per' controls the behavior of the function. For TSSs 'default' will mark,
+#' dominant TSS per TSR, and for TSRs the dominant TSR per gene is marked. For TSSs, 
+#' 'gene' can also be specified, which will mark the dominant TSS per gene.  
 #'
 #' @examples
 #' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
 #' TSSs <- readRDS(TSSs)
-#' tsre_exp <- tsr_explorer(TSSs)
-#' tsre_exp <- format_counts(tsre_exp, data_type="tss")
-#' tsre_exp <- tss_clustering(tsre_exp)
-#' tsre_exp <- associate_with_tsr(tsre_exp, sample_list=list(
+#' exp <- tsr_explorer(TSSs)
+#' exp <- format_counts(exp, data_type="tss")
+#' exp <- tss_clustering(exp)
+#' exp <- associate_with_tsr(exp, sample_list=list(
 #'   "S288C_WT_1"="S288C_WT_1", "S288C_WT_2"="S288C_WT_2", "S288C_WT_3"="S288C_WT_3",
 #'   "S288C_D_1"="S288C_D_1", "S288C_D_2"="S288C_D_2", "S288C_D_3"="S288C_D_3"
 #' ))
-#' tsre_exp <- mark_dominant(tsre_exp, data_type="tss")
+#' exp <- mark_dominant(exp, data_type="tss")
 #'
-#' @return tsr exlorer object with dominant status added to TSSs or TSRs.
+#' @return TSRexploreR object with dominant status added to TSSs or TSRs.
 #'
 #' @seealso
 #' \code{\link{associate_wth_tsr}} to associate TSSs with TSRs prior to marking
@@ -51,25 +47,40 @@ mark_dominant <- function(
   data_type=c("tss", "tsr"),
   threshold=NULL,
   use_normalized=FALSE,
-  mark_per="default"
+  mark_per="default",
+  exclude_antisense=TRUE
 ) {
 
   ## Check inputs.
   assert_that(is(experiment, "tsr_explorer"))
   data_type <- match.arg(str_to_lower(data_type), c("tss", "tsr"))
-  assert_that(is.count(threshold))
+  assert_that(
+    is.null(threshold) ||
+    (is.numeric(threshold) && threshold >= 0)
+  )
   mark_per <- match.arg(str_to_lower(mark_per), c("default", "gene"))
 
   ## Select samples.
   select_samples <- extract_counts(experiment, data_type, "all", use_normalized)
 
-  ## Mark dominant TSS/TSR per gene if requested.
-  if (data_type == "tsr" | (data_type == "tss" & mark_per == "gene")) {
+  ## Set threshold to 0 if not supplied.
+  if (is.null(threshold)) threshold <- 0
+
+  ## Mark whether antisense should be excluded
+  anno_remove <- ifelse(
+    exclude_antisense,
+    c("Downstream", "Intergenic", "Antisense"),
+    c("Downstream", "Intergenic")
+  )
+
+  ## Mark dominant TSS per gene if requested.
+  if (data_type == "tss" & mark_per == "gene") {
     dominant <- map(select_samples, function(x) {
-      x[,
+      x[
+        !is.na(TSR_FHASH),
         dominant := (
           score == max(score) &
-          !simple_annotations %in% c("Downstream", "Intergenic") &
+          !simple_annotations %in% anno_remove &
           score >= threshold
         ),
         by=eval(ifelse(
@@ -80,11 +91,30 @@ mark_dominant <- function(
 
       return(x)
     })
-  
+    
+  ## Mark the dominant TSR per gene if requested.
+  } else if (data_type == "tsr") {
+    dominant <- map(select_samples, function(x) {
+      x[,
+        dominant := (
+          score == max(score) &
+          !simple_annotations %in% anno_remove &
+          score >= threshold
+        ),
+        by=eval(ifelse(
+          experiment@settings$annotation[, feature_type] == "transcript",
+          "transcriptId", "geneId"
+        ))
+      ]
+
+      return(x)
+    })
+    
   ## Mark the dominant TSS per TSR if requested.
   } else if (data_type == "tss" & mark_per == "default") {
     dominant <- map(select_samples, function(x) {
-      x[,
+      x[
+        !is.na(TSR_FHASH),
         dominant := (
           !is.na(score) &
           score == max(score) &
@@ -108,17 +138,15 @@ mark_dominant <- function(
 
 #' Max UTR Length
 #'
-#' Get TSS with furthest distance
+#' Get TSS with furthest distance to the annotated gene start.
 #'
-#' @param experiment TSRexploreR object with annotated TSSs
-#' @param samples Either 'all' or names of sample to analyze
-#' @param threshold Number of reads required for each TSS
-#' @param max_upstream Max upstream distance of TSS to consider
-#' @param max_downstream Max downstream distance of TSS to consider
-#' @param feature_type Feature type used when finding distance to TSS ("geneId", "transcriptId")
-#' @param quantiles Number of quantiles to break data into.
+#' @inheritParams common_params
+#' @param threshold Number of reads required for each TSS.
+#' @param max_upstream Max upstream distance of TSS to consider.
+#' @param max_downstream Max downstream distance of TSS to consider.
+#' @param feature_type Feature type used when finding distance to TSS ("geneId", "transcriptId").
 #'
-#' @return tibble with max UTR length for features
+#' @return tibble with max UTR length for features.
 #'
 #' @rdname max_utr-function
 #'
@@ -133,7 +161,7 @@ max_utr <- function(
   feature_type=c("geneId", "transcriptId"),
   quantiles=NA
 ) {
-  ## Grab selected samples.
+  ## Get selected samples.
   max_utr <- experiment %>%
     extract_counts("tss", samples) %>%
     bind_rows(.id="sample") %>%

@@ -35,7 +35,6 @@ Imports:
     Biostrings,
     ChIPseeker,
     edgeR,
-    GGally,
     S4Vectors,
     SummarizedExperiment,
     Gviz,
@@ -50,13 +49,17 @@ Imports:
     apeglm,
     CAGEr,
     PCAtools,
-    GenomeInfoDb
+    GenomeInfoDb,
+    Cairo
 Depends:
     R (>= 3.5.0)
 Suggests:
     clusterProfiler,
     TSRchitect,
-    org.Sc.sgd.db
+    org.Sc.sgd.db,
+    testthat,
+    TxDb.Scerevisiae.UCSC.sacCer3.sgdGene,
+    BSgenome.Scerevisiae.UCSC.sacCer3
 RoxygenNote: 7.1.1
 Collate: 
     'RcppExports.R'
@@ -83,9 +86,12 @@ Collate:
     'motif.R'
     'normalize.R'
     'package_imports.R'
+    'params.R'
     'prepare_counts.R'
     'rnaseq.R'
     'sample_sheet.R'
+    'sequences.R'
+    'shifting_plots.R'
     'softclip_analysis.R'
     'thresholding.R'
     'tsr_metrics.R'

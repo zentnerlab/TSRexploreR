@@ -14,19 +14,22 @@ import_bams(
 )
 }
 \arguments{
-\item{experiment}{tsr explorer object}
+\item{experiment}{TSRexploreR object.}
 
-\item{paired}{Whether the BAMs are paired (TRUE) or unpaired (FALSE)}
+\item{paired}{Whether the BAMs are paired (TRUE) or unpaired (FALSE).}
 
-\item{soft_remove}{Remove read if greater than this number of soft-clipped bases.}
+\item{sample_sheet}{A sample sheet data.frame or tab delimited file.
+Must have the columns 'sample_name', 'file_1', and 'file_2'.
+Additional meta-data columns can be added with sample information such as condition and batch.}
+
+\item{soft_remove}{Remove read if greater than this number of soft-clipped bases 
+are present at its 5' end.}
 
 \item{proper_pair}{Whether reads should be properly paired for paired end data.
-TRUE by default when data is paired end.}
-
-\item{sample}{sheet to import bams}
+TRUE by default when data is paired-end.}
 
 \item{remove_seconday}{Remove non-primary reads.}
 }
 \description{
-Import BAMs
+Import alignment BAM files.
 }

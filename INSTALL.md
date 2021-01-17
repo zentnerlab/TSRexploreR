@@ -23,10 +23,11 @@ r-tidyverse \
 r-data.table \
 r-devtools \
 r-ggseqlogo \
-r-ggally \
 r-cowplot \
 r-rcpp \
 r-assertthat \
+r-testthat \
+r-cairo \
 bioconductor-apeglm \
 bioconductor-genomicranges \
 bioconductor-genomicfeatures \
@@ -46,6 +47,8 @@ bioconductor-biocgenerics \
 bioconductor-plyranges \
 bioconductor-pcatools \
 bioconductor-GenomeInfoDb
+bioconductor-bsgenome.scerevisiae.ucsc.saccer3 \
+bioconductor-txdb.scerevisiae.ucsc.saccer3.sgdgene
 
 conda activate TSRexploreR
 ```

@@ -15,19 +15,20 @@ dinucleotide_frequencies(
 )
 }
 \arguments{
-\item{experiment}{TSRexploreR object with TSS GRanges}
+\item{experiment}{TSRexploreR object.}
 
-\item{genome_assembly}{fasta file or BSgenome of genome assembly}
+\item{genome_assembly}{Genome assembly in FASTA or BSgenome format.}
 
-\item{samples}{Either 'all' to plot all samples or a vector of sample names}
+\item{samples}{A vector of sample names to analyze.}
 
-\item{threshold}{Raw TSS count threshold}
+\item{threshold}{TSSs or TSRs with a score below this value will not be considered.}
 
-\item{use_normalized}{Whether to use normalized counts}
+\item{use_normalized}{Whether to use the normalized (TRUE) or raw (FALSE) counts.}
 
-\item{dominant}{Consider only dominant TSSs}
+\item{dominant}{If TRUE, will only consider the highest-scoring TSS per gene, transcript, or TSR or 
+highest-scoring TSR per gene or transcript.}
 
-\item{data_conditions}{Condition the data}
+\item{data_conditions}{Apply advanced conditions to the data.}
 }
 \value{
 DataFrame with dinucleotide frequencies

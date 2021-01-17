@@ -1,18 +1,27 @@
 
 #' Generate Count Matrix.
 #'
-#' @param count_data Names list of counts.
-#' @param use_normalized Whether to use normalized counts.
+#' @inheritParams common_params
+#' @param count_data Named list of counts.
 
 .count_matrix <- function(
   count_data,
   data_type=c("tss", "tsr"),
-  use_normalized=FALSE
+  use_normalized=FALSE,
+  threshold=NULL
 ) {
 
   ## Input check.
   assert_that(is.list(count_data) && has_attr(count_data, "names"))
+  data_type <- match.arg(
+    str_to_lower(data_type),
+    c("tss", "tsr")
+  )
   assert_that(is.flag(use_normalized))
+  assert_that(
+    is.null(threshold) ||
+    (is.numeric(threshold) && threshold > 0)
+  )
 
   ## Change scores to normalized scores if requested.
   if (use_normalized) {

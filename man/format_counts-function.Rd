@@ -7,11 +7,11 @@
 format_counts(experiment, data_type = c("tss", "tsr"), samples = "all")
 }
 \arguments{
-\item{experiment}{TSRexploreR object}
+\item{experiment}{TSRexploreR object.}
 
 \item{data_type}{Whether to format TSS or TSR counts}
 
-\item{samples}{Character vector of sample names}
+\item{samples}{A vector of sample names to analyze.}
 }
 \value{
 TSRexploreR object with properly formatted features

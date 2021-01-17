@@ -7,11 +7,11 @@
 extract_de(experiment, data_type, de_comparisons = "all")
 }
 \arguments{
-\item{experiment}{TSRexploreR object}
+\item{experiment}{TSRexploreR object.}
 
-\item{data_type}{Either 'tss', 'tsr', 'tss_features', or 'tsr_features'}
+\item{data_type}{Either 'tss', 'tsr', 'tss_features', or 'tsr_features'.}
 
-\item{de_comparisons}{The comparison sets to extract}
+\item{de_comparisons}{The comparison sets to extract.}
 }
 \description{
 Extract differential expression analysis results.

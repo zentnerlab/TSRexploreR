@@ -5,7 +5,7 @@
 #'
 #' @importFrom PCAtools pca biplot
 #'
-#' @param experiment TSRexploreR object
+#' @inheritParams common_params
 #' @param data_type Either 'tss', 'tsr', 'tss_features', or 'tsr_features'
 #' @param remove_var Remove features in this bottom fraction
 #' @param center center the data

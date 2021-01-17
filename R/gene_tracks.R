@@ -1,28 +1,27 @@
-#' Gene Tracks by Gene
+#' Gene Tracks
 #'
 #' @description
 #' Generate gene tracks in GViz by gene name.
 #'
 #' @importFrom Gviz GeneRegionTrack DataTrack AnnotationTrack plotTracks
+#'   GenomeAxisTrack
 #' @importFrom stringr str_count
 #' @importFrom GenomicFeatures genes transcripts promoters
 #'
-#' @param experiment TSRexploreR object
-#' @param genome_annotation Genome annotation GTF/GFF file, or TxDb object
-#' @param feature_name Name of gene or transcript to plot
+#' @inheritParams common_params
+#' @param feature_name Name of gene or transcript to plot.
 #' @param feature_type Either 'gene' or 'transcript'
-#' @param samples Names of samples to plot.
-#'   Append sample names with 'TSS:' or 'TSR:' for TSS and TSR tracks respectively.
-#' @param threshold TSSs and TSRs below threshold are excluded from plotting
-#' @param use_normalized Whether to use normalized counts
-#' @param upstream bases upstream to extend gene or promoter track
-#' @param downstream bases downstream to extend gene or promoter track
-#' @param promoter_only Instead of plotting the entire gene, plot the promoter region
-#' @param use_normalized Use CPM normalized reads or not
-#' @param tss_colors Either a single color value for all TSS tracks, or a vector of colors
-#' @param tsr_colors Either a single color value for all TSR tracks, or a vector of colors
-#' @param axis_scale Relative size scale for axis text and title
-#' @param ymax Maximum value on Y axis for all TSS tracks
+#' @param samples Names of samples to plot. Append sample names with 'TSS:' or 'TSR:' 
+#' for TSS and TSR tracks, respectively.
+#' @param upstream Bases upstream to extend gene or promoter track.
+#' @param downstream Bases downstream to extend gene or promoter track.
+#' @param promoter_only Instead of plotting the entire gene, plot only the promoter region.
+#' @param tss_colors Either a single color value for all TSS tracks, or a vector of colors.
+#' @param tsr_colors Either a single color value for all TSR tracks, or a vector of colors.
+#' @param axis_scale Relative size scale for axis text and title.
+#' @param ymax Maximum value on y-axis for all TSS tracks.
+#' @param anno_pos Genome annotation and axis track position.
+#'   Either 'top' or 'bottom'.
 #'
 #' @rdname gene_tracks-function
 #' @export
@@ -41,7 +40,8 @@ gene_tracks <- function(
   tss_colors="black",
   tsr_colors="black",
   axis_scale=0.25,
-  ymax=NA
+  ymax=NA,
+  anno_pos="top"
 ) {
 
   ## Input checks.
@@ -66,6 +66,10 @@ gene_tracks <- function(
   assert_that(is.character(tsr_colors))
   assert_that(is.numeric(axis_scale) && axis_scale > 0)
   assert_that(is.na(ymax) || is.numeric(ymax))
+  anno_pos <- match.arg(
+    str_to_lower(anno_pos),
+    c("top", "bottom")
+  )
 
   ## Prepare genome annotation.
   anno <- .prepare_annotation(genome_annotation, experiment)
@@ -103,7 +107,7 @@ gene_tracks <- function(
     "gene"=feature_ranges[feature_ranges$gene_id == feature_name, ]
   )
 
-  ## Grab selected samples and convert to granges.
+  ## Get selected samples and convert to granges.
   use_tss <- any(names(samples) == "tss")
   use_tsr <- any(names(samples) == "tsr")
 
@@ -207,7 +211,20 @@ gene_tracks <- function(
   })
 
   tracks <- purrr::flatten(tracks)
-  tracks <- c(list("genome_track"=genome_track), tracks)
+
+  if (anno_pos == "top") {
+    tracks <- c(
+      list("axis_track"=GenomeAxisTrack()),
+      list("genome_track"=genome_track),
+      tracks
+    )
+  } else if (anno_pos == "bottom") {
+    tracks <- c(
+      tracks,
+      list("genome_track"=genome_track),
+      list("axis_track"=GenomeAxisTrack())
+    )
+  }
 
   plotTracks(
     tracks,

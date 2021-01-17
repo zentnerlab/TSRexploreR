@@ -1,95 +1,37 @@
-#' CPM Normalize Counts
+#' Normalize TSS counts
 #'
 #' @description
-#' CPM normalize the TSS, TSR, and/or feature counts.
+#' edgeR, DESeq2, or CPM normalization of TSSs or gene/transcript counts.
 #'
-#' @param experiment TSRexploreR object
-#' @param data_type 'tss', 'tsr', 'tss_features', or 'tsr_features'
+#' @inheritParams common_params
+#' @param data_type Whether TSS or gene/transcript counts should be normalized.
+#' @param normalization_method Either 'edgeR', 'DESeq2', or 'CPM'.
+#' @param n_samples Filter out TSSs or features not meeting the the selected threshold
+#'   in this number of samples.
 #'
 #' @details
-#' Counts Per Million (CPM) is an approach for read number normalization, 
-#'   allowing comparison between samples for various downstream analyses and plots.
-#' For more quantitative comparisons, TMM normalization is recommended (this should be fleshed out more qq)
+#' This function performs one of three normalizations on TSS or gene/transcript counts. The
+#' simplest of these is counts per million (CPM), which accounts for sequencing depth. While
+#' CPM is appropriate for comparing replicates, it is considered to be too simple for cases
+#' in which there are expected to be substantial differences in RNA composition between samples.
+#' For between-sample comparisons, the trimmed median of M-values (TMM) or median-of-ratios (MOR)
+#' approaches, implemented in edgeR and DESeq2, respectively, can be used. Both of these methods
+#' are designed to reduce the impact of library size on such comparisons. Prior to TMM or MOR
+#' normalization, it is recommend to remove features with few or no reads, as they may bias the 
+#' final results. To facilitate this filtering, two arguments are provided: 'threshold' and 
+#' 'n_samples'. Features must have greater than or equal to 'threshold' number of raw counts 
+#' in at least 'n_samples' number of samples to proceed through normalization.
 #'
-#' @return TSRexploreR object with CPM values.
+#' @return TSRexploreR object with normalized counts.
 #'
 #' @examples
 #' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
 #' TSSs <- readRDS(TSSs)
-#' tsre_exp <- tsr_explorer(TSSs)
-#' tsre_exp <- format_counts(tsre_exp, data_type="tss")
-#' tsre_exp <- cpm_normalize(tsre_exp, data_type="tss")
+#' exp <- tsr_explorer(TSSs)
+#' exp <- format_counts(exp, data_type="tss")
+#' exp <- normalize_counts(exp, data_type="tss", method="DESeq2")
 #'
-#' @rdname cpm_normalize-function
-
-cpm_normalize <- function(
-  experiment,
-  data_type=c("tss", "tsr", "tss_features", "tsr_features")
-) {
-
-  ## Check inputs.
-  assert_that(is(experiment, "tsr_explorer"))
-  data_type <- match.arg(str_to_lower(data_type), c("tss", "tsr", "tss_features", "tsr_features"))
-
-  ## Get selected samples.
-  select_samples <- switch(
-    data_type,
-    "tss"=experiment@counts$TSSs$raw,
-    "tsr"=experiment@counts$TSRs$raw,
-    "tss_features"=experiment@counts$TSS_features$raw,
-    "tsr_features"=experiment@counts$TSR_features$raw
-  )
-
-  ## CPM normalize counts.
-  cpm_counts <- select_samples %>%
-    map(function(x) {
-      x[, cpm := cpm(score)]
-      return(x)
-    })
-
-  ## Add CPM-normalized counts back to TSRexploreR object.
-  experiment <- set_count_slot(
-    experiment, cpm_counts,
-    "counts", data_type, "raw"
-  )
-
-  return(experiment)
-}
-
-#' TMM Normalize TSSs or TSRs
-#'
-#' @description
-#' Using edgeR to TMM normalize TSSs or TSRs.
-#'
-#' @param experiment TSRexploreR object
-#' @param data_type Whether TSSs, TSRs, or RNA-seq & 5' feature counts should be normalized
-#' @param normalization_method Either 'edgeR', 'DESeq2', or 'CPM'
-#' @param threshold Consider only features with at least this number of raw counts
-#' @param n_samples Filter out positions without features meeting the the selected threshold
-#'   in this number of samples
-#'
-#' @details
-#' The TMM normalization method, employed by edgeR, is designed to reduce the influence of
-#'   library size on inter-sample comparisons.
-#'
-#' For TMM normalization, it is recommended to remove features with few or no reads as
-#'   these may bias the final results.
-#' To facilitate this filtering, two arguments are provided, 'threshold' and 'n_samples'.
-#' Features must have greater than or equal to 'threshold' number of raw counts in at least
-#'   'n_samples' number of samples to be retained.
-#'
-#' @return TSRexploreR object with tmm normalized count matrices
-#'
-#' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-#' TSSs <- readRDS(TSSs)
-#' tsre_exp <- tsr_explorer(TSSs)
-#' tsre_exp <- format_counts(tsre_exp, data_type="tss")
-#' tsre_exp <- count_matrix(tsre_exp, data_type="tss")
-#' tsre_exp <- tmm_normalize(exp, data_type="tss")
-#'
-#' @seealso \code{\link{count_matrix}} to prepare the matrices.
-#'   \code{\link{plot_correlation}} for various correlation plots.
+#' @seealso \code{\link{plot_correlation}} for correlation analysis and visualization.
 #'
 #' @rdname normalize_counts-function
 #' @export
@@ -111,6 +53,9 @@ normalize_counts <- function(
   method <- match.arg(str_to_lower(method), c("edger", "deseq2", "cpm"))
   assert_that(is.count(threshold))
   assert_that(is.count(n_samples))
+  if (method == "DESeq2") {
+    assert_that(!is.null(experiment@meta_data$sample_sheet))
+  }
 
   ## Get selected samples.
   select_samples <- extract_counts(experiment, data_type, "all")
@@ -162,7 +107,7 @@ normalize_counts <- function(
   return(experiment)
 }
 
-#' edgeR Normalize
+#' edgeR Normalization
 #'
 #' @param count_matrix count matrix
 
@@ -180,12 +125,12 @@ normalize_counts <- function(
   return(normalized_counts)   
 }
 
-#' DESeq2 Normalize
+#' DESeq2 Normalization
 #'
-#' @param count_matrix count matrix
-#' @param design design formula
-#' @param coldata column data
-#' @param blind Whether normalization is blind
+#' @param count_matrix count matrix.
+#' @param design design formula.
+#' @param coldata column data.
+#' @param blind Whether normalization is blind.
 
 .deseq2_normalize <- function(count_matrix, coldata) {
 
@@ -193,7 +138,7 @@ normalize_counts <- function(
   assert_that(is.matrix(count_matrix))
   assert_that(is.data.frame(coldata))
 
-  ## DESeq2 Normalization.
+  ## DESeq2 normalization.
   normalized_counts <- count_matrix %>%
     DESeqDataSetFromMatrix(colData=coldata, design= ~ 1) %>%
     estimateSizeFactors %>%

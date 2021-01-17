@@ -1,48 +1,42 @@
 #' Genes/Transcripts Detected
 #'
 #' @description
-#' Get the number of genes or transcripts with an associated unique TSS or TSR
+#' Get the number of genes or transcripts with an associated unique TSS or TSR.
 #'
-#' @param experiment TSRexploreR object with annotated TSSs or TSRs
-#' @param samples Either 'all' or a vector of sample names
-#' @param data_type Whether TSSs or TSRs should be analyzed
-#' @param threshold The number of raw reads required for a TSS or TSR to be considered
-#' @param dominant Whether to consider only the dominant TSS or TSR
-#' @param condition_data Apply conditions to data (supports filtering and quantiles/grouping)
+#' @inheritParams common_params
+#' @param data_type Whether TSSs or TSRs should be analyzed.
 #'
 #' @details
-#' This function will return either the number of genes or transcripts with
-#'  an associated unique TSS or TSR.
-#' Information on whether the feature has a promoter-proximal TSS or TSR is included
-#'   in the output for plotting purposes.
+#' This function will returnthe number of genes or transcripts with an associated 
+#' unique TSS or TSR. Information on whether the feature has a promoter-proximal 
+#' TSS or TSR is included in the output for plotting purposes.
 #'
-#' A set of functions to control data structure for plotting are included.
-#' 'threshold' will define the minimum number of reads a TSS or TSR
-#'  must have to be considered.
-#' 'dominant' specifies whether only the dominant TSS or TSR is considered 
-#'   from the 'mark_dominant' function.
-#' For TSSs this can be either dominant per TSR or gene, and for TSRs
-#'   it is just the dominant TSR per gene.
-#' 'data_conditions' allows for the advanced filtering, ordering, and grouping
-#'   of data.
+#' A set of functions to control data structure for plotting are included. 'use_normalized' 
+#' will use  normalized scores, which only matters if 'consider_score' is TRUE.
+#' 'threshold' defines the minimum number of raw counts a TSS or TSR must have to be 
+#' considered. dominant' specifies whether only the dominant TSS or TSR (determined
+#' using the 'mark_dominant' function) is considered. For TSSs, this can be either 
+#' dominant TSS per TSR or gene/transcript, and for TSRs it is the dominant TSR 
+#' per gene/transcript. 'data_conditionals' can be used to filter, quantile, order, 
+#' and/or group data for plotting.
 #'
 #' @return DataFrame of detected feature numbers.
 #'
 #' @examples
 #' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
 #' TSSs <- readRDS(TSSs)
-#' tsre_exp <- tsr_explorer(TSSs)
-#' tsre_exp <- format_counts(tsre_exp, data_type="tss")
+#' exp <- tsr_explorer(TSSs)
+#' exp <- format_counts(exp, data_type="tss")
 #' annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
-#' tsre_exp <- annotate_features(
-#'   tsre_exp, annotation_data=annotation,
+#' exp <- annotate_features(
+#'   exp, annotation_data=annotation,
 #'   data_type="tss", feature_type="transcript"
 #' )
-#' detected <- detect_features(tsre_exp, data_type="tss")
+#' detected <- detect_features(exp, data_type="tss")
 #'
 #' @seealso
 #' \code{\link{annotate_features}} to annotate the TSSs and TSRs.
-#' \code{\link{plot_detected_features}} to plot detected features.
+#' \code{\link{plot_detected_features}} to plot numbers of detected features.
 #'
 #' @rdname detect_features-function
 #' @export
@@ -73,7 +67,7 @@ detect_features <- function(
     extract_counts(data_type, samples, use_normalized) %>%
     preliminary_filter(dominant, threshold)
   
-  ## Apply data conditioning if set.
+  ## Apply data conditioning if requested
   if (data_type %in% c("tss", "tsr") && all(!is.na(condition_data))) {
     sample_data <- do.call(group_data, c(list(signal_data=sample_data), condition_data))
   }
@@ -116,9 +110,9 @@ detect_features <- function(
 
 #' Calculate Feature Counts
 #'
-#' @param sample_data Sample data
-#' @param data_type Type of data
-#' @param groupings Whether there is a grouping variable
+#' @param sample_data Sample data.
+#' @param data_type Type of data.
+#' @param groupings Whether there is a grouping variable.
 
 .count_features <- function(sample_data, data_type, groupings) {
   if (data_type %in% c("tss", "tsr")) {
@@ -153,32 +147,32 @@ detect_features <- function(
 #'
 #' @importFrom stringr str_to_title
 #'
-#' @param detected_features DataFrame of detected feature counts from detect_features
-#' @param ... Arguments passed to geom_col
+#' @param detected_features DataFrame of detected feature counts from detect_features.
+#' @param ... Arguments passed to geom_col.
 #'
 #' @details
-#' This plotting function returns a stacked bar-plot showing the number of
-#'   features detected with and without a promoter proximal TSS or TSR.
-#' The information is first prepared using the 'detect_features' function.
+#' This plotting function returns a stacked barplot showing the number of
+#' features detected with and without a promoter proximal TSS or TSR. The information 
+#' is first prepared using the 'detect_features' function.
 #'
-#' @return ggplot2 object of detected feature counts
+#' @return ggplot2 object of detected feature counts.
 #'
 #' @examples
 #' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
 #' TSSs <- readRDS(TSSs)
-#' tsre_exp <- tsr_explorer(TSSs)
-#' tsre_exp <- format_counts(tsre_exp, data_type="tss")
+#' exp <- tsr_explorer(TSSs)
+#' exp <- format_counts(exp, data_type="tss")
 #' annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
-#' tsre_exp <- annotate_features(
-#'   tsre_exp, annotation_data=annotation,
+#' exp <- annotate_features(
+#'   exp, annotation_data=annotation,
 #'   data_type="tss", feature_type="transcript"
 #' )
-#' detected <- detect_features(tsre_exp, data_type="tss")
+#' detected <- detect_features(exp, data_type="tss")
 #' plot_detected_features(detected)
 #'
 #' @seealso
 #' \code{\link{annotate_features}} to annotate the TSSs or TSRs.
-#' \code{\link{detect_features}} to first detect feature numbers.
+#' \code{\link{detect_features}} to determine numbers of detected features.
 #'
 #' @rdname plot_detected_features-function
 #' @export

@@ -8,31 +8,69 @@ tss_shift(
   experiment,
   sample_1,
   sample_2,
+  comparison_name,
   tss_threshold = NULL,
-  min_distance = 100,
+  max_distance = 100,
   min_threshold = 10,
-  n_resamples = 1000L
+  n_resamples = 1000L,
+  fdr_cutoff = 0.05
 )
 }
 \arguments{
-\item{experiment}{TSRexploreR object}
+\item{experiment}{TSRexploreR object.}
 
 \item{sample_1}{First sample to compare.
 Vector with sample name for TSS and TSR,
-with names 'TSS' and 'TSR'}
+with names 'TSS' and 'TSR'.}
 
 \item{sample_2}{Second sample to compare.
 Vector with sample name for TSS and TSR,
-with names 'TSS' and 'TSR'}
+with names 'TSS' and 'TSR'.}
 
-\item{tss_threshold}{Whether to filter out TSSs below a threshold}
+\item{comparison_name}{Name assigned to the results in the TSRexploreR object.}
 
-\item{min_distance}{TSRs less than this distance apart will be merged}
+\item{tss_threshold}{Minimum number of raw counts required at a TSS for it to
+be considered in the shifting analysis.}
 
-\item{min_threshold}{Minimum number of raw counts required in each TSR for both TSR samples}
+\item{max_distance}{TSRs less than this distance apart will be merged.}
 
-\item{n_resamples}{Number of resamplings for permutation test}
+\item{min_threshold}{Minimum number of raw counts required in each TSR for both samples.}
+
+\item{n_resamples}{Number of resamplings for permutation test.}
+
+\item{fdr_cutoff}{Differential features not meeting this significance threshold will not be considered.}
 }
 \description{
-Calculate TSS shifting statistics
+Analyze TSS shifts between samples within a consensus TSR set.
+}
+\details{
+This function assesses the difference between TSS distributions from two distinct samples
+in a set of consensus TSRs by calculating the earth mover's distance (EMD) between
+them. For this approach, we imagine that the two TSS distributions in questions are piles 
+of dirt, and ask how much dirt from one pile we would need to move, how far, and in which 
+direction, to mimic the distribution of the other sample. The resulting score is between 
+-1 and 1, with larger magnitudes indicating larger shifts and the sign indicating direction 
+(negative values indicate upstream shifts and positive values indicate downstream shifts). 
+The function also calculates a p-value for the null hypothesis that there is no difference 
+(EMD = 0) based on a permutation test.
+}
+\examples{
+TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
+TSSs <- readRDS(TSSs)
+exp <- tsr_explorer(TSSs)
+annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
+samples <- data.frame(sample_name = c(sprintf("S288C_D_\%s", seq_len(3)), 
+                      sprintf("S288C_WT_\%s", seq_len(3))),
+                      file_1=NA, file_2=NA,
+                      condition=c(rep("Diamide", 3), rep("Untreated", 3)))
+exp <- tsr_explorer(TSSs, genome_annotation=annotation, sample_sheet=samples) \%>\%
+  format_counts(data_type="tss") \%>\%
+  tss_clustering(threshold=3) \%>\%  
+  merge_samples(data_type="tss", merge_group="condition") \%>\%
+  merge_samples(data_type="tsr", merge_group="condition")
+exp <- tss_shift(exp, sample_1=c(TSS="Untreated", TSR="Untreated"),
+                                 sample_2=c(TSS="Diamide", TSR="Diamide"),
+                 comparison_name="Untreated_vs_Diamide",
+                 min_distance=100, min_threshold=10, n_resamples=1000L)
+
 }

@@ -7,7 +7,7 @@
 count_features(experiment, data_type = c("tss", "tsr"))
 }
 \arguments{
-\item{experiment}{TSRexploreR object}
+\item{experiment}{TSRexploreR object.}
 
 \item{data_type}{Either 'tss' or 'tsr'}
 }

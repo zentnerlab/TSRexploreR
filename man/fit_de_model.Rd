@@ -2,7 +2,7 @@
 % Please edit documentation in R/diff_expression.R
 \name{fit_de_model}
 \alias{fit_de_model}
-\title{edgeR Model for DE}
+\title{Model for differential feature analysis}
 \usage{
 fit_de_model(
   experiment,
@@ -13,19 +13,19 @@ fit_de_model(
 )
 }
 \arguments{
-\item{experiment}{TSRexploreR object with TMM-normalized counts}
+\item{experiment}{TSRexploreR object.}
 
-\item{formula}{DE formula}
+\item{formula}{DE formula.}
 
-\item{data_type}{Whether TSSs, TSRs, or feature counts should be analyzed}
+\item{data_type}{Whether TSS, TSR, or gene/transcript counts should be analyzed.}
 
-\item{samples}{Vector of sample names to analyze}
+\item{samples}{A vector of sample names to analyze.}
 
-\item{method}{Either 'DESeq2' or 'edgeR'}
+\item{method}{Either 'DESeq2' or 'edgeR'.}
 }
 \value{
-DGEList object with fitted model
+DGEList object with fitted model.
 }
 \description{
-Find differential TSSs, TSRs, or features
+Find differential TSSs, TSRs, or genes/transcripts.
 }

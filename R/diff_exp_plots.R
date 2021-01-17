@@ -1,20 +1,16 @@
-#' DE MA Plot
+#' MA Plot
 #'
 #' @description
-#' Generate a MA plot for differential TSRs or Genes (RNA-seq) - confused. I see the MA-plot code but no volcano.
+#' Generate an MA plot for differential TSSs, TSRs, or genes/transcripts.
 #'
-#' @param experiment TSRexploreR object
-#' @param de_comparisons Which differential expression comparisons to plot
-#' @param data_type Either 'tss', 'tsr', 'tss_features', or 'tsr_features'
-#' @param ncol Number of columns for the facets
-#' @param log2fc_cutoff Log2FC cutoff value
-#' @param fdr_cutoff FDR cutoff value
-#' @param ... Arguments passed to geom_point
+#' @inheritParams common_params
+#' @param de_comparisons Character vector of differential expression comparisons to plot.
+#' @param data_type Either 'tss', 'tsr', 'tss_features', or 'tsr_features'.
+#' @param ... Arguments passed to geom_point.
 #'
 #' @details
-#' This function generates an MA plot of the results from
-#'   differential analysis of TSSs, TSRs, or features.
-#' It is returned as a ggplot2 object.
+#' This function generates an MA plot of the results from differential analysis of 
+#' TSSs, TSRs, or genes/transcripts. 
 #'
 #' @return ggplot2 object of MA plot.
 #'
@@ -54,7 +50,7 @@ plot_ma <- function(
   }
 
   ## MA plot of differential expression.
-  p <- ggplot(de_samples, aes(x=.data$mean_expr, y=.data$log2FC, color=.data$de_status)) +
+  p <- ggplot(de_samples, aes(x=log2(.data$mean_expr), y=.data$log2FC, color=.data$de_status)) +
     geom_point(...) +
     geom_hline(yintercept=log2fc_cutoff, lty=2) +
     geom_hline(yintercept=-log2fc_cutoff, lty=2) +
@@ -66,13 +62,13 @@ plot_ma <- function(
 
 #' DE Volcano Plot
 #'
-#' @param experiment tsr explorer object
-#' @param data_type either 'tss', 'tsr', 'tss_features', or 'tsr_features'
-#' @param de_comparisons The DE comparisons to plot
-#' @param ncol Number of columns for plot
-#' @param log2fc_cutoff Log2FC cutoff value
-#' @param fdr_cutoff FDR cutoff value
-#' @param ... Arguments passed to geom_point
+#' @description
+#' Generate a volcano plot for differential TSSs, TSRs, or genes/transcripts.
+#'
+#' @inheritParams common_params
+#' @param data_type either 'tss', 'tsr', 'tss_features', or 'tsr_features'.
+#' @param de_comparisons Character vector of differential expression comparisons to plot.
+#' @param ... Arguments passed to geom_point.
 #'
 #' @export
 
@@ -128,13 +124,16 @@ plot_volcano <- function(
 
 #' Export to clusterProfiler
 #'
-#' Export DEGs for use in clusterProfiler term enrichment.
+#' Export differential features for use in clusterProfiler term enrichment.
 #'
-#' @param experiment TSRexploreR object
-#' @param data_type Either 'tss', 'tsr', 'tss_features', or 'tsr_features'
-#' @param de_comparisons The DE comparisons to plot
-#' @param log2fc_cutoff Log2FC cutoff value
-#' @param fdr_cutoff FDR cutoff value
+#' @inheritParams common_params
+#' @param data_type Whether to export genes associated with differential TSSs or
+#'   TSRs.
+#' @param de_comparisons Character vector of differential expression comparisons to export.
+#' @param keep_unchanged Logical for inclusion of genes not significantly changed in
+#'   the exported list.
+#' @param Vector of annotation categories to keep.
+#'   If NULL no filtering by annotation type occurs.
 #'
 #' @rdname export_for_enrichment-function
 #'
@@ -145,7 +144,9 @@ export_for_enrichment <- function(
   data_type=c("tss", "tsr"),
   de_comparisons="all",
   log2fc_cutoff=1,
-  fdr_cutoff=0.05
+  fdr_cutoff=0.05,
+  keep_unchanged=FALSE,
+  anno_categories=NULL
 ) {
 
   ## Input checks.
@@ -154,16 +155,32 @@ export_for_enrichment <- function(
   assert_that(is.character(de_comparisons))
   assert_that(is.numeric(log2fc_cutoff) && log2fc_cutoff >= 0)
   assert_that(is.numeric(fdr_cutoff) && (fdr_cutoff > 0 & fdr_cutoff <= 1))
+  assert_that(is.flag(keep_unchanged))
+  assert_that(is.null(anno_categories) || is.character(anno_categories))
 
   ## Get DE comparisons.
   de_samples <- extract_de(experiment, data_type, de_comparisons)
   de_samples <- rbindlist(de_samples, idcol="sample")
 
+  ## Keep only selected annotation categories if provided.
+  if (!is.null(anno_categories)) {
+    de_samples <- de_samples[simple_annotations %in% anno_categories]
+  }
+
   ## Mark de status.
   .de_status(de_samples, log2fc_cutoff, fdr_cutoff)
-  de_samples[, de_status := factor(
-    de_status, levels=c("up", "unchanged", "down")
-  )]
+
+  ## Remove unchanged if requested and set factor levels.
+  if (keep_unchanged) {
+    de_samples[, de_status := factor(
+      de_status, levels=c("up", "unchanged", "down")
+    )]
+  } else {
+    de_samples <- de_samples[de_status != "unchanged"]
+    de_samples[, de_status := factor(
+      de_status, levels=c("up", "down")
+    )]
+  }
   
   return(de_samples)
 }
@@ -172,12 +189,11 @@ export_for_enrichment <- function(
 #'
 #' Plot number of DE features.
 #'
-#' @param experiment TSRexploreR object
-#' @param data_type Either 'tss', 'tsr', 'tss_features', or 'tsr_features'
-#' @param de_comparisons The comparisons to plot
-#' @param logfc_cutoff Log2 fold change cutoff
-#' @param fdr_cutoff FDR cutoff value
-#' @param ... Additional arguments passed to geom_col
+#' @inheritParams common_params
+#' @param data_type Either 'tss', 'tsr', 'tss_features', or 'tsr_features'.
+#' @param de_comparisons Character vector of differential expression comparisons to plot.
+#' @param keep_unchanged Whether to include unchanged features in the plot.
+#' @param ... Additional arguments passed to geom_col.
 #'
 #' @rdname plot_num_de-function
 #' @export
@@ -188,6 +204,7 @@ plot_num_de <- function(
   de_comparisons="all",
   log2fc_cutoff=1,
   fdr_cutoff=0.05,
+  keep_unchanged=FALSE,
   ...
 ) {
 
@@ -207,11 +224,16 @@ plot_num_de <- function(
 
   ## Mark DE status.
   .de_status(de_samples, log2fc_cutoff, fdr_cutoff)
-  de_samples[, de_status := factor(
-    de_status, levels=c("up", "unchanged", "down")
-  )]
+  if (keep_unchanged) {
+    de_samples[, de_status := factor(
+      de_status, levels=c("up", "unchanged", "down")
+    )]
+  } else {
+    de_samples <- de_samples[de_status != "unchanged"]
+    de_samples[, de_status := factor(de_status, levels=c("up", "down"))]
+  }
 
-  ## prepare data for plotting.
+  ## Prepare data for plotting.
   de_samples <- de_samples[, .(count=.N), by=.(samples, de_status)]
 
   ## Set sample order if required.

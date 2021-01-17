@@ -7,11 +7,11 @@
 .de_status(de_results, log2fc_cutoff, fdr_cutoff)
 }
 \arguments{
-\item{de_results}{Results of DE}
+\item{de_results}{Results of DE.}
 
-\item{log2fc_cutoff}{Log2FC cutoff value}
+\item{log2fc_cutoff}{Differential features not meeting this |Log2 FC| threshold will not be considered.}
 
-\item{fdr_cutoff}{FDR cutoff value}
+\item{fdr_cutoff}{Differential features not meeting this significance threshold will not be considered.}
 }
 \description{
 Mark DE Status

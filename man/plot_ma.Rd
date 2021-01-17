@@ -2,7 +2,7 @@
 % Please edit documentation in R/diff_exp_plots.R
 \name{plot_ma}
 \alias{plot_ma}
-\title{DE MA Plot}
+\title{MA Plot}
 \usage{
 plot_ma(
   experiment,
@@ -15,28 +15,27 @@ plot_ma(
 )
 }
 \arguments{
-\item{experiment}{TSRexploreR object}
+\item{experiment}{TSRexploreR object.}
 
-\item{data_type}{Either 'tss', 'tsr', 'tss_features', or 'tsr_features'}
+\item{data_type}{Either 'tss', 'tsr', 'tss_features', or 'tsr_features'.}
 
-\item{de_comparisons}{Which differential expression comparisons to plot}
+\item{de_comparisons}{Character vector of differential expression comparisons to plot.}
 
-\item{ncol}{Number of columns for the facets}
+\item{ncol}{Integer specifying the number of columns to arrange multiple plots.}
 
-\item{log2fc_cutoff}{Log2FC cutoff value}
+\item{log2fc_cutoff}{Differential features not meeting this |Log2 FC| threshold will not be considered.}
 
-\item{fdr_cutoff}{FDR cutoff value}
+\item{fdr_cutoff}{Differential features not meeting this significance threshold will not be considered.}
 
-\item{...}{Arguments passed to geom_point}
+\item{...}{Arguments passed to geom_point.}
 }
 \value{
 ggplot2 object of MA plot.
 }
 \description{
-Generate a MA plot for differential TSRs or Genes (RNA-seq) - confused. I see the MA-plot code but no volcano.
+Generate an MA plot for differential TSSs, TSRs, or genes/transcripts.
 }
 \details{
-This function generates an MA plot of the results from
-  differential analysis of TSSs, TSRs, or features.
-It is returned as a ggplot2 object.
+This function generates an MA plot of the results from differential analysis of 
+TSSs, TSRs, or genes/transcripts.
 }

@@ -1,38 +1,37 @@
 #' Export TSSs
 #'
 #' @description
-#' Export TSSs to tables or bedgraphs
+#' Export TSSs to bedGraph, bigWig, or table format.
 #'
-#' @param experiment TSRexploreR object
-#' @param samples Either 'all', or names of samples to export
-#' @param file_type either 'bedgraph' or 'table'
-#' @param out_dir Output directory for files
-#' @param diff_tss If TRUE will output differential TSSs
-#' @param sep Delimiter for table output
+#' @inheritParams common_params
+#' @param file_type Either 'bedgraph', 'table', or 'bigwig'.
+#' @param out_dir Output directory for files.
+#' @param diff_tss If TRUE, will output differential TSSs.
+#' @param sep Delimiter for tabular output.
 #'
 #' @details
-#' This function will save TSSs as bedgraphs, or a tab delimited file.
+#' This function will save TSSs as bedGraphs, bigWigs, or a delimited table
 #'
-#' 'file_type' controls what the TSSs will be output as.
-#' 'bedgraph' will result in each sample being saved as two bedgraph files,
-#'   one for each strand.
-#' 'table' will output a file with the delimiter specified by the 'sep' argument.
-#' The resulting table will have all columns added to the TSSs data
-#'   in the tsr explorer object, such as various metrics.
+#' 'file_type' controls what the TSSs will be output as. 'bedgraph' will result 
+#' in each sample being saved as two bedGraph files, one for each strand. The 
+#' 'bigwig' argument provides a similar result. 'table' will output a file with 
+#' the delimiter specified by the 'sep' argument. The resulting table will have 
+#' all columns added to the TSSs data in the TSRexploreR object, such as annotation
+#' information.
 #'
-#' The directory to output the files can be set with 'out_dir'.
-#'   A value of NA will save the files to the working directory by default.
+#' The directory to output the files can be set with 'out_dir'. A value of NA will 
+#' save the files to the working directory.
 #'
 #' If 'diff_tss' is TRUE, only differential TSSs will be output.
 #'
 #' @examples
 #' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
 #' TSSs <- readRDS(TSSs)
-#' tsre_exp <- tsr_explorer(TSSs)
-#' tsre_exp <- format_counts(tsre_exp, data_type="tss")
-#' tss_export(tsre_exp)
+#' exp <- tsr_explorer(TSSs)
+#' exp <- format_counts(exp, data_type="tss")
+#' tss_export(exp)
 #'
-#' @return Either bedgraphs split by strand, or a tabular file.
+#' @return Either bedGraphs or bigWigs split by strand, or a table.
 #'
 #' @seealso
 #' \code{\link{tsr_export}} to export TSRs.
@@ -48,15 +47,23 @@ tss_export <- function(
   file_type="bedgraph",
   out_dir=NA,
   diff_tss=FALSE,
-  sep="\t"
+  sep="\t",
+  genome_assembly=NULL
 ) {
 
   ## Input checks.
   assert_that(is(experiment, "tsr_explorer"))
   assert_that(is.character(samples))
-  file_type <- match.arg(str_to_lower(file_type), c("bedgraph", "table"))
+  file_type <- match.arg(
+    str_to_lower(file_type),
+    c("bedgraph", "table", "bigwig")
+  )
   assert_that(is.na(out_dir) || is.character(out_dir))
   assert_that(is.flag(diff_tss))
+  assert_that(
+    is.null(genome_assembly) || is.character(genome_assembly) ||
+    is(genome_assembly, "BSgenome")
+  )
 
   ## Retrieve samples.
   if (!diff_tss) {
@@ -66,6 +73,27 @@ tss_export <- function(
     if (all(samples == "all")) samples <- names(experiment@diff_features$TSSs$results)
     export_samples <- experiment@diff_features$TSSs$results[samples]
   }
+
+  ## If exporting as bigWig, retrieve the seq lengths from the genome object.
+  genome_assembly <- .prepare_assembly(genome_assembly, experiment)
+
+  assembly_type <- case_when(
+    is(genome_assembly, "BSgenome") ~ "bsgenome",
+    is(genome_assembly, "FaFile") ~ "fafile"
+  )
+
+  chrm_lengths <- switch(
+    assembly_type,
+    "fafile"=Rsamtools::seqinfo(genome_assembly),
+    "bsgenome"=GenomeInfoDb::seqinfo(genome_assembly)
+  )
+
+  export_samples <- map(export_samples, function(x) {
+    x <- sort(as_granges(x))
+    chrm_lengths <- chrm_lengths[seqlevels(x)]
+    seqlengths(x) <- seqlengths(chrm_lengths)
+    return(x)
+  })
 
   ## Export files.
   if (file_type == "bedgraph") {
@@ -86,7 +114,7 @@ tss_export <- function(
       )
       export(min_data, min_file, "bedgraph")
     })
-  } else if (data_type == "table") {
+  } else if (file_type == "table") {
     iwalk(export_samples, function(x, y) {
       export_file <- file.path(
         ifelse(is.na(out_dir), getwd(), out_dir),
@@ -97,6 +125,22 @@ tss_export <- function(
         row.names=FALSE, quote=FALSE
       )
     })
+  } else if (file_type == "bigwig") {
+    iwalk(export_samples, function(x, y) {
+      pos_data <- x[strand(x) == "+"]
+      pos_file <- file.path(
+        ifelse(is.na(out_dir), getwd(), out_dir),
+        str_c(y, "_pos.bigwig") 
+      )
+      export(pos_data, pos_file, "bigwig")
+
+      min_data <- x[strand(x) == "-"]
+      min_file <- file.path(
+        ifelse(is.na(out_dir), getwd(), out_dir),
+        str_c(y, "_min.bigwig")
+      )
+      export(min_data, min_file, "bigwig")
+    })
   }
 }
 
@@ -105,36 +149,34 @@ tss_export <- function(
 #' @description
 #' Export TSRs to table or BED
 #'
-#' @param experiment TSRexploreR object
-#' @param samples Samples to export ('all' as well? qq)
-#' @param file_type either 'bed' or 'table'
-#' @param out_dir Output directory for files
-#' @param diff_tsr Whether to pull out the differential TSRs (qq again, this is a bit unclear)
-#' @param sep Delimiter for table output
+#' @inheritParams common_params
+#' @param file_type Either 'bed' or 'table'.
+#' @param out_dir Output directory for files.
+#' @param diff_tsr If TRUE, will output differential TSSs.
+#' @param sep Delimiter for tabular output.
 #'
 #' @details
-#' This function will save TSRs as beds, or a tab delimited file.
+#' This function will save TSRs as BED files or a delimited table.
 #'
-#' 'file_type' controls what the TSRs will be output as.
-#' 'bed' will result in each sample being saved as a file.
-#' 'table' will output a file with the delimiter specified by the 'sep' argument.
-#' The resulting table will have all columns added to the TSRs data
-#'   in the tsr explorer object, such as various metrics.
+#' 'file_type' controls what the TSRs will be output as. 'bed' will result in each 
+#' sample being saved as a BED file. 'table' will output a file with the delimiter 
+#' specified by the 'sep' argument. The resulting table will have all columns added 
+#' to the TSR data in the TSRexplorer object, such as annotation information.
 #'
-#' The directory to output the files can be set with 'out_dir'.
-#'   A value of NA will save the files to the working directory by default.
+#' The directory to output the files can be set with 'out_dir'. A value of NA will 
+#' save the files to the working directory by default.
 #'
 #' If 'diff_tsr' is TRUE, only differential TSRs will be output.
 #'
 #' @examples
 #' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
 #' TSSs <- readRDS(TSSs)
-#' tsre_exp <- tsr_explorer(TSSs)
-#' tsre_exp <- format_counts(tsre_exp, data_type="tss")
-#' tsre_exp <- tss_clustering(tsre_exp)
-#' tsr_export(tsre_exp)
+#' exp <- tsr_explorer(TSSs)
+#' exp <- format_counts(exp, data_type="tss")
+#' exp <- tss_clustering(exp)
+#' tsr_export(exp)
 #'
-#' @return Either bed files, or a tabular file.
+#' @return Either a BED file or a table.
 #'
 #' @seealso
 #' \code{\link{tss_export}} to export TSSs.

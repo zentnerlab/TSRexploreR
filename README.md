@@ -8,7 +8,7 @@ see [INSTALL](./INSTALL.md)
 
 ### Importing Data
 
-TSRexplereR was designed to allow high flexibility and interoperability when importing data. TSSs and TSRs can be imported from common genomic formats such as bedgraphs and beds. Furthermore, data can be imported directly from other R libraries such as TSRchitect and CAGEr.
+TSRexploreR was designed to allow high flexibility and interoperability when importing data. TSSs and TSRs can be imported from common genomic formats such as bedgraphs and beds. Furthermore, data can be imported directly from other R libraries such as TSRchitect and CAGEr.
 
 [Data Import Vignette](./github/DATA_IMPORT.md)
 

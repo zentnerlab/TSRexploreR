@@ -4,10 +4,14 @@
 \alias{tsr_metrics}
 \title{TSR Metrics}
 \usage{
-tsr_metrics(experiment)
+tsr_metrics(experiment, iqr_lower = 0.1, iqr_upper = 0.9)
 }
 \arguments{
-\item{experiment}{TSRexploreR object}
+\item{experiment}{TSRexploreR object.}
+
+\item{iqr_lower}{Lower IQR cutoff value.}
+
+\item{iqr_upper}{Upper IQR cutoff value.}
 }
 \description{
 Calculate TSR Metrics.

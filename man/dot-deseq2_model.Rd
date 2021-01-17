@@ -7,11 +7,13 @@
 .deseq2_model(count_data, sample_sheet, formula)
 }
 \arguments{
-\item{count_data}{Count matrix}
+\item{count_data}{Count matrix.}
 
-\item{sample_sheet}{Sample data}
+\item{sample_sheet}{A sample sheet data.frame or tab delimited file.
+Must have the columns 'sample_name', 'file_1', and 'file_2'.
+Additional meta-data columns can be added with sample information such as condition and batch.}
 
-\item{formula}{Differential expression formula}
+\item{formula}{Differential expression formula.}
 }
 \description{
 DESeq2 Differential Expression Model
