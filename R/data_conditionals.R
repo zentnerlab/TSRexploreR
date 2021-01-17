@@ -179,16 +179,19 @@ condition_data <- function(
   
   ## Filter the data if required.
   if (!is.null(data_conditions$filters)) {
+    walk(signal_data, setDT)
     signal_data <- .filter_data(signal_data, data_conditions$filters)
   }
 
   ## Ordering the data if required.
   if (!is.null(data_conditions$ordering)) {
+    walk(signal_data, setDT)
     signal_data <- .order_data(signal_data, data_conditions$ordering)
   }
 
   ## Quantiling the data if required.
   if (!is.null(data_conditions$quantiling)) {
+    walk(signal_data, setDT)
     signal_data <- .quantile_data(signal_data, data_conditions$quantiling)
   }
 

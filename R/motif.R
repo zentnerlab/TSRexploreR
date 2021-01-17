@@ -283,9 +283,9 @@ plot_sequence_logo <- function(
 #' @importFrom stringr str_length
 #'
 #' @inheritParams common_params
-#' @param tss_sequences Sequences surrounding TSS generated with tss_sequences
 #' @param base_colors Named vector specifying colors for each base
-#' @param text_size Size of text for plots
+#' @param distance Bases to add on each side of eacg TSS
+#' @param font_size Size of text for plots
 #' @param ... Arguments passed to geom_tile
 #'
 #' @details
@@ -317,49 +317,78 @@ plot_sequence_logo <- function(
 #' @export
 
 plot_sequence_colormap <- function(
-  tss_sequences,
+  experiment,
+  samples="all",
+  genome_assembly=NULL,
+  threshold=NULL,
+  use_normalized=FALSE,
+  distance=10,
+  dominant=FALSE,
+  data_conditions=NULL,
   ncol=1,
   base_colors=c(
     "A"="#109649", "C"="#255C99",
     "G"="#F7B32C", "T"="#D62839"
   ),
-  text_size=6,
+  font_size=6,
   ...
 ) {
+
   ## Check inputs.
-  assert_that(is(tss_sequences, "DataFrame"))
+  assert_that(is(experiment, "tsr_explorer"))
+  assert_that(is.character(samples))
+  assert_that(
+    is.null(genome_assembly) || is.character(genome_assembly) ||
+    is(genome_assembly, "BSgenome")
+  )
+  assert_that(is.null(threshold) || (is.numeric(threshold) && threshold >= 0))
+  assert_that(is.count(distance))
+  assert_that(is.flag(dominant))
+  assert_that(is.null(data_conditions) || is.list(data_conditions))
   assert_that(is.count(ncol))
+  assert_that(is.numeric(font_size) && font_size > 0)
   assert_that(
     is.character(base_colors) &&
-    has_name(base_colors, c("A", "C", "T", "G"))
+    all(c("A", "T", "G", "C") %in% names(base_colors))
   )
-  assert_that(is.numeric(text_size) && text_size > 0)
 
-  ## Grab some information out of DataFrame.
-  distance <- metadata(tss_sequences)$distance
-  groupings <- metadata(tss_sequences)$groupings
+  ## Get sequences.
+  tss_sequences <- .tss_sequences(
+    experiment,
+    samples,
+    genome_assembly,
+    threshold,
+    use_normalized,
+    distance,
+    dominant,
+    data_conditions
+  )
 
-  ## Start preparing data for plotting.
-  seq_data <- as.data.table(tss_sequences)
-  seq_data[, width := str_length(sequence)]
+  ## Store status of data conditions.
+  grouping_status <- case_when(
+    !is.null(data_conditions$quantiling) ~ "row_quantile",
+    !is.null(data_conditions$grouping) ~ "row_groups",
+    TRUE ~ "none"
+  )
 
   ## Split sequences into columns
-  split_seqs <- seq_data[, tstrsplit(sequence, split="")]
+  split_seqs <- tss_sequences[, tstrsplit(sequence, split="")]
 
-  #split_seqs <- seq_data[, as.data.table(str_split(sequence, "", simplify=TRUE))]
   setnames(
     split_seqs,
     old=sprintf("V%s", seq(1, (distance * 2) + 1)),
     new=as.character(c(seq(-distance, -1), seq(1, distance + 1)))
   )
-  seq_data <- cbind(seq_data, split_seqs)
+  seq_data <- cbind(tss_sequences, split_seqs)
 
   ## Get order of TSSs for plotting.
-  seq_data[, FHASH := fct_reorder(factor(FHASH), plot_order)]
+  if (!is.null(data_conditions$ordering))  {
+    seq_data[, FHASH := fct_reorder(FHASH, row_order)]
+  }
 
   ## Format data for plotting.
-  long_data <- seq_data %>%
-    melt(
+  long_data <- melt(
+      seq_data,
       measure.vars=as.character(c(seq(-distance, -1), seq(1, distance + 1))),
       variable.name="position", value.name="base"
     )
@@ -383,16 +412,17 @@ plot_sequence_colormap <- function(
       legend.title=element_blank(),
       axis.title.x=element_text(margin=margin(t=15)),
       panel.grid=element_blank(),
-      text=element_text(size=text_size)
+      text=element_text(size=font_size)
     ) +
     scale_x_continuous(
       breaks=c(1, distance, distance + 1, (distance * 2) + 1),
       labels=c(-distance, -1, 1, distance + 1)
     )
 
-  if (!groupings) {
+  if (grouping_status == "none") {
     p <- p + facet_wrap(. ~ sample, scales="free", ncol=ncol)
   } else {
+    setnames(long_data, old=grouping_status, new="grouping")
     p <- p + facet_wrap(grouping ~ sample, scales="free", ncol=ncol)
   }
 

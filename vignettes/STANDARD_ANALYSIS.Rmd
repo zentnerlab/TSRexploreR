@@ -167,14 +167,8 @@ Generating sequence logos around TSSs is a good first step in ascertaining the s
 
 To generate analyze TSS sequence context, TSRexploreR retrieves sequences centered on TSSs from a 'FASTA' genome assembly or 'BSgenome' object. This example uses the Ensembl R64-1-1 Release 99 FASTA.
 
-```{r message=FALSE}
-seqs <- tss_sequences(exp)
-```
-
-After the sequences are retrieved, the sequence logos can be generated.
-
 ```{r message=FALSE, fig.height=2, fig.width=6}
-plot_sequence_logo(seqs, ncol=3)
+plot_sequence_logo(exp, ncol=3)
 ```
 
 ### Sequence Color Map
@@ -182,7 +176,7 @@ plot_sequence_logo(seqs, ncol=3)
 A sequence logo "averages" the bases when displaying data, but as with TSSs, it can be useful to view the information without aggregation. In a sequence color map, each row represents the window around a TSS and each column represents a specific position relative to this TSS. These display conventions are analogous to those used in a heatmap. Each base is assigned a color and displayed in this two-dimensional space. The prevalence of colors in certain positions can give further evidence towards putative sequence contexts. The same genome assembly and retrieved sequences that were used to make the sequence logos above are used here.
 
 ```{r message=FALSE, fig.width=6, fig.height=4}
-plot_sequence_colormap(seqs, ncol=3)
+plot_sequence_colormap(exp, ncol=3)
 ```
 
 ### Dinucleotide Frequency
@@ -312,13 +306,10 @@ plot_tsr_metric(exp, tsr_metrics=c("score", "width"), log2_transform=TRUE, ncol=
 Most plots in this vignette can be filtered, ordered, grouped, and quantiled by any of the desired metrics. Here is an example of what can be done with the TSS sequence motif plot using TSR metrics. In this plot, only the dominant TSSs of each TSR is considered, and TSSs with a score below 10 are discarded. The plot is then split by the shape class of the TSR. A more detailed guide to advanced plotting can be found here.
 
 ```{r message=FALSE, fig.height=5, fig.width=8}
-conditions <- list(order_by="score", grouping="shape_class")
-seqs <- tss_sequences(
-  exp, threshold=10,
-  dominant=TRUE, data_conditions=conditions
+plot_sequence_logo(
+  exp, threshold=10, dominant=TRUE,
+  data_conditions=conditions(data_grouping=shape_class)
 )
-
-plot_sequence_logo(seqs, ncol=3)
 ```
 
 ## Gene Tracks
