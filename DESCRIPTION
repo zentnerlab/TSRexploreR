@@ -51,7 +51,8 @@ Imports:
     PCAtools,
     GenomeInfoDb,
     Cairo,
-    rlang
+    rlang,
+    ggrastr
 Depends:
     R (>= 3.5.0)
 Suggests:

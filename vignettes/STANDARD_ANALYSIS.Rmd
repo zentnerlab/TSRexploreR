@@ -133,7 +133,7 @@ plot_genomic_distribution(exp, data_type="tss") +
 The number of features detected and fraction of features with a promoter-proximal TSSs can be displayed as a stacked bar plot or jitter plot.
 
 ```{r message=FALSE, fig.height=4, fig.width=5}
-plot_detected_features(features, data_type="tss") +
+plot_detected_features(exp, data_type="tss") +
   scale_fill_viridis_d(direction=-1)
 ```
 
