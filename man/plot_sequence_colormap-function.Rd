@@ -16,6 +16,8 @@ plot_sequence_colormap(
   ncol = 1,
   base_colors = c(A = "#109649", C = "#255C99", G = "#F7B32C", T = "#D62839"),
   font_size = 6,
+  rasterize = FALSE,
+  raster_dpi = 150,
   ...
 )
 }
@@ -42,6 +44,10 @@ highest-scoring TSR per gene or transcript.}
 \item{base_colors}{Named vector specifying colors for each base}
 
 \item{font_size}{Size of text for plots}
+
+\item{rasterize}{Rasterize a ggplot.}
+
+\item{raster_dpi}{If rasterization is set, this controls the rasterization DPI.}
 
 \item{...}{Arguments passed to geom_tile}
 }

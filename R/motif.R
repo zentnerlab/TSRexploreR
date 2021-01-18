@@ -331,6 +331,8 @@ plot_sequence_colormap <- function(
     "G"="#F7B32C", "T"="#D62839"
   ),
   font_size=6,
+  rasterize=FALSE,
+  raster_dpi=150,
   ...
 ) {
 
@@ -401,8 +403,18 @@ plot_sequence_colormap <- function(
   ]
     
   ## Plot sequence colormap
-  p <- ggplot(long_data, aes(x=.data$position, y=.data$FHASH)) +
-    geom_tile(aes(fill=.data$base, color=.data$base)) +
+  p <- ggplot(long_data, aes(x=.data$position, y=.data$FHASH))
+
+  if (rasterize) {
+    p <- p + rasterize(
+      geom_tile(aes(fill=.data$base, color=.data$base), ...),
+      dpi=raster_dpi
+    )
+  } else {
+    p <- p + geom_tile(aes(fill=.data$base, color=.data$base), ...)
+  }
+
+  p <- p +
     scale_fill_manual(values=base_colors) +
     scale_color_manual(values=base_colors) +
     theme_minimal() +

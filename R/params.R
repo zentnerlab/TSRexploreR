@@ -17,5 +17,7 @@
 #'   highest-scoring TSR per gene or transcript.
 #' @param exclude_antisense Remove antisense TSSs/TSRs prior to analysis.
 #' @param data_conditions Apply advanced conditions to the data.
+#' @param rasterize Rasterize a ggplot.
+#' @param raster_dpi If rasterization is set, this controls the rasterization DPI.
 
 common_params <- function(x) NULL
