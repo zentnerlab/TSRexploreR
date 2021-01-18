@@ -28,6 +28,7 @@ r-rcpp \
 r-assertthat \
 r-testthat \
 r-cairo \
+r-ggrastr \
 bioconductor-apeglm \
 bioconductor-genomicranges \
 bioconductor-genomicfeatures \

@@ -5,21 +5,43 @@
 \title{Plot Sequence Colormap}
 \usage{
 plot_sequence_colormap(
-  tss_sequences,
+  experiment,
+  samples = "all",
+  genome_assembly = NULL,
+  threshold = NULL,
+  use_normalized = FALSE,
+  distance = 10,
+  dominant = FALSE,
+  data_conditions = NULL,
   ncol = 1,
   base_colors = c(A = "#109649", C = "#255C99", G = "#F7B32C", T = "#D62839"),
-  text_size = 6,
+  font_size = 6,
   ...
 )
 }
 \arguments{
-\item{tss_sequences}{Sequences surrounding TSS generated with tss_sequences}
+\item{experiment}{TSRexploreR object.}
+
+\item{samples}{A vector of sample names to analyze.}
+
+\item{genome_assembly}{Genome assembly in FASTA or BSgenome format.}
+
+\item{threshold}{TSSs or TSRs with a score below this value will not be considered.}
+
+\item{use_normalized}{Whether to use the normalized (TRUE) or raw (FALSE) counts.}
+
+\item{distance}{Bases to add on each side of eacg TSS}
+
+\item{dominant}{If TRUE, will only consider the highest-scoring TSS per gene, transcript, or TSR or 
+highest-scoring TSR per gene or transcript.}
+
+\item{data_conditions}{Apply advanced conditions to the data.}
 
 \item{ncol}{Integer specifying the number of columns to arrange multiple plots.}
 
 \item{base_colors}{Named vector specifying colors for each base}
 
-\item{text_size}{Size of text for plots}
+\item{font_size}{Size of text for plots}
 
 \item{...}{Arguments passed to geom_tile}
 }

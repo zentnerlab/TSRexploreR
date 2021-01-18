@@ -132,7 +132,9 @@ plot_heatmap <- function(
   threshold=NULL,
   use_normalized=FALSE,
   dominant=FALSE,
-  data_conditions=list(order_by="score"),
+  data_conditions=conditions(
+    data_ordering=ordering(desc(score))
+  ),
   ...
 ) {
 

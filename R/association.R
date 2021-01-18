@@ -148,7 +148,7 @@ merge_samples <- function(
 #'   "S288C_D_1"="S288C_D_1", "S288C_D_2"="S288C_D_2", "S288C_D_3"="S288C_D_3"
 #' ))
 #'
-#'#' @seealso
+#' @seealso
 #' \code{\link{add_sample_sheet}} to add a sample sheet to the TSRexploreR object.
 #'
 #' @rdname associate_with_tsr-function

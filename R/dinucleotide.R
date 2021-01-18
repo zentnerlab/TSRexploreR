@@ -6,6 +6,7 @@
 #' @include TSRexplore.R
 #'
 #' @inheritParams common_params
+#' @param ... Arguments passed to geom_col
 #'
 #' @details
 #' It has been shown in many organisms that particular base preferences exist at the
@@ -39,17 +40,18 @@
 #' @seealso
 #' \code{\link{plot_dinculeotide_frequencies}} to plot the dinucleotide frequencies.
 #'
-#' @rdname dinucleotide_frequencies-function
 #' @export
 
-dinucleotide_frequencies <- function(
+plot_dinucleotide_frequencies <- function(
   experiment,
   genome_assembly=NULL,
   samples="all",
   threshold=NULL,
   use_normalized=FALSE,
   dominant=FALSE,
-  data_conditions=NA
+  data_conditions=NULL,
+  ncol=3,
+  ...
 ) {
 
   ## Check inputs.
@@ -62,9 +64,7 @@ dinucleotide_frequencies <- function(
   assert_that(is.null(threshold) || (is.numeric(threshold) && threshold >= 0))
   assert_that(is.flag(use_normalized))
   assert_that(is.flag(dominant))
-  if (all(!is.na(data_conditions)) && !is(data_conditions, "list")) {
-    stop("data_conditions must be a list of values")
-  }
+  assert_that(is.null(data_conditions) || is.list(data_conditions))
 
   ## Load genome assembly.
   fasta_assembly <- .prepare_assembly(genome_assembly, experiment)
@@ -75,13 +75,10 @@ dinucleotide_frequencies <- function(
     preliminary_filter(dominant, threshold)
 
   ## Apply conditions to data.
-  if (all(!is.na(data_conditions))) {
-    select_samples <- do.call(group_data, c(list(signal_data=select_samples), data_conditions))
-  }
+  select_samples <- condition_data(select_samples, data_conditions)
 
   ## Prepare samples for analysis.
   select_samples <- rbindlist(select_samples, idcol="sample")
-  select_samples <- select_samples[, .(seqnames, start, end, strand, sample)]
 
   ## Extend ranges to capture base before TSS.
   select_samples <- select_samples %>%
@@ -107,30 +104,57 @@ dinucleotide_frequencies <- function(
   setnames(seqs, old="x", new="dinucleotide")
 
   ## Find dinucleotide frequencies.
-  groupings <- any(names(data_conditions) %in% c("quantile_by", "grouping"))
-  freqs <- .calculate_freqs(seqs, groupings)
+  data_grouping <- case_when(
+    !is.null(data_conditions$quantiling) ~ "row_quantile",
+    !is.null(data_conditions$grouping) ~ "row_groups",
+    TRUE ~ "none"
+  )
+
+  freqs <- .calculate_freqs(seqs, data_grouping)
+
+  ## Order dinucleotides by mean occurance.
+  freqs[,
+    mean_freq := mean(freqs), by=dinucleotide
+  ][,
+    rank := dense_rank(mean_freq)
+  ][,
+    dinucleotide := fct_reorder(dinucleotide, rank)
+  ]
 
   ## Order samples if required.
   if (!all(samples == "all")) {
     freqs[, sample := factor(sample, levels=samples)]
   }
 
-  ## Prepare DataFrame to return.
-  freqs_df <- DataFrame(freqs)
-  metadata(freqs_df)$groupings <- groupings
-  metadata(freqs_df)$threshold <- threshold
-  
-  return(freqs_df)
+  ## PLot dinucleotide frequencies.
+  p <- ggplot(freqs, aes(x=.data$dinucleotide, y=.data$freqs)) +
+    geom_col(width=0.5, aes(fill=.data$freqs), ...) +
+    theme_bw() +
+    coord_flip() +
+    labs(
+      x="Dinucleotide",
+      y="Frequency"
+    )
+
+  if (data_grouping != "none") {
+    p <- p + facet_grid(as.formula(str_c(data_grouping, "~", "sample")))
+  } else {
+    p <- p + facet_wrap(~ sample, ncol=ncol)
+  }
+
+  return(p)
+
 }
 
 #' Internal DinucleotideFrequency Calculation
 #'
 #' @param seqs Dinucleotide sequences
-#' @param grouping_status Whether any goruping should be applied
+#' @param grouping_status Whether there is quantiling or grouping.
 
 .calculate_freqs <- function(seqs, grouping_status) {
 
- if (!grouping_status) {
+  ## Get the dinucleotide frequencies.
+  if (grouping_status == "none") {
     freqs <- seqs[,
       .(count=.N), by=.(sample, dinucleotide)
     ][,
@@ -139,10 +163,10 @@ dinucleotide_frequencies <- function(
     ]
   } else {
     freqs <- seqs[,
-      .(count=.N), by=.(sample, dinucleotide, grouping)
+      .(count=.N), by=c("sample", "dinucleotide", grouping_status)
     ][,
       .(dinucleotide, count, freqs=count / sum(count)),
-      by=.(sample, grouping)
+      by=c("sample", grouping_status)
     ]
   }
 
@@ -155,8 +179,6 @@ dinucleotide_frequencies <- function(
 #' Plot results from dinucleotide analysis
 #'
 #' @inheritParams common_params
-#' @param dinucleotide_frequencies tibble from dinucleotide_frequencies analysis
-#' @param ... Arguments passed to geom_col
 #'
 #' @details
 #' This plotting function returns a ggplot2 barplot of -1 and +1 dinucleotide frequencies, 
@@ -176,63 +198,5 @@ dinucleotide_frequencies <- function(
 #'
 #' @seealso
 #' \code{\link{dinucleotide_frequencies}} to calculate the dinucleotide frequencies.
-#'
-#' @rdname plot_dinucleotide_frequencies-function
-#' @export
 
-plot_dinucleotide_frequencies <- function(
-  dinucleotide_frequencies,
-  ncol=1,
-  ...
-) {
-
-  ## Check inputs.
-  assert_that(is(dinucleotide_frequencies, "DataFrame"))
-  assert_that(is.count(ncol))
-
-  ## Pull out some info from the dataframe.
-  groupings <- metadata(dinucleotide_frequencies)$groupings
-
-  ## Convert dataframe to data.table.
-  freqs <- as.data.table(dinucleotide_frequencies)
-  
-  ## Set factor order for dinucleotides.
-  if (!groupings) {
-    freqs <- freqs[,
-      .(sample, count, freqs, mean_freqs=mean(freqs)),
-      by=dinucleotide
-    ]
-  } else {
-    freqs <- freqs[,
-      .(sample, count, freqs, grouping, mean_freqs=mean(freqs)),
-      by=dinucleotide
-    ]
-  }
-
-  freqs[,
-    rank := dense_rank(mean_freqs)
-  ][,
-    dinucleotide := fct_reorder(factor(dinucleotide), rank)
-  ][,
-    c("mean_freqs", "rank") := NULL
-  ]
-
-  ## Plot dinucleotide frequencies.
-
-  p <- ggplot(freqs, aes(x=.data$dinucleotide, y=.data$freqs)) +
-    geom_col(width=0.5, aes(fill=.data$freqs), ...) +
-    theme_bw() +
-    coord_flip() +
-    labs(
-      x="Dinucleotide",
-      y="Frequency"
-    )
-
-  if (groupings) {
-    p <- p + facet_wrap(grouping ~ sample)
-  } else {
-    p <- p + facet_wrap(~ sample, ncol=ncol)
-  }
-
-  return(p)
-}
+plot_dinucleotide_freqs <- function(x) NULL

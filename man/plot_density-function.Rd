@@ -16,7 +16,7 @@ plot_density(
   use_normalized = FALSE,
   dominant = FALSE,
   exclude_antisense = TRUE,
-  data_conditions = NA,
+  data_conditions = NULL,
   color = "default",
   ...
 )
