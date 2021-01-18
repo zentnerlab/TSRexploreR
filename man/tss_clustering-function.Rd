@@ -8,6 +8,7 @@ tss_clustering(
   experiment,
   samples = "all",
   threshold = NULL,
+  n_samples = NULL,
   max_distance = 25,
   max_width = NULL
 )
@@ -18,6 +19,9 @@ tss_clustering(
 \item{samples}{A vector of sample names to analyze.}
 
 \item{threshold}{TSSs or TSRs with a score below this value will not be considered.}
+
+\item{n_samples}{Keep TSS if threshold number of reads are present in n_samples
+number of samples.}
 
 \item{max_distance}{Maximum allowable distance between TSSs for clustering.}
 
