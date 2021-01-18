@@ -14,7 +14,7 @@ plot_tsr_metric(
   use_normalized = FALSE,
   dominant = FALSE,
   threshold = NULL,
-  data_conditions = NA,
+  data_conditions = NULL,
   ...
 )
 }

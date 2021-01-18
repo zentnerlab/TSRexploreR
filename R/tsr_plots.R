@@ -34,7 +34,7 @@ plot_tsr_metric <- function(
   use_normalized=FALSE,
   dominant=FALSE,
   threshold=NULL,
-  data_conditions=NA,
+  data_conditions=NULL,
   ...
 ) {
 
@@ -51,7 +51,7 @@ plot_tsr_metric <- function(
   assert_that(is.flag(use_normalized))
   assert_that(is.flag(dominant))
   assert_that(is.null(threshold) || (is.numeric(threshold) && threshold >= 0))
-  if (all(!is.na(data_conditions)) && !is(data_conditions, "list")) stop("data_conditions must in list form")
+  assert_that(is.null(data_conditions) || is.list(data_conditions))
 
   ## Get data.
   selected_data <- experiment %>%
@@ -59,21 +59,17 @@ plot_tsr_metric <- function(
     preliminary_filter(dominant, threshold)
 
   ## Condition the data.
-  if (all(!is.na(data_conditions))) {
-    selected_data <- do.call(group_data, c(list(signal_data=selected_data), data_conditions))
-  }
+  selected_data <- condition_data(selected_data, data_conditions)
 
-  groupings <- !is.na(data_conditions) & any(names(data_conditions) %in% c("grouping", "quantile_by"))
+  grouping_status <- case_when(
+    !is.null(data_conditions$quantiling) ~ "row_quantile",
+    !is.null(data_conditions$grouping) ~ "row_groups",
+    TRUE ~ "none"
+  )
 
   ## Combine data into one data table.
   selected_data <- rbindlist(selected_data, idcol="sample")
   
-  if (samples == "all") {
-    selected_data[, sample := fct_inorder(factor(sample))]
-  } else {
-    selected_data[, sample := factor(sample, levels=samples)]
-  }
-
   ## Log2 + 1 transform data if required.
   if (log2_transform) {
     selected_data[,
@@ -131,7 +127,8 @@ plot_tsr_metric <- function(
       axis.ticks.x=element_blank()
     )
 
-  if (groupings) {
+  if (grouping_status != "none") {
+    setnames(selected_data, old=grouping_status, new="grouping")
     p <- p + facet_wrap(grouping ~ metric, ncol=ncol, scales="free")
   } else {
     p <- p + facet_wrap(~ metric, ncol=ncol, scales="free")
