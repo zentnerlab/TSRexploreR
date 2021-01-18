@@ -16,6 +16,8 @@ plot_sequence_colormap(
   ncol = 1,
   base_colors = c(A = "#109649", C = "#255C99", G = "#F7B32C", T = "#D62839"),
   font_size = 6,
+  rasterize = FALSE,
+  raster_dpi = 150,
   ...
 )
 }

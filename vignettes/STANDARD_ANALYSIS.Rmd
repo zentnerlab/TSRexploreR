@@ -176,7 +176,7 @@ plot_sequence_logo(exp, ncol=3)
 A sequence logo "averages" the bases when displaying data, but as with TSSs, it can be useful to view the information without aggregation. In a sequence color map, each row represents the window around a TSS and each column represents a specific position relative to this TSS. These display conventions are analogous to those used in a heatmap. Each base is assigned a color and displayed in this two-dimensional space. The prevalence of colors in certain positions can give further evidence towards putative sequence contexts. The same genome assembly and retrieved sequences that were used to make the sequence logos above are used here.
 
 ```{r message=FALSE, fig.width=6, fig.height=4}
-plot_sequence_colormap(exp, ncol=3)
+plot_sequence_colormap(exp, ncol=3, rasterize=TRUE)
 ```
 
 ### Dinucleotide Frequency

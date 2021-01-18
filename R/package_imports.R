@@ -32,6 +32,7 @@ NULL
 #'   is.readable
 #' @importFrom knitr kable
 #' @importFrom rlang enquo enquos quo_is_null "!!" "!!!" quo_text
+#' @importFrom ggrastr rasterize
 
 NULL
 
