@@ -12,6 +12,8 @@
 \item{upstream}{Bases upstream of plot center}
 
 \item{downstream}{Bases downstream of plot center}
+
+\item{...}{Arguments passed to geom_tile}
 }
 \value{
 DataFrame of counts for each gene/transcript and position

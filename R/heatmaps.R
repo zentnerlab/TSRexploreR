@@ -9,6 +9,7 @@
 #' @param annotated_data Annotated data.table
 #' @param upstream Bases upstream of plot center
 #' @param downstream Bases downstream of plot center
+#' @param ... Arguments passed to geom_tile
 #'
 #' @details
 #' This function makes a count matrix for each gene or transcript with detected features
@@ -68,18 +69,8 @@
   tss_mat[,
     distanceToTSS := factor(distanceToTSS, levels=seq(-upstream, downstream, 1))
   ]
-  # Long to wide format for ComplexHeatmap matrix.
-  tss_mat <- dcast(tss_mat, sample + feature ~ distanceToTSS, value.var="score")
-  # Make factors for splitting plot later.
-  sample_data <- unique(tss_mat[["sample"]])
-  sample_data <- map(sample_data, ~rep(.x, length(seq(-upstream, downstream, 1))))
-  sample_data <- purrr::reduce(sample_data, c)
-  # Split samples and convert to matrix.
-  tss_mat <- split(tss_mat, by="sample", keep.by=FALSE)
-  tss_mat <- map(tss_mat, ~as.matrix(column_to_rownames(.x, "feature")))
-  tss_mat <- purrr::reduce(tss_mat, cbind)
-
-  return(list(mat=tss_mat, samps=sample_data))
+  
+  return(tss_mat)
 }
 
 #' Plot Heatmap
@@ -93,6 +84,11 @@
 #' @param upstream Bases upstream to consider
 #' @param downstream bases downstream to consider
 #' @param ... Additional arguments passed to Heatmap
+#' @param max_value Truncate heatmap scale at this value.
+#' @param low_color Color for minimum value.
+#' @param high_color Color for maximum value.
+#' @param log2_transform Log2 + 1 transform values for plotting.
+#' @param x_axis_breaks The distance breaks to show values on the x-axis.
 #'
 #' @details
 #' This plotting function generates a ggplot2 heatmap of TSS or TSR signal
@@ -133,8 +129,15 @@ plot_heatmap <- function(
   use_normalized=FALSE,
   dominant=FALSE,
   data_conditions=conditions(
-    data_ordering=ordering(desc(score))
+    data_ordering=ordering(desc(score), .aggr_fun=sum)
   ),
+  rasterize=FALSE,
+  raster_dpi=150,
+  max_value=NULL,
+  low_color="white",
+  high_color="blue",
+  log2_transform=TRUE,
+  x_axis_breaks=100,
   ...
 ) {
 
@@ -150,6 +153,15 @@ plot_heatmap <- function(
     stop("data_conditions must be a list of values")
   }
   data_type <- match.arg(str_to_lower(data_type), c("tss", "tsr"))
+  assert_that(is.flag(rasterize))
+  assert_that(is.count(raster_dpi))
+  assert_that(
+    is.null(max_value) ||
+    (is.numeric(max_value) && max_value > 0)
+  )
+  assert_that(is.character(low_color))
+  assert_that(is.character(high_color))
+  assert_that(is.flag(log2_transform))
 
   ## Get requested samples.
   annotated <- experiment %>%
@@ -178,18 +190,74 @@ plot_heatmap <- function(
     "tsr"=.tsr_heatmap(annotated, upstream, downstream)
   )
 
+  ## Log2 + 1 transform data if set.
+  count_mat[, score := log2(score + 1)]
+
   ## Create heatmap.
-  p <- count_mat[["mat"]] %>%
-    {log2(. + 1)} %>%
-    Heatmap(
-      cluster_rows=FALSE, show_row_dend=FALSE,
-      cluster_columns=FALSE, show_column_dend=FALSE,
-      show_row_names=FALSE, show_column_names=FALSE,
-      col=viridis::viridis(100),
-      column_split=count_mat[["samps"]],
-      name="log2 score",
-      ...
+  p <- ggplot(count_mat, aes(x=.data$distanceToTSS, y=.data$feature))
+
+  # Apply rasterization if required.
+  if (rasterize) {
+    p <- p + rasterize(
+      geom_tile(aes(fill=.data$score, color=.data$score), ...),
+      dpi=raster_dpi
     )
+  } else {
+    p <- p + geom_tile(aes(fill=.data$score, color=.data$score), ...)
+  }
+
+  p <- p +
+    geom_vline(xintercept=upstream, color="black", linetype="dashed", size=0.1) +
+    scale_x_discrete(
+      breaks=seq(-upstream, downstream, 1) %>% keep(~ (./x_axis_breaks) %% 1 == 0),
+      labels=seq(-upstream, downstream, 1) %>% keep(~ (./x_axis_breaks) %% 1 == 0)
+    )
+
+  # Truncate scale if max_value is set.
+  if (!is.null(max_value)) {
+    p <- p +
+      scale_fill_continuous(
+        limits=c(0, max_value),
+        breaks=seq(0, max_value, 1),
+        labels=c(seq(0, max_value - 1, 1), paste0(">=", max_value)),
+        name="Log2(Score)",
+        low=low_color,
+        high=high_color
+      ) +
+      scale_color_continuous(
+        limits=c(0, max_value),
+        breaks=seq(0, max_value, 1),
+        labels=c(seq(0, max_value - 1, 1), paste0(">=", max_value)),
+        name="Log2(Score)",
+        low=low_color,
+        high=high_color
+      )
+  } else {
+    p <- p +
+      scale_fill_continuous(
+        name="Log2(Score)",
+        low=low_color,
+        high=high_color
+      ) +
+      scale_color_continuous(
+        name="Log2(Score)",
+        low=low_color,
+        high=high_color
+      )
+  }
+
+  p <- p +
+    theme(
+      axis.text.x=element_text(angle=45, hjust=1),
+      panel.spacing=unit(1.5, "lines"),
+      axis.text.y=element_blank(),
+      axis.ticks.y=element_blank(),
+      panel.grid=element_blank(),
+      panel.background=element_rect(fill="white", color="white")
+    ) +
+    labs(x="Position", y="Feature")
+
+  p <- p + facet_wrap(sample ~ ., scales="free")
 
   return(p)
 
@@ -237,21 +305,7 @@ plot_heatmap <- function(
     , on=.(sample, feature, distanceToTSS)
   ]
   setnafill(new_ranges, cols="score", fill=0)
-
-  ## Create matrix.
   new_ranges[, distanceToTSS := factor(distanceToTSS, levels=seq(-upstream, downstream, 1))]
-  new_ranges <- dcast(new_ranges, sample + feature ~ distanceToTSS, value.var="score")
 
-  # Make factors for splitting plot later.
-  sample_data <- new_ranges[["sample"]] %>%
-    unique %>%
-    map(~rep(.x, length(seq(-upstream, downstream, 1)))) %>%
-    purrr::reduce(c)
-
-  tsr_mat <- new_ranges %>%
-    split(by="sample", keep.by=FALSE) %>%
-    map(~column_to_rownames(.x, "feature") %>% as.matrix) %>%
-    purrr::reduce(cbind)
-
-  return(list(mat=tsr_mat, samps=sample_data))
+  return(new_ranges)
 }

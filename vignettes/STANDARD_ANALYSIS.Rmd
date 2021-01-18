@@ -153,7 +153,7 @@ While a density plot gives a general overview of TSS distribution relative to an
 plot_heatmap(
   exp, data_type="tss",
   upstream=250, downstream=250,
-  use_raster=TRUE, raster_device="CairoPNG"
+  rasterize=TRUE, raster_dpi=150
 )
 ```
 
@@ -285,7 +285,7 @@ TSR heatmaps provide a global view of TSR distribution relative to annotated sta
 plot_heatmap(
   exp, data_type="tsr",
   upstream=500, downstream=500,
-  use_raster=TRUE, raster_device="CairoPNG"
+  rasterize=TRUE, raster_dpi=150
 )
 ```
 
