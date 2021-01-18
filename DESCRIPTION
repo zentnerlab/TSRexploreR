@@ -99,6 +99,7 @@ Collate:
     'tss_clustering.R'
     'tss_metrics.R'
     'tss_shifting.R'
+    'utils-pipe.R'
 LinkingTo: 
     Rcpp,
     RcppArmadillo

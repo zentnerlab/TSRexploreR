@@ -1,5 +1,13 @@
+---
+title: TSS Shifting
+author: Robert Policastro
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{TSS Shifting}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
 
-# TSS Shifting
 
 ## Prepare Data
 
