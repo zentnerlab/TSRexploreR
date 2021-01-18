@@ -35,6 +35,10 @@ highest-scoring TSR per gene or transcript.}
 \item{exclude_antisense}{Remove antisense TSSs/TSRs prior to analysis.}
 
 \item{data_conditions}{Apply advanced conditions to the data.}
+
+\item{rasterize}{Rasterize a ggplot.}
+
+\item{raster_dpi}{If rasterization is set, this controls the rasterization DPI.}
 }
 \description{
 Function to hold common parameters.

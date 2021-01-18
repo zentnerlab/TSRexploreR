@@ -45,6 +45,10 @@ highest-scoring TSR per gene or transcript.}
 
 \item{font_size}{Size of text for plots}
 
+\item{rasterize}{Rasterize a ggplot.}
+
+\item{raster_dpi}{If rasterization is set, this controls the rasterization DPI.}
+
 \item{...}{Arguments passed to geom_tile}
 }
 \value{
