@@ -6,6 +6,8 @@
 #' @inheritParams common_params
 #' @param max_distance Maximum allowable distance between TSSs for clustering.
 #' @param max_width Maximum allowable TSR width.
+#' @param n_samples Keep TSS if threshold number of reads are present in n_samples
+#'   number of samples.
 #'
 #' @details
 #' This function clusters TSSs into Transcription Start Regions (TSRs). TSSs are 
@@ -29,6 +31,7 @@ tss_clustering <- function(
   experiment,
   samples="all",
   threshold=NULL,
+  n_samples=NULL,
   max_distance=25,
   max_width=NULL
 ) {
@@ -39,11 +42,23 @@ tss_clustering <- function(
   assert_that(is.null(threshold) || (is.numeric(threshold) && threshold >= 0))
   assert_that(is.count(max_distance))
   assert_that(is.null(max_width) || is.count(max_width))
+  assert_that(is.null(n_samples) || is.count(n_samples))
 
   ## Get selected samples.
-  select_samples <- experiment %>%
-    extract_counts("tss", samples, FALSE) %>%
-    preliminary_filter(FALSE, threshold)
+  select_samples <- extract_counts(experiment, "tss", samples, FALSE)
+
+  ## Filter samples if requested.
+  if (!is.null(threshold)) {
+    if (!is.null(n_samples)) {
+      select_samples <- rbindlist(select_samples, idcol="samples")
+      select_samples[, .n_samples := .N, by=FHASH]
+      select_samples <- select_samples[score >= threshold & .n_samples >= n_samples]
+      select_samples[, .n_samples := NULL]
+      select_samples <- split(select_samples, by="samples", keep.by=FALSE)
+    } else {
+      select_samples <- map(select_samples, ~.x[score > threshold])
+    }
+  }
 
   select_samples <- map(select_samples, function(x) {
     keep_cols <- c("seqnames", "start", "end", "strand", "score")
