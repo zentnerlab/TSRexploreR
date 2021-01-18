@@ -353,6 +353,8 @@ plot_sequence_colormap <- function(
     is.character(base_colors) &&
     all(c("A", "T", "G", "C") %in% names(base_colors))
   )
+  assert_that(is.flag(rasterize))
+  assert_that(is.count(raster_dpi))
 
   ## Get sequences.
   tss_sequences <- .tss_sequences(

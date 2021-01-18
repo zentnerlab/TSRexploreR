@@ -18,7 +18,7 @@ NULL
 #'   scale_fill_viridis_c scale_fill_viridis_d
 #'   scale_color_viridis_c scale_color_viridis_d
 #'   scale_fill_continuous scale_fill_manual scale_color_manual
-#'   scale_x_continuous scale_x_discrete
+#'   scale_x_continuous scale_x_discrete scale_color_continuous
 #'   theme_bw theme_minimal
 #'   theme element_text element_blank unit margin element_rect
 #'   geom_density geom_point geom_col geom_vline geom_tile geom_line

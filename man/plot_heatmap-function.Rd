@@ -13,7 +13,14 @@ plot_heatmap(
   threshold = NULL,
   use_normalized = FALSE,
   dominant = FALSE,
-  data_conditions = conditions(data_ordering = ordering(desc(score))),
+  data_conditions = conditions(data_ordering = ordering(desc(score), .aggr_fun = sum)),
+  rasterize = FALSE,
+  raster_dpi = 150,
+  max_value = NULL,
+  low_color = "white",
+  high_color = "blue",
+  log2_transform = TRUE,
+  x_axis_breaks = 100,
   ...
 )
 }
@@ -34,6 +41,20 @@ plot_heatmap(
 highest-scoring TSR per gene or transcript.}
 
 \item{data_conditions}{Apply advanced conditions to the data.}
+
+\item{rasterize}{Rasterize a ggplot.}
+
+\item{raster_dpi}{If rasterization is set, this controls the rasterization DPI.}
+
+\item{max_value}{Truncate heatmap scale at this value.}
+
+\item{low_color}{Color for minimum value.}
+
+\item{high_color}{Color for maximum value.}
+
+\item{log2_transform}{Log2 + 1 transform values for plotting.}
+
+\item{x_axis_breaks}{The distance breaks to show values on the x-axis.}
 
 \item{...}{Additional arguments passed to Heatmap}
 }
