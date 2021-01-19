@@ -75,7 +75,7 @@ plot_genomic_distribution <- function(
   selected_samples <- condition_data(selected_samples, data_conditions)
 
   ## Calculate distribution.
-  selected_samples <- rbindlist(selected_samples, idcol="samples")
+  selected_samples <- rbindlist(selected_samples, idcol="sample")
 
   grouping_status <- case_when(
     !is.null(data_conditions$quantiling) ~ "row_quantile",
@@ -87,11 +87,11 @@ plot_genomic_distribution <- function(
 
   ## Order samples if required.
   if (!all(samples == "all")) {
-    genomic_dist[, samples := factor(samples, levels=samples)]
+    genomic_dist[, sample := factor(sample, levels=samples)]
   }
 
   ## Plot the genomic distribution.
-  p <- ggplot(genomic_dist, aes(x=.data$samples, y=.data$count, fill=fct_rev(.data$simple_annotations))) +
+  p <- ggplot(genomic_dist, aes(x=.data$sample, y=.data$count, fill=fct_rev(.data$simple_annotations))) +
     geom_col(position="fill", ...) +
     coord_flip() +
     ylab("Fraction") +
@@ -120,18 +120,18 @@ plot_genomic_distribution <- function(
     setnames(selected_samples, old=grouping_status, new="grouping")
     genomic_distribution <- selected_samples[,
       .(count=.N),
-      by=.(samples, simple_annotations, grouping)
+      by=.(sample, simple_annotations, grouping)
     ][,
       .(simple_annotations, count, fraction=count / sum(count)),
-      by=.(samples, grouping)
+      by=.(sample, grouping)
     ]
   } else {
     genomic_distribution <- selected_samples[,
       .(count=.N),
-      by=.(samples, simple_annotations)
+      by=.(sample, simple_annotations)
     ][,
       .(simple_annotations, count, fraction=count / sum(count)),
-      by=samples
+      by=sample
     ]
   }
 
