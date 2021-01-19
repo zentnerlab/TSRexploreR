@@ -24,24 +24,29 @@ plot_shift_rank <- function(
 
   ## Retrieve samples.
   if (samples == "all") {
-    samples <- experiment@shifting$results
+    select_samples <- experiment@shifting$results
   } else {
-    samples <- experiment@shifting$results[samples]
+    select_samples <- experiment@shifting$results[samples]
   }
 
-  samples <- rbindlist(samples, idcol="comparison")
+  select_samples <- rbindlist(select_samples, idcol="comparison")
 
   ## Order features by selected order.
-  samples[, FID := as.character(seq_len(nrow(samples)))]
+  select_samples[, FID := as.character(seq_len(nrow(select_samples)))]
 
   if (score_order == "descending") {
-    samples[, FID := fct_reorder(FID, shift_score, .desc=TRUE)]
+    select_samples[, FID := fct_reorder(FID, shift_score, .desc=TRUE)]
   } else {
-    samples[, FID := fct_reorder(FID, shift_score, .desc=FALSE)]
+    select_samples[, FID := fct_reorder(FID, shift_score, .desc=FALSE)]
+  }
+
+  ## Set sample order if required.
+  if (!all(samples == "all")) {
+    select_samples[, comparison := factor(comparison, levels=samples)]
   }
 
   ## Generate the plot.
-  p <- ggplot(samples, aes(x=FID, y=shift_score, fill=shift_score)) +
+  p <- ggplot(select_samples, aes(x=.data$FID, y=.data$shift_score, fill=.data$shift_score)) +
     geom_col() +
     theme(
       axis.text.x=element_blank(),
@@ -71,25 +76,30 @@ plot_shift_count <- function(
 
   ## Get samples.
   if (all(samples == "all")) {
-    samples <- experiment@shifting$results
+    select_samples <- experiment@shifting$results
   } else {
-    samples <- experiment@shifting$results[samples]
+    select_samples <- experiment@shifting$results[samples]
   }
 
-  samples <- rbindlist(samples, idcol="comparison")
+  select_samples <- rbindlist(select_samples, idcol="comparison")
 
   ## Annotate shifting status.
-  samples[, shift_status := case_when(
+  select_samples[, shift_status := case_when(
     shift_score < 0 ~ "upstream",
     shift_score > 0 ~ "downstream",
     TRUE ~ "n.s."
   )]
 
   ## Get number of shifts per shifting status.
-  shift_count <- samples[, .(count=.N), by=.(shift_status, comparison)]
+  shift_count <- select_samples[, .(count=.N), by=.(shift_status, comparison)]
+
+  ## Set sample order if required.
+  if (!all(samples == "all")) {
+    shift_count[, comparison := factor(comparison, levels=samples)]
+  }
 
   ## bar plot of shifting status.
-  p <- ggplot(shift_count, aes(x=comparison, y=count, fill=shift_status)) +
+  p <- ggplot(shift_count, aes(x=.data$comparison, y=.data$count, fill=.data$shift_status)) +
     geom_col(position="stack")
 
   return(p)

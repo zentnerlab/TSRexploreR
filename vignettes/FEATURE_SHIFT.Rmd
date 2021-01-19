@@ -10,6 +10,7 @@ TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "TSRexploreR")
 TSSs <- readRDS(TSSs)
 
 annotation <- system.file("extdata", "S288C_Annotation.gtf", package = "TSRexploreR")
+assembly <- system.file("extdata", "S288C_Assembly.fasta", package = "TSRexploreR")
 
 samples <- data.frame(
   sample_name=c(sprintf("S288C_D_%s", seq_len(3)), sprintf("S288C_WT_%s", seq_len(3))),
@@ -19,7 +20,11 @@ samples <- data.frame(
 ```
 
 ```{r message=FALSE, warning=FALSE}
-exp <- tsr_explorer(TSSs, genome_annotation=annotation, sample_sheet=samples) %>%
+exp <- TSSs %>%
+  tsr_explorer(
+    genome_annotation=annotation, genome_assembly=assembly,
+    sample_sheet=samples
+  ) %>%
   format_counts(data_type = "tss") %>%
   tss_clustering(threshold=3) %>%  
   merge_samples(data_type = "tss", merge_group="condition") %>%
@@ -37,7 +42,7 @@ exp <- tss_shift(
   sample_1=c(TSS="Untreated", TSR="Untreated"),
   sample_2=c(TSS="Diamide", TSR="Diamide"),
   comparison_name="Untreated_vs_Diamide",
-  min_distance = 100, min_threshold = 10, n_resamples = 1000L
+  max_distance = 100, min_threshold = 10, n_resamples = 1000L
 )
 ```
 
@@ -68,9 +73,7 @@ exp <- annotate_features(exp, data_type="shift", feature_type="transcript")
 Plot the genomic distribution.
 
 ```{r message=FALSE}
-distribution <- genomic_distribution(exp, data_type="shift")
-
-plot_genomic_distribution(distribution) +
+plot_genomic_distribution(exp, data_type="shift") +
   scale_fill_viridis_d()
 ```
 
