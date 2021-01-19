@@ -1,4 +1,3 @@
-context("Sequence Retrieval Functions")
 source("setup.R")
 
 test_that("TSS sequence colormap and sequence logo", {
