@@ -24,14 +24,13 @@ NULL
 #'   geom_density geom_point geom_col geom_vline geom_tile geom_line
 #'   geom_violin geom_boxplot geom_jitter geom_raster geom_histogram
 #'   geom_bar geom_hline
-#' @importFrom rlang .data
 #' @importFrom forcats fct_rev fct_inorder fct_reorder fct_relevel
 #' @importFrom dplyr pull case_when desc
 #' @importFrom assertthat
 #'   assert_that is.count is.flag is.string has_name has_attr
 #'   is.readable
 #' @importFrom knitr kable
-#' @importFrom rlang enquo enquos quo_is_null "!!" "!!!" quo_text
+#' @importFrom rlang .data enquo enquos quo_is_null "!!" "!!!" quo_text ensym
 #' @importFrom ggrastr rasterize
 
 NULL
