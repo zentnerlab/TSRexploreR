@@ -71,6 +71,11 @@ softclip_composition <- function(
     by=.(sample, position, base)
   ]
 
+  ## Set sample order if required.
+  if (!all(samples == "all")) {
+    select_samples[, sample := factor(sample, levels=samples)]
+  }
+
   ## Plot frequencies.
   p <- ggplot(select_samples, aes(x=.data$sample, y=.data$count)) +
     geom_col(aes(fill=.data$base), position="fill") +
@@ -113,6 +118,11 @@ softclip_histogram <- function(
   select_samples[,
     c("seqnames", "start", "end", "strand", "width", "seq_soft") := NULL
   ]
+
+  ## Set sample order if requested.
+  if (!all(samples == "all")) {
+    select_samples[, sample := factor(sample, levels=samples)]
+  }
 
   ## Plot histogram.
   p <- ggplot(select_samples, aes(x=.data$n_soft)) +

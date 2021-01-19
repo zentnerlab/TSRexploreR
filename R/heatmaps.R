@@ -193,6 +193,11 @@ plot_heatmap <- function(
   ## Log2 + 1 transform data if set.
   count_mat[, score := log2(score + 1)]
 
+  ## Set sample order if required.
+  if (!all(samples == "all")) {
+    count_mat[, sample := factor(sample, levels=samples)]
+  }
+
   ## Create heatmap.
   p <- ggplot(count_mat, aes(x=.data$distanceToTSS, y=.data$feature))
 
