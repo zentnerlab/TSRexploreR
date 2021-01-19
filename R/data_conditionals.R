@@ -17,22 +17,41 @@ conditions <- function(
   data_grouping=NULL
 ) {
 
+  ## Check inputs.
+  assert_that(
+    is.null(data_ordering) || (
+      is.list(data_ordering) && 
+      has_attr(data_ordering, "condition_type") &&
+      attributes(data_ordering)$condition_type == "ordering"
+    )
+  )
+  assert_that(
+    is.null(data_quantiling) || (
+      is.list(data_quantiling) &&
+      has_attr(data_quantiling, "condition_type") &&
+      attributes(data_quantiling)$condition_type == "quantiling"
+    )
+  )
+
+  ## Return a quosure of the filter.
   data_filters <- enquo(data_filters)
   if (quo_is_null(data_filters)) data_filters <- NULL
 
-  data_grouping <- enquo(data_grouping)
-  if (quo_is_null(data_grouping)) {
+  ## For data grouping return either NULL or a character.
+  if (quo_is_null(enquo(data_grouping))) {
     data_grouping <- NULL
   } else {
-    data_grouping <- quo_text(data_grouping)
+    data_grouping <- as.character(ensym(data_grouping))
   }
 
+  ## Return a list of conditions.
   conds <- list(
     filters=data_filters,
     ordering=data_ordering,
     quantiling=data_quantiling,
     grouping=data_grouping
   )
+  attr(conds, "data_conditions") <- "data_conditions"
 
   return(conds)  
 
@@ -64,6 +83,7 @@ ordering <- function(
       samples=.samples,
       aggr_fun=.aggr_fun
     )
+    attr(ord, "condition_type") <- "ordering"
   }
 
   return(ord)
@@ -107,6 +127,7 @@ quantiling <- function(
       descending=descending,
       aggr_fun=aggr_fun
     )
+    attr(quantiling, "condition_type") <- "quantiling"
   }
 
   return(quantiling)
@@ -176,7 +197,15 @@ condition_data <- function(
   signal_data,
   data_conditions
 ) {
-  
+
+  ## Input checks.
+  assert_that(
+    is.null(data_conditions) || (
+      is.list(data_conditions) &&
+      has_attr(data_conditions, "data_conditions")
+    )
+  )
+
   ## Filter the data if required.
   if (!is.null(data_conditions$filters)) {
     walk(signal_data, setDT)
