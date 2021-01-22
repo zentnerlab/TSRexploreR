@@ -12,7 +12,7 @@ merge_samples(
   merge_group = NULL,
   merge_list = NULL,
   max_distance = NULL,
-  genome_annotation = NULL
+  genome_assembly = NULL
 )
 }
 \arguments{
@@ -32,7 +32,7 @@ Additional meta-data columns can be added with sample information such as condit
 
 \item{max_distance}{Merge TSRs within this distance.}
 
-\item{genome_annotation}{Genome annotation in GTF, GFF3, or TxDb format.}
+\item{genome_assembly}{Genome assembly in FASTA or BSgenome format.}
 
 \item{merge_replicates}{If 'TRUE', replicate groups will be merged.}
 
