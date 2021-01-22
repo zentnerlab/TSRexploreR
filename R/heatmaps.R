@@ -128,7 +128,7 @@ plot_heatmap <- function(
   threshold=NULL,
   use_normalized=FALSE,
   dominant=FALSE,
-  data_conditions=conditions(
+  data_conditions=conditionals(
     data_ordering=ordering(desc(score), .aggr_fun=sum)
   ),
   rasterize=FALSE,

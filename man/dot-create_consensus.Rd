@@ -4,12 +4,12 @@
 \alias{.create_consensus}
 \title{Create Consensus Ranges}
 \usage{
-.create_consensus(signal_data, conditions)
+.create_consensus(signal_data, conditionals)
 }
 \arguments{
 \item{signal_data}{TSS or TSR data}
 
-\item{conditions}{Either ordering or quantiling conditions}
+\item{conditionals}{Either ordering or quantiling conditions}
 }
 \description{
 Create Consensus Ranges

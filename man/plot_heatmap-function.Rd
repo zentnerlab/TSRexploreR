@@ -13,7 +13,8 @@ plot_heatmap(
   threshold = NULL,
   use_normalized = FALSE,
   dominant = FALSE,
-  data_conditions = conditions(data_ordering = ordering(desc(score), .aggr_fun = sum)),
+  data_conditions = conditionals(data_ordering = ordering(desc(score), .aggr_fun =
+    sum)),
   rasterize = FALSE,
   raster_dpi = 150,
   max_value = NULL,

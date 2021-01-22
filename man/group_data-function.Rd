@@ -9,7 +9,7 @@ condition_data(signal_data, data_conditions)
 \arguments{
 \item{signal_data}{TSS or TSR data.}
 
-\item{conditions}{List of conditions.}
+\item{data_conditions}{List of conditions.}
 }
 \value{
 data.table with the results from the various data conditionals applied.
@@ -53,11 +53,11 @@ exp <- tsr_explorer(TSSs)
 exp <- format_counts(exp, data_type="tss")
 exp <- tss_clustering(exp)
 exp <- tsr_metrics(exp)
-conditions <- list(order_by="score", grouping="shape_class")
+conditionals <- list(order_by="score", grouping="shape_class")
 assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
 seqs <- tss_sequences(
   exp, genome_assembly=assembly, threshold=10,
-  dominant=TRUE, data_conditions=conditions
+  dominant=TRUE, data_conditions=conditionals
 )
 plot_sequence_logo(seqs)
 

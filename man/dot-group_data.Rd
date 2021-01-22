@@ -9,7 +9,7 @@
 \arguments{
 \item{signal_data}{TSS or TSR data}
 
-\item{conditions}{List of conditions}
+\item{grouping}{Grouping variable}
 }
 \description{
 Group Data

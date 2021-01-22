@@ -10,7 +10,7 @@
 #'
 #' @export
 
-conditions <- function(
+conditionals <- function(
   data_filters=NULL,
   data_ordering=ordering(),
   data_quantiling=quantiling(),
@@ -142,7 +142,7 @@ quantiling <- function(
 #' @importFrom dplyr dense_rank ntile desc
 #'
 #' @param signal_data TSS or TSR data.
-#' @param conditions List of conditions.
+#' @param data_conditions List of conditions.
 #'
 #' @details
 #' It may be desirable to analyze certain subsets of TSSs or TSRs, or split the data 
@@ -180,11 +180,11 @@ quantiling <- function(
 #' exp <- format_counts(exp, data_type="tss")
 #' exp <- tss_clustering(exp)
 #' exp <- tsr_metrics(exp)
-#' conditions <- list(order_by="score", grouping="shape_class")
+#' conditionals <- list(order_by="score", grouping="shape_class")
 #' assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
 #' seqs <- tss_sequences(
 #'   exp, genome_assembly=assembly, threshold=10,
-#'   dominant=TRUE, data_conditions=conditions
+#'   dominant=TRUE, data_conditions=conditionals
 #' )
 #' plot_sequence_logo(seqs)
 #'
@@ -328,7 +328,7 @@ condition_data <- function(
 #' Group Data
 #'
 #' @param signal_data TSS or TSR data
-#' @param conditions List of conditions
+#' @param grouping Grouping variable
 
 .group_data <- function(
   signal_data,
@@ -342,11 +342,11 @@ condition_data <- function(
 #' Create Consensus Ranges
 #'
 #' @param signal_data TSS or TSR data
-#' @param conditions Either ordering or quantiling conditions
+#' @param conditionals Either ordering or quantiling conditions
 
 .create_consensus <- function(
   signal_data,
-  conditions
+  conditionals
 ) {
 
   ## Reduce ranges of samples into consensus ranges.
@@ -357,8 +357,8 @@ condition_data <- function(
   cranges[, CFHASH := str_c(seqnames, start, end, strand, sep=":")]
 
   ## Filter out samples not being used to calculate ordering.
-  if (!is.null(conditions$samples)) {
-    ord <- signal_data[samples %in% conditions$samples]
+  if (!is.null(conditionals$samples)) {
+    ord <- signal_data[samples %in% conditionals$samples]
   } else {
     ord <- signal_data
   }
@@ -375,7 +375,7 @@ condition_data <- function(
   numeric_cols <- colnames(ord)[sapply(ord, is.numeric)]
 
   ord <- ord[,
-    lapply(.SD, conditions$aggr_fun),
+    lapply(.SD, conditionals$aggr_fun),
     by=CFHASH,
     .SDcol=numeric_cols
   ]
