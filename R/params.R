@@ -19,5 +19,6 @@
 #' @param data_conditions Apply advanced conditions to the data.
 #' @param rasterize Rasterize a ggplot.
 #' @param raster_dpi If rasterization is set, this controls the rasterization DPI.
+#' @param return_table Return a table of results instead of a plot.
 
 common_params <- function(x) NULL

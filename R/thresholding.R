@@ -145,6 +145,7 @@ plot_threshold_exploration <- function(
   use_normalized=FALSE,
   ncol=1,
   point_size=1,
+  return_table=FALSE,
   ...
 ) {
 
@@ -165,6 +166,9 @@ plot_threshold_exploration <- function(
     samples,
     use_normalized
   ) 
+
+  ## Return table if requested.
+  if (return_table) return(as.data.frame(threshold_data))
 
   ## Plot data.
   p <- ggplot(threshold_data, aes(x=.data$threshold, y=.data$frac_promoter_proximal)) +
