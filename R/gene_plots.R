@@ -106,11 +106,11 @@ plot_detected_features <- function(
 
   ## Order samples if required.
   if (!all(samples == "all")) {
-    sample_data[, sample := factor(sample, levels=samples)]
+    plot_data[, sample := factor(sample, levels=samples)]
   }
 
   ## Return a table if required.
-  if (return_table) return(as.data.frame(sample_data))
+  if (return_table) return(as.data.frame(plot_data))
 
   ## Plot data.
   p <- ggplot(plot_data, aes(x=.data$sample, y=.data$feature_count, fill=.data$count_type)) +
