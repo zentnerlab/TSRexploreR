@@ -51,6 +51,7 @@ plot_dinucleotide_frequencies <- function(
   dominant=FALSE,
   data_conditions=NULL,
   ncol=3,
+  return_table=FALSE,
   ...
 ) {
 
@@ -65,6 +66,7 @@ plot_dinucleotide_frequencies <- function(
   assert_that(is.flag(use_normalized))
   assert_that(is.flag(dominant))
   assert_that(is.null(data_conditions) || is.list(data_conditions))
+  assert_that(is.flag(return_table))
 
   ## Load genome assembly.
   fasta_assembly <- .prepare_assembly(genome_assembly, experiment)
@@ -125,6 +127,9 @@ plot_dinucleotide_frequencies <- function(
   if (!all(samples == "all")) {
     freqs[, sample := factor(sample, levels=samples)]
   }
+
+  ## Return table if requested.
+  if (return_table) return(as.data.frame(freqs))
 
   ## PLot dinucleotide frequencies.
   p <- ggplot(freqs, aes(x=.data$dinucleotide, y=.data$freqs)) +

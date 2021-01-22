@@ -157,6 +157,7 @@ plot_threshold_exploration <- function(
   assert_that(is.character(samples))
   assert_that(is.numeric(steps) && steps >= 0.1)
   assert_that(is.flag(use_normalized))
+  assert_that(is.flag(return_table))
 
   ## Threshold exploration.
   threshold_data <- .explore_thresholds(

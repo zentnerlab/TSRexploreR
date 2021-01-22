@@ -130,6 +130,7 @@ plot_correlation <- function(
     is.null(threshold) ||
     (is.numeric(threshold) && threshold > 0)
   )
+  assert_that(is.flag(return_matrix))
 
   ## Get data from proper slot.
   normalized_counts <- experiment %>%
