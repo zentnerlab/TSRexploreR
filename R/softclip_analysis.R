@@ -2,6 +2,7 @@
 #'
 #' @inheritParams common_params
 #' @param n_bases Number of bases from -1 position to keep
+#' @param ... Arguments passed to geom_col
 #'
 #' @export
 
@@ -9,7 +10,9 @@ softclip_composition <- function(
   experiment,
   samples="all",
   n_bases=NULL,
-  ncol=3
+  ncol=3,
+  return_table=FALSE,
+  ...
 ) {
 
   ## Input checks.
@@ -75,6 +78,9 @@ softclip_composition <- function(
   if (!all(samples == "all")) {
     select_samples[, sample := factor(sample, levels=samples)]
   }
+
+  ## Return table if requested.
+  if (return_table) return(as.data.frame(select_samples))
 
   ## Plot frequencies.
   p <- ggplot(select_samples, aes(x=.data$sample, y=.data$count)) +
