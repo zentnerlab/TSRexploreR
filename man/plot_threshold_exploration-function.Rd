@@ -18,6 +18,10 @@ plot_threshold_exploration(
 \arguments{
 \item{experiment}{TSRexploreR object.}
 
+\item{max_threshold}{Thresholds from 1 to max_threshold will be explored}
+
+\item{steps}{Steps to get the threshold values}
+
 \item{samples}{A vector of sample names to analyze.}
 
 \item{use_normalized}{Whether to use the normalized (TRUE) or raw (FALSE) counts.}
@@ -27,8 +31,6 @@ plot_threshold_exploration(
 \item{point_size}{The size of the points on the plot}
 
 \item{...}{Arguments passed to geom_point}
-
-\item{threshold_data}{Tibble of threshold exploration data from explore_thresholds}
 }
 \value{
 ggplot2 object containing the threshold exploration plot

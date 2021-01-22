@@ -107,7 +107,8 @@
 #' Make a plot to explore threshold values.
 #'
 #' @inheritParams common_params
-#' @param threshold_data Tibble of threshold exploration data from explore_thresholds
+#' @param max_threshold Thresholds from 1 to max_threshold will be explored
+#' @param steps Steps to get the threshold values
 #' @param point_size The size of the points on the plot
 #' @param ... Arguments passed to geom_point
 #'
