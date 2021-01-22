@@ -10,7 +10,8 @@ import_bams(
   sample_sheet = NULL,
   soft_remove = 3,
   proper_pair = NULL,
-  remove_secondary = TRUE
+  remove_secondary = TRUE,
+  remove_duplicate = FALSE
 )
 }
 \arguments{
@@ -27,6 +28,8 @@ are present at its 5' end.}
 
 \item{proper_pair}{Whether reads should be properly paired for paired end data.
 TRUE by default when data is paired-end.}
+
+\item{remove_duplicate}{If the duplciate flag is set, duplicates are removed.}
 
 \item{remove_seconday}{Remove non-primary reads.}
 }
