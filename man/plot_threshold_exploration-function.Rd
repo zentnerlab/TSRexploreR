@@ -12,6 +12,7 @@ plot_threshold_exploration(
   use_normalized = FALSE,
   ncol = 1,
   point_size = 1,
+  return_table = FALSE,
   ...
 )
 }
@@ -29,6 +30,8 @@ plot_threshold_exploration(
 \item{ncol}{Integer specifying the number of columns to arrange multiple plots.}
 
 \item{point_size}{The size of the points on the plot}
+
+\item{return_table}{Return a table of results instead of a plot.}
 
 \item{...}{Arguments passed to geom_point}
 }

@@ -4,7 +4,13 @@
 \alias{plot_shift_count}
 \title{Shift Count Plot}
 \usage{
-plot_shift_count(experiment, samples = "all", ncol = 3)
+plot_shift_count(
+  experiment,
+  samples = "all",
+  ncol = 3,
+  return_table = FALSE,
+  ...
+)
 }
 \arguments{
 \item{experiment}{TSRexploreR object.}
@@ -12,6 +18,10 @@ plot_shift_count(experiment, samples = "all", ncol = 3)
 \item{samples}{A vector of sample names to analyze.}
 
 \item{ncol}{Integer specifying the number of columns to arrange multiple plots.}
+
+\item{return_table}{Return a table of results instead of a plot.}
+
+\item{...}{Arguments passed to geom_col}
 }
 \description{
 Shift Count Plot

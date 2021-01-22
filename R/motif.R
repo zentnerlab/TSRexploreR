@@ -408,7 +408,7 @@ plot_sequence_colormap <- function(
   if (!all(samples == "all")) {
     long_data[, sample := factor(sample, levels=samples)]
   }
-    
+
   ## Plot sequence colormap
   p <- ggplot(long_data, aes(x=.data$position, y=.data$FHASH))
 

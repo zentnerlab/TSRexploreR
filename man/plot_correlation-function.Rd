@@ -15,6 +15,7 @@ plot_correlation(
   cluster_samples = FALSE,
   heatmap_colors = NULL,
   show_values = TRUE,
+  return_matrix = FALSE,
   ...
 )
 }
@@ -39,6 +40,8 @@ on rows and columns.}
 \item{heatmap_colors}{Vector of colors for heatmap.}
 
 \item{show_values}{Logical for whether to show correlation values on the heatmap.}
+
+\item{return_matrix}{Return the correlation matrix without plotting correlation heatmap.}
 
 \item{...}{Additional arguments passed to ComplexHeatmap::Heatmap.}
 }

@@ -70,6 +70,7 @@ find_correlation <- function(
 #'   on rows and columns.
 #' @param heatmap_colors Vector of colors for heatmap.
 #' @param show_values Logical for whether to show correlation values on the heatmap.
+#' @param return_matrix Return the correlation matrix without plotting correlation heatmap.
 #' @param ... Additional arguments passed to ComplexHeatmap::Heatmap.
 #'
 #' @details
@@ -111,6 +112,7 @@ plot_correlation <- function(
   cluster_samples=FALSE,
   heatmap_colors=NULL,
   show_values=TRUE,
+  return_matrix=FALSE,
   ...
 ) {
 
@@ -128,6 +130,7 @@ plot_correlation <- function(
     is.null(threshold) ||
     (is.numeric(threshold) && threshold > 0)
   )
+  assert_that(is.flag(return_matrix))
 
   ## Get data from proper slot.
   normalized_counts <- experiment %>%
@@ -153,6 +156,9 @@ plot_correlation <- function(
 
   ## Correlation Matrix.
   cor_mat <- cor(normalized_counts, method=correlation_metric)
+
+  ## Return correlation matrix if requested.
+  if (return_matrix) return(cor_mat)
 
   ## ComplexHeatmap Correlation Plot.
   heatmap_args <- list(

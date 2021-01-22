@@ -39,6 +39,8 @@ highest-scoring TSR per gene or transcript.}
 \item{rasterize}{Rasterize a ggplot.}
 
 \item{raster_dpi}{If rasterization is set, this controls the rasterization DPI.}
+
+\item{return_table}{Return a table of results instead of a plot.}
 }
 \description{
 Function to hold common parameters.

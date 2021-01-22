@@ -60,19 +60,23 @@ plot_shift_rank <- function(
 #' Shift Count Plot
 #'
 #' @inheritParams common_params
+#' @param ... Arguments passed to geom_col
 #'
 #' @export
 
 plot_shift_count <- function(
   experiment,
   samples="all",
-  ncol=3
+  ncol=3,
+  return_table=FALSE,
+  ...
 ) {
 
   ## Check inputs.
   assert_that(is(experiment, "tsr_explorer"))
   assert_that(is.character(samples))
   assert_that(is.count(ncol))
+  assert_that(is.flag(return_table))
 
   ## Get samples.
   if (all(samples == "all")) {
@@ -98,9 +102,12 @@ plot_shift_count <- function(
     shift_count[, comparison := factor(comparison, levels=samples)]
   }
 
+  ## Return a table if requested.
+  if (return_table) return(as.data.frame(shift_count))
+
   ## bar plot of shifting status.
   p <- ggplot(shift_count, aes(x=.data$comparison, y=.data$count, fill=.data$shift_status)) +
-    geom_col(position="stack")
+    geom_col(position="stack", ...)
 
   return(p)
 }

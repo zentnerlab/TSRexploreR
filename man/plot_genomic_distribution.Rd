@@ -12,6 +12,7 @@ plot_genomic_distribution(
   use_normalized = FALSE,
   dominant = FALSE,
   data_conditions = NULL,
+  return_table = FALSE,
   ...
 )
 }
@@ -30,6 +31,8 @@ plot_genomic_distribution(
 highest-scoring TSR per gene or transcript.}
 
 \item{data_conditions}{Apply advanced conditions to the data.}
+
+\item{return_table}{Return a table of results instead of a plot.}
 
 \item{...}{Arguments passed to geom_col.}
 }

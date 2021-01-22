@@ -205,6 +205,7 @@ plot_num_de <- function(
   log2fc_cutoff=1,
   fdr_cutoff=0.05,
   keep_unchanged=FALSE,
+  return_table=FALSE,
   ...
 ) {
 
@@ -217,6 +218,8 @@ plot_num_de <- function(
   assert_that(is.character(de_comparisons))
   assert_that(is.numeric(log2fc_cutoff) && log2fc_cutoff >= 0)
   assert_that(is.numeric(fdr_cutoff) && (fdr_cutoff > 0 & fdr_cutoff <= 1))
+  assert_that(is.flag(keep_unchanged))
+  assert_that(is.flag(return_table))
 
   ## Get appropriate samples.
   de_samples <- extract_de(experiment, data_type, de_comparisons)
@@ -240,6 +243,9 @@ plot_num_de <- function(
   if (!all(de_comparisons == "all")) {
     de_samples[, samples := factor(samples, levels=de_comparisons)]
   }
+
+  ## Return table if requested.
+  if (return_table) return(as.data.frame(de_samples))
 
   ## Plot data.
   p <- ggplot(de_samples, aes(x=.data$samples, y=.data$count, fill=.data$de_status)) +

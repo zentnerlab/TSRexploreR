@@ -48,6 +48,7 @@ plot_genomic_distribution <- function(
   use_normalized=FALSE,
   dominant=FALSE,
   data_conditions=NULL,
+  return_table=FALSE,
   ...
 ) {
 
@@ -58,6 +59,7 @@ plot_genomic_distribution <- function(
   assert_that(is.null(threshold) || (is.numeric(threshold) && threshold >= 0))
   assert_that(is.flag(dominant))
   assert_that(is.null(data_conditions) || is.list(data_conditions))
+  assert_that(is.flag(return_table))
 
   ## Get samples.
   selected_samples <- experiment %>%
@@ -89,6 +91,9 @@ plot_genomic_distribution <- function(
   if (!all(samples == "all")) {
     genomic_dist[, sample := factor(sample, levels=samples)]
   }
+
+  ## Return table is requested.
+  if (return_table) return(as.data.frame(genomic_dist))
 
   ## Plot the genomic distribution.
   p <- ggplot(genomic_dist, aes(x=.data$sample, y=.data$count, fill=fct_rev(.data$simple_annotations))) +

@@ -22,7 +22,7 @@ merge_samples <- function(
   merge_group=NULL,
   merge_list=NULL,
   max_distance=NULL,
-  genome_annotation=NULL
+  genome_assembly=NULL
 ) {
 
   ## Check inputs.
