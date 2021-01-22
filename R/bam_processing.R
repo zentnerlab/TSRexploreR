@@ -11,6 +11,7 @@
 #' @param proper_pair Whether reads should be properly paired for paired end data.
 #'   TRUE by default when data is paired-end.
 #' @param remove_seconday Remove non-primary reads.
+#' @param remove_duplicate If the duplciate flag is set, duplicates are removed.
 #'
 #' @export
 
@@ -20,7 +21,8 @@ import_bams <- function(
   sample_sheet=NULL,
   soft_remove=3,
   proper_pair=NULL,
-  remove_secondary=TRUE
+  remove_secondary=TRUE,
+  remove_duplicate=FALSE
 ) {
 
   ## Input checks.
@@ -33,6 +35,7 @@ import_bams <- function(
   assert_that(is.null(soft_remove) || is.count(soft_remove))
   assert_that(is.null(proper_pair) || is.flag(proper_pair))
   assert_that(is.flag(remove_secondary))
+  assert_that(is.flag(remove_duplicate))
 
   ## Prepare sample sheet if required.
   sample_sheet_type <- case_when(
@@ -65,6 +68,9 @@ import_bams <- function(
       isProperPair=TRUE, #Remove improperly paired reads.
       hasUnmappedMate=FALSE #Remove reads with unmapped mate.
     ))
+  }
+  if (remove_duplicate) {
+    flag_args <- c(flag_args, list(isDuplicate=FALSE))
   }
 
   ## Import BAMs.
