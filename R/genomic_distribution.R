@@ -89,7 +89,7 @@ plot_genomic_distribution <- function(
 
   ## Order samples if required.
   if (!all(samples == "all")) {
-    genomic_dist[, sample := factor(sample, levels=samples)]
+    genomic_dist[, sample := factor(sample, levels=rev(samples))]
   }
 
   ## Return table is requested.

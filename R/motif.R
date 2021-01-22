@@ -259,7 +259,7 @@ plot_sequence_logo <- function(
       # labels=c(-distance, -1, +1, distance + 1)
       #)
   } else {
-    p <- rev(sequences) %>%
+    p <- sequences %>%
       map(function(x) {
         ggseqlogo(x, ncol=ncol, ...) +
           theme(text=element_text(size=font_size)) #+
