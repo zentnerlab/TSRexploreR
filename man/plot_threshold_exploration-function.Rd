@@ -4,16 +4,31 @@
 \alias{plot_threshold_exploration}
 \title{Plot Threshold Exploration}
 \usage{
-plot_threshold_exploration(threshold_data, ncol = 1, point_size = 1, ...)
+plot_threshold_exploration(
+  experiment,
+  max_threshold = 25,
+  steps = 1,
+  samples = "all",
+  use_normalized = FALSE,
+  ncol = 1,
+  point_size = 1,
+  ...
+)
 }
 \arguments{
-\item{threshold_data}{Tibble of threshold exploration data from explore_thresholds}
+\item{experiment}{TSRexploreR object.}
+
+\item{samples}{A vector of sample names to analyze.}
+
+\item{use_normalized}{Whether to use the normalized (TRUE) or raw (FALSE) counts.}
 
 \item{ncol}{Integer specifying the number of columns to arrange multiple plots.}
 
 \item{point_size}{The size of the points on the plot}
 
 \item{...}{Arguments passed to geom_point}
+
+\item{threshold_data}{Tibble of threshold exploration data from explore_thresholds}
 }
 \value{
 ggplot2 object containing the threshold exploration plot

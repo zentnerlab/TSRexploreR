@@ -35,11 +35,8 @@
 #'
 #' @seealso
 #' \code{\link{plot_threshold_exploration}} to plot the results.
-#'
-#' @rdname explore_thresholds-function
-#' @export
 
-explore_thresholds <- function(
+.explore_thresholds <- function(
   experiment,
   max_threshold=25,
   steps=0.5,
@@ -140,16 +137,33 @@ explore_thresholds <- function(
 #' @export
 
 plot_threshold_exploration <- function(
-  threshold_data,
+  experiment,
+  max_threshold=25,
+  steps=1,
+  samples="all",
+  use_normalized=FALSE,
   ncol=1,
   point_size=1,
   ...
 ) {
 
   ## Check inputs.
-  assert_that(is.data.frame(threshold_data))
   assert_that(is.count(ncol))
   assert_that(is.numeric(point_size) && point_size > 0)
+  assert_that(is(experiment, "tsr_explorer"))
+  assert_that(is.numeric(max_threshold) && max_threshold >= 5)
+  assert_that(is.character(samples))
+  assert_that(is.numeric(steps) && steps >= 0.1)
+  assert_that(is.flag(use_normalized))
+
+  ## Threshold exploration.
+  threshold_data <- .explore_thresholds(
+    experiment,
+    max_threshold,
+    steps,
+    samples,
+    use_normalized
+  ) 
 
   ## Plot data.
   p <- ggplot(threshold_data, aes(x=.data$threshold, y=.data$frac_promoter_proximal)) +

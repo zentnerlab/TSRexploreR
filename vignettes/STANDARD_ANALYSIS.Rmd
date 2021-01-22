@@ -84,9 +84,7 @@ This background can complicate downstream analysis, but it can largely be remove
 
 
 ```{r fig.height=3}
-threshold_data <- explore_thresholds(exp, steps=1)
-
-plot_threshold_exploration(threshold_data, ncol=3, point_size=0.5) +
+plot_threshold_exploration(exp, ncol=3, point_size=0.5) +
   scale_color_viridis_c() 
 ```
 
