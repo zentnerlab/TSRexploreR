@@ -102,7 +102,7 @@
   ## Expand GRanges and remove out of bound.
   select_samples <- stretch(select_samples, distance * 2)
 
-  out_of_bounds <- GenomicRanges:::get_out_of_bound_index(select_samples)
+  out_of_bounds <- .out_of_bounds_index(select_samples)
   if (length(out_of_bounds) > 0) {
     select_samples <- select_samples[-out_of_bounds]
   }
