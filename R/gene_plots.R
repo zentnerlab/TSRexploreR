@@ -49,6 +49,7 @@ plot_detected_features <- function(
   dominant=FALSE,
   use_normalized=FALSE,
   data_conditions=NULL,
+  return_table=FALSE,
   ...
 ) {
 
@@ -60,6 +61,7 @@ plot_detected_features <- function(
   assert_that(is.flag(dominant))
   assert_that(is.flag(use_normalized))
   assert_that(is.null(data_conditions) || is.list(data_conditions))
+  assert_that(is.flag(return_table))
 
   ## Get sample data.
   sample_data <- experiment %>%
@@ -106,6 +108,9 @@ plot_detected_features <- function(
   if (!all(samples == "all")) {
     sample_data[, sample := factor(sample, levels=samples)]
   }
+
+  ## Return a table if required.
+  if (return_table) return(as.data.frame(sample_data))
 
   ## Plot data.
   p <- ggplot(plot_data, aes(x=.data$sample, y=.data$feature_count, fill=.data$count_type)) +

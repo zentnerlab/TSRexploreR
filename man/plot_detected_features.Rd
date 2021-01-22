@@ -12,6 +12,7 @@ plot_detected_features(
   dominant = FALSE,
   use_normalized = FALSE,
   data_conditions = NULL,
+  return_table = FALSE,
   ...
 )
 }
@@ -30,6 +31,8 @@ highest-scoring TSR per gene or transcript.}
 \item{use_normalized}{Whether to use the normalized (TRUE) or raw (FALSE) counts.}
 
 \item{data_conditions}{Apply advanced conditions to the data.}
+
+\item{return_table}{Return a table of results instead of a plot.}
 
 \item{...}{Arguments passed to geom_col.}
 }
