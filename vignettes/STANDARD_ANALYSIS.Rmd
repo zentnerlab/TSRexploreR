@@ -306,7 +306,7 @@ Most plots in this vignette can be filtered, ordered, grouped, and quantiled by 
 ```{r message=FALSE, fig.height=5, fig.width=8}
 plot_sequence_logo(
   exp, threshold=10, dominant=TRUE,
-  data_conditions=conditions(data_grouping=shape_class)
+  data_conditions=conditionals(data_grouping=shape_class)
 )
 ```
 
