@@ -11,6 +11,7 @@ plot_num_de(
   log2fc_cutoff = 1,
   fdr_cutoff = 0.05,
   keep_unchanged = FALSE,
+  return_table = FALSE,
   ...
 )
 }
@@ -26,6 +27,8 @@ plot_num_de(
 \item{fdr_cutoff}{Differential features not meeting this significance threshold will not be considered.}
 
 \item{keep_unchanged}{Whether to include unchanged features in the plot.}
+
+\item{return_table}{Return a table of results instead of a plot.}
 
 \item{...}{Additional arguments passed to geom_col.}
 }

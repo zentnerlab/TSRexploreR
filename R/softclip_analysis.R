@@ -20,6 +20,7 @@ softclip_composition <- function(
   assert_that(is.character(samples))
   assert_that(is.null(n_bases) || is.count(n_bases))
   assert_that(is.count(ncol))
+  assert_that(is.flag(return_table))
 
   ## Retrieve selected samples.
   if (all(samples == "all")) {
