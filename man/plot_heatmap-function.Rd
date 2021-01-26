@@ -13,8 +13,7 @@ plot_heatmap(
   threshold = NULL,
   use_normalized = FALSE,
   dominant = FALSE,
-  data_conditions = conditionals(data_ordering = ordering(desc(score), .aggr_fun =
-    sum)),
+  remove_antisense = TRUE,
   rasterize = FALSE,
   raster_dpi = 150,
   max_value = NULL,
@@ -22,6 +21,16 @@ plot_heatmap(
   high_color = "blue",
   log2_transform = TRUE,
   x_axis_breaks = 100,
+  ncol = 3,
+  filtering = NULL,
+  ordering = score,
+  order_descending = TRUE,
+  order_fun = sum,
+  order_samples = NULL,
+  quantiling = NULL,
+  quantile_fun = sum,
+  n_quantiles = 5,
+  quantile_samples = NULL,
   ...
 )
 }
@@ -41,7 +50,7 @@ plot_heatmap(
 \item{dominant}{If TRUE, will only consider the highest-scoring TSS per gene, transcript, or TSR or 
 highest-scoring TSR per gene or transcript.}
 
-\item{data_conditions}{Apply advanced conditions to the data.}
+\item{remove_antisense}{Remove antisense reads.}
 
 \item{rasterize}{Rasterize a ggplot.}
 
@@ -56,6 +65,26 @@ highest-scoring TSR per gene or transcript.}
 \item{log2_transform}{Log2 + 1 transform values for plotting.}
 
 \item{x_axis_breaks}{The distance breaks to show values on the x-axis.}
+
+\item{ncol}{Integer specifying the number of columns to arrange multiple plots.}
+
+\item{filtering}{Logical statment to filter data by.}
+
+\item{ordering}{Symbol/name specifying the column to order by.}
+
+\item{order_descending}{Whether to order in descending (TRUE) order.}
+
+\item{order_fun}{Function to aggregate variable by before ordering.}
+
+\item{order_samples}{Samples that are used to calculate ordering.}
+
+\item{quantiling}{Character specifying column to quantile by.}
+
+\item{quantile_fun}{Functiont o aggregate variable by before quantiling.}
+
+\item{n_quantiles}{Number of quantiles.}
+
+\item{quantile_samples}{Samples to use for quantiling.}
 
 \item{...}{Additional arguments passed to Heatmap}
 }

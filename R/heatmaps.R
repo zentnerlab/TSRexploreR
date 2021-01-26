@@ -58,7 +58,7 @@
 ) {
 
   ## Create matrix.
-  annotated_data <- annotated_data[, .(sample, score, distanceToTSS, feature)]
+  annotated_data <- annotated_data[, .(sample, score, distanceToTSS, feature, FHASH)]
 
   # Cross-join so that all TSS distances are generated.
   tss_mat <- annotated_data[
@@ -89,6 +89,16 @@
 #' @param high_color Color for maximum value.
 #' @param log2_transform Log2 + 1 transform values for plotting.
 #' @param x_axis_breaks The distance breaks to show values on the x-axis.
+#' @param filtering Logical statment to filter data by.
+#' @param ordering Symbol/name specifying the column to order by.
+#' @param order_fun Function to aggregate variable by before ordering.
+#' @param order_descending Whether to order in descending (TRUE) order.
+#' @param order_samples Samples that are used to calculate ordering.
+#' @param quantiling Character specifying column to quantile by.
+#' @param quantile_fun Functiont o aggregate variable by before quantiling.
+#' @param n_quantiles Number of quantiles.
+#' @param quantile_samples Samples to use for quantiling.
+#' @param remove_antisense Remove antisense reads.
 #'
 #' @details
 #' This plotting function generates a ggplot2 heatmap of TSS or TSR signal
@@ -128,9 +138,7 @@ plot_heatmap <- function(
   threshold=NULL,
   use_normalized=FALSE,
   dominant=FALSE,
-  data_conditions=conditionals(
-    data_ordering=ordering(desc(score), .aggr_fun=sum)
-  ),
+  remove_antisense=TRUE,
   rasterize=FALSE,
   raster_dpi=150,
   max_value=NULL,
@@ -138,6 +146,16 @@ plot_heatmap <- function(
   high_color="blue",
   log2_transform=TRUE,
   x_axis_breaks=100,
+  ncol=3,
+  filtering=NULL,
+  ordering=score,
+  order_descending=TRUE,
+  order_fun=sum,
+  order_samples=NULL,
+  quantiling=NULL,
+  quantile_fun=sum,
+  n_quantiles=5,
+  quantile_samples=NULL,
   ...
 ) {
 
@@ -149,9 +167,7 @@ plot_heatmap <- function(
   assert_that(is.null(threshold) || (is.numeric(threshold) && threshold >= 0))
   assert_that(is.flag(use_normalized))
   assert_that(is.flag(dominant))
-  if (all(!is.na(data_conditions)) && !is(data_conditions, "list")) {
-    stop("data_conditions must be a list of values")
-  }
+  assert_that(is.null(data_conditions) || is.list(data_conditions))
   data_type <- match.arg(str_to_lower(data_type), c("tss", "tsr"))
   assert_that(is.flag(rasterize))
   assert_that(is.count(raster_dpi))
@@ -162,14 +178,29 @@ plot_heatmap <- function(
   assert_that(is.character(low_color))
   assert_that(is.character(high_color))
   assert_that(is.flag(log2_transform))
+  assert_that(is.count(ncol))
+  assert_that(is.flag(order_descending))
+  assert_that(is.function(order_fun))
+  assert_that(is.null(order_samples) || is.character(order_samples))
+  assert_that(is.function(quantile_fun))
+  assert_that(is.count(n_quantiles))
+  assert_that(is.null(quantile_samples) || is.character(quantile_samples))
 
   ## Get requested samples.
   annotated <- experiment %>%
     extract_counts(data_type, samples, use_normalized) %>%
     preliminary_filter(dominant, threshold)
 
+  ## Filter data if data condition set.
+  if (!quo_is_null(enquo(filtering))) {
+    filtering <- enquo(filtering)
+    annotated <- .filter_heatmap(annotated, filtering)
+  }
+
   ## Remove antisense TSSs/TSRs.
-  annotated <- map(annotated, ~.x[simple_annotations != "Antisense"])
+  if (remove_antisense) {
+    annotated <- map(annotated, ~.x[simple_annotations != "Antisense"])
+  }
 
   ## Rename feature ID.
   walk(annotated, function(x) {
@@ -189,6 +220,32 @@ plot_heatmap <- function(
     "tss"=.tss_heatmap(annotated, upstream, downstream),
     "tsr"=.tsr_heatmap(annotated, upstream, downstream)
   )
+
+  ## Quantile and/or order if required.
+  # Apply ordering if set.
+  if (!quo_is_null(enquo(ordering))) {
+    ordering <- enquo(ordering)
+    count_mat <- .order_heatmap(
+      count_mat, data_type, annotated,
+      ordering, order_fun, order_descending,
+      order_samples
+    )
+  }
+
+  # Apply quantiling if set.
+  if (!quo_is_null(enquo(quantiling))) {
+    quantiling <- enquo(quantiling)
+    count_mat <- .quantile_heatmap(
+      count_mat, data_type, annotated,
+      quantiling, quantile_fun, n_quantiles,
+      quantile_samples
+    )
+  }
+
+  # Change factor level of features if ordering.
+  if (any(colnames(count_mat) == "row_order")) {
+    count_mat[, feature := fct_rev(fct_reorder(feature, row_order))]
+  }
 
   ## Log2 + 1 transform data if set.
   count_mat[, score := log2(score + 1)]
@@ -262,7 +319,11 @@ plot_heatmap <- function(
     ) +
     labs(x="Position", y="Feature")
 
-  p <- p + facet_wrap(sample ~ ., scales="free")
+  if (any(colnames(count_mat) == "row_quantile")) {
+    p <- p + facet_wrap(row_quantile ~ sample, scales="free", ncol=ncol)
+  } else {
+    p <- p + facet_wrap(sample ~ ., scales="free", ncol=ncol)
+  }
 
   return(p)
 
@@ -297,7 +358,7 @@ plot_heatmap <- function(
   ]
   ## Put TSR score for entire range of TSR.
   new_ranges <- annotated_data[,
-    .(sample, feature, score,
+    .(sample, feature, score, FHASH,
     distanceToTSS=seq(as.numeric(startDist), as.numeric(endDist), 1)),
     by=tsr_id
   ]
@@ -313,4 +374,119 @@ plot_heatmap <- function(
   new_ranges[, distanceToTSS := factor(distanceToTSS, levels=seq(-upstream, downstream, 1))]
 
   return(new_ranges)
+}
+
+#' Filter Heatmap.
+#'
+#' @param sample_list List of sample data.
+#' @param filter Quosure of filters.
+
+.filter_heatmap <- function(
+  sample_list,
+  filtering
+) {
+  sample_list <- map(sample_list, ~dplyr::filter(.x, !!filtering))
+  return(sample_list)
+}
+
+#' Order Heatmap.
+#'
+#' @inheritParams plot_heatmap
+#' @param count_data data.table of sample data.
+#' @param data_type Either 'tss' or 'tsr'.
+#' @param annotated_data Annotated sample data.
+
+.order_heatmap <- function(
+  count_data,
+  data_type,
+  annotated_data,
+  ordering,
+  order_fun,
+  order_descending,
+  order_samples
+) {
+
+  an_data <- copy(annotated_data)
+  an_data[, c("score", "feature", "distanceToTSS") := NULL]
+
+  if (data_type == "tss") {
+    merged <- copy(count_data)
+  } else if (data_type == "tsr") {
+    merged <- copy(count_data)
+    merged[, distanceToTSS := NULL]
+    merged <- unique(merged)
+  }
+
+  if (!is.null(order_samples)) {
+    merged <- merged[sample %in% order_samples]
+  }
+
+  merged <- merge(merged, an_data, by=c("FHASH", "sample"))
+
+  merged <- merged %>%
+    dplyr::group_by(feature) %>%
+    dplyr::summarize(aggr_var=order_fun(!!ordering))
+
+  setDT(merged)
+  if (order_descending) {
+    merged <- merged[order(-aggr_var)]
+  } else {
+    merged <- merged[order(aggr_var)]
+  }
+
+  merged[, row_order := .I]
+  merged[, aggr_var := NULL]
+
+  merged <- merge(count_data, merged, by="feature")
+
+  return(merged)
+}
+
+#' Quantile Heatmap
+#'
+#' @inheritParams plot_heatmap
+#' @param count_data data.table of sample data.
+#' @param data_type Either 'tss' or 'tsr'.
+#' @param annotated_data Annotated data.
+
+.quantile_heatmap <- function(
+  count_data,
+  data_type,
+  annotated_data,
+  quantiling,
+  quantile_fun,
+  n_quantiles,
+  quantile_samples
+) {
+
+  an_data <- copy(annotated_data)
+  an_data[, c("score", "feature", "distanceToTSS") := NULL]
+
+  if (data_type == "tss") {
+    merged <- copy(count_data)
+  } else if (data_type == "tsr") {
+    merged <- copy(count_data)
+    merged[, distanceToTSS := NULL]
+    merged <- unique(merged)
+  }
+
+  if (!is.null(quantile_samples)) {
+    merged <- merged[sample %in% quantile_samples]
+  }
+
+  merged <- merge(count_data, an_data, by=c("FHASH", "sample"))
+
+  merged <- merged %>%
+    dplyr::group_by(feature) %>%
+    dplyr::summarize(aggr_var=quantile_fun(!!quantiling))
+
+  setDT(merged)
+  merged[, row_quantile := ntile(aggr_var, n=n_quantiles)]
+  merged[, row_quantile := fct_rev(factor(row_quantile))]
+  merged[, aggr_var := NULL]
+
+  merged <- merge(count_data, merged, by="feature")
+
+  return(merged)
+
 }
