@@ -32,7 +32,6 @@ plot_heatmap(
   n_quantiles = 5,
   quantile_samples = NULL,
   split_by = NULL,
-  order_by_split = FALSE,
   ...
 )
 }

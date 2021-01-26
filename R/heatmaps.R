@@ -159,7 +159,6 @@ plot_heatmap <- function(
   n_quantiles=5,
   quantile_samples=NULL,
   split_by=NULL,
-  order_by_split=FALSE,
   ...
 ) {
 
@@ -193,7 +192,6 @@ plot_heatmap <- function(
     (is.list(split_by) && has_attr(split_by, "names")) ||
     (is.data.frame(split_by) && colnames(split_by) %in% c("feature", "split_group"))
   )
-  assert_that(is.flag(order_by_split))
 
   ## Get requested samples.
   annotated <- experiment %>%
@@ -231,6 +229,7 @@ plot_heatmap <- function(
   )
 
   ## Quantile and/or order if required.
+
   # Apply ordering if set.
   if (!quo_is_null(enquo(ordering))) {
     ordering <- enquo(ordering)
@@ -254,6 +253,11 @@ plot_heatmap <- function(
   # Change factor level of features if ordering.
   if (any(colnames(count_mat) == "row_order")) {
     count_mat[, feature := fct_rev(fct_reorder(feature, row_order))]
+  }
+
+  ## Use custom gene groups if set.
+  if (!is.null(split_by)) {
+    count_mat <- .split_heatmap(count_mat, split_by)
   }
 
   ## Log2 + 1 transform data if set.
@@ -330,6 +334,8 @@ plot_heatmap <- function(
 
   if (any(colnames(count_mat) == "row_quantile")) {
     p <- p + facet_wrap(row_quantile ~ sample, scales="free", ncol=ncol)
+  } else if (any(colnames(count_mat) == "row_group")) {
+    p <- p + facet_wrap(row_group ~ sample, scales="free", ncol=ncol)
   } else {
     p <- p + facet_wrap(sample ~ ., scales="free", ncol=ncol)
   }
@@ -402,7 +408,6 @@ plot_heatmap <- function(
 #'
 #' @inheritParams plot_heatmap
 #' @param count_data data.table of sample data.
-#' @param data_type Either 'tss' or 'tsr'.
 #' @param annotated_data Annotated sample data.
 
 .order_heatmap <- function(
@@ -455,7 +460,6 @@ plot_heatmap <- function(
 #'
 #' @inheritParams plot_heatmap
 #' @param count_data data.table of sample data.
-#' @param data_type Either 'tss' or 'tsr'.
 #' @param annotated_data Annotated data.
 
 .quantile_heatmap <- function(
@@ -498,4 +502,29 @@ plot_heatmap <- function(
 
   return(merged)
 
+}
+
+#' Split Heatmap
+#'
+#' @inheritParams plot_heatmap
+#' @param count_mat Count matrix.
+
+.split_heatmap <- function(
+  count_mat,
+  split_by
+) {
+
+  ## Change list to data.table if list provided.
+  if (is.list(split_by)) {
+    split_by <- map(split_by, ~data.table(feature=.x))
+    split_by <- rbindlist(split_by, idcol="split_group")
+  } else {
+    setDT(split_by)
+  }
+
+  ## Merge split groups into data.
+  setnames(split_by, old="split_group", new="row_group")
+  count_mat <- merge(count_mat, split_by, by="feature")
+
+  return(count_mat)
 }
