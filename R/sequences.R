@@ -177,6 +177,8 @@ retrieve_seqs <- function(
 
 #' Get index of out of bounds ranges.
 #'
+#' @importFrom GenomeInfoDb isCircular
+#'
 #' @description
 #' Taken from GenomicRanges:::get_out_of_bound_index
 #'
