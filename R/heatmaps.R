@@ -99,6 +99,8 @@
 #' @param n_quantiles Number of quantiles.
 #' @param quantile_samples Samples to use for quantiling.
 #' @param remove_antisense Remove antisense reads.
+#' @param split_by Named list with split group as name and vector of genes,
+#'   or data.frame with columns 'feature' and 'split_group'.
 #'
 #' @details
 #' This plotting function generates a ggplot2 heatmap of TSS or TSR signal
@@ -156,6 +158,8 @@ plot_heatmap <- function(
   quantile_fun=sum,
   n_quantiles=5,
   quantile_samples=NULL,
+  split_by=NULL,
+  order_by_split=FALSE,
   ...
 ) {
 
@@ -167,7 +171,6 @@ plot_heatmap <- function(
   assert_that(is.null(threshold) || (is.numeric(threshold) && threshold >= 0))
   assert_that(is.flag(use_normalized))
   assert_that(is.flag(dominant))
-  assert_that(is.null(data_conditions) || is.list(data_conditions))
   data_type <- match.arg(str_to_lower(data_type), c("tss", "tsr"))
   assert_that(is.flag(rasterize))
   assert_that(is.count(raster_dpi))
@@ -185,6 +188,12 @@ plot_heatmap <- function(
   assert_that(is.function(quantile_fun))
   assert_that(is.count(n_quantiles))
   assert_that(is.null(quantile_samples) || is.character(quantile_samples))
+  assert_that(
+    is.null(split_by) ||
+    (is.list(split_by) && has_attr(split_by, "names")) ||
+    (is.data.frame(split_by) && colnames(split_by) %in% c("feature", "split_group"))
+  )
+  assert_that(is.flag(order_by_split))
 
   ## Get requested samples.
   annotated <- experiment %>%

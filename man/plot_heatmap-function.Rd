@@ -31,6 +31,8 @@ plot_heatmap(
   quantile_fun = sum,
   n_quantiles = 5,
   quantile_samples = NULL,
+  split_by = NULL,
+  order_by_split = FALSE,
   ...
 )
 }
@@ -85,6 +87,9 @@ highest-scoring TSR per gene or transcript.}
 \item{n_quantiles}{Number of quantiles.}
 
 \item{quantile_samples}{Samples to use for quantiling.}
+
+\item{split_by}{Named list with split group as name and vector of genes,
+or data.frame with columns 'feature' and 'split_group'.}
 
 \item{...}{Additional arguments passed to Heatmap}
 }
