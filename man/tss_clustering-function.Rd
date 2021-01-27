@@ -10,7 +10,8 @@ tss_clustering(
   threshold = NULL,
   n_samples = NULL,
   max_distance = 25,
-  max_width = NULL
+  max_width = NULL,
+  singlet_threshold = NULL
 )
 }
 \arguments{
@@ -26,6 +27,9 @@ number of samples.}
 \item{max_distance}{Maximum allowable distance between TSSs for clustering.}
 
 \item{max_width}{Maximum allowable TSR width.}
+
+\item{singlet_threshold}{TSRs of width 1 must have a score greater than
+or equal to this threshold to be kept.}
 }
 \value{
 TSRexploreR object with TSRs.
