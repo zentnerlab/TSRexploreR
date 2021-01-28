@@ -76,23 +76,27 @@ will use  normalized scores, which only matters if 'consider_score' is TRUE.
 considered. dominant' specifies whether only the dominant TSS or TSR (determined
 using the 'mark_dominant' function) is considered. For TSSs, this can be either 
 dominant TSS per TSR or gene/transcript, and for TSRs it is the dominant TSR 
-per gene/transcript. 'data_conditionals' can be used to filter, quantile, order, 
-and/or group data for plotting.
+per gene/transcript. 'data_conditions' can be used to filter, quantile, order, 
+and/or group data for plotting. Finally, 'exclude_antisense' removes anti-sense TSSs or
+  TSRs prior to plotting.
 }
 \examples{
 TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
 TSSs <- readRDS(TSSs)
-exp <- tsr_explorer(TSSs)
-exp <- format_counts(exp, data_type="tss")
 annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
-exp <- annotate_features(
-  exp, annotation_data=annotation,
-  data_type="tss", feature_type="transcript"
-)
-plot_density(exp, data_type="tss")
+
+tsre <- TSSs[1] \%>\%
+  tsr_explorer(genome_annotation=annotation) \%>\%
+  format_counts(data-type="tss")
+
+# TSS density plot.
+\donttest{plot_density(tsre, data_type="tss")}
+
+# TSR density plot.
+tsre <- tss_clustering(tsre, threshold=3)
+\donttest{plot_density(tsre, data_type="tsr")}
 
 }
 \seealso{
 \code{\link{annotate_features}} to annotate TSSs or TSRs.
-  \code{\link{mark_dominant}} to identify dominant TSSs or TSRs.
 }
