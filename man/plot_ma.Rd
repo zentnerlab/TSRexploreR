@@ -40,7 +40,7 @@ This function generates an MA plot of the results from differential analysis of
 TSSs or TSRs.
 
 'de_comparisons' are the names given to the comparisons from the 'comparison_name'
-  argument of 'differential_expression'.
+  argument of the 'differential_expression' function.
 'log2fc_cutoff' and 'fdr_cutoff' are the Log2 Fold Change and FDR cutoffs used
   for consideration of significance in the plot.
 }
@@ -81,7 +81,7 @@ diff_tsr <- tsre \%>\%
     comparison_type="name",
     comparison="condition_Untreated_vs_Diamide"
   )
-\donttest{plot_ma(diff_tss, data_type="tsr")}
+\donttest{plot_ma(diff_tsr, data_type="tsr")}
 
 }
 \seealso{
