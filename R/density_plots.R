@@ -43,7 +43,7 @@
 #'
 #' tsre <- TSSs[1] %>%
 #'   tsr_explorer(genome_annotation=annotation) %>%
-#'   format_counts(data-type="tss")
+#'   format_counts(data_type="tss")
 #'
 #' # TSS density plot.
 #' \donttest{plot_density(tsre, data_type="tss")}
