@@ -6,11 +6,10 @@
 #' @importFrom ChIPseeker annotatePeak
 #'
 #' @inheritParams common_params
-#' @param annotation_data Path to annotation file or loaded TxDb object.
-#' @param data_type Whether to annotate TSSs or TSRs.
-#' @param feature_type Whether to annotate at the gene or transcript level.
-#' @param upstream Bases upstream of TSS for 'promoter' annotation.
-#' @param downstream Bases downstream of TSS for 'promoter' annotation.
+#' @param data_type Whether to annotate TSSs ('tss') or TSRs ('tsr').
+#' @param feature_type Whether to annotate at the 'gene' or 'transcript' level.
+#' @param upstream Number of bases upstream of TSS for 'promoter' annotation (integer).
+#' @param downstream Number of bases downstream of TSS for 'promoter' annotation (integer).
 #'
 #' @details
 #' This function attempts to assign TSSs or TSRs to the nearest genomic feature.
@@ -49,7 +48,7 @@ annotate_features <- function(
   experiment,
   data_type=c("tss", "tsr", "tss_diff", "tsr_diff", "shift"),
   feature_type=c("gene", "transcript"),
-  annotation_data=NULL,
+  genome_annotation=NULL,
   upstream=1000,
   downstream=100
 ) {
@@ -57,9 +56,9 @@ annotate_features <- function(
   ## Check inputs.
   assert_that(is(experiment, "tsr_explorer"))
   assert_that(
-    is.null(annotation_data) ||
-    is(annotation_data, "character") || is(annotation_data, "TxDb"),
-    msg="annotation_data must be a GTF/GFF3 annotation file or TxDb object"
+    is.null(genome_annotation) ||
+    is(genome_annotation, "character") || is(genome_annotation, "TxDb"),
+    msg="genome_annotation must be a GTF/GFF3 annotation file or TxDb object"
   )
   data_type <- match.arg(data_type, c("tss", "tsr", "tss_diff", "tsr_diff", "shift")) 
   feature_type <- match.arg(feature_type, c("gene", "transcript"))
@@ -67,7 +66,7 @@ annotate_features <- function(
   assert_that(is.count(downstream))
 
   ## Load GTF.
-  genome_annotation <- .prepare_annotation(annotation_data, experiment)
+  genome_annotation <- .prepare_annotation(genome_annotation, experiment)
 
   ## Get data from proper slot.
   counts <- switch(data_type,

@@ -23,6 +23,37 @@ quantiling(
 
 \item{aggr_fun}{Function to aggregate scores if more than one sample selected.}
 }
+\value{
+A list of quantiling parameters to be passed to the 'data_quantiling' argument
+  of 'conditionals'.
+}
 \description{
-Quantiling
+This is a companion function to 'conditionals' that allows the
+  specification of a variable to split the data into quantiles
+  before plotting.
+}
+\details{
+Column to order by should be specified by names/symbol and not character.
+By default quantiling is calculated based on the aggregate value (based on 'aggr_fun')
+  of the variable accross all samples.
+If 'samples' is specified, only the given samples will be used for aggregate
+  calculation and ordering.
+'descending' controls whether quantiling is calculated in descending (TRUE) or
+  ascending (FALSE) order, and 'n' allows specification of number of quantiles.
+}
+\examples{
+TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
+TSSs <- readRDS(TSSs)
+
+tsre <- TSSs[1] \%>\%
+  tsr_explorer \%>\%
+  format_counts(data_type="tss")
+
+# Sequence base color plot quantiled by score.
+conditions <- conditionals(data_quantiling=quantiling(score))
+\donttest{plot_sequence_colormap(tsre, data_conditions=conditions)}
+
+}
+\seealso{
+\code{\link{conditionals}} For more information on advanced data conditions.
 }

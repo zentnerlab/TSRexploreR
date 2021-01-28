@@ -10,11 +10,39 @@ ordering(..., .samples = NULL, .aggr_fun = mean)
 \item{...}{Variables to order by.
 Wrap varaible name in desc() for descending order (like in dplyr::arrange).}
 
-\item{samples}{Names of samples to order by aggregate score.}
+\item{.samples}{Names of samples to order by aggregate score.}
 
-\item{If}{more than one sample is selected feature values
+\item{.aggr_fun}{If more than one sample is selected feature values
 are aggregated using this function.}
 }
+\value{
+A list of ordering parameters to be passed to the 'data_ordering' argument
+  of 'conditionals'.
+}
 \description{
-Ordering
+This is a companion function to 'conditionals' that allows the
+  specification of variables to order data by for plotting.
+
+Columns to order by should be specified by names/symbols and not characters.
+To sort by a variable in descending order, wrap the variable name in the 'desc' function.
+By default ordering is calculated based on the aggregate value (based on '.aggr_fun')
+  of the variable accross all samples.
+If '.samples' is specified, only the given samples will be used for aggregate
+  calculation and ordering.
+}
+\examples{
+TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
+TSSs <- readRDS(TSSs)
+
+tsre <- TSSs[1] \%>\%
+  tsr_explorer \%>\%
+  format_counts(data_type="tss")
+
+# Sequence base color plot sorted by descending score.
+conditions <- conditionals(data_ordering=ordering(desc(score)))
+\donttest{plot_sequence_colormap(tsre, data_conditions=conditions)}
+
+}
+\seealso{
+\code{\link{conditionals}} For more information on advanced data conditions.
 }
