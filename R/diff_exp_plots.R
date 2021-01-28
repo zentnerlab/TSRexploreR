@@ -237,7 +237,71 @@ plot_volcano <- function(
 #' @param Vector of annotation categories to keep.
 #'   If NULL no filtering by annotation type occurs.
 #'
-#' @rdname export_for_enrichment-function
+#' @details
+#' This function outputs a data.frame that is formatted for use in the 'compateCluster'
+#'   function of the clusterProfiler library.
+#' Importantly, the 'geneId', 'sample', and 'de_status' columns can be used in the formula
+#'   notation 'geneId ~ sample + de_status'.
+#'
+#' 'de_comparisons' are the names given to the comparisons from the 'comparison_name'
+#'   argument of the 'differential_expression' function.
+#' 'log2fc_cutoff' and 'fdr_cutoff' are the Log2 Fold Change and FDR cutoffs used
+#'   for consideration of significance in the plot.
+#'
+#' 'keep_unchanged' controls whether genes with the category of 'unchanged'
+#'   (not differentially expressed) are returned in the table also.
+#' Additionally, genes can be returned based on whether they have differential
+#'   features within a certain relative genomic location, such as promoter.
+#' This is controlled by providing a vector annotation types to 'anno_types'
+#'   which will be kept.
+#'
+#' @return data.frame of genes and differential expression status of TSSs or TSRs.
+#'
+#' @seealso
+#' \code{\link{fit_de_model}} to fit a differential expression model.
+#' \code{\link{differential_expression}} to find differential TSSs or TSRs.
+#'
+#' @examples
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
+#' TSSs <- readRDS(TSSs)
+#' annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
+#' sample_sheet <- data.frame(
+#'   sample_name=c(
+#'     sprintf("S288C_D_%s", seq_len(3)),
+#'     sprintf("S288C_WT_%s", seq_len(3))
+#'   ),
+#'   file_1=NA, file_2=NA,
+#'   condition=c(rep("Diamide", 3), rep("Untreated", 3))
+#' )
+#'
+#' tsre <- TSSs %>%
+#'   tsr_explorer(sample_sheet=sample_sheet, genome_annotation=annotation) %>%
+#'   format_counts(data_type="tss") %>%
+#'   annotate_features(data_type="tss")
+#'
+#' # Differential TSS .
+#' diff_tss <- tsre %>%
+#'   fit_de_model(data_type="tss", formula= ~condition) %>%
+#'   differential_expression(
+#'     exp, data_type="tss",
+#'     comparison_name="Diamide_vs_Untreated",
+#'     comparison_type="name",
+#'     comparison="condition_Untreated_vs_Diamide"
+#'   )
+#' export_for_enrichment(diff_tss, data_type="tss")
+#'
+#' # Differential TSR volcano plot.
+#' diff_tsr <- tsre %>%
+#'   tss_clustering(threshold=3) %>%
+#'   annotate_features(data_type="tsr") %>%
+#'   fit_de_model(data_type="tsr", formula= ~condition) %>%
+#'   differential_expression(
+#'     exp, data_type="tsr",
+#'     comparison_name="Diamide_vs_Untreated",
+#'     comparison_type="name",
+#'     comparison="condition_Untreated_vs_Diamide"
+#'   )
+#' export_for_enrichment(diff_tsr, data_type="tsr")
 #'
 #' @export
 
@@ -284,7 +348,7 @@ export_for_enrichment <- function(
     )]
   }
   
-  return(de_samples)
+  return(as.data.frame(de_samples))
 }
 
 #' Plot DE Numbers
