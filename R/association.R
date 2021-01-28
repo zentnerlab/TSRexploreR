@@ -3,8 +3,6 @@
 #' @description
 #' Associate TSSs with TSRs
 #'
-#' @importFrom plyranges join_overlap_left_directed
-#'
 #' @inheritParams common_params
 #' @param sample_list List with TSRs as names and TSSs as vector.
 #'   If NULL will associate TSSs with TSRs from the sample of the same name.
@@ -27,13 +25,12 @@
 #' @examples
 #' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
 #' TSSs <- readRDS(TSSs)
-#' exp <- tsr_explorer(TSSs)
-#' exp <- format_counts(exp, data_type="tss")
-#' exp <- tss_clustering(exp)
-#' exp <- associate_with_tsr(exp, sample_list=list(
-#'   "S288C_WT_1"="S288C_WT_1", "S288C_WT_2"="S288C_WT_2", "S288C_WT_3"="S288C_WT_3",
-#'   "S288C_D_1"="S288C_D_1", "S288C_D_2"="S288C_D_2", "S288C_D_3"="S288C_D_3"
-#' ))
+#'
+#' TSSs[1] %>%
+#'   tsr_explorer %>%
+#'   format_counts(data_type="tss") %>%
+#'   tss_clustering(threshold=3) %>%
+#'   associate_with_tsr
 #'
 #' @seealso
 #' \code{\link{add_sample_sheet}} to add a sample sheet to the TSRexploreR object.
