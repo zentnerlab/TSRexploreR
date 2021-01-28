@@ -279,7 +279,7 @@ plot_volcano <- function(
 #'   format_counts(data_type="tss") %>%
 #'   annotate_features(data_type="tss")
 #'
-#' # Differential TSS .
+#' # Differential TSS table.
 #' diff_tss <- tsre %>%
 #'   fit_de_model(data_type="tss", formula= ~condition) %>%
 #'   differential_expression(
@@ -290,7 +290,7 @@ plot_volcano <- function(
 #'   )
 #' export_for_enrichment(diff_tss, data_type="tss")
 #'
-#' # Differential TSR volcano plot.
+#' # Differential TSR table.
 #' diff_tsr <- tsre %>%
 #'   tss_clustering(threshold=3) %>%
 #'   annotate_features(data_type="tsr") %>%
@@ -353,20 +353,79 @@ export_for_enrichment <- function(
 
 #' Plot DE Numbers
 #'
-#' Plot number of DE features.
+#' @description
+#' Stacked barplot of the number of differential TSSs or TSRs per comparison.
 #'
 #' @inheritParams common_params
-#' @param data_type Either 'tss', 'tsr', 'tss_features', or 'tsr_features'.
+#' @param data_type Either 'tss' or 'tsr'.
 #' @param de_comparisons Character vector of differential expression comparisons to plot.
-#' @param keep_unchanged Whether to include unchanged features in the plot.
+#' @param keep_unchanged Whether to include (TRUE) unchanged features in the plot.
 #' @param ... Additional arguments passed to geom_col.
 #'
-#' @rdname plot_num_de-function
+#' @details
+#' Generate a stacked barplot with the number of differential TSSs or TSRs per comparison.
+#'
+#' 'de_comparisons' are the names given to the comparisons from the 'comparison_name'
+#'   argument of the 'differential_expression' function.
+#' 'log2fc_cutoff' and 'fdr_cutoff' are the Log2 Fold Change and FDR cutoffs used
+#'   for consideration of significance in the plot.
+#' 'keep_unchaged' controls whether non-significant feature numbers are included in the plot.
+#'
+#' If 'keep_unchaged' is TRUE, a table with the numbers is returned instead of the ggplot.
+#' This may be useful if exact numbers underlying the plot are required.
+#'
+#' @return ggplot2 object of stacked barplot.
+#'   If 'return_table' is TRUE, a data.frame with differentially expressed TSS/TSR numbers
+#'   are returned.
+#'
+#' @seealso
+#' \code{\link{fit_de_model}} to fit a differential expression model.
+#' \code{\link{differential_expression}} to find differential TSSs or TSRs.
+#'
+#' @examples
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
+#' TSSs <- readRDS(TSSs)
+#' sample_sheet <- data.frame(
+#'   sample_name=c(
+#'     sprintf("S288C_D_%s", seq_len(3)),
+#'     sprintf("S288C_WT_%s", seq_len(3))
+#'   ),
+#'   file_1=NA, file_2=NA,
+#'   condition=c(rep("Diamide", 3), rep("Untreated", 3))
+#' )
+#'
+#' tsre <- TSSs %>%
+#'   tsr_explorer(sample_sheet=sample_sheet) %>%
+#'   format_counts(data_type="tss")
+#'
+#' # Differential TSS quantities plot.
+#' diff_tss <- tsre %>%
+#'   fit_de_model(data_type="tss", formula= ~condition) %>%
+#'   differential_expression(
+#'     exp, data_type="tss",
+#'     comparison_name="Diamide_vs_Untreated",
+#'     comparison_type="name",
+#'     comparison="condition_Untreated_vs_Diamide"
+#'   )
+#' \donttest{plot_num_de(diff_tss, data_type="tss")}
+#'
+#' # Differential TSR quantities plot.
+#' diff_tsr <- tsre %>%
+#'   tss_clustering(threshold=3) %>%
+#'   fit_de_model(data_type="tsr", formula= ~condition) %>%
+#'   differential_expression(
+#'     exp, data_type="tsr",
+#'     comparison_name="Diamide_vs_Untreated",
+#'     comparison_type="name",
+#'     comparison="condition_Untreated_vs_Diamide"
+#'   )
+#' \donttest{plot_num_de(diff_tsr, data_type="tsr")}
+#'
 #' @export
 
 plot_num_de <- function(
   experiment,
-  data_type=c("tss", "tsr", "tss_features", "tsr_features"),
+  data_type=c("tss", "tsr"),
   de_comparisons="all",
   log2fc_cutoff=1,
   fdr_cutoff=0.05,
