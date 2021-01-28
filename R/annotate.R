@@ -3,7 +3,6 @@
 #' @description
 #' Use the ChIPseeker package to annotate TSSs or TSRs relative to known genes or transcripts.
 #'
-#' @import tibble
 #' @importFrom ChIPseeker annotatePeak
 #'
 #' @inheritParams common_params
@@ -16,27 +15,34 @@
 #' @details
 #' This function attempts to assign TSSs or TSRs to the nearest genomic feature.
 #' Genomic annotation data can be provided as either a 'GTF' or 'GFF' file,
-#'   or as a TxDb package from bioconductor.
+#'   or as a TxDb package from Bioconductor.
 #'
 #' 'feature_type' allows to you link TSSs or TSRs to genes or transcripts.
 #' Furthermore, the size of the promoter region can be defined using
 #'   'upstream' and 'downstream', which are relative to the TSSs
 #'   defined in your annotation data.
+#' TSSs or TSRs overlapping a gene on the opposite strand
+#'   will be marked as 'Antisense'.
 #'
-#' @return TSRexploreR object with annotated features
+#' @return TSRexploreR object with annotation data added to TSS or TSR tables.
 #'
 #' @examples
 #' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
 #' TSSs <- readRDS(TSSs)
-#' exp <- tsr_explorer(TSSs)
-#' exp <- format_counts(tsre, data_type="tss")
 #' annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
-#' exp <- annotate_features(
-#'   exp, annotation_data=annotation,
-#'   data_type="tss", feature_type="transcript"
-#' )
 #'
-#' @rdname annotate_features-function
+#' tsre <- TSSs[1] %>%
+#'   tsr_explorer(genome_annotation=annotation) %>%
+#'   format_counts(data_type="tss")
+#'
+#' # Annotating TSSs.
+#' annotate_features(tsre, data_type="tss")
+#'
+#' # Annotating TSRs
+#' tsre %>%
+#'   tss_clustering(threshold=3) %>%
+#'   annotate_features(data_type="tsr")
+#'
 #' @export
 
 annotate_features <- function(
