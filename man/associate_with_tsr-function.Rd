@@ -33,13 +33,12 @@ TSS samples can be associated with TSR samples using a list or sample sheet.
 \examples{
 TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
 TSSs <- readRDS(TSSs)
-exp <- tsr_explorer(TSSs)
-exp <- format_counts(exp, data_type="tss")
-exp <- tss_clustering(exp)
-exp <- associate_with_tsr(exp, sample_list=list(
-  "S288C_WT_1"="S288C_WT_1", "S288C_WT_2"="S288C_WT_2", "S288C_WT_3"="S288C_WT_3",
-  "S288C_D_1"="S288C_D_1", "S288C_D_2"="S288C_D_2", "S288C_D_3"="S288C_D_3"
-))
+
+TSSs[1] \%>\%
+  tsr_explorer \%>\%
+  format_counts(data_type="tss") \%>\%
+  tss_clustering(threshold=3) \%>\%
+  associate_with_tsr
 
 }
 \seealso{
