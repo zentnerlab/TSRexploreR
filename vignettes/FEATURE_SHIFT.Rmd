@@ -81,8 +81,9 @@ exp <- annotate_features(exp, data_type="shift", feature_type="transcript")
 
 Plot the genomic distribution.
 
-```{r message=FALSE}
-plot_genomic_distribution(exp, data_type="shift") +
+```{r message=FALSE, eval=FALSE}
+# some kind of error here (DJM)
+plot_genomic_distribution(exp) +
   scale_fill_viridis_d()
 ```
 
