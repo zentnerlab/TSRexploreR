@@ -3,47 +3,52 @@
 #' @description
 #' Use the ChIPseeker package to annotate TSSs or TSRs relative to known genes or transcripts.
 #'
-#' @import tibble
 #' @importFrom ChIPseeker annotatePeak
 #'
 #' @inheritParams common_params
-#' @param annotation_data Path to annotation file or loaded TxDb object.
-#' @param data_type Whether to annotate TSSs or TSRs.
-#' @param feature_type Whether to annotate at the gene or transcript level.
-#' @param upstream Bases upstream of TSS for 'promoter' annotation.
-#' @param downstream Bases downstream of TSS for 'promoter' annotation.
+#' @param data_type Whether to annotate TSSs ('tss') or TSRs ('tsr').
+#' @param feature_type Whether to annotate at the 'gene' or 'transcript' level.
+#' @param upstream Number of bases upstream of TSS for 'promoter' annotation (integer).
+#' @param downstream Number of bases downstream of TSS for 'promoter' annotation (integer).
 #'
 #' @details
 #' This function attempts to assign TSSs or TSRs to the nearest genomic feature.
 #' Genomic annotation data can be provided as either a 'GTF' or 'GFF' file,
-#'   or as a TxDb package from bioconductor.
+#'   or as a TxDb package from Bioconductor.
 #'
 #' 'feature_type' allows to you link TSSs or TSRs to genes or transcripts.
 #' Furthermore, the size of the promoter region can be defined using
 #'   'upstream' and 'downstream', which are relative to the TSSs
 #'   defined in your annotation data.
+#' TSSs or TSRs overlapping a gene on the opposite strand
+#'   will be marked as 'Antisense'.
 #'
-#' @return TSRexploreR object with annotated features
+#' @return TSRexploreR object with annotation data added to TSS or TSR tables.
 #'
 #' @examples
 #' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
 #' TSSs <- readRDS(TSSs)
-#' exp <- tsr_explorer(TSSs)
-#' exp <- format_counts(tsre, data_type="tss")
 #' annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
-#' exp <- annotate_features(
-#'   exp, annotation_data=annotation,
-#'   data_type="tss", feature_type="transcript"
-#' )
 #'
-#' @rdname annotate_features-function
+#' tsre <- TSSs[1] %>%
+#'   tsr_explorer(genome_annotation=annotation) %>%
+#'   format_counts(data_type="tss")
+#'
+#' # Annotating TSSs.
+#' annotate_features(tsre, data_type="tss")
+#'
+#' # Annotating TSRs
+#' tsre %>%
+#'   tss_clustering(threshold=3) %>%
+#'   annotate_features(data_type="tsr")
+#'
 #' @export
 
 annotate_features <- function(
   experiment,
   data_type=c("tss", "tsr", "tss_diff", "tsr_diff", "shift"),
   feature_type=c("gene", "transcript"),
-  annotation_data=NULL,
+  genome_annotation=NULL,
   upstream=1000,
   downstream=100
 ) {
@@ -51,9 +56,9 @@ annotate_features <- function(
   ## Check inputs.
   assert_that(is(experiment, "tsr_explorer"))
   assert_that(
-    is.null(annotation_data) ||
-    is(annotation_data, "character") || is(annotation_data, "TxDb"),
-    msg="annotation_data must be a GTF/GFF3 annotation file or TxDb object"
+    is.null(genome_annotation) ||
+    is(genome_annotation, "character") || is(genome_annotation, "TxDb"),
+    msg="genome_annotation must be a GTF/GFF3 annotation file or TxDb object"
   )
   data_type <- match.arg(data_type, c("tss", "tsr", "tss_diff", "tsr_diff", "shift")) 
   feature_type <- match.arg(feature_type, c("gene", "transcript"))
@@ -61,7 +66,7 @@ annotate_features <- function(
   assert_that(is.count(downstream))
 
   ## Load GTF.
-  genome_annotation <- .prepare_annotation(annotation_data, experiment)
+  genome_annotation <- .prepare_annotation(genome_annotation, experiment)
 
   ## Get data from proper slot.
   counts <- switch(data_type,

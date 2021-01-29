@@ -4,12 +4,12 @@
 \alias{.calculate_distribution}
 \title{Calculate Genomic Distribution}
 \usage{
-.calculate_distribution(selected_samples, groupings)
+.calculate_distribution(selected_samples, grouping_status)
 }
 \arguments{
 \item{selected_samples}{Samples to analyze.}
 
-\item{groupings}{Whether data is grouped.}
+\item{grouping_status}{Whether data is grouped.}
 }
 \description{
 Calculate Genomic Distribution

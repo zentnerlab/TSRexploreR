@@ -108,7 +108,7 @@ retrieve_seqs <- function(
   }
 
   ## Remove any ranges that are now out of bounds.
-  out_of_bounds <- GenomicRanges:::get_out_of_bound_index(selected_samples)
+  out_of_bounds <- .out_of_bounds_index(selected_samples)
   if (length(out_of_bounds) > 0) {
     selected_samples <- selected_samples[-out_of_bounds]
   }
@@ -173,4 +173,25 @@ retrieve_seqs <- function(
     return(seqs)
   }
 
+}
+
+#' Get index of out of bounds ranges.
+#'
+#' @importFrom GenomeInfoDb isCircular
+#'
+#' @description
+#' Taken from GenomicRanges:::get_out_of_bound_index
+#'
+#' @param x GenomicRanges object.
+
+.out_of_bounds_index <- function(x) {
+    if (length(x) == 0L)
+        return(integer(0))
+    x_seqnames_id <- as.integer(seqnames(x))
+    x_seqlengths <- unname(seqlengths(x))
+    seqlevel_is_circ <- unname(isCircular(x)) %in% TRUE
+    seqlength_is_na <- is.na(x_seqlengths)
+    seqlevel_has_bounds <- !(seqlevel_is_circ | seqlength_is_na)
+    which(seqlevel_has_bounds[x_seqnames_id] &
+          (start(x) < 1L | end(x) > x_seqlengths[x_seqnames_id]))
 }

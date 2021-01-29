@@ -5,6 +5,7 @@
 #'
 #' @inheritParams common_params
 #' @param data_type Whether to get distribution of TSSs or TSRs.
+#' @param ... Arguments passed to geom_col.
 #'
 #' @details
 #' This function summarizes the distribution of TSSs or TSRs relative to annotated 
@@ -37,17 +38,18 @@
 #' @seealso \code{\link{annotate_features}} to annotate TSSs or TSRs.
 #'   \code{\link{plot_genomic_distribution}} to plot the genomic distribution.
 #'
-#' @rdname genomic_distribution-function
 #' @export 
 
-genomic_distribution <- function(
+plot_genomic_distribution <- function(
   experiment,
   data_type=c("tss", "tsr", "shift"),
   samples="all",
   threshold=NULL,
   use_normalized=FALSE,
   dominant=FALSE,
-  data_conditions=NA
+  data_conditions=NULL,
+  return_table=FALSE,
+  ...
 ) {
 
   ## Check inputs.
@@ -56,7 +58,8 @@ genomic_distribution <- function(
   assert_that(is.character(samples))
   assert_that(is.null(threshold) || (is.numeric(threshold) && threshold >= 0))
   assert_that(is.flag(dominant))
-  if (all(!is.na(data_conditions)) && !is(data_conditions, "list")) stop("data_conditions must in list form")
+  assert_that(is.null(data_conditions) || is.list(data_conditions))
+  assert_that(is.flag(return_table))
 
   ## Get samples.
   selected_samples <- experiment %>%
@@ -71,52 +74,69 @@ genomic_distribution <- function(
   })
 
   ## Apply advanced grouping.
-  if (all(!is.na(data_conditions))) {
-    selected_samples <- do.call(group_data, c(list(signal_data=selected_samples), data_conditions))
-  }
+  selected_samples <- condition_data(selected_samples, data_conditions)
 
-  ## Prepare data to be plotted later.
-  selected_samples <- rbindlist(selected_samples, idcol="samples")
-  groupings <- any(names(data_conditions) %in% c("quantile_by", "grouping"))
-  genomic_dist <- .calculate_distribution(selected_samples, groupings)
+  ## Calculate distribution.
+  selected_samples <- rbindlist(selected_samples, idcol="sample")
+
+  grouping_status <- case_when(
+    !is.null(data_conditions$quantiling) ~ "row_quantile",
+    !is.null(data_conditions$grouping) ~ "row_groups",
+    TRUE ~ "none"
+  )
+
+  genomic_dist <- .calculate_distribution(selected_samples, grouping_status)
 
   ## Order samples if required.
   if (!all(samples == "all")) {
-    genomic_dist[, samples := factor(samples, levels=samples)]
+    genomic_dist[, sample := factor(sample, levels=rev(samples))]
   }
 
-  ## Prepare dataframe to return.
-  dist_exp <- DataFrame(genomic_dist)
+  ## Return table is requested.
+  if (return_table) return(as.data.frame(genomic_dist))
 
-  ## Add quantile information to summarized experiment.
-  metadata(dist_exp)$groupings <- groupings
-  metadata(dist_exp)$dominant <- dominant
+  ## Plot the genomic distribution.
+  p <- ggplot(genomic_dist, aes(x=.data$sample, y=.data$count, fill=fct_rev(.data$simple_annotations))) +
+    geom_col(position="fill", ...) +
+    coord_flip() +
+    ylab("Fraction") +
+    theme_bw() +
+    theme(
+      axis.title.y=element_blank(),
+      panel.grid=element_blank()
+    )
 
-  return(dist_exp)
+  if (grouping_status != "none") {
+    p <- p + facet_grid(grouping ~ .)
+  }
+
+  return(p)
+
 }
 
 #' Calculate Genomic Distribution
 #'
 #' @param selected_samples Samples to analyze.
-#' @param groupings Whether data is grouped.
+#' @param grouping_status Whether data is grouped.
 
-.calculate_distribution <- function(selected_samples, groupings) {
+.calculate_distribution <- function(selected_samples, grouping_status) {
 
-  if (groupings) {
+  if (grouping_status != "none") {
+    setnames(selected_samples, old=grouping_status, new="grouping")
     genomic_distribution <- selected_samples[,
       .(count=.N),
-      by=.(samples, simple_annotations, grouping)
+      by=.(sample, simple_annotations, grouping)
     ][,
       .(simple_annotations, count, fraction=count / sum(count)),
-      by=.(samples, grouping)
+      by=.(sample, grouping)
     ]
   } else {
     genomic_distribution <- selected_samples[,
       .(count=.N),
-      by=.(samples, simple_annotations)
+      by=.(sample, simple_annotations)
     ][,
       .(simple_annotations, count, fraction=count / sum(count)),
-      by=samples
+      by=sample
     ]
   }
 
@@ -153,32 +173,5 @@ genomic_distribution <- function(
 #'
 #' @seealso \code{\link{annotate_features}} to annotate TSSs or TSRs.
 #'   \code{\link{genomic_distribution}} to prepare annotated TSSs or TSRs for plotting.
-#'
-#' @rdname plot_genomic_distribution-function
-#' @export 
 
-plot_genomic_distribution <- function(
-  genomic_distribution
-) {
-
-  ## Check inputs.
-  assert_that(is(genomic_distribution, "DataFrame"))
-  
-  ## Get information from DataFrame.
-  genomic_dist <- as_tibble(genomic_distribution, .name_repair="unique")
-
-  ## Plot the genomic distribution.
-  p <- ggplot(genomic_dist, aes(x=.data$samples, y=.data$count, fill=fct_rev(.data$simple_annotations))) +
-    geom_col(position="fill") +
-    coord_flip() +
-    ylab("Fraction") +
-    theme_bw() +
-    theme(
-      axis.title.y=element_blank(),
-      panel.grid=element_blank()
-    )
-
-  if (metadata(genomic_distribution)$groupings) p <- p + facet_grid(fct_rev(factor(grouping)) ~ .)
-
-  return(p)
-}
+plot_genomic_dist <- function(x) NULL

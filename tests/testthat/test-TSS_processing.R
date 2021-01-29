@@ -1,4 +1,3 @@
-context("TSS Processing")
 source("setup.R")
 
 test_that("TSS Normalization", {

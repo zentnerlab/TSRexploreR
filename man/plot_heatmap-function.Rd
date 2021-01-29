@@ -13,7 +13,25 @@ plot_heatmap(
   threshold = NULL,
   use_normalized = FALSE,
   dominant = FALSE,
-  data_conditions = list(order_by = "score"),
+  remove_antisense = TRUE,
+  rasterize = FALSE,
+  raster_dpi = 150,
+  max_value = NULL,
+  low_color = "white",
+  high_color = "blue",
+  log2_transform = TRUE,
+  x_axis_breaks = 100,
+  ncol = 3,
+  filtering = NULL,
+  ordering = score,
+  order_descending = TRUE,
+  order_fun = sum,
+  order_samples = NULL,
+  quantiling = NULL,
+  quantile_fun = sum,
+  n_quantiles = 5,
+  quantile_samples = NULL,
+  split_by = NULL,
   ...
 )
 }
@@ -33,7 +51,44 @@ plot_heatmap(
 \item{dominant}{If TRUE, will only consider the highest-scoring TSS per gene, transcript, or TSR or 
 highest-scoring TSR per gene or transcript.}
 
-\item{data_conditions}{Apply advanced conditions to the data.}
+\item{remove_antisense}{Remove antisense reads.}
+
+\item{rasterize}{Rasterize a ggplot.}
+
+\item{raster_dpi}{If rasterization is set, this controls the rasterization DPI.}
+
+\item{max_value}{Truncate heatmap scale at this value.}
+
+\item{low_color}{Color for minimum value.}
+
+\item{high_color}{Color for maximum value.}
+
+\item{log2_transform}{Log2 + 1 transform values for plotting.}
+
+\item{x_axis_breaks}{The distance breaks to show values on the x-axis.}
+
+\item{ncol}{Integer specifying the number of columns to arrange multiple plots.}
+
+\item{filtering}{Logical statment to filter data by.}
+
+\item{ordering}{Symbol/name specifying the column to order by.}
+
+\item{order_descending}{Whether to order in descending (TRUE) order.}
+
+\item{order_fun}{Function to aggregate variable by before ordering.}
+
+\item{order_samples}{Samples that are used to calculate ordering.}
+
+\item{quantiling}{Character specifying column to quantile by.}
+
+\item{quantile_fun}{Functiont o aggregate variable by before quantiling.}
+
+\item{n_quantiles}{Number of quantiles.}
+
+\item{quantile_samples}{Samples to use for quantiling.}
+
+\item{split_by}{Named list with split group as name and vector of genes,
+or data.frame with columns 'feature' and 'split_group'.}
 
 \item{...}{Additional arguments passed to Heatmap}
 }

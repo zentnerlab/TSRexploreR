@@ -9,7 +9,7 @@
 \arguments{
 \item{seqs}{Dinucleotide sequences}
 
-\item{grouping_status}{Whether any goruping should be applied}
+\item{grouping_status}{Whether there is quantiling or grouping.}
 }
 \description{
 Internal DinucleotideFrequency Calculation

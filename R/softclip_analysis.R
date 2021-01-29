@@ -2,6 +2,7 @@
 #'
 #' @inheritParams common_params
 #' @param n_bases Number of bases from -1 position to keep
+#' @param ... Arguments passed to geom_col
 #'
 #' @export
 
@@ -9,7 +10,9 @@ softclip_composition <- function(
   experiment,
   samples="all",
   n_bases=NULL,
-  ncol=3
+  ncol=3,
+  return_table=FALSE,
+  ...
 ) {
 
   ## Input checks.
@@ -17,6 +20,7 @@ softclip_composition <- function(
   assert_that(is.character(samples))
   assert_that(is.null(n_bases) || is.count(n_bases))
   assert_that(is.count(ncol))
+  assert_that(is.flag(return_table))
 
   ## Retrieve selected samples.
   if (all(samples == "all")) {
@@ -71,6 +75,14 @@ softclip_composition <- function(
     by=.(sample, position, base)
   ]
 
+  ## Set sample order if required.
+  if (!all(samples == "all")) {
+    select_samples[, sample := factor(sample, levels=samples)]
+  }
+
+  ## Return table if requested.
+  if (return_table) return(as.data.frame(select_samples))
+
   ## Plot frequencies.
   p <- ggplot(select_samples, aes(x=.data$sample, y=.data$count)) +
     geom_col(aes(fill=.data$base), position="fill") +
@@ -113,6 +125,11 @@ softclip_histogram <- function(
   select_samples[,
     c("seqnames", "start", "end", "strand", "width", "seq_soft") := NULL
   ]
+
+  ## Set sample order if requested.
+  if (!all(samples == "all")) {
+    select_samples[, sample := factor(sample, levels=samples)]
+  }
 
   ## Plot histogram.
   p <- ggplot(select_samples, aes(x=.data$n_soft)) +

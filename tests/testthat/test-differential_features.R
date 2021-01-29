@@ -1,5 +1,3 @@
-context("Differential TSSs/TSRs")
-
 source("setup.R")
 
 sample_sheet <- data.frame(

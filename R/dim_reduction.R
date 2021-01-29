@@ -55,7 +55,7 @@ plot_reduction <- function(
   assert_that(is.character(samples))
   data_type <- match.arg(str_to_lower(data_type), c("tss", "tsr", "tss_features", "tsr_features"))
   assert_that(is.flag(use_normalized))
-  assert_that(is.null(remove_var) | (remove_var > 0 & remove_var < 1))
+  assert_that(is.null(remove_var) || (remove_var > 0 & remove_var < 1))
 
   ## Grab counts.
   count_mat <- experiment %>%

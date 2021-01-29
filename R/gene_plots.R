@@ -5,6 +5,7 @@
 #'
 #' @inheritParams common_params
 #' @param data_type Whether TSSs or TSRs should be analyzed.
+#' @param ... Arguments passed to geom_col.
 #'
 #' @details
 #' This function will returnthe number of genes or transcripts with an associated 
@@ -38,17 +39,18 @@
 #' \code{\link{annotate_features}} to annotate the TSSs and TSRs.
 #' \code{\link{plot_detected_features}} to plot numbers of detected features.
 #'
-#' @rdname detect_features-function
 #' @export
 
-detect_features <- function(
+plot_detected_features <- function(
   experiment,
   samples="all",
-  data_type=c("tss", "tsr", "tss_features", "tsr_features"),
+  data_type=c("tss", "tsr"),
   threshold=NULL,
   dominant=FALSE,
   use_normalized=FALSE,
-  condition_data=NA
+  data_conditions=NULL,
+  return_table=FALSE,
+  ...
 ) {
 
   ## Check inputs.
@@ -57,20 +59,17 @@ detect_features <- function(
   data_type <- match.arg(str_to_lower(data_type), c("tss", "tsr", "tss_features", "tsr_features"))
   assert_that(is.null(threshold) || (is.numeric(threshold) && threshold >= 0))
   assert_that(is.flag(dominant))
-  if (all(!is.na(condition_data)) && !is(condition_data, "list")) {
-    stop("condition_data must be a list of values")
-  }
   assert_that(is.flag(use_normalized))
-  
+  assert_that(is.null(data_conditions) || is.list(data_conditions))
+  assert_that(is.flag(return_table))
+
   ## Get sample data.
   sample_data <- experiment %>%
     extract_counts(data_type, samples, use_normalized) %>%
     preliminary_filter(dominant, threshold)
   
-  ## Apply data conditioning if requested
-  if (data_type %in% c("tss", "tsr") && all(!is.na(condition_data))) {
-    sample_data <- do.call(group_data, c(list(signal_data=sample_data), condition_data))
-  }
+  ## Apply data conditioning if requested.
+  sample_data <- condition_data(sample_data, data_conditions)
 
   ## Rename feature column.
   walk(sample_data, function(x) {
@@ -84,57 +83,78 @@ detect_features <- function(
   })
 
   ## Get feature counts.
-  groupings <- data_type %in% c("tss", "tsr") &&
-    any(names(condition_data) %in% c("quantile_by", "grouping"))
+  grouping_status <- case_when(
+    !is.null(data_conditions$quantiling) ~ "row_quantile",
+    !is.null(data_conditions$grouping) ~ "row_groups",
+    TRUE ~ "none"
+  )
+
   sample_data <- rbindlist(sample_data, idcol="sample")
-  sample_data <- .count_features(sample_data, data_type, groupings)
+  sample_data <- .count_features(sample_data, grouping_status)
+
+  ## Prepare data for plotting.
+  sample_data[, total := NULL]
+  plot_data <- melt(
+    sample_data,
+    measure.vars=c("with_promoter", "without_promoter"),
+    variable.name="count_type",
+    value.name="feature_count"
+  )
+  plot_data[, count_type := factor(
+    count_type, levels=c("without_promoter", "with_promoter")
+  )]
 
   ## Order samples if required.
   if (!all(samples == "all")) {
-    sample_data[, samples := factor(samples, levels=samples)]
+    plot_data[, sample := factor(sample, levels=samples)]
   }
 
-  ## Create DataFrame to export.
-  detected_features <- DataFrame(sample_data)
+  ## Return a table if required.
+  if (return_table) return(as.data.frame(plot_data))
 
-  metadata(detected_features)$threshold <- threshold
-  metadata(detected_features)$data_type <- data_type
-  metadata(detected_features)$feature_type <- experiment@settings$annotation[, feature_type]
-  if (data_type %in% c("tss", "tsr")) {
-    metadata(detected_features)$dominant <- dominant
-    metadata(detected_features)$groupings <- groupings
+  ## Plot data.
+  p <- ggplot(plot_data, aes(x=.data$sample, y=.data$feature_count, fill=.data$count_type)) +
+    geom_col(position="stack", ...) +
+    theme_bw() +
+    ylim(c(0, NA)) +
+    ylab("Feature Count") +
+    xlab("Sample") +
+    theme(
+      axis.text.x=element_text(angle=45, hjust=1)
+    )
+
+  if (grouping_status != "none") {
+    p <- p + facet_grid(fct_rev(factor(grouping)) ~ .)
   }
 
-  return(detected_features)
+  return(p)
+
 }
 
 #' Calculate Feature Counts
 #'
 #' @param sample_data Sample data.
-#' @param data_type Type of data.
-#' @param groupings Whether there is a grouping variable.
+#' @param grouping_status Whether there is a grouping variable.
 
-.count_features <- function(sample_data, data_type, groupings) {
-  if (data_type %in% c("tss", "tsr")) {
-    if (groupings) {
-      sample_data <- sample_data[,
-        .(grouping, promoter=any(simple_annotations == "Promoter")),
-        by=.(sample, feature)
-      ][,
-        .(with_promoter=sum(promoter), without_promoter=.N - sum(promoter), total=.N),
-        by=.(sample, grouping)
-      ]
-    } else {
-      sample_data <- sample_data[,
-        .(promoter=any(simple_annotations == "Promoter")),
-        by=.(sample, feature)
-      ][,
-        .(with_promoter=sum(promoter), without_promoter=.N - sum(promoter), total=.N),
-        by=sample
-      ]
-    }
-  } else if (data_type %in% c("tss_features", "tsr_features")) {
-    sample_data <- sample_data[, .(count=uniqueN(feature)), by=sample]
+.count_features <- function(sample_data, grouping_status) {
+
+  if (grouping_status != "none") {
+    setnames(sample_data, old=grouping_status, new="grouping")
+    sample_data <- sample_data[,
+      .(grouping, promoter=any(simple_annotations == "Promoter")),
+      by=.(sample, feature)
+    ][,
+      .(with_promoter=sum(promoter), without_promoter=.N - sum(promoter), total=.N),
+      by=.(sample, grouping)
+    ]
+  } else {
+    sample_data <- sample_data[,
+      .(promoter=any(simple_annotations == "Promoter")),
+      by=.(sample, feature)
+    ][,
+      .(with_promoter=sum(promoter), without_promoter=.N - sum(promoter), total=.N),
+      by=sample
+    ]
   }
 
   return(sample_data)
@@ -146,9 +166,6 @@ detect_features <- function(
 #' Plot number of features detected per sample.
 #'
 #' @importFrom stringr str_to_title
-#'
-#' @param detected_features DataFrame of detected feature counts from detect_features.
-#' @param ... Arguments passed to geom_col.
 #'
 #' @details
 #' This plotting function returns a stacked barplot showing the number of
@@ -173,66 +190,5 @@ detect_features <- function(
 #' @seealso
 #' \code{\link{annotate_features}} to annotate the TSSs or TSRs.
 #' \code{\link{detect_features}} to determine numbers of detected features.
-#'
-#' @rdname plot_detected_features-function
-#' @export
 
-plot_detected_features <- function(
-  detected_features,
-  ...
-) {
-
-  ## Check inputs.
-  assert_that(is(detected_features, "DataFrame"))
-  
-  ## Get some info from DataFrame.
-  data_type <- metadata(detected_features)$data_type
-  feature_type <- str_to_title(metadata(detected_features)$feature_type)
-  if (data_type %in% c("tss", "tsr")) {
-    grouping_status <- metadata(detected_features)$groupings
-  }
-
-  ## Prepare data for plotting.
-  plot_data <- as.data.table(detected_features)
-
-  if (data_type %in% c("tss", "tsr")) {
-    plot_data[, total := NULL]  
-    plot_data <- melt(plot_data,
-      measure.vars=c("with_promoter", "without_promoter"),
-      variable.name="count_type",
-      value.name="feature_count"
-    )
-    plot_data[, count_type := fct_rev(factor(count_type))]
-  }
-
-  ## Plot data.
-  if (data_type %in% c("tss", "tsr")) {
-    p <- ggplot(plot_data, aes(x=.data$sample, y=.data$feature_count, fill=.data$count_type)) +
-      geom_col(position="stack", ...) +
-      theme_bw() +
-      ylim(c(0, NA)) +
-      ylab(str_c(feature_type, "Count", sep=" ")) +
-      xlab("Sample") +
-      theme(
-        axis.text.x=element_text(angle=45, hjust=1)
-      )
-
-    if (grouping_status) {
-      p <- p + facet_grid(fct_rev(factor(grouping)) ~ .)
-    }
-  } else if (data_type %in% c("tss_features", "tsr_features")) {
-    p <- ggplot(plot_data, aes(x=.data$sample, y=.data$count, fill=.data$sample)) +
-      geom_col(...) +
-      theme_bw() +
-      scale_fill_viridis_d() +
-      ylim(c(0, NA)) +
-      ylab(str_c(feature_type, "Count", sep=" ")) +
-      xlab("Sample") +
-      theme(
-        axis.text.x=element_text(angle=45, hjust=1),
-        legend.position="none"
-      )
-  }
-    
-  return(p)
-}
+plot_detected_feats <- function(x) NULL
