@@ -21,6 +21,7 @@ this vignette uses a named list of GRanges as input into the function that creat
 
 ```{r message=FALSE, warning=FALSE}
 library("TSRexploreR")
+library(ggplot2)
 
 # Example TSSs.
 TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")

@@ -4,3 +4,5 @@ src/*.dll
 *.bedgraph
 *.bed
 
+.Rproj.user
+docs
