@@ -15,13 +15,14 @@ plot_correlation(
   cluster_samples = FALSE,
   heatmap_colors = NULL,
   show_values = TRUE,
+  return_matrix = FALSE,
   ...
 )
 }
 \arguments{
 \item{experiment}{TSRexploreR object.}
 
-\item{data_type}{Whether to make scatter plots from TSS, TSR, or RNA-seq & 5' data.}
+\item{data_type}{Whether to make scatter plots from TSS or TSRs.}
 
 \item{samples}{A vector of sample names to analyze.}
 
@@ -40,10 +41,13 @@ on rows and columns.}
 
 \item{show_values}{Logical for whether to show correlation values on the heatmap.}
 
+\item{return_matrix}{Return the correlation matrix without plotting correlation heatmap.}
+
 \item{...}{Additional arguments passed to ComplexHeatmap::Heatmap.}
 }
 \value{
-ggplot2 object of correlation heatmap.
+ggplot2 object of correlation heatmap,
+  or correlation matrix if 'return_matrix' is TRUE.
 }
 \description{
 Heatmaps and/or scatter plots to explore replicate concordance of TSSs or TSRs.
@@ -62,13 +66,20 @@ between the ranks, rather than the specific values, of each feature.
 \examples{
 TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
 TSSs <- readRDS(TSSs)
-exp <- tsr_explorer(TSSs)
-exp <- format_counts(exp, data_type="tss")
-exp <- normalize_counts(exp, data_type="tss")
-plot_correlation(exp, data_type="tss")
+
+tsre <- TSSs[1] \%>\%
+  tsr_explorer \%>\%
+  format_counts(data_type="tss") \%>\%
+  normalize_counts(data_type="tss", method="CPM")
+
+# TSS correlation.
+\donttest{plot_correlation(tsre, data_type="tss")}
+
+# TSR correlation.
+tsre <- tss_clustering(tsre, threshold=3)
+\donttest{plot_correlation(tsre, data_type="tsr")}
 
 }
 \seealso{
-\code{\link{count_matrix}} to generate the count matrices.
-  \code{\link{tmm_normalize}} to TMM normalize the matrices.
+\code{\link{normalize_counts}} for TSS and TSR normalization.
 }

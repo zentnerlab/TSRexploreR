@@ -14,11 +14,13 @@ NULL
 #' @importFrom tidyr pivot_longer replace_na
 #' @importFrom rlang .data
 #' @importFrom forcats fct_rev fct_inorder fct_reorder fct_relevel
-#' @importFrom dplyr pull case_when
+#' @importFrom dplyr pull case_when desc
 #' @importFrom assertthat
 #'   assert_that is.count is.flag is.string has_name has_attr
 #'   is.readable
 #' @importFrom knitr kable
+#' @importFrom rlang .data enquo enquos quo_is_null "!!" "!!!" quo_text ensym
+#' @importFrom ggrastr rasterize
 
 NULL
 

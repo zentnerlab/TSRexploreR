@@ -10,7 +10,8 @@ import_bams(
   sample_sheet = NULL,
   soft_remove = 3,
   proper_pair = NULL,
-  remove_secondary = TRUE
+  remove_secondary = TRUE,
+  remove_duplicate = FALSE
 )
 }
 \arguments{
@@ -23,13 +24,42 @@ Must have the columns 'sample_name', 'file_1', and 'file_2'.
 Additional meta-data columns can be added with sample information such as condition and batch.}
 
 \item{soft_remove}{Remove read if greater than this number of soft-clipped bases 
-are present at its 5' end.}
+are present at its 5' most end.}
 
-\item{proper_pair}{Whether reads should be properly paired for paired end data.
+\item{proper_pair}{Remove reads without a proper pair SAM flag.
 TRUE by default when data is paired-end.}
 
-\item{remove_seconday}{Remove non-primary reads.}
+\item{remove_duplicate}{Remove reads with duplicate SAM flag set (TRUE).}
+
+\item{remove_seconday}{Remove reads with non-primary SAM flag set (TRUE).}
+}
+\value{
+TSRexploreR object with BAM GRanges and soft-clip information.
 }
 \description{
-Import alignment BAM files.
+Import BAM files with optional quality control parameters.
+}
+\details{
+Import BAMs using the information from the sample sheet.
+If the BAMs are from paired end data,
+  'proper_pair' allows removal of reads without a proper-pair SAM flag.
+Additionally 'remove_seconday' and 'remove_duplicate' will remove reads
+  with the secondary alignments and duplicate flags set.
+
+Most TSS mapping methodologies tend to add at least one non-templated base
+  at the 5' end of the read.
+Futhermore, template switching reverse transcription (TSRT) methods such
+  as STRIPE-seq or nanoCAGE can have up to 3 or 4 non-templated 5' bases.
+We recommend setting `soft_remove` to at minimum 3 because of this,
+  Which removes the read if the given number of soft-clip bases are exceeded.
+}
+\examples{
+bam_file <- system.file("extdata", "S288C.bam", package="TSRexploreR")
+assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
+samples <- data.frame(sample_name="S288C", file_1=bam_file, file_2=NA)
+
+bam_file \%>\%
+  tsr_explorer(sample_sheet=samples, genome_assembly=assembly) \%>\%
+  import_bams(paired=TRUE)
+
 }

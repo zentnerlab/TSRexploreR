@@ -6,7 +6,7 @@
 \usage{
 plot_ma(
   experiment,
-  data_type = c("tss", "tsr", "tss_features", "tsr_features"),
+  data_type = c("tss", "tsr"),
   de_comparisons = "all",
   ncol = 1,
   log2fc_cutoff = 1,
@@ -17,7 +17,7 @@ plot_ma(
 \arguments{
 \item{experiment}{TSRexploreR object.}
 
-\item{data_type}{Either 'tss', 'tsr', 'tss_features', or 'tsr_features'.}
+\item{data_type}{Either 'tss' or 'tsr'.}
 
 \item{de_comparisons}{Character vector of differential expression comparisons to plot.}
 
@@ -37,5 +37,54 @@ Generate an MA plot for differential TSSs, TSRs, or genes/transcripts.
 }
 \details{
 This function generates an MA plot of the results from differential analysis of 
-TSSs, TSRs, or genes/transcripts.
+TSSs or TSRs.
+
+'de_comparisons' are the names given to the comparisons from the 'comparison_name'
+  argument of the 'differential_expression' function.
+'log2fc_cutoff' and 'fdr_cutoff' are the Log2 Fold Change and FDR cutoffs used
+  for consideration of significance in the plot.
+}
+\examples{
+TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
+TSSs <- readRDS(TSSs)
+sample_sheet <- data.frame(
+  sample_name=c(
+    sprintf("S288C_D_\%s", seq_len(3)),
+    sprintf("S288C_WT_\%s", seq_len(3))
+  ),
+  file_1=NA, file_2=NA,
+  condition=c(rep("Diamide", 3), rep("Untreated", 3))
+)
+
+tsre <- TSSs \%>\%
+  tsr_explorer(sample_sheet=sample_sheet) \%>\%
+  format_counts(data_type="tss")
+
+# Differential TSS MA plot.
+diff_tss <- tsre \%>\%
+  fit_de_model(data_type="tss", formula= ~condition) \%>\%
+  differential_expression(
+    exp, data_type="tss",
+    comparison_name="Diamide_vs_Untreated",
+    comparison_type="name",
+    comparison="condition_Untreated_vs_Diamide"
+  )
+\donttest{plot_ma(diff_tss, data_type="tss")}
+
+# Differential TSR MA plot.
+diff_tsr <- tsre \%>\%
+  tss_clustering(threshold=3) \%>\%
+  fit_de_model(data_type="tsr", formula= ~condition) \%>\%
+  differential_expression(
+    exp, data_type="tsr",
+    comparison_name="Diamide_vs_Untreated",
+    comparison_type="name",
+    comparison="condition_Untreated_vs_Diamide"
+  )
+\donttest{plot_ma(diff_tsr, data_type="tsr")}
+
+}
+\seealso{
+\code{\link{fit_de_model}} to fit a differential expression model.
+\code{\link{differential_expression}} to find differential TSSs or TSRs.
 }

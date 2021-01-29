@@ -6,6 +6,10 @@
 #' @inheritParams common_params
 #' @param max_distance Maximum allowable distance between TSSs for clustering.
 #' @param max_width Maximum allowable TSR width.
+#' @param n_samples Keep TSS if threshold number of reads are present in n_samples
+#'   number of samples.
+#' @param singlet_threshold TSRs of width 1 must have a score greater than
+#'   or equal to this threshold to be kept.
 #'
 #' @details
 #' This function clusters TSSs into Transcription Start Regions (TSRs). TSSs are 
@@ -29,8 +33,10 @@ tss_clustering <- function(
   experiment,
   samples="all",
   threshold=NULL,
+  n_samples=NULL,
   max_distance=25,
-  max_width=NULL
+  max_width=NULL,
+  singlet_threshold=NULL
 ) {
 
   ## Check inputs.
@@ -39,11 +45,27 @@ tss_clustering <- function(
   assert_that(is.null(threshold) || (is.numeric(threshold) && threshold >= 0))
   assert_that(is.count(max_distance))
   assert_that(is.null(max_width) || is.count(max_width))
+  assert_that(is.null(n_samples) || is.count(n_samples))
+  assert_that(
+    is.null(singlet_threshold) ||
+    (is.numeric(singlet_threshold) && singlet_threshold > 0)
+  )
 
   ## Get selected samples.
-  select_samples <- experiment %>%
-    extract_counts("tss", samples, FALSE) %>%
-    preliminary_filter(FALSE, threshold)
+  select_samples <- extract_counts(experiment, "tss", samples, FALSE)
+
+  ## Filter samples if requested.
+  if (!is.null(threshold)) {
+    if (!is.null(n_samples)) {
+      select_samples <- rbindlist(select_samples, idcol="samples")
+      select_samples[, .n_samples := .N, by=FHASH]
+      select_samples <- select_samples[score >= threshold & .n_samples >= n_samples]
+      select_samples[, .n_samples := NULL]
+      select_samples <- split(select_samples, by="samples", keep.by=FALSE)
+    } else {
+      select_samples <- map(select_samples, ~.x[score > threshold])
+    }
+  }
 
   select_samples <- map(select_samples, function(x) {
     keep_cols <- c("seqnames", "start", "end", "strand", "score")
@@ -56,7 +78,10 @@ tss_clustering <- function(
   })
   
   ## Cluster TSSs into TSRs.
-  clustered_TSSs <- map(select_samples, .aggr_scores, max_distance, max_width)
+  clustered_TSSs <- map(
+    select_samples, .aggr_scores,
+    max_distance, max_width, singlet_threshold
+  )
 
   ## Add TSRs back to TSRexploreR object.
   clustered_TSSs <- map(clustered_TSSs, function(x) {
@@ -91,8 +116,9 @@ tss_clustering <- function(
 #'
 #' @param granges GRanges.
 #' @param maxdist Maximum distance to cluster.
+#' @param sthresh Singlet threshold.
 
-.aggr_scores <- function(granges, maxdist, maxwidth) {
+.aggr_scores <- function(granges, maxdist, maxwidth, sthresh) {
 
   ## Check inputs.
   assert_that(is(granges, "GRanges"))
@@ -132,6 +158,12 @@ tss_clustering <- function(
   ## If max_width is set, remove TSRs that are too wide.
   if (!is.null(maxwidth)) {
     overlaps <- overlaps[width <= maxwidth]
+  }
+
+  ## If singlet threshold is set,
+  ## remove singlets that fail threshold check.
+  if (!is.null(sthresh)) {
+    overlaps <- overlaps[!(width == 1 & score < sthresh)]
   }
 
   return(overlaps)

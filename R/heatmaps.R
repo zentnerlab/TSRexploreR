@@ -9,6 +9,7 @@
 #' @param annotated_data Annotated data.table
 #' @param upstream Bases upstream of plot center
 #' @param downstream Bases downstream of plot center
+#' @param ... Arguments passed to geom_tile
 #'
 #' @details
 #' This function makes a count matrix for each gene or transcript with detected features
@@ -57,7 +58,7 @@
 ) {
 
   ## Create matrix.
-  annotated_data <- annotated_data[, .(sample, score, distanceToTSS, feature)]
+  annotated_data <- annotated_data[, .(sample, score, distanceToTSS, feature, FHASH)]
 
   # Cross-join so that all TSS distances are generated.
   tss_mat <- annotated_data[
@@ -68,18 +69,8 @@
   tss_mat[,
     distanceToTSS := factor(distanceToTSS, levels=seq(-upstream, downstream, 1))
   ]
-  # Long to wide format for ComplexHeatmap matrix.
-  tss_mat <- dcast(tss_mat, sample + feature ~ distanceToTSS, value.var="score")
-  # Make factors for splitting plot later.
-  sample_data <- unique(tss_mat[["sample"]])
-  sample_data <- map(sample_data, ~rep(.x, length(seq(-upstream, downstream, 1))))
-  sample_data <- purrr::reduce(sample_data, c)
-  # Split samples and convert to matrix.
-  tss_mat <- split(tss_mat, by="sample", keep.by=FALSE)
-  tss_mat <- map(tss_mat, ~as.matrix(column_to_rownames(.x, "feature")))
-  tss_mat <- purrr::reduce(tss_mat, cbind)
-
-  return(list(mat=tss_mat, samps=sample_data))
+  
+  return(tss_mat)
 }
 
 #' Plot Heatmap
@@ -93,6 +84,23 @@
 #' @param upstream Bases upstream to consider
 #' @param downstream bases downstream to consider
 #' @param ... Additional arguments passed to Heatmap
+#' @param max_value Truncate heatmap scale at this value.
+#' @param low_color Color for minimum value.
+#' @param high_color Color for maximum value.
+#' @param log2_transform Log2 + 1 transform values for plotting.
+#' @param x_axis_breaks The distance breaks to show values on the x-axis.
+#' @param filtering Logical statment to filter data by.
+#' @param ordering Symbol/name specifying the column to order by.
+#' @param order_fun Function to aggregate variable by before ordering.
+#' @param order_descending Whether to order in descending (TRUE) order.
+#' @param order_samples Samples that are used to calculate ordering.
+#' @param quantiling Character specifying column to quantile by.
+#' @param quantile_fun Functiont o aggregate variable by before quantiling.
+#' @param n_quantiles Number of quantiles.
+#' @param quantile_samples Samples to use for quantiling.
+#' @param remove_antisense Remove antisense reads.
+#' @param split_by Named list with split group as name and vector of genes,
+#'   or data.frame with columns 'feature' and 'split_group'.
 #'
 #' @details
 #' This plotting function generates a ggplot2 heatmap of TSS or TSR signal
@@ -132,7 +140,25 @@ plot_heatmap <- function(
   threshold=NULL,
   use_normalized=FALSE,
   dominant=FALSE,
-  data_conditions=list(order_by="score"),
+  remove_antisense=TRUE,
+  rasterize=FALSE,
+  raster_dpi=150,
+  max_value=NULL,
+  low_color="white",
+  high_color="blue",
+  log2_transform=TRUE,
+  x_axis_breaks=100,
+  ncol=3,
+  filtering=NULL,
+  ordering=score,
+  order_descending=TRUE,
+  order_fun=sum,
+  order_samples=NULL,
+  quantiling=NULL,
+  quantile_fun=sum,
+  n_quantiles=5,
+  quantile_samples=NULL,
+  split_by=NULL,
   ...
 ) {
 
@@ -144,18 +170,44 @@ plot_heatmap <- function(
   assert_that(is.null(threshold) || (is.numeric(threshold) && threshold >= 0))
   assert_that(is.flag(use_normalized))
   assert_that(is.flag(dominant))
-  if (all(!is.na(data_conditions)) && !is(data_conditions, "list")) {
-    stop("data_conditions must be a list of values")
-  }
   data_type <- match.arg(str_to_lower(data_type), c("tss", "tsr"))
+  assert_that(is.flag(rasterize))
+  assert_that(is.count(raster_dpi))
+  assert_that(
+    is.null(max_value) ||
+    (is.numeric(max_value) && max_value > 0)
+  )
+  assert_that(is.character(low_color))
+  assert_that(is.character(high_color))
+  assert_that(is.flag(log2_transform))
+  assert_that(is.count(ncol))
+  assert_that(is.flag(order_descending))
+  assert_that(is.function(order_fun))
+  assert_that(is.null(order_samples) || is.character(order_samples))
+  assert_that(is.function(quantile_fun))
+  assert_that(is.count(n_quantiles))
+  assert_that(is.null(quantile_samples) || is.character(quantile_samples))
+  assert_that(
+    is.null(split_by) ||
+    (is.list(split_by) && has_attr(split_by, "names")) ||
+    (is.data.frame(split_by) && colnames(split_by) %in% c("feature", "split_group"))
+  )
 
   ## Get requested samples.
   annotated <- experiment %>%
     extract_counts(data_type, samples, use_normalized) %>%
     preliminary_filter(dominant, threshold)
 
+  ## Filter data if data condition set.
+  if (!quo_is_null(enquo(filtering))) {
+    filtering <- enquo(filtering)
+    annotated <- .filter_heatmap(annotated, filtering)
+  }
+
   ## Remove antisense TSSs/TSRs.
-  annotated <- map(annotated, ~.x[simple_annotations != "Antisense"])
+  if (remove_antisense) {
+    annotated <- map(annotated, ~.x[simple_annotations != "Antisense"])
+  }
 
   ## Rename feature ID.
   walk(annotated, function(x) {
@@ -176,18 +228,118 @@ plot_heatmap <- function(
     "tsr"=.tsr_heatmap(annotated, upstream, downstream)
   )
 
-  ## Create heatmap.
-  p <- count_mat[["mat"]] %>%
-    {log2(. + 1)} %>%
-    Heatmap(
-      cluster_rows=FALSE, show_row_dend=FALSE,
-      cluster_columns=FALSE, show_column_dend=FALSE,
-      show_row_names=FALSE, show_column_names=FALSE,
-      col=viridis::viridis(100),
-      column_split=count_mat[["samps"]],
-      name="log2 score",
-      ...
+  ## Quantile and/or order if required.
+
+  # Apply ordering if set.
+  if (!quo_is_null(enquo(ordering))) {
+    ordering <- enquo(ordering)
+    count_mat <- .order_heatmap(
+      count_mat, data_type, annotated,
+      ordering, order_fun, order_descending,
+      order_samples
     )
+  }
+
+  # Apply quantiling if set.
+  if (!quo_is_null(enquo(quantiling))) {
+    quantiling <- enquo(quantiling)
+    count_mat <- .quantile_heatmap(
+      count_mat, data_type, annotated,
+      quantiling, quantile_fun, n_quantiles,
+      quantile_samples
+    )
+  }
+
+  # Change factor level of features if ordering.
+  if (any(colnames(count_mat) == "row_order")) {
+    count_mat[, feature := fct_rev(fct_reorder(feature, row_order))]
+  }
+
+  ## Use custom gene groups if set.
+  if (!is.null(split_by)) {
+    count_mat <- .split_heatmap(count_mat, split_by)
+  }
+
+  ## Log2 + 1 transform data if set.
+  count_mat[, score := log2(score + 1)]
+
+  ## Set sample order if required.
+  if (!all(samples == "all")) {
+    count_mat[, sample := factor(sample, levels=samples)]
+  }
+
+  ## Create heatmap.
+  p <- ggplot(count_mat, aes(x=.data$distanceToTSS, y=.data$feature))
+
+  # Apply rasterization if required.
+  if (rasterize) {
+    p <- p + rasterize(
+      geom_tile(aes(fill=.data$score, color=.data$score), ...),
+      dpi=raster_dpi
+    )
+  } else {
+    p <- p + geom_tile(aes(fill=.data$score, color=.data$score), ...)
+  }
+
+  p <- p +
+    geom_vline(xintercept=upstream, color="black", linetype="dashed", size=0.1) +
+    scale_x_discrete(
+      breaks=seq(-upstream, downstream, 1) %>% keep(~ (./x_axis_breaks) %% 1 == 0),
+      labels=seq(-upstream, downstream, 1) %>% keep(~ (./x_axis_breaks) %% 1 == 0)
+    )
+
+  # Truncate scale if max_value is set.
+  if (!is.null(max_value)) {
+    p <- p +
+      scale_fill_continuous(
+        limits=c(0, max_value),
+        breaks=seq(0, max_value, 1),
+        labels=c(seq(0, max_value - 1, 1), paste0(">=", max_value)),
+        name="Log2(Score)",
+        low=low_color,
+        high=high_color
+      ) +
+      scale_color_continuous(
+        limits=c(0, max_value),
+        breaks=seq(0, max_value, 1),
+        labels=c(seq(0, max_value - 1, 1), paste0(">=", max_value)),
+        name="Log2(Score)",
+        low=low_color,
+        high=high_color
+      )
+  } else {
+    p <- p +
+      scale_fill_continuous(
+        name="Log2(Score)",
+        low=low_color,
+        high=high_color
+      ) +
+      scale_color_continuous(
+        name="Log2(Score)",
+        low=low_color,
+        high=high_color
+      )
+  }
+
+  p <- p +
+    ggplot2::theme_bw() +
+    theme(
+      axis.text.x=element_text(angle=45, hjust=1),
+      panel.spacing=unit(1.5, "lines"),
+      axis.text.y=element_blank(),
+      axis.ticks.y=element_blank(),
+      panel.grid=element_blank(),
+      panel.background=element_rect(fill="white", color="white")
+    ) +
+    labs(x="Position", y="Feature")
+
+  if (any(colnames(count_mat) == "row_quantile")) {
+    p <- p + facet_wrap(row_quantile ~ sample, scales="free", ncol=ncol)
+  } else if (any(colnames(count_mat) == "row_group")) {
+    p <- p + facet_wrap(row_group ~ sample, scales="free", ncol=ncol)
+  } else {
+    p <- p + facet_wrap(sample ~ ., scales="free", ncol=ncol)
+  }
 
   return(p)
 
@@ -222,7 +374,7 @@ plot_heatmap <- function(
   ]
   ## Put TSR score for entire range of TSR.
   new_ranges <- annotated_data[,
-    .(sample, feature, score,
+    .(sample, feature, score, FHASH,
     distanceToTSS=seq(as.numeric(startDist), as.numeric(endDist), 1)),
     by=tsr_id
   ]
@@ -235,21 +387,145 @@ plot_heatmap <- function(
     , on=.(sample, feature, distanceToTSS)
   ]
   setnafill(new_ranges, cols="score", fill=0)
-
-  ## Create matrix.
   new_ranges[, distanceToTSS := factor(distanceToTSS, levels=seq(-upstream, downstream, 1))]
-  new_ranges <- dcast(new_ranges, sample + feature ~ distanceToTSS, value.var="score")
 
-  # Make factors for splitting plot later.
-  sample_data <- new_ranges[["sample"]] %>%
-    unique %>%
-    map(~rep(.x, length(seq(-upstream, downstream, 1)))) %>%
-    purrr::reduce(c)
+  return(new_ranges)
+}
 
-  tsr_mat <- new_ranges %>%
-    split(by="sample", keep.by=FALSE) %>%
-    map(~column_to_rownames(.x, "feature") %>% as.matrix) %>%
-    purrr::reduce(cbind)
+#' Filter Heatmap.
+#'
+#' @param sample_list List of sample data.
+#' @param filter Quosure of filters.
 
-  return(list(mat=tsr_mat, samps=sample_data))
+.filter_heatmap <- function(
+  sample_list,
+  filtering
+) {
+  sample_list <- map(sample_list, ~dplyr::filter(.x, !!filtering))
+  return(sample_list)
+}
+
+#' Order Heatmap.
+#'
+#' @inheritParams plot_heatmap
+#' @param count_data data.table of sample data.
+#' @param annotated_data Annotated sample data.
+
+.order_heatmap <- function(
+  count_data,
+  data_type,
+  annotated_data,
+  ordering,
+  order_fun,
+  order_descending,
+  order_samples
+) {
+
+  an_data <- copy(annotated_data)
+  an_data[, c("score", "feature", "distanceToTSS") := NULL]
+
+  if (data_type == "tss") {
+    merged <- copy(count_data)
+  } else if (data_type == "tsr") {
+    merged <- copy(count_data)
+    merged[, distanceToTSS := NULL]
+    merged <- unique(merged)
+  }
+
+  if (!is.null(order_samples)) {
+    merged <- merged[sample %in% order_samples]
+  }
+
+  merged <- merge(merged, an_data, by=c("FHASH", "sample"))
+
+  merged <- merged %>%
+    dplyr::group_by(feature) %>%
+    dplyr::summarize(aggr_var=order_fun(!!ordering))
+
+  setDT(merged)
+  if (order_descending) {
+    merged <- merged[order(-aggr_var)]
+  } else {
+    merged <- merged[order(aggr_var)]
+  }
+
+  merged[, row_order := .I]
+  merged[, aggr_var := NULL]
+
+  merged <- merge(count_data, merged, by="feature")
+
+  return(merged)
+}
+
+#' Quantile Heatmap
+#'
+#' @inheritParams plot_heatmap
+#' @param count_data data.table of sample data.
+#' @param annotated_data Annotated data.
+
+.quantile_heatmap <- function(
+  count_data,
+  data_type,
+  annotated_data,
+  quantiling,
+  quantile_fun,
+  n_quantiles,
+  quantile_samples
+) {
+
+  an_data <- copy(annotated_data)
+  an_data[, c("score", "feature", "distanceToTSS") := NULL]
+
+  if (data_type == "tss") {
+    merged <- copy(count_data)
+  } else if (data_type == "tsr") {
+    merged <- copy(count_data)
+    merged[, distanceToTSS := NULL]
+    merged <- unique(merged)
+  }
+
+  if (!is.null(quantile_samples)) {
+    merged <- merged[sample %in% quantile_samples]
+  }
+
+  merged <- merge(count_data, an_data, by=c("FHASH", "sample"))
+
+  merged <- merged %>%
+    dplyr::group_by(feature) %>%
+    dplyr::summarize(aggr_var=quantile_fun(!!quantiling))
+
+  setDT(merged)
+  merged[, row_quantile := ntile(aggr_var, n=n_quantiles)]
+  merged[, row_quantile := fct_rev(factor(row_quantile))]
+  merged[, aggr_var := NULL]
+
+  merged <- merge(count_data, merged, by="feature")
+
+  return(merged)
+
+}
+
+#' Split Heatmap
+#'
+#' @inheritParams plot_heatmap
+#' @param count_mat Count matrix.
+
+.split_heatmap <- function(
+  count_mat,
+  split_by
+) {
+
+  ## Change list to data.table if list provided.
+  if (is.list(split_by)) {
+    split_by <- map(split_by, ~data.table(feature=.x))
+    split_by <- rbindlist(split_by, idcol="split_group")
+  } else {
+    setDT(split_by)
+  }
+
+  ## Merge split groups into data.
+  setnames(split_by, old="split_group", new="row_group")
+  count_mat <- merge(count_mat, split_by, by="feature")
+
+  return(count_mat)
 }

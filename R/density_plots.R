@@ -30,28 +30,31 @@
 #' considered. dominant' specifies whether only the dominant TSS or TSR (determined
 #' using the 'mark_dominant' function) is considered. For TSSs, this can be either 
 #' dominant TSS per TSR or gene/transcript, and for TSRs it is the dominant TSR 
-#' per gene/transcript. 'data_conditionals' can be used to filter, quantile, order, 
-#' and/or group data for plotting.
+#' per gene/transcript. 'data_conditions' can be used to filter, quantile, order, 
+#' and/or group data for plotting. Finally, 'exclude_antisense' removes anti-sense TSSs or
+#'   TSRs prior to plotting.
 #'   
 #' @return ggplot2 object of density plot.
 #'
 #' @examples
 #' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
 #' TSSs <- readRDS(TSSs)
-#' exp <- tsr_explorer(TSSs)
-#' exp <- format_counts(exp, data_type="tss")
 #' annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
-#' exp <- annotate_features(
-#'   exp, annotation_data=annotation,
-#'   data_type="tss", feature_type="transcript"
-#' )
-#' plot_density(exp, data_type="tss")
+#'
+#' tsre <- TSSs[1] %>%
+#'   tsr_explorer(genome_annotation=annotation) %>%
+#'   format_counts(data_type="tss")
+#'
+#' # TSS density plot.
+#' \donttest{plot_density(tsre, data_type="tss")}
+#'
+#' # TSR density plot.
+#' tsre <- tss_clustering(tsre, threshold=3)
+#' \donttest{plot_density(tsre, data_type="tsr")}
 #'
 #' @seealso
 #' \code{\link{annotate_features}} to annotate TSSs or TSRs.
-#'   \code{\link{mark_dominant}} to identify dominant TSSs or TSRs.
 #'
-#' @rdname plot_density-function
 #' @export
 
 plot_density <- function(
@@ -66,7 +69,7 @@ plot_density <- function(
   use_normalized=FALSE,
   dominant=FALSE,
   exclude_antisense=TRUE,
-  data_conditions=NA,
+  data_conditions=NULL,
   color="default",
   ...
 ) {
@@ -82,9 +85,7 @@ plot_density <- function(
   assert_that(is.count(ncol))
   assert_that(is.flag(use_normalized))
   assert_that(is.flag(dominant))
-  if (all(!is.na(data_conditions)) && !is(data_conditions, "list")) {
-    stop("data_conditions should be a list of values")
-  }
+  assert_that(is.null(data_conditions) || is.list(data_conditions))
   assert_that(is.flag(exclude_antisense))
 
   ## Assign color type.
@@ -105,9 +106,7 @@ plot_density <- function(
   sample_data <- map(sample_data, ~ .x[simple_annotations != "Antisense"])
 
   ## Condition data.
-  if (all(!is.na(data_conditions))) {
-    sample_data <- do.call(group_data, c(list(signal_data=sample_data), data_conditions))
-  }
+  sample_data <- condition_data(sample_data, data_conditions)
 
   ## Update data if score is to be considered in addition to unique position.
   sample_data <- rbindlist(sample_data, idcol="sample")
@@ -119,8 +118,6 @@ plot_density <- function(
   }
 
   ## Plot densities.
-  groupings <- any(names(data_conditions) %in% c("quantile_by", "grouping"))
-
   p <- ggplot(sample_data, aes(.data$distanceToTSS)) +
     geom_density(fill=color_type, color=color_type, ...) +
     labs(
@@ -129,10 +126,13 @@ plot_density <- function(
     ) +
     theme_bw()
 
-  if (groupings) {
-    p <- p + facet_grid(fct_rev(factor(grouping)) ~ sample)
+  if (!is.null(data_conditions$grouping)) {
+    p <- p + facet_grid(row_groups ~ sample)
+  } else if (!is.null(data_conditions$quantiling)) {
+    p <- p + facet_grid(row_quantile ~ sample)
   } else {
     p <- p + facet_wrap(~ sample, ncol=ncol)
   }
+
   return(p)
 }
