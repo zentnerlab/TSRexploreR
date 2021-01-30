@@ -1,17 +1,57 @@
 #' Merge Samples
 #'
-#' Merge replicates or selected samples.
+#' @description
+#' Merge TSSs or TSRs by group or select samples.
 #'
 #' @inheritParams common_params
 #' @param data_type Either 'tss' or 'tsr'.
 #' @param merge_group Column in sample sheet to merge by.
 #' @param merge_list Named list of samples to merge.
-#' @param merge_replicates If 'TRUE', replicate groups will be merged.
-#' @param sample_list If merge_replicates is set to 'FALSE',
+#'   List names will be the new TSS/TSR name, and the list contents should
+#'   be a character vector of the TSSs or TSRs to merge.
+#' @param merge_group The name of the column in the sample sheet
+#'   that has the factor levels to merge samples by.
+#' @param sample_list If merge_group is set to 'FALSE',
 #'   specify what samples to merge in list format.
+#'   List names will be the new TSS/TSR name, and the list contents should
+#'   be a character vector of the TSSs or TSRs to merge.
 #' @param max_distance Merge TSRs within this distance.
 #'
-#' @rdname merge_samples-function
+#' @details
+#' This function will merge overlapping TSSs or TSRs from different samples
+#'   using either the sample sheet, or a named list.
+#' If 'merge_group' is specified, the new merged TSS/TSR set will be the
+#'   factor level in the column, and all TSS/TSR sets sharing that factor level
+#'   will be merged.
+#' If 'merge_list' is specified instead,
+#'   The new TSS/TSR set will be the name of the list element,
+#'   and the samples to merge will be a character vector as the list element.
+#'
+#' 'merge_distance' is provided for TSRs, and will merge TSRs within a certain
+#'   distance from other TSRs.
+#'
+#' @return TSRexploreR object containing merged TSSs or TSRs.
+#'
+#' @examples
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
+#' TSSs <- readRDS(TSSs)
+#' sample_sheet <- data.frame(
+#'   sample_name=sprintf("S288C_D_%s", seq_len(3)),
+#'   file_1=NA, file_2=NA,
+#'   condition="Diamide"
+#' )
+#'
+#' tsre <- TSSs %>%
+#'   tsr_explorer %>%
+#'   format_counts(data_type="tss")
+#'
+#' # Merge TSSs by condition column.
+#' merge_samples(tsre, data_type="tss", merge_group="condition")
+#'
+#' # Merge TSRs by condition column.
+#' tsre <- tss_clustering(tsre, threshold=3)
+#' merge_samples(tsre, data_type="tsr", merge_group="condition")
+#'
 #' @export
 
 merge_samples <- function(
