@@ -9,41 +9,6 @@
 #'
 #' @inheritParams common_params
 #' @param distance Bases to add on each side of eacg TSS
-#'
-#' @details
-#' This function will retrieve the genomic sequence surrounding TSSs for later use in
-#'   plotting sequence color maps or sequence logos.
-#'
-#' 'genome_assembly' must be a valid genome assembly in either fasta or BSgenome format.
-#' fasta formatted genome assemblies should have the file extension '.fasta' or '.fa'.
-#' BSgenome assemblies are precompiled Bioconductor libraries for common organisms.
-#'
-#' 'distance' controls the length upstream and downstream of the TSS
-#'   from which the sequence will be retrieved.
-#'
-#' A set of functions to control data structure for plotting are included.
-#' 'threshold' will define the minimum number of reads a TSS or TSR
-#'  must have to be considered.
-#' 'dominant' specifies whether only the dominant TSS or TSR is considered 
-#'   from the 'mark_dominant' function.
-#' For TSSs this can be either dominant per TSR or gene, and for TSRs
-#'   it is just the dominant TSR per gene.
-#' 'data_conditions' allows for the advanced filtering, ordering, and grouping
-#'   of data.
-#'
-#' @return DataFrame of sequences surrounding TSSs.
-#'
-#' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-#' TSSs <- readRDS(TSSs)
-#' tsre_exp <- tsr_explorer(TSSs)
-#' tsre_exp <- format_counts(tsre_exp, data_type="tss")
-#' assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
-#' seqs <- tss_sequences(tsre_exp, genome_assembly=assembly)
-#'
-#' @seealso
-#' \code{\link{plot_sequence_logo}} to make sequence logos.
-#' \code{\link{plot_sequence_colormap}} to make sequence color maps.
 
 .tss_sequences <- function(
   experiment,
@@ -151,22 +116,38 @@
 #' This is particularly important for TSS analysis since literature has shown
 #'   strong base preferences spanning TSSs and surrounding sequences.
 #'
-#' @return ggplot2 object with sequence logo
+#' 'genome_assembly' must be a valid genome assembly in either fasta or BSgenome format.
+#' fasta formatted genome assemblies should have the file extension '.fasta' or '.fa'.
+#' BSgenome assemblies are precompiled Bioconductor libraries for common organisms.
+#'
+#' 'distance' controls the length upstream and downstream of the TSS
+#'   from which the sequence will be retrieved.
+#'
+#' A set of functions to control data structure for plotting are included.
+#' 'threshold' will define the minimum number of reads a TSS or TSR
+#'  must have to be considered.
+#' 'dominant' specifies whether only the dominant TSS or TSR is considered 
+#'   from the 'mark_dominant' function.
+#' For TSSs this can be either dominant per TSR or gene, and for TSRs
+#'   it is just the dominant TSR per gene.
+#' 'data_conditions' allows for the advanced filtering, ordering, and grouping
+#'   of data.
+#'
+#' @return ggplot2 object with sequence logo.
+#'
+#' @seealso
+#' \code{\link{plot_sequence_colormap}} for a sequence color map plot.
 #'
 #' @examples
 #' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
 #' TSSs <- readRDS(TSSs)
-#' tsre_exp <- tsr_explorer(TSSs)
-#' tsre_exp <- format_counts(tsre_exp, data_type="tss")
 #' assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
-#' seqs <- tss_sequences(tsre_exp, genome_assembly=assembly)
-#' plot_sequence_logo(seqs)
 #'
-#' @seealso
-#' \code{\link{tss_sequences}} to get the surrounding sequences.
-#' \code{\link{plot_sequence_colormap}} for a sequence color map plot.
+#' tsre <- TSSs[1] %>%
+#'   tsr_explorer(genome_aassembly=assembly) %>%
+#'   format_counts(data_type="tss")
+#' \donttest{plot_sequence_logo(tsre)}
 #'
-#' @rdname plot_sequence_logo-function
 #' @export
 
 plot_sequence_logo <- function(
@@ -253,20 +234,12 @@ plot_sequence_logo <- function(
   ## Make sequence logo.
   if (grouping_status == "none") {
     p <- ggseqlogo(sequences, ncol=ncol, ...) +
-      theme(text=element_text(size=font_size)) #+
-      #scale_x_continuous(
-      # breaks=c(1, distance, distance + 1, (distance * 2) + 1),
-      # labels=c(-distance, -1, +1, distance + 1)
-      #)
+      theme(text=element_text(size=font_size))
   } else {
     p <- sequences %>%
       map(function(x) {
         ggseqlogo(x, ncol=ncol, ...) +
-          theme(text=element_text(size=font_size)) #+
-          #scale_x_continuous(
-          # breaks=c(1, distance, distance + 1, (distance * 2) + 1),
-          # labels=c(-distance, -1, +1, distance + 1)
-          #)
+          theme(text=element_text(size=font_size))
       })
 
     p <- plot_grid(plotlist=p, labels=rev(names(sequences)), ncol=1)
