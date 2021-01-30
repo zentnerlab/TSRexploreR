@@ -7,11 +7,11 @@
 preliminary_filter(signal_data, dominant, threshold)
 }
 \arguments{
-\item{signal_data}{TSS or TSR data}
+\item{signal_data}{TSS or TSR data.}
 
-\item{dominant}{Whether to retain dominant TSS/TSR}
+\item{dominant}{Whether to use dominant TSS/TSR.}
 
-\item{threshold}{Raw count threshold for a TSS or TSR to be considered}
+\item{threshold}{Raw count threshold for a TSS or TSR to be considered.}
 }
 \description{
 Preliminary filtering of data

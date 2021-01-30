@@ -23,12 +23,12 @@ r-tidyverse \
 r-data.table \
 r-devtools \
 r-ggseqlogo \
-r-ggally \
 r-cowplot \
 r-rcpp \
 r-assertthat \
 r-testthat \
 r-cairo \
+r-ggrastr \
 bioconductor-apeglm \
 bioconductor-genomicranges \
 bioconductor-genomicfeatures \

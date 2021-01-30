@@ -35,7 +35,6 @@ Imports:
     Biostrings,
     ChIPseeker,
     edgeR,
-    GGally,
     S4Vectors,
     SummarizedExperiment,
     Gviz,
@@ -51,7 +50,9 @@ Imports:
     CAGEr,
     PCAtools,
     GenomeInfoDb,
-    Cairo
+    Cairo,
+    rlang,
+    ggrastr
 Depends:
     R (>= 3.5.0)
 Suggests:
@@ -84,6 +85,7 @@ Collate:
     'gene_tracks.R'
     'genomic_distribution.R'
     'heatmaps.R'
+    'merge.R'
     'motif.R'
     'normalize.R'
     'package_imports.R'

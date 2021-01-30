@@ -25,12 +25,12 @@ retrieve_seqs(
 
 \item{samples}{A vector of sample names to analyze.}
 
-\item{genome_assembly}{Genome assembly in either a FASTA file or BSgenome object format.}
+\item{genome_assembly}{Genome assembly in FASTA or BSgenome format.}
 
-\item{threshold}{TSSs or TSRs with a score below this value will be discarded.}
+\item{threshold}{TSSs or TSRs with a score below this value will not be considered.}
 
-\item{dominant}{If TRUE will discard any TSSs and/or TSRs that do not have the
-highest score per gene or transcript.}
+\item{dominant}{If TRUE, will only consider the highest-scoring TSS per gene, transcript, or TSR or 
+highest-scoring TSR per gene or transcript.}
 
 \item{fixed_size}{Whether all returned sequences should have the
 same fixed size starting from the center of the ranges}

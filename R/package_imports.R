@@ -18,19 +18,20 @@ NULL
 #'   scale_fill_viridis_c scale_fill_viridis_d
 #'   scale_color_viridis_c scale_color_viridis_d
 #'   scale_fill_continuous scale_fill_manual scale_color_manual
-#'   scale_x_continuous scale_x_discrete
+#'   scale_x_continuous scale_x_discrete scale_color_continuous
 #'   theme_bw theme_minimal
 #'   theme element_text element_blank unit margin element_rect
 #'   geom_density geom_point geom_col geom_vline geom_tile geom_line
 #'   geom_violin geom_boxplot geom_jitter geom_raster geom_histogram
 #'   geom_bar geom_hline
-#' @importFrom rlang .data
 #' @importFrom forcats fct_rev fct_inorder fct_reorder fct_relevel
-#' @importFrom dplyr pull case_when
+#' @importFrom dplyr pull case_when desc
 #' @importFrom assertthat
 #'   assert_that is.count is.flag is.string has_name has_attr
 #'   is.readable
 #' @importFrom knitr kable
+#' @importFrom rlang .data enquo enquos quo_is_null "!!" "!!!" quo_text ensym
+#' @importFrom ggrastr rasterize
 
 NULL
 

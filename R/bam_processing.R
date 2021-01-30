@@ -1,16 +1,43 @@
 #' Import BAMs
-#' 
-#' Import alignment BAM files.
+#'
+#' @description 
+#' Import BAM files with optional quality control parameters.
 #'
 #' @importFrom GenomicAlignments readGAlignmentPairs readGAlignments
 #'
 #' @inheritParams common_params
 #' @param paired Whether the BAMs are paired (TRUE) or unpaired (FALSE).
 #' @param soft_remove Remove read if greater than this number of soft-clipped bases 
-#'   are present at its 5' end.
-#' @param proper_pair Whether reads should be properly paired for paired end data.
+#'   are present at its 5' most end.
+#' @param proper_pair Remove reads without a proper pair SAM flag.
 #'   TRUE by default when data is paired-end.
-#' @param remove_seconday Remove non-primary reads.
+#' @param remove_seconday Remove reads with non-primary SAM flag set (TRUE).
+#' @param remove_duplicate Remove reads with duplicate SAM flag set (TRUE).
+#'
+#' @details
+#' Import BAMs using the information from the sample sheet.
+#' If the BAMs are from paired end data,
+#'   'proper_pair' allows removal of reads without a proper-pair SAM flag.
+#' Additionally 'remove_seconday' and 'remove_duplicate' will remove reads
+#'   with the secondary alignments and duplicate flags set.
+#'
+#' Most TSS mapping methodologies tend to add at least one non-templated base
+#'   at the 5' end of the read.
+#' Futhermore, template switching reverse transcription (TSRT) methods such
+#'   as STRIPE-seq or nanoCAGE can have up to 3 or 4 non-templated 5' bases.
+#' We recommend setting `soft_remove` to at minimum 3 because of this,
+#'   Which removes the read if the given number of soft-clip bases are exceeded.
+#'
+#' @return TSRexploreR object with BAM GRanges and soft-clip information.
+#'
+#' @examples
+#' bam_file <- system.file("extdata", "S288C.bam", package="TSRexploreR")
+#' assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
+#' samples <- data.frame(sample_name="S288C", file_1=bam_file, file_2=NA)
+#'
+#' bam_file %>%
+#'   tsr_explorer(sample_sheet=samples, genome_assembly=assembly) %>%
+#'   import_bams(paired=TRUE)
 #'
 #' @export
 
@@ -20,7 +47,8 @@ import_bams <- function(
   sample_sheet=NULL,
   soft_remove=3,
   proper_pair=NULL,
-  remove_secondary=TRUE
+  remove_secondary=TRUE,
+  remove_duplicate=FALSE
 ) {
 
   ## Input checks.
@@ -33,6 +61,7 @@ import_bams <- function(
   assert_that(is.null(soft_remove) || is.count(soft_remove))
   assert_that(is.null(proper_pair) || is.flag(proper_pair))
   assert_that(is.flag(remove_secondary))
+  assert_that(is.flag(remove_duplicate))
 
   ## Prepare sample sheet if required.
   sample_sheet_type <- case_when(
@@ -65,6 +94,9 @@ import_bams <- function(
       isProperPair=TRUE, #Remove improperly paired reads.
       hasUnmappedMate=FALSE #Remove reads with unmapped mate.
     ))
+  }
+  if (remove_duplicate) {
+    flag_args <- c(flag_args, list(isDuplicate=FALSE))
   }
 
   ## Import BAMs.
@@ -131,6 +163,23 @@ import_bams <- function(
 #' Aggregate overlapping TSSs into a total sum score.
 #'
 #' @inheritParams common_params
+#'
+#' @details
+#' 'import_bams' generates a GRanges object of non-aggregated TSSs.
+#' This function aggregates overlapping TSSs into a sum total score
+#'   per genomic position.
+#'
+#' @return TSRexploreR object with GRanges of aggregated TSSs.
+#'
+#' @examples
+#' bam_file <- system.file("extdata", "S288C.bam", package="TSRexploreR")
+#' assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
+#' samples <- data.frame(sample_name="S288C", file_1=bam_file, file_2=NA)
+#'
+#' bam_file %>%
+#'   tsr_explorer(sample_sheet=samples, genome_assembly=assembly) %>%
+#'   import_bams(paired=TRUE) %>%
+#'   tss_aggregate
 #'
 #' @export
 

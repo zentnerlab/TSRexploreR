@@ -2,19 +2,19 @@
 % Please edit documentation in R/normalize.R
 \name{.deseq2_normalize}
 \alias{.deseq2_normalize}
-\title{DESeq2 Normalize}
+\title{DESeq2 Normalization}
 \usage{
 .deseq2_normalize(count_matrix, coldata)
 }
 \arguments{
-\item{count_matrix}{count matrix}
+\item{count_matrix}{count matrix.}
 
-\item{coldata}{column data}
+\item{coldata}{column data.}
 
-\item{design}{design formula}
+\item{design}{design formula.}
 
-\item{blind}{Whether normalization is blind}
+\item{blind}{Whether normalization is blind.}
 }
 \description{
-DESeq2 Normalize
+DESeq2 Normalization
 }

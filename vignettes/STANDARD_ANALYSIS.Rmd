@@ -84,9 +84,7 @@ This background can complicate downstream analysis, but it can largely be remove
 
 
 ```{r fig.height=3}
-threshold_data <- explore_thresholds(exp, steps=1)
-
-plot_threshold_exploration(threshold_data, ncol=3, point_size=0.5) +
+plot_threshold_exploration(exp, ncol=3, point_size=0.5) +
   scale_color_viridis_c() 
 ```
 
@@ -124,9 +122,7 @@ As part of the initial TSS processing, TSSs are annotated relative to known feat
 A stacked bar plot can be generated to showcase the fractional distribution of TSSs relative to known features.
 
 ```{r message=FALSE, fig.height=4}
-tss_distribution <- genomic_distribution(exp, data_type="tss")
-
-plot_genomic_distribution(tss_distribution) +
+plot_genomic_distribution(exp, data_type="tss") +
   scale_fill_viridis_d(direction=-1, name="Annotation")
 ```
 
@@ -135,9 +131,7 @@ plot_genomic_distribution(tss_distribution) +
 The number of features detected and fraction of features with a promoter-proximal TSSs can be displayed as a stacked bar plot or jitter plot.
 
 ```{r message=FALSE, fig.height=4, fig.width=5}
-features <- detect_features(exp, data_type="tss")
-
-plot_detected_features(features) +
+plot_detected_features(exp, data_type="tss") +
   scale_fill_viridis_d(direction=-1)
 ```
 
@@ -157,7 +151,7 @@ While a density plot gives a general overview of TSS distribution relative to an
 plot_heatmap(
   exp, data_type="tss",
   upstream=250, downstream=250,
-  use_raster=TRUE, raster_device="CairoPNG"
+  rasterize=TRUE, raster_dpi=150
 )
 ```
 
@@ -171,14 +165,8 @@ Generating sequence logos around TSSs is a good first step in ascertaining the s
 
 To generate analyze TSS sequence context, TSRexploreR retrieves sequences centered on TSSs from a 'FASTA' genome assembly or 'BSgenome' object. This example uses the Ensembl R64-1-1 Release 99 FASTA.
 
-```{r message=FALSE}
-seqs <- tss_sequences(exp)
-```
-
-After the sequences are retrieved, the sequence logos can be generated.
-
 ```{r message=FALSE, fig.height=2, fig.width=6}
-plot_sequence_logo(seqs, ncol=3)
+plot_sequence_logo(exp, ncol=3)
 ```
 
 ### Sequence Color Map
@@ -186,7 +174,7 @@ plot_sequence_logo(seqs, ncol=3)
 A sequence logo "averages" the bases when displaying data, but as with TSSs, it can be useful to view the information without aggregation. In a sequence color map, each row represents the window around a TSS and each column represents a specific position relative to this TSS. These display conventions are analogous to those used in a heatmap. Each base is assigned a color and displayed in this two-dimensional space. The prevalence of colors in certain positions can give further evidence towards putative sequence contexts. The same genome assembly and retrieved sequences that were used to make the sequence logos above are used here.
 
 ```{r message=FALSE, fig.width=6, fig.height=4}
-plot_sequence_colormap(seqs, ncol=3)
+plot_sequence_colormap(exp, ncol=3, rasterize=TRUE)
 ```
 
 ### Dinucleotide Frequency
@@ -194,9 +182,7 @@ plot_sequence_colormap(seqs, ncol=3)
 As previously discused, organisms often have a specific TSS sequence context. This function explores the fraction of each potential dinucleotide at the -1/+1 positions of all TSSs, where the +1 position is the TSS.
 
 ```{r message=FALSE, fig.height=3, fig.width=6}
-frequencies <- dinucleotide_frequencies(exp)
-
-plot_dinucleotide_frequencies(frequencies, ncol=3)
+plot_dinucleotide_frequencies(exp)
 ```
 
 ## Clustering TSSs
@@ -268,9 +254,7 @@ As for TSSs, it is expected that TSRs will be be enriched upstream of annotated 
 A stacked bar plot can be generated to visualize the fractional distribution of TSRs relative to known features.
 
 ```{r message=FALSE, fig.height=3, fig.width=6}
-tsr_distribution <- genomic_distribution(exp, data_type="tsr")
-
-plot_genomic_distribution(tsr_distribution) +
+plot_genomic_distribution(exp, data_type="tsr") +
   scale_fill_viridis_d(direction=-1)
 ```
 
@@ -279,9 +263,7 @@ plot_genomic_distribution(tsr_distribution) +
 The number of features detected and fraction of features with a promoter-proximal TSSs can be displayed as a stacked bar plot or jitter plot.
 
 ```{r message=FALSE, fig.height=4, fig.width=6}
-features <- detect_features(exp, data_type="tsr")
-
-plot_detected_features(features) +
+plot_detected_features(exp, data_type="tsr") +
   scale_fill_viridis_d(direction=-1)
 ```
 
@@ -301,7 +283,7 @@ TSR heatmaps provide a global view of TSR distribution relative to annotated sta
 plot_heatmap(
   exp, data_type="tsr",
   upstream=500, downstream=500,
-  use_raster=TRUE, raster_device="CairoPNG"
+  rasterize=TRUE, raster_dpi=150
 )
 ```
 
@@ -322,13 +304,10 @@ plot_tsr_metric(exp, tsr_metrics=c("score", "width"), log2_transform=TRUE, ncol=
 Most plots in this vignette can be filtered, ordered, grouped, and quantiled by any of the desired metrics. Here is an example of what can be done with the TSS sequence motif plot using TSR metrics. In this plot, only the dominant TSSs of each TSR is considered, and TSSs with a score below 10 are discarded. The plot is then split by the shape class of the TSR. A more detailed guide to advanced plotting can be found here.
 
 ```{r message=FALSE, fig.height=5, fig.width=8}
-conditions <- list(order_by="score", grouping="shape_class")
-seqs <- tss_sequences(
-  exp, threshold=10,
-  dominant=TRUE, data_conditions=conditions
+plot_sequence_logo(
+  exp, threshold=10, dominant=TRUE,
+  data_conditions=conditionals(data_grouping=shape_class)
 )
-
-plot_sequence_logo(seqs, ncol=3)
 ```
 
 ## Gene Tracks

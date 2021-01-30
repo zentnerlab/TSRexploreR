@@ -1,5 +1,3 @@
-context("Genome Annotation and Assembly")
-
 source("setup.R")
 library("TxDb.Scerevisiae.UCSC.sacCer3.sgdGene")
 library("BSgenome.Scerevisiae.UCSC.sacCer3")

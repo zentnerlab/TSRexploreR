@@ -4,12 +4,14 @@
 \alias{.aggr_scores}
 \title{Aggregate Scores}
 \usage{
-.aggr_scores(granges, maxdist, maxwidth)
+.aggr_scores(granges, maxdist, maxwidth, sthresh)
 }
 \arguments{
-\item{granges}{GRanges}
+\item{granges}{GRanges.}
 
-\item{maxdist}{Maximum distance to cluster}
+\item{maxdist}{Maximum distance to cluster.}
+
+\item{sthresh}{Singlet threshold.}
 }
 \description{
 Aggregate Scores

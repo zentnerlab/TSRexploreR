@@ -13,31 +13,30 @@ tss_import(experiment, sample_sheet = NULL, file_type = "auto", delim = "\\t")
 Must have the columns 'sample_name', 'file_1', and 'file_2'.
 Additional meta-data columns can be added with sample information such as condition and batch.}
 
-\item{file_type}{Either 'auto', 'bedgraph', 'bigwig', 'table', or 'ctss'}
+\item{file_type}{Either 'auto', 'bedgraph', 'bigwig', 'table', or 'ctss'.}
 
-\item{delim}{If the input is a table, use this delimiter}
+\item{delim}{Delimiter for tabular input.}
 }
 \value{
-tsr explorer object with imported TSSs
+TSRexploreR object with imported TSSs.
 }
 \description{
 Function to import TSSs from various sources.
 }
 \details{
-TSRexploreR can import TSSs from various sources.
-Currently bedgraphs, bigwigs, and TSRchitect tssObjects are supported.
+TSRexploreR can import TSSs from various file formats. Currently, these are bedGraphs, 
+bigWigs, CTSS files, delimited tables, and TSRchitect tssObjects.
 
-To import bedgraphs or bigwigs, a sample sheet must first be created.
-The sample sheet can be a data.frame or tabular file.
-It should have three columns: sample_name, file_1, and file_2.
-sample_name specifies the sample name that will be added for that TSS in the
-  tsr explorer object.
-file_1 and file_2 should be the path to the two bedgraphs or bigwigs,
-  which are usually separated by strand.
+To import TSSs from files, a sample sheet must first be created. The sample 
+sheet can be a data.frame or tabular file. It should have three columns: 
+sample_name, file_1, and file_2. sample_name specifies the sample name that 
+will be added for that TSS in the TSRexploreR object. For bedGraphs and bigWigs,
+file_1 and file_2 should be the paths to the plus and minus strand TSS files. For
+CTSS or tabular import, file_1 should be the path to the file, and file_2can be 
+left blank or filled with NA values.
 
-To import TSSs directly from a TSRchitect tssObject,
-  the TSRchitect workflow must first be run up to the
-  'processTSS' step.
+To import TSSs directly from a TSRchitect tssObject, the TSRchitect workflow 
+must first be run up to the 'processTSS' step.
 }
 \seealso{
 \code{\link{tsr_import}} to import TSRs.

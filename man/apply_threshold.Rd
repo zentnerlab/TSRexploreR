@@ -9,7 +9,7 @@ apply_threshold(experiment, threshold, n_samples = 1, use_normalized = FALSE)
 \arguments{
 \item{experiment}{TSRexploreR object.}
 
-\item{threshold}{TSSs or TSRs with a score below this value will be discarded.}
+\item{threshold}{TSSs or TSRs with a score below this value will not be considered.}
 
 \item{n_samples}{Number of samples threshold must be reached to keep TSS.
 By default set to 1 sample. A NULL value will result in all samples being

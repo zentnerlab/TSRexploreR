@@ -2,15 +2,15 @@
 % Please edit documentation in R/bam_processing.R
 \name{G_correction}
 \alias{G_correction}
-\title{Correct G}
+\title{Correct G artifact}
 \usage{
 G_correction(experiment, assembly = NULL)
 }
 \arguments{
-\item{experiment}{tsr explorer object}
+\item{experiment}{TSRexploreR object.}
 
-\item{assembly}{Fasta assembly of genome or BSgenome object.}
+\item{assembly}{Genome assembly in FASTA or BSgenome format.}
 }
 \description{
-Correct overrepresentation of G TSSs
+Correct overrepresentation of 5' G bases added during reverse transcription.
 }

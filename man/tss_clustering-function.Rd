@@ -8,8 +8,10 @@ tss_clustering(
   experiment,
   samples = "all",
   threshold = NULL,
+  n_samples = NULL,
   max_distance = 25,
-  max_width = NULL
+  max_width = NULL,
+  singlet_threshold = NULL
 )
 }
 \arguments{
@@ -17,30 +19,35 @@ tss_clustering(
 
 \item{samples}{A vector of sample names to analyze.}
 
-\item{threshold}{TSSs or TSRs with a score below this value will be discarded.}
+\item{threshold}{TSSs or TSRs with a score below this value will not be considered.}
 
-\item{max_distance}{Maximum distance between TSSs that can be clustered}
+\item{n_samples}{Keep TSS if threshold number of reads are present in n_samples
+number of samples.}
 
-\item{max_width}{Maximum width of TSR allowed.}
+\item{max_distance}{Maximum allowable distance between TSSs for clustering.}
+
+\item{max_width}{Maximum allowable TSR width.}
+
+\item{singlet_threshold}{TSRs of width 1 must have a score greater than
+or equal to this threshold to be kept.}
 }
 \value{
-TSRexploreR object with TSRs
+TSRexploreR object with TSRs.
 }
 \description{
 Basic distance and threshold-based clustering of TSSs.
 }
 \details{
-This function clusters TSSs into Transcription Start Regions (TSRs).
-
-TSSs are clustered if their score is greater than or equal to
-  'threshold' and are less than or equal to 'max_distance'
-  from each other.
+This function clusters TSSs into Transcription Start Regions (TSRs). TSSs are 
+clustered if their score is greater than or equal to 'threshold' and are less 
+than or equal to 'max_distance' from each other. The clustered TSSs cannot
+encompass more than 'max_width' bases.
 }
 \examples{
 TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
 TSSs <- readRDS(TSSs)
-tsre_exp <- tsr_explorer(TSSs)
-tsre_exp <- format_counts(tsre_exp, data_type="tss")
-tsre_exp <- tss_clustering(tsre_exp)
+exp <- tsr_explorer(TSSs)
+exp <- format_counts(exp, data_type="tss")
+exp <- tss_clustering(exp)
 
 }

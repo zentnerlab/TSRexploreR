@@ -19,19 +19,17 @@ max_utr(
 
 \item{samples}{A vector of sample names to analyze.}
 
-\item{threshold}{Number of reads required for each TSS}
+\item{threshold}{Number of reads required for each TSS.}
 
-\item{max_upstream}{Max upstream distance of TSS to consider}
+\item{max_upstream}{Max upstream distance of TSS to consider.}
 
-\item{max_downstream}{Max downstream distance of TSS to consider}
+\item{max_downstream}{Max downstream distance of TSS to consider.}
 
-\item{feature_type}{Feature type used when finding distance to TSS ("geneId", "transcriptId")}
-
-\item{quantiles}{Number of quantiles to break data into.}
+\item{feature_type}{Feature type used when finding distance to TSS ("geneId", "transcriptId").}
 }
 \value{
-tibble with max UTR length for features
+tibble with max UTR length for features.
 }
 \description{
-Get TSS with furthest distance
+Get TSS with furthest distance to the annotated gene start.
 }

@@ -4,7 +4,14 @@
 \alias{softclip_composition}
 \title{Composition of Softclipped Bases}
 \usage{
-softclip_composition(experiment, samples = "all", n_bases = NULL, ncol = 3)
+softclip_composition(
+  experiment,
+  samples = "all",
+  n_bases = NULL,
+  ncol = 3,
+  return_table = FALSE,
+  ...
+)
 }
 \arguments{
 \item{experiment}{TSRexploreR object.}
@@ -14,6 +21,10 @@ softclip_composition(experiment, samples = "all", n_bases = NULL, ncol = 3)
 \item{n_bases}{Number of bases from -1 position to keep}
 
 \item{ncol}{Integer specifying the number of columns to arrange multiple plots.}
+
+\item{return_table}{Return a table of results instead of a plot.}
+
+\item{...}{Arguments passed to geom_col}
 }
 \description{
 Composition of Softclipped Bases

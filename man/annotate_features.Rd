@@ -2,13 +2,13 @@
 % Please edit documentation in R/annotate.R
 \name{annotate_features}
 \alias{annotate_features}
-\title{Annotate Data}
+\title{Annotate Features}
 \usage{
 annotate_features(
   experiment,
   data_type = c("tss", "tsr", "tss_diff", "tsr_diff", "shift"),
   feature_type = c("gene", "transcript"),
-  annotation_data = NULL,
+  genome_annotation = NULL,
   upstream = 1000,
   downstream = 100
 )
@@ -16,18 +16,18 @@ annotate_features(
 \arguments{
 \item{experiment}{TSRexploreR object.}
 
-\item{data_type}{Whether to annotate TSSs or TSRs}
+\item{data_type}{Whether to annotate TSSs ('tss') or TSRs ('tsr').}
 
-\item{feature_type}{Annotate at the gene or transcript level}
+\item{feature_type}{Whether to annotate at the 'gene' or 'transcript' level.}
 
-\item{annotation_data}{Path to annotation file or loaded TxDb object}
+\item{genome_annotation}{Genome annotation in GTF, GFF3, or TxDb format.}
 
-\item{upstream}{Bases upstream of TSS for 'promoter' annotation}
+\item{upstream}{Number of bases upstream of TSS for 'promoter' annotation (integer).}
 
-\item{downstream}{Bases downstream of TSS for 'promoter' annotation}
+\item{downstream}{Number of bases downstream of TSS for 'promoter' annotation (integer).}
 }
 \value{
-TSRexploreR object with annotated features
+TSRexploreR object with annotation data added to TSS or TSR tables.
 }
 \description{
 Use the ChIPseeker package to annotate TSSs or TSRs relative to known genes or transcripts.
@@ -35,22 +35,30 @@ Use the ChIPseeker package to annotate TSSs or TSRs relative to known genes or t
 \details{
 This function attempts to assign TSSs or TSRs to the nearest genomic feature.
 Genomic annotation data can be provided as either a 'GTF' or 'GFF' file,
-  or as a TxDb package from bioconductor.
+  or as a TxDb package from Bioconductor.
 
 'feature_type' allows to you link TSSs or TSRs to genes or transcripts.
 Furthermore, the size of the promoter region can be defined using
   'upstream' and 'downstream', which are relative to the TSSs
   defined in your annotation data.
+TSSs or TSRs overlapping a gene on the opposite strand
+  will be marked as 'Antisense'.
 }
 \examples{
 TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
 TSSs <- readRDS(TSSs)
-tsre_exp <- tsr_explorer(TSSs)
-tsre_exp <- format_counts(tsre_exp, data_type="tss")
 annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
-tsre_exp <- annotate_features(
-  tsre_exp, annotation_data=annotation,
-  data_type="tss", feature_type="transcript"
-)
+
+tsre <- TSSs[1] \%>\%
+  tsr_explorer(genome_annotation=annotation) \%>\%
+  format_counts(data_type="tss")
+
+# Annotating TSSs.
+annotate_features(tsre, data_type="tss")
+
+# Annotating TSRs
+tsre \%>\%
+  tss_clustering(threshold=3) \%>\%
+  annotate_features(data_type="tsr")
 
 }

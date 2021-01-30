@@ -18,41 +18,40 @@ tsr_export(
 
 \item{samples}{A vector of sample names to analyze.}
 
-\item{file_type}{either 'bed' or 'table'}
+\item{file_type}{Either 'bed' or 'table'.}
 
-\item{out_dir}{Output directory for files}
+\item{out_dir}{Output directory for files.}
 
-\item{diff_tsr}{Whether to pull out the differential TSRs (qq again, this is a bit unclear)}
+\item{diff_tsr}{If TRUE, will output differential TSSs.}
 
-\item{sep}{Delimiter for table output}
+\item{sep}{Delimiter for tabular output.}
 }
 \value{
-Either bed files, or a tabular file.
+Either a BED file or a table.
 }
 \description{
 Export TSRs to table or BED
 }
 \details{
-This function will save TSRs as beds, or a tab delimited file.
+This function will save TSRs as BED files or a delimited table.
 
-'file_type' controls what the TSRs will be output as.
-'bed' will result in each sample being saved as a file.
-'table' will output a file with the delimiter specified by the 'sep' argument.
-The resulting table will have all columns added to the TSRs data
-  in the tsr explorer object, such as various metrics.
+'file_type' controls what the TSRs will be output as. 'bed' will result in each 
+sample being saved as a BED file. 'table' will output a file with the delimiter 
+specified by the 'sep' argument. The resulting table will have all columns added 
+to the TSR data in the TSRexplorer object, such as annotation information.
 
-The directory to output the files can be set with 'out_dir'.
-  A value of NA will save the files to the working directory by default.
+The directory to output the files can be set with 'out_dir'. A value of NA will 
+save the files to the working directory by default.
 
 If 'diff_tsr' is TRUE, only differential TSRs will be output.
 }
 \examples{
 TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
 TSSs <- readRDS(TSSs)
-tsre_exp <- tsr_explorer(TSSs)
-tsre_exp <- format_counts(tsre_exp, data_type="tss")
-tsre_exp <- tss_clustering(tsre_exp)
-tsr_export(tsre_exp)
+exp <- tsr_explorer(TSSs)
+exp <- format_counts(exp, data_type="tss")
+exp <- tss_clustering(exp)
+tsr_export(exp)
 
 }
 \seealso{
