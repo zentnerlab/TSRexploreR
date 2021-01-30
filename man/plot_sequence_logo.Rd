@@ -66,6 +66,10 @@ BSgenome assemblies are precompiled Bioconductor libraries for common organisms.
 'distance' controls the length upstream and downstream of the TSS
   from which the sequence will be retrieved.
 
+The color of each base is set using the 'base_colors' argument.
+The argument input should be a named vector, with the base as the name,
+and the desired color of the base as the vector element.
+
 A set of functions to control data structure for plotting are included.
 'threshold' will define the minimum number of reads a TSS or TSR
  must have to be considered.

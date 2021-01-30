@@ -22,18 +22,39 @@
 #' 'n_samples'. Features must have greater than or equal to 'threshold' number of raw counts 
 #' in at least 'n_samples' number of samples to proceed through normalization.
 #'
+#' When clustering TSSs into TSRs using 'tss_clustering',
+#'   both the raw and normalized counts will be stored in the new TSRs.
+#'
 #' @return TSRexploreR object with normalized counts.
 #'
 #' @examples
 #' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
 #' TSSs <- readRDS(TSSs)
-#' exp <- tsr_explorer(TSSs)
-#' exp <- format_counts(exp, data_type="tss")
-#' exp <- normalize_counts(exp, data_type="tss", method="DESeq2")
+#' sample_sheet <- data.frame(
+#'   sample_name=c(
+#'     sprintf("S288C_D_%s", seq_len(3)),
+#'     sprintf("S288C_WT_%s", seq_len(3))
+#'   ),
+#'   file_1=NA, file_2=NA,
+#'   condition=c(
+#'     rep("Diamide", 3),
+#'     rep("Untreated", 3)
+#'   )
+#' )
 #'
-#' @seealso \code{\link{plot_correlation}} for correlation analysis and visualization.
+#' tsre <- TSSs %>%
+#'   tsr_explorer(sample_sheet=sample_sheet) %>%
+#'   format_counts(data_type="tss")
 #'
-#' @rdname normalize_counts-function
+#' # CPM normalization
+#' \donttest{normalize_counts(tsre, method="CPM")}
+#'
+#' # DESeq2 normalization
+#' \donttest{normalize_counts(tsre, method="DESeq2")}
+#'
+#' # edgeR normalization
+#' \donttest{normalize_counts(tsre, method="edgeR")}
+#'
 #' @export
 
 normalize_counts <- function(
