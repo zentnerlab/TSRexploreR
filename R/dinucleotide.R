@@ -11,7 +11,7 @@
 #' @details
 #' It has been shown in many organisms that particular base preferences exist at the
 #'  -1 and +1 positions, where +1 is the TSS and -1 is the position immediately upstream.
-#' This function returns the dinucleotide frequencies at each TSS.
+#' This plotting function returns a ggplot2 barplot of -1 and +1 dinucleotide frequencies,
 #'
 #' 'genome_assembly' must be a valid genome assembly in either fasta or BSgenome format.
 #' fasta formatted genome assemblies should have the file extension '.fasta' or '.fa'.
@@ -22,23 +22,23 @@
 #'  must have to be considered.
 #' 'dominant' specifies whether only the dominant TSS should be considered 
 #'   from the 'mark_dominant' function.
-#' For TSSs this can be either dominant per TSR or gene, and for TSRs
-#'   it is just the dominant TSR per gene. (qq should this just be TSSs?)
+#' For TSSs this can be either dominant per TSR or gene.
 #' 'data_conditions' allows for the advanced filtering, ordering, and grouping
 #'   of data.
 #'
-#' @return DataFrame with dinucleotide frequencies
+#' @return ggplot2 object of dinucleotide plot.
+#'   If 'return_table' is TRUE, a data.frame of underlying data is returned.
 #'
 #' @examples
 #' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
 #' TSSs <- readRDS(TSSs)
-#' tsre_exp <- tsr_explorer(TSSs)
-#' tsre_exp <- format_counts(tsre_exp, data_type="tss")
 #' assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
-#' freqs <- dinucleotide_frequencies(tsre_exp, genome_assembly=assembly)
 #'
-#' @seealso
-#' \code{\link{plot_dinculeotide_frequencies}} to plot the dinucleotide frequencies.
+#' tsre <- TSSs[1] %>%
+#'   tsr_explorer(genome_annotation=annotation) %>%
+#'   format_counts(data_type="tss")
+#'
+#' \donttest{plot_dinucleotide_frequencies(tsre)}
 #'
 #' @export
 
@@ -177,31 +177,3 @@ plot_dinucleotide_frequencies <- function(
 
   return(freqs)
 }
-
-#' Plot Dinucleotide Frequencies
-#'
-#' @description
-#' Plot results from dinucleotide analysis
-#'
-#' @inheritParams common_params
-#'
-#' @details
-#' This plotting function returns a ggplot2 barplot of -1 and +1 dinucleotide frequencies, 
-#'   where +1 is the TSS and -1 is the position immediately upstream.
-#' The results of the 'dinucleotide_frequencies' function are used as input.
-#'
-#' @return ggplot2 object of dinucleotide frequencies plot
-#'
-#' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-#' TSSs <- readRDS(TSSs)
-#' tsre_exp <- tsr_explorer(TSSs)
-#' tsre_exp <- format_counts(tsre_exp, data_type="tss")
-#' assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
-#' freqs <- dinucleotide_frequencies(tsre_exp, genome_assembly=assembly)
-#' plot_dinucleotide_frequencies(freqs)
-#'
-#' @seealso
-#' \code{\link{dinucleotide_frequencies}} to calculate the dinucleotide frequencies.
-
-plot_dinucleotide_freqs <- function(x) NULL
