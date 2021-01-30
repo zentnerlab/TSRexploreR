@@ -37,14 +37,15 @@ highest-scoring TSR per gene or transcript.}
 \item{...}{Arguments passed to geom_col.}
 }
 \value{
-DataFrame with TSS or TSR genomic distribution stats.
+ggplot2 plot with TSS or TSR genomic distribution.
+  If 'return_table' is TRUE returns a data.frame of underlying stats.
 }
 \description{
 Get genomic distribution of TSSs and TSRs.
 }
 \details{
-This function summarizes the distribution of TSSs or TSRs relative to annotated 
-genomic features (exons, introns, intergenic, downstream, and promoter regions).
+This plotting function will create a stacked barplot of genomic feature types for each sample.
+Genomic features include exons, introns, intergenic, downstream, antisense, and promoter regions.
 The promoter region is user-defined during annotation.
 
 A set of functions to control data structure for plotting are included. 'use_normalized' 
@@ -53,23 +54,32 @@ will use  normalized scores, which only matters if 'consider_score' is TRUE.
 considered. dominant' specifies whether only the dominant TSS or TSR (determined
 using the 'mark_dominant' function) is considered. For TSSs, this can be either 
 dominant TSS per TSR or gene/transcript, and for TSRs it is the dominant TSR 
-per gene/transcript. 'data_conditionals' can be used to filter, quantile, order, 
+per gene/transcript. 'data_conditions' can be used to filter, quantile, order, 
 and/or group data for plotting.
+
+If 'return_table' is TRUE, a data.frame containing the underlying data
+  for the plot is returned.
 }
 \examples{
 TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
 TSSs <- readRDS(TSSs)
-exp <- tsr_explorer(TSSs)
-exp <- format_counts(exp, data_type="tss")
 annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
-exp <- annotate_features(
-  exp, annotation_data=annotation,
-  data_type="tss", feature_type="transcript"
-)
-genomic_dist <- genomic_distribution(exp, data_type="tss")
+
+tsre <- TSSs[1] \%>\%
+  tsr_explorer(genome_annotation=annotation) \%>\%
+  format_counts(data_type="tss") \%>\%
+  annotate_features(data_type="tss")
+
+# TSS genomic distribution plot.
+\donttest{plot_genomic_distribution(tsre, data_type="tss")}
+
+# TSR genomic distribution plot.
+tsre <- tsre \%>\%
+  tss_clustering(threshold=3) \%>\%
+  annotate_features(data_type="tsr")
+\donttest{plot_genomic_distribution(tsre, data_type="tsr")}
 
 }
 \seealso{
 \code{\link{annotate_features}} to annotate TSSs or TSRs.
-  \code{\link{plot_genomic_distribution}} to plot the genomic distribution.
 }

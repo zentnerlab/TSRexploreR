@@ -55,6 +55,31 @@ for TSS and TSR tracks, respectively.}
 \item{anno_pos}{Genome annotation and axis track position.
 Either 'top' or 'bottom'.}
 }
+\value{
+GViz gene track plot.
+}
 \description{
 Generate gene tracks in GViz by gene name.
+}
+\details{
+This function generates a GViz gene track of either the promoter region,
+  or the gene or transcript and surrounding region.
+The gene or transcript name should be supplied to 'feature_name'.
+'promoter_only' controls whether the plot is of the feature promoter
+  or the entire gene.
+'upstream' and 'downstream' is relative to either the the TSS (if promoter only)
+  or the feature boundaries (if gene/transcript).
+}
+\examples{
+TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
+TSSs <- readRDS(TSSs)
+annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
+
+tsre <- TSSs[1] \%>\%
+  tsr_explorer(genome_annotation=annotation) \%>\%
+  format_counts(data_type="tss") \%>\%
+  tss_clustering(threshold=3)
+
+\donttest{gene_tracks(tsre, "YKR076W")}
+
 }

@@ -108,27 +108,66 @@
 #' Whether genes or transcripts are used depends on the feature type chosen
 #'   when annotating the TSSs with the 'annotate_features' function. 
 #'
+#' The region around the annotated TSS used for plotting is controlled by
+#'   'upstream' and 'downstream', which should be positive integers.
+#'
+#' A set of arguments to control data structure for plotting are included.
+#' 'use_normalized' will use the CPM normalized scores as opposed to raw read counts.
+#' 'threshold' will define the minimum number of reads a TSS or TSR
+#'  must have to be considered.
+#' 'dominant' specifies whether only the dominant TSS or TSR is considered 
+#'   from the 'mark_dominant' function.
+#' For TSSs this can be either dominant per TSR or gene, and for TSRs
+#'   it is just the dominant TSR per gene.
+#' 'data_conditions' allows for the advanced filtering, ordering, and grouping
+#'   of data.
+#'
+#' A set of arguments for data conditions are supplied seperatly from
+#'   the 'conditionals' function used in many other core functions.
+#' This is because each row (feature) can have multiple TSSs or TSRs,
+#'   which is unique to this type of plot.
+#' 'filtering' can be supplied with a logical statement to filter TSSs and TSRs
+#'   by the given condition(s).
+#' 'ordering' can be supplied with a symbol/name of the variable to order by,
+#'   and 'order_descending' controls ordering direction.
+#' 'order_fun' is the function used to aggregate the variable score for each row/feature,
+#'   and 'order_sample' controls the samples used to order from these aggregated variables.
+#' 'quantiling' is a character specifying the numeric variable to quantile by,
+#'   and 'n_quantiles' controls the number of quantiles to split the data into.
+#' Just as with ordering, 'quantiles_fun' is the function to aggregate the numeric
+#'   variable by per feature/row, and 'quantile_samples' are the samples used to
+#'   determine the order.
+#' Finally, 'split_by' can be given either a two column data.frame ('feature' and 'split_group'),
+#'   or a named list, where the names are the split category and the list contents are
+#'   a vector of genes.
+#'
+#' An option to rasterize the heatmaps using ggrastr is provided with the 'rasterize' argument,
+#'   and the DPI (resolution) is controlled by 'raster_dpi'.
+#'
 #' @return ggplot2 object of TSS or TSR heatmap
+#'
+#' @seealso
+#' \code{\link{annotate_features}} to annotate the TSSs or TSRs.
 #'
 #' @examples
 #' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
 #' TSSs <- readRDS(TSSs)
-#' tsre_exp <- tsr_explorer(TSSs)
-#' tsre_exp <- format_counts(tsre_exp, data_type="tss")
 #' annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
-#' tsre_exp <- annotate_features(
-#'   tsre_exp, annotation_data=annotation,
-#'   data_type="tss", feature_type="transcript"
-#' )
-#' hm_mat <- tss_heatmap_matrix(tsre_exp)
-#' plot_heatmap(hm_matrix)
 #'
-#' @seealso
-#' \code{\link{annotate_features}} to annotate the TSSs or TSRs.
-#' \code{\link{tss_heatmap_matrix}} to generate the TSS matrix data for plotting.
-#' \code{\link{tsr_heatmap_matrix}} to generate the TSR matrix data for plotting.
+#' tsre <- TSSs[1] %>%
+#'   tsr_explorer(genome_annotation=annotation) %>%
+#'   format_counts(data_type="tss") %>%
+#'   annotate_features(data_type="tss")
 #'
-#' @rdname plot_heatmap-function
+#' # TSS heatmap.
+#' \donttest{plot_heatmap(tsre, data_type="tss")}
+#'
+#' # TSR heatmap.
+#' tsre <- tsre %>%
+#'   tss_clustering(threshold=3) %>%
+#'   annotate_features(data_type="tsr")
+#' \donttest{plot_heatmap(tsre, data_type="tsr")}
+#'
 #' @export
 
 plot_heatmap <- function(

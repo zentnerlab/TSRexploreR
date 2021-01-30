@@ -6,37 +6,37 @@
 #' @importFrom PCAtools pca biplot
 #'
 #' @inheritParams common_params
-#' @param data_type Either 'tss', 'tsr', 'tss_features', or 'tsr_features'
-#' @param remove_var Remove features in this bottom fraction
-#' @param center center the data
-#' @param scale scale the data
-#' @param ... Additional arguments passed to PCAtools::biplot
+#' @param data_type Either 'tss' or 'tsr'.
+#' @param remove_var Remove features in this bottom fraction.
+#' @param center Center the data.
+#' @param scale Scale the data.
+#' @param ... Additional arguments passed to PCAtools::biplot.
+#'
+#' @return ggplot2 object of PCA plot.
 #'
 #' @details
-#' This function will generate a dimensionality reduction plot.
-#' These help to visualize the relative similarity of samples
+#' This function will generatete a PCA plot of the first two PCs.
+#' This helps to visualize the relative similarity of samples
 #'   based on the most variables features.
 #'
-#' 'method' lets you choose between the more traditional PCA plot or newer
-#'   UMAP plot.
-#'
-#' If a UMAP plot is chosen, there are two parameters available
-#'   for tweaking the results.
-#' 'n_neighbors' will find the specified number of nearest neighbor points,
-#'   and 'min_dist' specifies the minimum distance allowed between two points 
-#'   in the UMAP plot. 
+#' 'remove_var' removes features in the bottom fraction of variance.
+#' 'center' and 'scale' will center and scale the data respectively.
 #'
 #' @examples
 #' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
 #' TSSs <- readRDS(TSSs)
-#' tsre_exp <- tsr_explorer(TSSs)
-#' tsre_exp <- format_counts(tsre_exp, data_type="tss")
-#' tsre_exp <- tss_clustering(tsre_exp)
-#' plot_reduction(tsre_exp, data_type="tsr")
 #'
-#' @return ggplot2 plot of dimension reduction
+#' tsre_exp <- TSSs %>%
+#'   tsr_explorer %>%
+#'   format_counts(data_type="tss")
 #'
-#' @rdname plot_reduction-function
+#' # TSS PCA plot.
+#' \donttest{plot_reduction(tsre, data_type="tss")}
+#'
+#' # TSR PCA plot.
+#' tsre <- tss_clustering(tsre, threshold=3)
+#' \donttest{plot_reduction(tsre, data_type="tsr")}
+#'
 #' @export
 
 plot_reduction <- function(
