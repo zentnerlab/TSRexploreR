@@ -37,10 +37,11 @@ highest-scoring TSR per gene or transcript.}
 \item{...}{Arguments passed to geom_col.}
 }
 \value{
-DataFrame of detected feature numbers.
+ggplot2 object of detected features.
 }
 \description{
-Get the number of genes or transcripts with an associated unique TSS or TSR.
+This plotting function returns a stacked barplot showing the number of
+features detected with and without a promoter proximal TSS or TSR. The information
 }
 \details{
 This function will returnthe number of genes or transcripts with an associated 
@@ -59,17 +60,23 @@ and/or group data for plotting.
 \examples{
 TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
 TSSs <- readRDS(TSSs)
-exp <- tsr_explorer(TSSs)
-exp <- format_counts(exp, data_type="tss")
 annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
-exp <- annotate_features(
-  exp, annotation_data=annotation,
-  data_type="tss", feature_type="transcript"
-)
-detected <- detect_features(exp, data_type="tss")
+
+tsre <- TSSs[1] \%>\%
+  tsr_explorer(genome_annotation=annotation) \%>\%
+  format_counts(data_type="tss") \%>\%
+  annotate_features(data_type="tss")
+
+# Detected features with TSSs plot.
+\donttest{plot_detected_features(tsre, data_type="tss")}
+
+# Detected features with TSRs plot.
+tsre <- tsre \%>\%
+  tss_clustering(threshold=3) \%>\%
+  annotate_features(data_type="tss")
+\donttest{plot_detected_features(tsre, data_type="tsr")}
 
 }
 \seealso{
-\code{\link{annotate_features}} to annotate the TSSs and TSRs.
-\code{\link{plot_detected_features}} to plot numbers of detected features.
+\code{\link{annotate_features}} to annotate the TSSs or TSRs.
 }

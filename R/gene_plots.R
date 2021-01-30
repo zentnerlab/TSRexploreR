@@ -1,7 +1,8 @@
 #' Genes/Transcripts Detected
 #'
 #' @description
-#' Get the number of genes or transcripts with an associated unique TSS or TSR.
+#' This plotting function returns a stacked barplot showing the number of
+#' features detected with and without a promoter proximal TSS or TSR. The information 
 #'
 #' @inheritParams common_params
 #' @param data_type Whether TSSs or TSRs should be analyzed.
@@ -21,23 +22,29 @@
 #' per gene/transcript. 'data_conditionals' can be used to filter, quantile, order, 
 #' and/or group data for plotting.
 #'
-#' @return DataFrame of detected feature numbers.
+#' @return ggplot2 object of detected features.
+#'
+#' @seealso
+#' \code{\link{annotate_features}} to annotate the TSSs or TSRs.
 #'
 #' @examples
 #' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
 #' TSSs <- readRDS(TSSs)
-#' exp <- tsr_explorer(TSSs)
-#' exp <- format_counts(exp, data_type="tss")
 #' annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
-#' exp <- annotate_features(
-#'   exp, annotation_data=annotation,
-#'   data_type="tss", feature_type="transcript"
-#' )
-#' detected <- detect_features(exp, data_type="tss")
 #'
-#' @seealso
-#' \code{\link{annotate_features}} to annotate the TSSs and TSRs.
-#' \code{\link{plot_detected_features}} to plot numbers of detected features.
+#' tsre <- TSSs[1] %>%
+#'   tsr_explorer(genome_annotation=annotation) %>%
+#'   format_counts(data_type="tss") %>%
+#'   annotate_features(data_type="tss")
+#'
+#' # Detected features with TSSs plot.
+#' \donttest{plot_detected_features(tsre, data_type="tss")}
+#'
+#' # Detected features with TSRs plot.
+#' tsre <- tsre %>%
+#'   tss_clustering(threshold=3) %>%
+#'   annotate_features(data_type="tss")
+#' \donttest{plot_detected_features(tsre, data_type="tsr")}
 #'
 #' @export
 
@@ -159,36 +166,3 @@ plot_detected_features <- function(
 
   return(sample_data)
 }
-
-#' Plot Detected Features
-#'
-#' @description
-#' Plot number of features detected per sample.
-#'
-#' @importFrom stringr str_to_title
-#'
-#' @details
-#' This plotting function returns a stacked barplot showing the number of
-#' features detected with and without a promoter proximal TSS or TSR. The information 
-#' is first prepared using the 'detect_features' function.
-#'
-#' @return ggplot2 object of detected feature counts.
-#'
-#' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-#' TSSs <- readRDS(TSSs)
-#' exp <- tsr_explorer(TSSs)
-#' exp <- format_counts(exp, data_type="tss")
-#' annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
-#' exp <- annotate_features(
-#'   exp, annotation_data=annotation,
-#'   data_type="tss", feature_type="transcript"
-#' )
-#' detected <- detect_features(exp, data_type="tss")
-#' plot_detected_features(detected)
-#'
-#' @seealso
-#' \code{\link{annotate_features}} to annotate the TSSs or TSRs.
-#' \code{\link{detect_features}} to determine numbers of detected features.
-
-plot_detected_feats <- function(x) NULL
