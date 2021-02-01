@@ -137,6 +137,9 @@
 #'
 #' @return ggplot2 object containing the threshold exploration plot
 #'
+#' @seealso
+#' \code{\link{apply_threshold}} to permantly filter TSSs below threshold value.
+#'
 #' @examples
 #' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
 #' TSSs <- readRDS(TSSs)
@@ -198,10 +201,38 @@ plot_threshold_exploration <- function(
 
 #' Apply a threshold to TSSs or TSRs
 #'
+#' @description
+#' Filter TSSs based on given threshold.
+#'
 #' @inheritParams common_params
 #' @param n_samples Number of samples threshold must be reached to keep TSS.
 #'   By default set to 1 sample. A NULL value will result in all samples being
 #'   required to have read counts above threshold.
+#'
+#' @details
+#' All TSSs mapping methods produce spurious 5' reads.
+#' For the most part, these spurious reads tend to be weak and somewhat uniformly
+#'   distributed through the promoter and gene body.
+#' This means that this background can be mitigated by requiring a minimum read threshold
+#'   for a TSS to be retained in the filtered dataset.
+#'
+#' This function will permantly filter TSSs from the TSS data.table if no sample has
+#'  at least 'threshold' number of reads in at least 'n_samples' number of samples.
+#'
+#' @return TSRexploreR object with weak TSSs filtered out of counts table.
+#'
+#' @seealso
+#' \code{\link{plot_threshold_exploration}} to explore fraction of
+#'   promoter proximal TSSs, and absolute number of detected genes.
+#'
+#' @examples
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
+#' TSSs <- readRDS(TSSs)
+#'
+#' tsre <- TSSs[1] %>%
+#'   tsr_explorer(genome_annotation=annotation) %>%
+#'   format_counts(data_type="tss")
+#' apply_threshold(tsre, threshold=3)
 #'
 #' @export
 

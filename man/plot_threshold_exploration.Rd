@@ -75,3 +75,6 @@ tsre <- TSSs[1] \%>\%
 \donttest{plot_threshold_exploration(tsre)}
 
 }
+\seealso{
+\code{\link{apply_threshold}} to permantly filter TSSs below threshold value.
+}
