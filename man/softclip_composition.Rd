@@ -64,4 +64,6 @@ tsre <- tsr_explorer(sample_sheet=samples, genome_assembly=assembly) \%>\%
 }
 \seealso{
 \code{\link{import_bams}} to import BAMs.
+\code{\link{G_correction}} to correct for incidentally templated 
+  spurrious 5' Gs.
 }
