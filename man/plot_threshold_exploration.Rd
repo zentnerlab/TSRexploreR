@@ -42,24 +42,39 @@ ggplot2 object containing the threshold exploration plot
 Make a plot to explore threshold values.
 }
 \details{
-We have found that a threshold of 3 often provides an appropriate balance between
+All TSSs mapping methods produce spurious 5' reads.
+For the most part, these spurious reads tend to be weak and somewhat uniformly
+  distributed through the promoter and gene body.
+This means that this background can be mitigated by requiring a minimum read threshold
+  for a TSS to be retained in the filtered dataset.
+
+This plotting function generates a line-plot, where the x-axis is the nieve read threshold,
+  and the y-axis is the number of TSSs within annotated gene/transcript promoters.
+Additionally, the point color represents the absolute number of genes with at least 1 surviving
+  TSSs after filtering.
+'max_threshold' controls the maximum threshold value explored,
+  and 'steps' is the value that is used to count between 1 and the 'max_threshold'.
+
+At a certain threshold there are diminishing returns,
+  where an increase in threshold results in little increase in promoter proximal fraction,
+  but a precipitous loss in number of genes with a TSS.
+A threshold should be chosen that balances these two competing metrics.
+For STRIPE-seq We have found that a threshold of 3 often provides an appropriate balance between
   a high promoter-proximal fraction (>= 0.8) and the number of unique genes or
   transcripts with at least one unique TSS.
 }
 \examples{
 TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
 TSSs <- readRDS(TSSs)
-tsre_exp <- tsr_explorer(TSSs)
-tsre_exp <- format_counts(tsre_exp, data_type="tss")
 annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
-tsre_exp <- annotate_features(
-  tsre_exp, annotation_data=annotation,
-  data_type="tss", feature_type="transcript"
-)
-thresh_results <- explore_thresholds(tsre_exp)
-plot_threshold_exploration(thresh_results)
+
+tsre <- TSSs[1] \%>\%
+  tsr_explorer(genome_annotation=annotation) \%>\%
+  format_counts(data_type="tss") \%>\%
+  annotate_features(data_type="tss")
+\donttest{plot_threshold_exploration(tsre)}
 
 }
 \seealso{
-\code{\link{explore_thresholds}} for initial calculations.
+\code{\link{apply_threshold}} to permantly filter TSSs below threshold value.
 }

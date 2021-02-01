@@ -1,8 +1,48 @@
 
 #' Shifting Rank Plot
 #'
+#' @description
+#' Barplot of shift ranks ordered by score.
+#'
 #' @inheritParams common_params
 #' @param score_order Either descending or ascending
+#'
+#' @details
+#' The 'tss_shifting' function uses the Earth Movers Distance (EMD)
+#'   to find significant upstream or downstream shifts in TSS clusters.
+#' EMD returns a score between -1 and 1 inclusive, with negative and positive scores
+#'   correspending to upstream and downstream shifts respectively.
+#' In rarer cases you can have a shifting scores of 0,
+#'   indicating an equal shift of TSS cluster 'mass' upstream and downstream.
+#'
+#' This functions generates a barplot of shifting score,
+#'   with the x-axis corresponding to TSS clusters ordered by tss shifting score,
+#'   and the y-axis the shifting score.
+#' TSS clusters can be in ascending or descending order as controlled by 'score_order'.
+#'
+#' This function 
+#'
+#' @return ggplot2 object of shifting rank plot.
+#'
+#' @seealso
+#' \code{\link{tss_shifting}} to calculate TSS cluster shifting.
+#'
+#' @examples
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "TSRexploreR")
+#' TSSs <- readRDS(TSSs)
+#'
+#' tsre <- TSSs[c(1, 4)] %>%
+#'   tsr_explorer %>%
+#'   format_counts(data_type="tss") %>%
+#'   tss_clustering(threshold=3)
+#'   tss_shift(
+#'     tsre,
+#'     sample_1=c(TSS="S288C_WT_1", TSR="S288C_WT_1"),
+#'     sample_2=c(TSS="S288C_D_1", TSR="S288C_D_1"),
+#'     comparison_name="Untreated_vs_Diamide",
+#'     max_distance = 100, min_threshold = 10, n_resamples = 1000L
+#'   )
+#' \donttest{plot_shift_rank(tsre)}
 #'
 #' @export
 
@@ -47,7 +87,7 @@ plot_shift_rank <- function(
 
   ## Generate the plot.
   p <- ggplot(select_samples, aes(x=.data$FID, y=.data$shift_score, fill=.data$shift_score)) +
-    geom_col() +
+    geom_col(width=1) +
     theme(
       axis.text.x=element_blank(),
       axis.ticks.x=element_blank()
@@ -59,8 +99,49 @@ plot_shift_rank <- function(
 
 #' Shift Count Plot
 #'
+#' @description
+#' Generate a stacked barplot for the number of TSS clusters
+#'   shifted upstream and/or downstream per sample.
+#'
 #' @inheritParams common_params
 #' @param ... Arguments passed to geom_col
+#'
+#' @return ggplot2 of stacked barplot of shifted TSS clusters.
+#'   If 'return_table' is TRUE, a data.frame of underlying counts
+#'   is returned instead.
+#'
+#' @seealso
+#' \code{\link{tss_shifting}} For TSS cluster shifting calculation.
+#'
+#' @details
+#' The 'tss_shifting' function uses the Earth Movers Distance (EMD)
+#'   to find significant upstream or downstream shifts in TSS clusters.
+#' EMD returns a score between -1 and 1 inclusive, with negative and positive scores
+#'   correspending to upstream and downstream shifts respectively.
+#' In rarer cases you can have a shifting scores of 0,
+#'   indicating an equal shift of TSS cluster 'mass' upstream and downstream.
+#'
+#' This function generates a stacked barplot for the number of TSS clusters
+#'   with an upstream and downstream shift.
+#' If 'return_table' is TRUE, a data.frame is returned that provides the underlying
+#'   counts for each sample.
+#'
+#' @examples
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "TSRexploreR")
+#' TSSs <- readRDS(TSSs)
+#'
+#' tsre <- TSSs[c(1, 4)] %>%
+#'   tsr_explorer %>%
+#'   format_counts(data_type="tss") %>%
+#'   tss_clustering(threshold=3)
+#'   tss_shift(
+#'     tsre,
+#'     sample_1=c(TSS="S288C_WT_1", TSR="S288C_WT_1"),
+#'     sample_2=c(TSS="S288C_D_1", TSR="S288C_D_1"),
+#'     comparison_name="Untreated_vs_Diamide",
+#'     max_distance = 100, min_threshold = 10, n_resamples = 1000L
+#'   )
+#' \donttest{plot_shift_count(tsre)}
 #'
 #' @export
 
