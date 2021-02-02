@@ -49,6 +49,12 @@ ggplot2 object with TSR matrix plotted.
 Plot selected TSR metrics.
 }
 \details{
+Plot any TSR metrics contained within the counts data.table.
+Metrics can be supplied as a character vector to 'tsr_metrics',
+  and will be optionally Log2 transformed if 'log2_transform' is TRUE.
+Valid plot types that can be supplied to 'plot_type' include
+  'violin', 'box', 'jitter', and 'boxjitter' (a combination of boxplot and jitterplot).
+
 A set of functions to control data structure for plotting are included. 'use_normalized' 
 will use  normalized scores, which only matters if 'consider_score' is TRUE.
 'threshold' defines the minimum number of raw counts a TSS or TSR must have to be 
@@ -57,4 +63,18 @@ using the 'mark_dominant' function) is considered. For TSSs, this can be either
 dominant TSS per TSR or gene/transcript, and for TSRs it is the dominant TSR 
 per gene/transcript. 'data_conditionals' can be used to filter, quantile, order, 
 and/or group data for plotting.
+}
+\examples{
+TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
+TSSs <- readRDS(TSSs)
+
+tsre <- TSSs[1] \%>\%
+  tsr_explorer \%>\%
+  format_counts(data_type="tss") \%>\%
+  tss_clsutering(threshold=3)
+\donttest{plot_tsr_metric(tsre, "width")}
+
+}
+\seealso{
+\code{\link{tsr_metrics}} to calculate additional TSR metrics.
 }

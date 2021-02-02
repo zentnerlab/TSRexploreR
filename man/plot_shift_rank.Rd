@@ -48,7 +48,7 @@ TSSs <- readRDS(TSSs)
 tsre <- TSSs[c(1, 4)] \%>\%
   tsr_explorer \%>\%
   format_counts(data_type="tss") \%>\%
-  tss_clustering(threshold=3)
+  tss_clustering(threshold=3) \%>\%
   tss_shift(
     tsre,
     sample_1=c(TSS="S288C_WT_1", TSR="S288C_WT_1"),

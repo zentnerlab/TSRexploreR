@@ -17,25 +17,6 @@
 #' @param min_threshold Minimum number of raw counts required in each TSR for both samples.
 #' @param n_resamples Number of resamplings for permutation test.
 #'
-#' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-#' TSSs <- readRDS(TSSs)
-#' exp <- tsr_explorer(TSSs)
-#' annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
-#' samples <- data.frame(sample_name = c(sprintf("S288C_D_%s", seq_len(3)), 
-#'                       sprintf("S288C_WT_%s", seq_len(3))),
-#'                       file_1=NA, file_2=NA,
-#'                       condition=c(rep("Diamide", 3), rep("Untreated", 3)))
-#' exp <- tsr_explorer(TSSs, genome_annotation=annotation, sample_sheet=samples) %>%
-#'   format_counts(data_type="tss") %>%
-#'   tss_clustering(threshold=3) %>%  
-#'   merge_samples(data_type="tss", merge_group="condition") %>%
-#'   merge_samples(data_type="tsr", merge_group="condition")
-#' exp <- tss_shift(exp, sample_1=c(TSS="Untreated", TSR="Untreated"),
-#'                                  sample_2=c(TSS="Diamide", TSR="Diamide"),
-#'                  comparison_name="Untreated_vs_Diamide",
-#'                  min_distance=100, min_threshold=10, n_resamples=1000L)
-#'
 #' @details
 #' This function assesses the difference between TSS distributions from two distinct samples
 #' in a set of consensus TSRs by calculating the earth mover's distance (EMD) between
@@ -46,8 +27,34 @@
 #' (negative values indicate upstream shifts and positive values indicate downstream shifts). 
 #' The function also calculates a p-value for the null hypothesis that there is no difference 
 #' (EMD = 0) based on a permutation test.
+#'
+#' 'sample_1' and 'sample_2' should be the names of the two samples to compare.
+#' For the directions to make sense for the results 'sample_1' should be the control.
+#'   and 'sample_2' the treatment sample.
+#' The results will be stored back in the TSRexploreR object with the name given by
+#'   'comparison_name'.
+#' 'tss_threshold' applies a global threshold to remove TSSs below a certain score,
+#'   and 'min_threshold' is the minimal score that both TSRs must have to be considered.
+#' 'max_distance' is the maximum distance between two two TSRs to be considered for shifting.
+#'
+#' @return TSRexploreR object with shifting scores added.
+#'
+#' @examples
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "TSRexploreR")
+#' TSSs <- readRDS(TSSs)
+#'
+#' tsre <- TSSs[c(1, 4)] %>%
+#'   tsr_explorer %>%
+#'   format_counts(data_type="tss") %>%
+#'   tss_clustering(threshold=3)
+#' tss_shift(
+#'   tsre,
+#'   sample_1=c(TSS="S288C_WT_1", TSR="S288C_WT_1"),
+#'   sample_2=c(TSS="S288C_D_1", TSR="S288C_D_1"),
+#'   comparison_name="Untreated_vs_Diamide",
+#'   max_distance = 100, min_threshold = 10, n_resamples = 1000L
+#' )
 #' 
-#' @rdname tss_shift-function
 #' @export
 
 tss_shift <- function(

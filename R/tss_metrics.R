@@ -21,25 +21,35 @@
 #' dominant TSS per TSR, and for TSRs the dominant TSR per gene is marked. For TSSs, 
 #' 'gene' can also be specified, which will mark the dominant TSS per gene.  
 #'
-#' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-#' TSSs <- readRDS(TSSs)
-#' exp <- tsr_explorer(TSSs)
-#' exp <- format_counts(exp, data_type="tss")
-#' exp <- tss_clustering(exp)
-#' exp <- associate_with_tsr(exp, sample_list=list(
-#'   "S288C_WT_1"="S288C_WT_1", "S288C_WT_2"="S288C_WT_2", "S288C_WT_3"="S288C_WT_3",
-#'   "S288C_D_1"="S288C_D_1", "S288C_D_2"="S288C_D_2", "S288C_D_3"="S288C_D_3"
-#' ))
-#' exp <- mark_dominant(exp, data_type="tss")
-#'
 #' @return TSRexploreR object with dominant status added to TSSs or TSRs.
 #'
 #' @seealso
 #' \code{\link{associate_wth_tsr}} to associate TSSs with TSRs prior to marking
 #'   dominant TSS per TSR.
 #'
-#' @rdname mark_dominant-function
+#' @examples
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
+#' TSSs <- readRDS(TSSs)
+#' annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
+#'
+#' tsre <- TSSs[1] %>%
+#'   tsr_explorer %>%
+#'   format_counts(data_type="tss") %>%
+#'
+#' # Dominant TSS per gene.
+#' tsre <- annotate_features(tsre, data_type="tss")
+#' \donttest{mark_dominant(tsre, data_type="tss", mark_per="gene")}
+#'
+#' # Dominant TSS per TSR.
+#' tsre <- tsre %>%
+#'   tss_clustering(threshold=3) %>%
+#'   associate_with_tsr
+#' \donttest{mark_dominant(tsre, data_type="tss")}
+#'
+#' # Dominant TSR per gene.
+#' tsre <- annotate_features(tsre, data_type="tsr")
+#' \donttest{mark_dominant(tsre, data_type="tsr")}
+#'
 #' @export
 
 mark_dominant <- function(
@@ -147,10 +157,6 @@ mark_dominant <- function(
 #' @param feature_type Feature type used when finding distance to TSS ("geneId", "transcriptId").
 #'
 #' @return tibble with max UTR length for features.
-#'
-#' @rdname max_utr-function
-#'
-#' @export
 
 max_utr <- function(
   experiment,
@@ -210,10 +216,6 @@ max_utr <- function(
 #' @param ... Arguments passed to geom_density
 #'
 #' @return ggplot2 object of max UTR length average
-#'
-#' @rdname plot_max_utr-function
-#'
-#' @export
 
 plot_max_utr <- function(
   max_utr, upstream=1000, downstream=100,
