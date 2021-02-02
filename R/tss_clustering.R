@@ -12,21 +12,25 @@
 #'   or equal to this threshold to be kept.
 #'
 #' @details
-#' This function clusters TSSs into Transcription Start Regions (TSRs). TSSs are 
-#' clustered if their score is greater than or equal to 'threshold' and are less 
-#' than or equal to 'max_distance' from each other. The clustered TSSs cannot
-#' encompass more than 'max_width' bases.
+#' Genes rarely have a singular TSS, but rather a cluster of TSSs.
+#' This function clusters TSSs into Transcription Start Regions (TSRs).
+#' TSSs are clustered if their score is greater than or equal to 'threshold'
+#'   in at least 'n_samples' number of samples,
+#'   and are less than or equal to 'max_distance' from each other.
+#' The clustered TSSs cannot encompass more than 'max_width' bases.
+#'   A global singlet threshold can be applied using 'singlet_threshold'.
 #'
-#' @return TSRexploreR object with TSRs.
+#' @return TSRexploreR object with TSRs added to GRanges and data.table counts.
 #'
 #' @examples
 #' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
 #' TSSs <- readRDS(TSSs)
-#' exp <- tsr_explorer(TSSs)
-#' exp <- format_counts(exp, data_type="tss")
-#' exp <- tss_clustering(exp)
 #'
-#' @rdname tss_clustering-function
+#' tsre <- TSSs[1] %>%
+#'   tsr_explorer %>%
+#'   format_counts(data_type="tss")
+#' tss_clustering(tsre, threshold=3)
+#'
 #' @export
 
 tss_clustering <- function(
