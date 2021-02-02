@@ -165,7 +165,7 @@ fit_de_model <- function(
 
 #' Analyze Differential Features
 #'
-#' Find differential TSSs, TSRs, or features from edgeR or DESeq2 model.
+#' Find differential TSSs or TSRs from previous edgeR or DESeq2 model.
 #'
 #' @importFrom SummarizedExperiment rowData
 #' @importFrom edgeR glmQLFTest
@@ -177,10 +177,63 @@ fit_de_model <- function(
 #' @param comparison_type For DEseq2, either 'contrast' or 'name'. For edgeR, either 'contrast' or 'coef'.
 #' @param comparison For DESeq2, the contrast or name. For edgeR, the coefficients or contrasts.
 #' @param shrink_lfc For DESeq2, whether the log2 fold changes are shrunk (TRUE) or not (FALSE).
-#' 
-#' @return tibble of differential TSRs.
 #'
-#' @rdname differential_expression-function
+#' @details
+#' Calculate the differential TSSs or TSRs for the desired contrast.
+#' 'comparison_type' corresponds to the way the contrast will be provided,
+#'   with edgeR having the 'contrast' and 'coef' options,
+#'   and DESeq2 having the 'contrast' and 'name' options.
+#' The actual contrast is specified with 'comparison,
+#'   the format of which should match with the option provided to 'comparison_type'.
+#' If DESeq2 is used and 'shrink_lfc' is TRUE,
+#'   apeglm is used to shrink the Log2 fold changes to mitigate the effect size of
+#'   genes with lower levels of expression.
+#' The results for the contrast will be stored back into the TSRexploreR object with
+#'   the name provided to 'comparison_name'.
+#' 
+#' @return TSRexploreR object with results for given contrast.
+#'
+#' @seealso
+#' \code{\link{fit_de_model}} to fit DEseq2 or edgeR model to data.
+#'
+#' @examples
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
+#' TSSs <- readRDS(TSSs)
+#' sample_sheet <- data.frame(
+#'   sample_name=c(
+#'     sprintf("S288C_D_%s", seq_len(3)),
+#'     sprintf("S288C_WT_%s", seq_len(3))
+#'   ),
+#'   file_1=NA, file_2=NA,
+#'   condition=c(
+#'     rep("Diamide", 3),
+#'     rep("Untreated", 3)
+#'   )
+#' )
+#'
+#' tsre <- TSSs %>%
+#'   tsr_explorer(sample_sheet=sample_sheet) %>%
+#'   format_counts(data_type="tss")
+#'
+#' # Differential TSSs with DESeq2.
+#' tsre <- fit_de_model(tsre, ~condition, data_type="tss")
+#' differential_expression(
+#'   tsre, data_type="tss",
+#'   comparison_name="Diamide_vs_Untreated",
+#'   comparison_type="contrast",
+#'   comparison=c("condition", "Diamide", "Untreated")
+#' )
+#'
+#' # Differential TSRs with DESeq2.
+#' tsre <- tsre %>%
+#'   tss_clustering(threshold=3) %>%
+#'   fit_de_model(~condition, data_type="tsr")
+#' differential_expression(
+#'   tsre, data_type="tsr",
+#'   comparison_name="Diamide_vs_Untreated",
+#'   comparison_type="contrast",
+#'   comparison=c("condition", "Diamide", "Untreated")
+#' )
 #'
 #' @export
 
