@@ -48,10 +48,12 @@ If 'diff_tsr' is TRUE, only differential TSRs will be output.
 \examples{
 TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
 TSSs <- readRDS(TSSs)
-exp <- tsr_explorer(TSSs)
-exp <- format_counts(exp, data_type="tss")
-exp <- tss_clustering(exp)
-tsr_export(exp)
+
+tsre <- TSSs[1] \%>\%
+  tsr_explorer \%>\%
+  format_counts(data_type="tss") \%>\%
+  tss_clustering(threshold=3)
+\donttest{tsr_export(tsre)}
 
 }
 \seealso{

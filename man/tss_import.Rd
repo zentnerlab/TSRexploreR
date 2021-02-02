@@ -38,6 +38,28 @@ left blank or filled with NA values.
 To import TSSs directly from a TSRchitect tssObject, the TSRchitect workflow 
 must first be run up to the 'processTSS' step.
 }
+\examples{
+\donttest{
+TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
+TSSs <- readRDS(TSSs)
+
+# Export bedgraphs as example data.
+tsre <- TSSs[1] \%>\%
+  tsr_explorer \%>\%
+  format_count(data_type="tss")
+tss_export(tsre)
+
+# Import the previously created bedgraphs.
+samples <- data.frame(
+  sample_name="S288C_D_1",
+  file_1="S288C_D_1_pos.bedgraph",
+  file_2="S288C_D_1_min.bedgraph"
+)
+tss <- tsr_explorer(sample_sheet=samples)
+tss_import(tss)
+}
+
+}
 \seealso{
 \code{\link{tsr_import}} to import TSRs.
 \code{\link{tss_export}} to export TSSs.
