@@ -1,12 +1,34 @@
 #' TSR Metrics
 #'
-#' Calculate TSR Metrics.
+#' @description
+#' Calculate various TSR Metrics including:
+#'   IQR width, peak balance and shape index.
 #'
 #' @inheritParams common_params
 #' @param iqr_lower Lower IQR cutoff value.
 #' @param iqr_upper Upper IQR cutoff value.
 #'
-#' @rdname tsr_metrics-function
+#' @description
+#' TSR shape descriptors such as peaked versus broad can enrich for
+#'   different functional classes of genes.
+#' TSRexploreR allows for the calculation of various common TSR shape indicators
+#'   such as Interquartile width (IQR), shape index (broad versus peaked), and peak balance.
+#' 'iqr_lower' and 'iqr_upper' determine the upper and lower quantile bounds for calculation.
+#'
+#' @return TSRexplorer object with TSR metrics added to
+#'   TSSs and TSRs.
+#'
+#' @examples
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
+#' TSSs <- readRDS(TSSs)
+#'
+#' tsre <- TSSs[1] %>%
+#'   tsr_explorer %>%
+#'   format_counts(data_type="tss") %>%
+#'   tss_clustering(threshold=3) %>%
+#'   associate_with_tsr
+#' tsr_metrics(tsre)
+#'
 #' @export
 
 tsr_metrics <- function(
@@ -106,9 +128,6 @@ tsr_metrics <- function(
 #' Calculate shape index.
 #'
 #' @param tss_table data.table of TSSs
-#'
-#' @rdname shape_index-function
-#' @export
 
 shape_index <- function(tss_table) {
   
@@ -133,9 +152,6 @@ shape_index <- function(tss_table) {
 #' Calculate peak concentration.
 #'
 #' @param tss_table data.table of TSSs
-#'
-#' @rdname peak_concentration-function
-#' @export
 
 peak_concentration <- function(tss_table) {
   
@@ -155,9 +171,6 @@ peak_concentration <- function(tss_table) {
 #' Calculate peak balance.
 #'
 #' @param tss_table data.table of TSSs
-#'
-#' @rdname peak_balance-function
-#' @export
 
 peak_balance <- function(tss_table) {
 
@@ -189,9 +202,6 @@ peak_balance <- function(tss_table) {
 #'
 #' @param tss_table data.table of TSSs
 #' @inheritParams tsr_metrics
-#'
-#' @rdname iq_range-function
-#' @export
 
 iq_range <- function(tss_table, iqr_upper, iqr_lower) {
   
@@ -238,9 +248,6 @@ iq_range <- function(tss_table, iqr_upper, iqr_lower) {
 #' Return ECDF values.
 #'
 #' @param tss_vector Vector of values to compute ECDF values
-#'
-#' @rdname ecdf_function-function
-#' @export
 
 ecdf_function <- function(tss_vector) {
   ecdf_func <- ecdf(tss_vector)
