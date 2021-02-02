@@ -103,12 +103,6 @@ plot_correlation <- function(
     "tsr_features"="#29AF7FFF"
   )
 
-#  ## Log2 + 1 transform data if indicated.
-#  pre_transformed <- copy(normalized_counts)
-#  if (log2_transform) {
-#    normalized_counts <- log2(normalized_counts + 1)
-#  }
-
   ## Correlation Matrix.
   cor_mat <- cor(normalized_counts, method=correlation_metric)
 
