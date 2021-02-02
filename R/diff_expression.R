@@ -1,20 +1,55 @@
 #' Model for differential feature analysis
 #'
-#' Find differential TSSs, TSRs, or genes/transcripts.
+#' Find differential TSSs or TSRs.
 #'
 #' @inheritParams common_params
 #' @param data_type Whether TSS, TSR, or gene/transcript counts should be analyzed.
 #' @param formula DE formula.
-#' @param method Either 'DESeq2' or 'edgeR'.
+#' @param method Either 'DESeq2' or 'edgeR.
 #'
-#' @return DGEList object with fitted model.
+#' @details
+#' This function uses either DESeq2 or edgeR depending on what is specified in 'method'
+#'   to find differential TSSs or TSRs.
+#' 'formula' should be a valid R formula in any form accepted by DESeq2 or edgeR,
+#'   where the formula components are any columns present in the sample sheet.
+#'
+#' @return TSRexploreR object with stored DE model.
+#'
+#' @seealso
+#' \code{\link{differential_expression}} to extract differential TSSs or TSRs from model.
+#'
+#' @examples
+#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
+#' TSSs <- readRDS(TSSs)
+#' sample_sheet <- data.frame(
+#'   sample_name=c(
+#'     sprintf("S288C_D_%s", seq_len(3)),
+#'     sprintf("S288C_WT_%s", seq_len(3))
+#'   ),
+#'   file_1=NA, file_2=NA,
+#'   condition=c(
+#'     rep("Diamide", 3),
+#'     rep("Untreated", 3)
+#'   )
+#' )
+#'
+#' tsre <- TSSs %>%
+#'   tsr_explorer(sample_sheet=sample_sheet) %>%
+#'   format_counts(data_type="tss")
+#'
+#' # DESeq2 model for differential TSSs.
+#' fit_de_model(tsre, ~condtion, data_type="tss")
+#'
+#' # DESeq2 model for differential TSRs.
+#' tsre <- tss_clustering(tsre, threshold=3)
+#' fit_de_model(tsre, ~condition, data_type="tsr")
 #'
 #' @export
 
 fit_de_model <- function(
   experiment,
   formula,
-  data_type=c("tss", "tsr", "tss_features", "tsr_features"),
+  data_type=c("tss", "tsr"),
   samples="all",
   method="DESeq2"
 ) {
