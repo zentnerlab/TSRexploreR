@@ -19,3 +19,31 @@ List of differential features data.frames.
 \description{
 Get the DESeq2 or edgeR differential features.
 }
+\examples{
+TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
+TSSs <- readRDS(TSSs)
+sample_sheet <- data.frame(
+  sample_name=c(
+    sprintf("S288C_D_\%s", seq_len(3)),
+    sprintf("S288C_WT_\%s", seq_len(3))
+  ),
+  file_1=NA, file_2=NA,
+  condition=c(
+    rep("Diamide", 3),
+    rep("Untreated", 3)
+  )
+)
+
+tsre <- TSSs \%>\%
+  tsr_explorer(sample_sheet=sample_sheet) \%>\%
+  format_counts(data_type="tss") \%>\%
+  fit_de_model(~condition, data_type="tss") \%>\%
+  differential_expression(
+    tsre, data_type="tss",
+    comparison_name="Diamide_vs_Untreated",
+    comparison_type="contrast",
+    comparison=c("condition", "Diamide", "Untreated")
+  )
+get_diff_results(tsre, data_type="tss")
+
+}
