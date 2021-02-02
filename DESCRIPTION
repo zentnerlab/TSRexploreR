@@ -84,6 +84,7 @@ Collate:
     'gene_plots.R'
     'gene_tracks.R'
     'genomic_distribution.R'
+    'getters.R'
     'heatmaps.R'
     'merge.R'
     'motif.R'
