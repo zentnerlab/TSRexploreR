@@ -49,14 +49,25 @@ dominant TSS per TSR, and for TSRs the dominant TSR per gene is marked. For TSSs
 \examples{
 TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
 TSSs <- readRDS(TSSs)
-exp <- tsr_explorer(TSSs)
-exp <- format_counts(exp, data_type="tss")
-exp <- tss_clustering(exp)
-exp <- associate_with_tsr(exp, sample_list=list(
-  "S288C_WT_1"="S288C_WT_1", "S288C_WT_2"="S288C_WT_2", "S288C_WT_3"="S288C_WT_3",
-  "S288C_D_1"="S288C_D_1", "S288C_D_2"="S288C_D_2", "S288C_D_3"="S288C_D_3"
-))
-exp <- mark_dominant(exp, data_type="tss")
+annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
+
+tsre <- TSSs[1] \%>\%
+  tsr_explorer \%>\%
+  format_counts(data_type="tss") \%>\%
+
+# Dominant TSS per gene.
+tsre <- annotate_features(tsre, data_type="tss")
+\donttest{mark_dominant(tsre, data_type="tss", mark_per="gene")}
+
+# Dominant TSS per TSR.
+tsre <- tsre \%>\%
+  tss_clustering(threshold=3) \%>\%
+  associate_with_tsr
+\donttest{mark_dominant(tsre, data_type="tss")}
+
+# Dominant TSR per gene.
+tsre <- annotate_features(tsre, data_type="tsr")
+\donttest{mark_dominant(tsre, data_type="tsr")}
 
 }
 \seealso{
