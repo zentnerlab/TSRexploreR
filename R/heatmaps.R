@@ -232,6 +232,14 @@ plot_heatmap <- function(
     (is.data.frame(split_by) && colnames(split_by) %in% c("feature", "split_group"))
   )
 
+  ## Check if ggrastr is installed if rasterization requested.
+  if (rasterize) {
+    if (!requireNamespace("ggrastr", quietly = TRUE)) {
+      stop("Package \"ggrastr\" needed for this function to work. Please install it.",
+        call. = FALSE)
+    }
+  }
+
   ## Get requested samples.
   annotated <- experiment %>%
     extract_counts(data_type, samples, use_normalized) %>%
@@ -312,7 +320,7 @@ plot_heatmap <- function(
 
   # Apply rasterization if required.
   if (rasterize) {
-    p <- p + rasterize(
+    p <- p + ggrastr::rasterize(
       geom_tile(aes(fill=.data$score, color=.data$score), ...),
       dpi=raster_dpi
     )

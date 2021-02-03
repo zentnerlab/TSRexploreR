@@ -78,6 +78,19 @@ normalize_counts <- function(
     assert_that(!is.null(experiment@meta_data$sample_sheet))
   }
 
+  ## Check whether DESeq2 or edgeR is required.
+  if (method == "deseq2") {
+    if (!requireNamespace("DESeq2", quietly = TRUE)) {
+      stop("Package \"DESeq2\" needed for this function to work. Please install it.",
+        call. = FALSE)
+    }
+  } else if (method %in% c("edger", "cpm")) {
+    if (!requireNamespace("edgeR", quietly = TRUE)) {
+      stop("Package \"edgeR\" needed for this function to work. Please install it.",
+        call. = FALSE)
+    }
+  }
+
   ## Get selected samples.
   select_samples <- extract_counts(experiment, data_type, "all")
 
@@ -99,7 +112,7 @@ normalize_counts <- function(
   normalized_counts <- switch(
     method,
     "edger"=.edger_normalize(filtered_counts),
-    "cpm"=cpm(filtered_counts),
+    "cpm"=edgeR::cpm(filtered_counts),
     "deseq2"=.deseq2_normalize(filtered_counts, coldata)
   )
 
@@ -139,9 +152,9 @@ normalize_counts <- function(
 
   ## TMM Normalization.
   normalized_counts <- count_matrix %>%
-    DGEList %>%
-    calcNormFactors %>%
-    cpm
+    edgeR::DGEList(.) %>%
+    edgeR::calcNormFactors(.) %>%
+    edgeR::cpm(.)
 
   return(normalized_counts)   
 }
@@ -161,9 +174,9 @@ normalize_counts <- function(
 
   ## DESeq2 normalization.
   normalized_counts <- count_matrix %>%
-    DESeqDataSetFromMatrix(colData=coldata, design= ~ 1) %>%
-    estimateSizeFactors %>%
-    counts(normalized=TRUE)
+    DESeq2::DESeqDataSetFromMatrix(colData=coldata, design= ~ 1) %>%
+    DESeq2::estimateSizeFactors(.) %>%
+    DESeq2::counts(normalized=TRUE)
 
   return(normalized_counts)
 }

@@ -1,3 +1,6 @@
+library("edgeR")
+library("DESeq2")
+
 source("setup.R")
 
 test_that("TSS Normalization", {

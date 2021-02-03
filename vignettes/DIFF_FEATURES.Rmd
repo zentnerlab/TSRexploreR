@@ -16,8 +16,6 @@ a 1 hour exposure to 1.5 mM Diamide prior to collection of total-RNA.
 Diamide is a reducing agent that damages DNA, and was shown to cause large changes to the transcriptome.
 
 ```{r message=FALSE}
-library("TSRexploreR")
-
 # Load example TSSs.
 TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
 TSSs <- readRDS(TSSs)

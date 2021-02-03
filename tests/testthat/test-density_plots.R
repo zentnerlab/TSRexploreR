@@ -1,4 +1,5 @@
 
+library("edgeR")
 source("setup.R")
 
 test_that("Density plots.", {

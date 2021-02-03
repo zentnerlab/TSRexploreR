@@ -3,8 +3,6 @@
 #' @description
 #' Dimensionality reduction plot using PCA
 #'
-#' @importFrom PCAtools pca biplot
-#'
 #' @inheritParams common_params
 #' @param data_type Either 'tss' or 'tsr'.
 #' @param remove_var Remove features in this bottom fraction.
@@ -77,11 +75,11 @@ plot_reduction <- function(
 
   ## Create biplot.
   p <- count_mat %>%
-    pca(
+    PCAtools::pca(
       center=center, scale=scale, metadata=metadata,
       removeVar=remove_var
     ) %>%
-    biplot(...)
+    PCAtools::biplot(...)
 
   return(p) 
 }
