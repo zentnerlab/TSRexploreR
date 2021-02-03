@@ -53,6 +53,7 @@ If 'return_table' is TRUE, a data.frame is returned with the
   underlying numbers used in the plot.
 }
 \examples{
+library("magrittr")
 bam_file <- system.file("extdata", "S288C.bam", package="TSRexploreR")
 assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
 samples <- data.frame(sample_name="S288C", file_1=bam_file, file_2=NA)

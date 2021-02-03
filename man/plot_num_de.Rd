@@ -53,6 +53,7 @@ If 'keep_unchaged' is TRUE, a table with the numbers is returned instead of the 
 This may be useful if exact numbers underlying the plot are required.
 }
 \examples{
+library("magrittr")
 data(TSSs)
 sample_sheet <- data.frame(
   sample_name=c(

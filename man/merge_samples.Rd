@@ -58,6 +58,7 @@ If 'merge_list' is specified instead,
   distance from other TSRs.
 }
 \examples{
+library("magrittr")
 data(TSSs)
 sample_sheet <- data.frame(
   sample_name=sprintf("S288C_D_\%s", seq_len(3)),

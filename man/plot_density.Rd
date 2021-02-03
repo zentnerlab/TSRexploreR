@@ -81,6 +81,7 @@ and/or group data for plotting. Finally, 'exclude_antisense' removes anti-sense 
   TSRs prior to plotting.
 }
 \examples{
+library("magrittr")
 data(TSSs)
 annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
 

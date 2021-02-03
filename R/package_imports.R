@@ -3,7 +3,6 @@
 NULL
 
 #' @importFrom tibble tibble as_tibble column_to_rownames
-#' @importFrom magrittr %>%
 #' @importFrom stringr
 #'   str_detect str_replace str_c str_split str_to_lower
 #'   str_extract str_sub str_pad

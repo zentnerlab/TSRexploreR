@@ -47,6 +47,7 @@ When clustering TSSs into TSRs using 'tss_clustering',
   both the raw and normalized counts will be stored in the new TSRs.
 }
 \examples{
+library("magrittr")
 data(TSSs)
 sample_sheet <- data.frame(
   sample_name=c(

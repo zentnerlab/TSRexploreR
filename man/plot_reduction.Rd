@@ -47,6 +47,7 @@ This helps to visualize the relative similarity of samples
 'center' and 'scale' will center and scale the data respectively.
 }
 \examples{
+library("magrittr")
 data(TSSs)
 
 tsre_exp <- TSSs \%>\%

@@ -88,6 +88,7 @@ The plot can be rasterized using ggrastr using 'rasterize',
   and the rasterization DPI set using 'raster_dpi'.
 }
 \examples{
+library("magrittr")
 data(TSSs)
 assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
 

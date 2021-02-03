@@ -64,6 +64,7 @@ For STRIPE-seq We have found that a threshold of 3 often provides an appropriate
   transcripts with at least one unique TSS.
 }
 \examples{
+library("magrittr")
 data(TSSs)
 annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
 

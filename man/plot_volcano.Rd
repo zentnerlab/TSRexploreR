@@ -45,6 +45,7 @@ TSSs or TSRs.
   for consideration of significance in the plot.
 }
 \examples{
+library("magrittr")
 data(TSSs)
 sample_sheet <- data.frame(
   sample_name=c(

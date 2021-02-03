@@ -47,6 +47,7 @@ dominant TSS per TSR, and for TSRs the dominant TSR per gene is marked. For TSSs
 'gene' can also be specified, which will mark the dominant TSS per gene.
 }
 \examples{
+library("magrittr")
 data(TSSs)
 annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
 

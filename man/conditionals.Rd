@@ -47,6 +47,7 @@ group data prior to downstream analysis.
   quantiling is not set.
 }
 \examples{
+library("magrittr")
 data(TSSs)
 
 tsre <- TSSs[1] \%>\%

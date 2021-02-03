@@ -18,6 +18,7 @@ DESeq2 or edgeR differential expression model.
 Get the DESeq2 or edgeR model.
 }
 \examples{
+library("magrittr")
 data(TSSs)
 sample_sheet <- data.frame(
   sample_name=c(

@@ -65,6 +65,7 @@ per gene/transcript. 'data_conditionals' can be used to filter, quantile, order,
 and/or group data for plotting.
 }
 \examples{
+library("magrittr")
 data(TSSs)
 
 tsre <- TSSs[1] \%>\%

@@ -64,6 +64,7 @@ such as STRIPE-seq vs. CAGE, due to the expectation of a roughly linear relation
 between the ranks, rather than the specific values, of each feature.
 }
 \examples{
+library("magrittr")
 data(TSSs)
 
 tsre <- TSSs[1] \%>\%

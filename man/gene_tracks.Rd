@@ -71,6 +71,7 @@ The gene or transcript name should be supplied to 'feature_name'.
   or the feature boundaries (if gene/transcript).
 }
 \examples{
+library("magrittr")
 data(TSSs)
 annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
 

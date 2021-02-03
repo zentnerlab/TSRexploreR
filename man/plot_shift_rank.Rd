@@ -42,6 +42,7 @@ TSS clusters can be in ascending or descending order as controlled by 'score_ord
 This function
 }
 \examples{
+library("magrittr")
 data(TSSs)
 
 tsre <- TSSs[c(1, 4)] \%>\%
