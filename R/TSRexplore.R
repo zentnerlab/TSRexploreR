@@ -53,8 +53,7 @@ setClass(
 #' @return A TSRexploreR object containing TSSs and/or TSRs
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-#' TSSs <- readRDS(TSSs)
+#' data(TSSs)
 #' exp <- tsr_explorer(TSSs)
 #'
 #' @rdname tsr_explorer-class

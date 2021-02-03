@@ -1,11 +1,5 @@
-library("purrr")
-
 ## Create example data.
-TSSs <- readRDS(system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR"))
-TSSs <- map(TSSs, function(x) {
-  x <- x[seqnames(x) == "I"]
-  return(x)
-})
+data(TSSs)
 
 ## Genome assembly an annotation files.
 assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")

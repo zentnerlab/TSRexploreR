@@ -53,8 +53,7 @@ start regions (TSRs).
 }}
 
 \examples{
-TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-TSSs <- readRDS(TSSs)
+data(TSSs)
 exp <- tsr_explorer(TSSs)
 
 }
