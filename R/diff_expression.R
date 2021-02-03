@@ -183,7 +183,6 @@ fit_de_model <- function(
 #' Find differential TSSs or TSRs from previous edgeR or DESeq2 model.
 #'
 #' @importFrom SummarizedExperiment rowData
-#' @importFrom edgeR glmQLFTest
 #' @importFrom purrr map_dbl
 #'
 #' @inheritParams common_params

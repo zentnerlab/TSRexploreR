@@ -2,7 +2,6 @@
 #'
 #' Heatmaps and/or scatter plots to explore replicate concordance of TSSs or TSRs.
 #'
-#' @importFrom ComplexHeatmap Heatmap
 #' @importFrom circlize colorRamp2 
 #' @importFrom viridis viridis
 #' @importFrom grid gpar grid.text
