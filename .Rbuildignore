@@ -4,3 +4,6 @@ proj$
 ^documentation
 ^github
 ^.*\.RDS
+^inst/extdata/.*\.RDS$
+^inst/images
+^inst/singularity
