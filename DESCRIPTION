@@ -73,6 +73,7 @@ Collate:
     'convenience_methods.R'
     'correlation.R'
     'count_matrix.R'
+    'data.R'
     'data_conditionals.R'
     'data_export.R'
     'data_import.R'

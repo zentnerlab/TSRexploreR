@@ -4,7 +4,24 @@
 \alias{common_params}
 \title{Function to hold common parameters.}
 \usage{
-common_params(x)
+common_params(
+  experiment,
+  genome_assembly,
+  genome_annotation,
+  sample_sheet,
+  threshold,
+  samples,
+  use_normalized,
+  ncol,
+  log2fc_cutoff,
+  fdr_cutoff,
+  dominant,
+  exclude_antisense,
+  data_conditions,
+  rasterize,
+  raster_dpi,
+  return_table
+)
 }
 \arguments{
 \item{experiment}{TSRexploreR object.}
