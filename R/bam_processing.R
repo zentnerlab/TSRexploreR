@@ -3,8 +3,6 @@
 #' @description 
 #' Import BAM files with optional quality control parameters.
 #'
-#' @importFrom GenomicAlignments readGAlignmentPairs readGAlignments
-#'
 #' @inheritParams common_params
 #' @param paired Whether the BAMs are paired (TRUE) or unpaired (FALSE).
 #' @param soft_remove Remove read if greater than this number of soft-clipped bases 
@@ -50,6 +48,12 @@ import_bams <- function(
   remove_secondary=TRUE,
   remove_duplicate=FALSE
 ) {
+
+  ## Check if GenomicAlignments is installed.
+  if (!requireNamespace("GenomicAlignments", quietly = TRUE)) {
+    stop("Package \"GenomicAlignments\" needed for this function to work. Please install it.",
+      call. = FALSE)
+  } 
 
   ## Input checks.
   assert_that(is(experiment, "tsr_explorer"))
@@ -102,7 +106,11 @@ import_bams <- function(
   ## Import BAMs.
   if (paired) {
     bams <- map(samples, function(x) {
-      bam <- readGAlignmentPairs(x, param=ScanBamParam(what="seq", flag=do.call(scanBamFlag, flag_args)))
+      bam <- GenomicAlignments::readGAlignmentPairs(
+        x, param=ScanBamParam(
+          what="seq", flag=do.call(scanBamFlag, flag_args)
+        )
+      )
       bam <- as.data.table(bam)[, .(
         seqnames=seqnames.first, start=start.first, end=end.first,
         strand=strand.first, cigar=cigar.first, seq=seq.first
@@ -111,7 +119,11 @@ import_bams <- function(
     })
   } else {
     bams <- map(samples, function(x) {
-      bam <- readGAlignments(x, param=ScanBamParam(what="seq", flag=do.call(scanBamFlag, flag_args)))
+      bam <- GenomicAlignments::readGAlignments(
+        x, param=ScanBamParam(
+          what="seq", flag=do.call(scanBamFlag, flag_args)
+        )
+      )
       bam <- as.data.table(bam)[, .(seqnames, start, end, strand, cigar, seq)]
       return(bam)
     })

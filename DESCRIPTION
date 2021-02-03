@@ -38,7 +38,6 @@ Imports:
     Rcpp,
     plyranges,
     assertthat,
-    GenomicAlignments,
     GenomeInfoDb,
     Cairo,
     rlang
@@ -61,7 +60,8 @@ Suggests:
     ChIPseeker,
     ggseqlogo,
     cowplot,
-    ComplexHeatmap
+    ComplexHeatmap,
+    GenomicAlignments
 RoxygenNote: 7.1.1
 Collate: 
     'RcppExports.R'
