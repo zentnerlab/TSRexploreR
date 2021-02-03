@@ -44,6 +44,12 @@ Imports:
     GenomeInfoDb,
     Cairo,
     rlang,
+    DESeq2,
+    edgeR,
+    apeglm,
+    ggseqlogo,
+    cowplot,
+    ComplexHeatmap,
     ggrastr
 Depends:
     R (>= 3.5.0)
@@ -55,13 +61,7 @@ Suggests:
     CAGEr,
     TxDb.Scerevisiae.UCSC.sacCer3.sgdGene,
     BSgenome.Scerevisiae.UCSC.sacCer3,
-    DESeq2,
-    edgeR,
-    apeglm,
-    Gviz,
-    ggseqlogo,
-    cowplot,
-    ComplexHeatmap
+    Gviz
 RoxygenNote: 7.1.1
 Collate: 
     'RcppExports.R'

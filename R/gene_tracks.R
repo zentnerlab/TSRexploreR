@@ -66,6 +66,12 @@ gene_tracks <- function(
   anno_pos="top"
 ) {
 
+  ## Check for Gviz library.
+  if (!requireNamespace("Gviz", quietly = TRUE)) {
+    stop("Package \"Gviz\" needed for this function to work. Please install it.",
+      call. = FALSE)
+  }
+
   ## Input checks.
   assert_that(is(experiment, "tsr_explorer"))
   assert_that(
