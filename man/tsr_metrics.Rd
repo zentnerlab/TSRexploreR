@@ -28,7 +28,6 @@ TSRexploreR allows for the calculation of various common TSR shape indicators
 'iqr_lower' and 'iqr_upper' determine the upper and lower quantile bounds for calculation.
 }
 \examples{
-library("magrittr")
 data(TSSs)
 
 tsre <- TSSs[1] \%>\%

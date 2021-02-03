@@ -34,7 +34,6 @@ This function will permantly filter TSSs from the TSS data.table if no sample ha
  at least 'threshold' number of reads in at least 'n_samples' number of samples.
 }
 \examples{
-library("magrittr")
 data(TSSs)
 annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
 

@@ -20,7 +20,6 @@ List of TSS or TSR count data.frame.
 Extract the TSS or TSR count tables from the 'counts' slot.
 }
 \examples{
-library("magrittr")
 data(TSSs)
 
 tsre <- tsr_explorer(TSSs[1]) \%>\%

@@ -38,7 +38,6 @@ first be run up to the 'determineTSR' step.
 }
 \examples{
 \donttest{
-library("magrittr")
 data(TSSs)
 
 # Export bed as example data.

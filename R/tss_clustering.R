@@ -23,7 +23,6 @@
 #' @return TSRexploreR object with TSRs added to GRanges and data.table counts.
 #'
 #' @examples
-#' library("magrittr")
 #' data(TSSs)
 #'
 #' tsre <- TSSs[1] %>%

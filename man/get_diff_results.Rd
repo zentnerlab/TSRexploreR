@@ -20,7 +20,6 @@ List of differential features data.frames.
 Get the DESeq2 or edgeR differential features.
 }
 \examples{
-library("magrittr")
 data(TSSs)
 sample_sheet <- data.frame(
   sample_name=c(

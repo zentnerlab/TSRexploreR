@@ -61,7 +61,6 @@ If 'return_table' is TRUE, a data.frame containing the underlying data
   for the plot is returned.
 }
 \examples{
-library("magrittr")
 data(TSSs)
 annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
 

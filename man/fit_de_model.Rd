@@ -36,7 +36,6 @@ This function uses either DESeq2 or edgeR depending on what is specified in 'met
   where the formula components are any columns present in the sample sheet.
 }
 \examples{
-library("magrittr")
 data(TSSs)
 sample_sheet <- data.frame(
   sample_name=c(

@@ -19,7 +19,6 @@
 #' \code{\link{differential_expression}} to extract differential TSSs or TSRs from model.
 #'
 #' @examples
-#' library("magrittr")
 #' data(TSSs)
 #' sample_sheet <- data.frame(
 #'   sample_name=c(
@@ -211,7 +210,6 @@ fit_de_model <- function(
 #' \code{\link{fit_de_model}} to fit DEseq2 or edgeR model to data.
 #'
 #' @examples
-#' library("magrittr")
 #' data(TSSs)
 #' sample_sheet <- data.frame(
 #'   sample_name=c(

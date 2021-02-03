@@ -96,7 +96,6 @@ Collate:
     'package_imports.R'
     'params.R'
     'prepare_counts.R'
-    'rnaseq.R'
     'sequences.R'
     'shifting_plots.R'
     'softclip_analysis.R'
@@ -106,6 +105,7 @@ Collate:
     'tss_clustering.R'
     'tss_metrics.R'
     'tss_shifting.R'
+    'utils-pipe.R'
 LinkingTo: 
     Rcpp,
     RcppArmadillo

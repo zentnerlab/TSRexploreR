@@ -28,7 +28,6 @@
 #' @return TSRexploreR object with normalized counts.
 #'
 #' @examples
-#' library("magrittr")
 #' data(TSSs)
 #' sample_sheet <- data.frame(
 #'   sample_name=c(

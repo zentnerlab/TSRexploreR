@@ -47,7 +47,6 @@ The clustered TSSs cannot encompass more than 'max_width' bases.
   A global singlet threshold can be applied using 'singlet_threshold'.
 }
 \examples{
-library("magrittr")
 data(TSSs)
 
 tsre <- TSSs[1] \%>\%

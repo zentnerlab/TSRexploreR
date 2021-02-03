@@ -67,7 +67,6 @@ get_granges <- function(
 #' \code{\link{get_granges}} to get TSS or TSR GRanges.
 #'
 #' @examples
-#' library("magrittr")
 #' data(TSSs)
 #'
 #' tsre <- tsr_explorer(TSSs[1]) %>%
@@ -213,7 +212,6 @@ get_sample_sheet <- function(
 #' @return List of TSS cluster shifting data.frames.
 #'
 #' @examples
-#' library("magrittr")
 #' data(TSSs)
 #'
 #' tsre <- TSSs[c(1, 4)] %>%
@@ -260,7 +258,6 @@ get_shifting_results <- function(
 #' @return DESeq2 or edgeR differential expression model.
 #'
 #' @examples
-#' library("magrittr")
 #' data(TSSs)
 #' sample_sheet <- data.frame(
 #'   sample_name=c(
@@ -314,7 +311,6 @@ get_diff_model <- function(
 #' @return List of differential features data.frames.
 #'
 #' @examples
-#' library("magrittr")
 #' data(TSSs)
 #' sample_sheet <- data.frame(
 #'   sample_name=c(

@@ -40,7 +40,6 @@ must first be run up to the 'processTSS' step.
 }
 \examples{
 \donttest{
-library("magrittr")
 data(TSSs)
 
 # Export bedgraphs as example data.

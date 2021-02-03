@@ -57,7 +57,6 @@ This is controlled by providing a vector annotation types to 'anno_types'
   which will be kept.
 }
 \examples{
-library("magrittr")
 data(TSSs)
 annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
 sample_sheet <- data.frame(

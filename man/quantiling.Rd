@@ -42,7 +42,6 @@ If 'samples' is specified, only the given samples will be used for aggregate
   ascending (FALSE) order, and 'n' allows specification of number of quantiles.
 }
 \examples{
-library("magrittr")
 data(TSSs)
 
 tsre <- TSSs[1] \%>\%

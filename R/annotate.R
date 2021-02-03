@@ -24,7 +24,6 @@
 #' @return TSRexploreR object with annotation data added to TSS or TSR tables.
 #'
 #' @examples
-#' library("magrittr")
 #' data(TSSs)
 #' annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
 #'

@@ -141,7 +141,6 @@
 #' \code{\link{plot_sequence_colormap}} for a sequence color map plot.
 #'
 #' @examples
-#' library("magrittr")
 #' data(TSSs)
 #' assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
 #'

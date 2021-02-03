@@ -51,7 +51,6 @@ save the files to the working directory.
 If 'diff_tss' is TRUE, only differential TSSs will be output.
 }
 \examples{
-library("magrittr")
 data(TSSs)
 
 tsre <- TSSs[1] \%>\%

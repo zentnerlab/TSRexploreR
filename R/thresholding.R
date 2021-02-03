@@ -129,7 +129,6 @@
 #' \code{\link{apply_threshold}} to permantly filter TSSs below threshold value.
 #'
 #' @examples
-#' library("magrittr")
 #' data(TSSs)
 #' annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
 #'
@@ -214,7 +213,6 @@ plot_threshold_exploration <- function(
 #'   promoter proximal TSSs, and absolute number of detected genes.
 #'
 #' @examples
-#' library("magrittr")
 #' data(TSSs)
 #' annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
 #'

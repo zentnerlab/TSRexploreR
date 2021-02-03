@@ -65,7 +65,6 @@ For TSSs this can be either dominant per TSR or gene.
   of data.
 }
 \examples{
-library("magrittr")
 data(TSSs)
 assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
 

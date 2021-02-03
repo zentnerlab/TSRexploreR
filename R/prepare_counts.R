@@ -16,7 +16,6 @@
 #'    in data.table format.
 #'
 #' @examples
-#' library("magrittr")
 #' data(TSSs)
 #'
 #' TSSs[1] %>%

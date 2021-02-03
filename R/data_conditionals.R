@@ -31,7 +31,6 @@
 #'   'data_conditions' argument in select functions.
 #'
 #' @examples
-#' library("magrittr")
 #' data(TSSs)
 #'
 #' tsre <- TSSs[1] %>%
@@ -134,7 +133,6 @@ conditionals <- function(
 #'   of 'conditionals'.
 #'
 #' @examples
-#' library("magrittr")
 #' data(TSSs)
 #'
 #' tsre <- TSSs[1] %>%
@@ -198,7 +196,6 @@ ordering <- function(
 #'   of 'conditionals'.
 #'
 #' @examples
-#' library("magrittr")
 #' data(TSSs)
 #'
 #' tsre <- TSSs[1] %>%

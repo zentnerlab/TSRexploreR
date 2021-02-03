@@ -40,7 +40,6 @@
 #' @return TSRexploreR object with shifting scores added.
 #'
 #' @examples
-#' library("magrittr")
 #' data(TSSs)
 #'
 #' tsre <- TSSs[c(1, 4)] %>%

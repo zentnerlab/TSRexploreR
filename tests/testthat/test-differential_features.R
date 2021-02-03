@@ -1,4 +1,3 @@
-library("magrittr")
 
 source("setup.R")
 

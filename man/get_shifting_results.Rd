@@ -18,7 +18,6 @@ List of TSS cluster shifting data.frames.
 Extract the TSS cluster shifting results.
 }
 \examples{
-library("magrittr")
 data(TSSs)
 
 tsre <- TSSs[c(1, 4)] \%>\%

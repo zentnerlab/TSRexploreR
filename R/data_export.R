@@ -32,7 +32,6 @@
 #' \code{\link{tsr_import}} to import TSRs.
 #'
 #' @examples
-#' library("magrittr")
 #' data(TSSs)
 #'
 #' tsre <- TSSs[1] %>%
@@ -177,7 +176,6 @@ tss_export <- function(
 #' \code{\link{tsr_import}} to import TSRs.
 #'
 #' @examples
-#' library("magrittr")
 #' data(TSSs)
 #'
 #' tsre <- TSSs[1] %>%

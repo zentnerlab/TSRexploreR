@@ -143,7 +143,6 @@ An option to rasterize the heatmaps using ggrastr is provided with the 'rasteriz
   and the DPI (resolution) is controlled by 'raster_dpi'.
 }
 \examples{
-library("magrittr")
 data(TSSs)
 annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
 

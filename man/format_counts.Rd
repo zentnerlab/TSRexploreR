@@ -27,7 +27,6 @@ This function converts these into data.table format,
   and adds a few important columns for downstream analysis.
 }
 \examples{
-library("magrittr")
 data(TSSs)
 
 TSSs[1] \%>\%

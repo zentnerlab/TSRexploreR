@@ -31,7 +31,6 @@
 #'
 #' @examples
 #' \donttest{
-#' library("magrittr")
 #' data(TSSs)
 #'
 #' # Export bedgraphs as example data.
@@ -271,7 +270,6 @@ tss_import <- function(
 #'
 #' @examples
 #' \donttest{
-#' library("magrittr")
 #' data(TSSs)
 #'
 #' # Export bed as example data.

@@ -46,7 +46,6 @@ The results for the contrast will be stored back into the TSRexploreR object wit
   the name provided to 'comparison_name'.
 }
 \examples{
-library("magrittr")
 data(TSSs)
 sample_sheet <- data.frame(
   sample_name=c(

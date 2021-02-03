@@ -33,7 +33,6 @@
 #'   or correlation matrix if 'return_matrix' is TRUE.
 #'
 #' @examples
-#' library("magrittr")
 #' data(TSSs)
 #'
 #' tsre <- TSSs[1] %>%

@@ -37,7 +37,6 @@
 #' @return ggplot2 object of density plot.
 #'
 #' @examples
-#' library("magrittr")
 #' data(TSSs)
 #' annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
 #'

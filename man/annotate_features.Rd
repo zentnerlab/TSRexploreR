@@ -45,7 +45,6 @@ TSSs or TSRs overlapping a gene on the opposite strand
   will be marked as 'Antisense'.
 }
 \examples{
-library("magrittr")
 data(TSSs)
 annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
 
