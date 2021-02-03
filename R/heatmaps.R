@@ -34,8 +34,7 @@
 #' @return DataFrame of counts for each gene/transcript and position
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-#' TSSs <- readRDS(TSSs)
+#' data(TSSs)
 #' tsre_exp <- tsr_explorer(TSSs)
 #' tsre_exp <- format_counts(tsre_exp, data_type="tss")
 #' annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
@@ -149,8 +148,7 @@
 #' \code{\link{annotate_features}} to annotate the TSSs or TSRs.
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-#' TSSs <- readRDS(TSSs)
+#' data(TSSs)
 #' annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
 #'
 #' tsre <- TSSs[1] %>%

@@ -32,8 +32,7 @@
 #' \code{\link{tsr_import}} to import TSRs.
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-#' TSSs <- readRDS(TSSs)
+#' data(TSSs)
 #'
 #' tsre <- TSSs[1] %>%
 #'   tsr_explorer %>%
@@ -177,8 +176,7 @@ tss_export <- function(
 #' \code{\link{tsr_import}} to import TSRs.
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-#' TSSs <- readRDS(TSSs)
+#' data(TSSs)
 #'
 #' tsre <- TSSs[1] %>%
 #'   tsr_explorer %>%

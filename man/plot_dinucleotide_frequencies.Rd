@@ -65,8 +65,7 @@ For TSSs this can be either dominant per TSR or gene.
   of data.
 }
 \examples{
-TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-TSSs <- readRDS(TSSs)
+data(TSSs)
 assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
 
 tsre <- TSSs[1] \%>\%

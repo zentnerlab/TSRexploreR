@@ -31,8 +31,7 @@
 #'   'data_conditions' argument in select functions.
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-#' TSSs <- readRDS(TSSs)
+#' data(TSSs)
 #'
 #' tsre <- TSSs[1] %>%
 #'   tsr_explorer %>%
@@ -134,8 +133,7 @@ conditionals <- function(
 #'   of 'conditionals'.
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-#' TSSs <- readRDS(TSSs)
+#' data(TSSs)
 #'
 #' tsre <- TSSs[1] %>%
 #'   tsr_explorer %>%
@@ -198,8 +196,7 @@ ordering <- function(
 #'   of 'conditionals'.
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-#' TSSs <- readRDS(TSSs)
+#' data(TSSs)
 #'
 #' tsre <- TSSs[1] %>%
 #'   tsr_explorer %>%

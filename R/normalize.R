@@ -28,8 +28,7 @@
 #' @return TSRexploreR object with normalized counts.
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-#' TSSs <- readRDS(TSSs)
+#' data(TSSs)
 #' sample_sheet <- data.frame(
 #'   sample_name=c(
 #'     sprintf("S288C_D_%s", seq_len(3)),

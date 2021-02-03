@@ -67,8 +67,7 @@ The results will be stored back in the TSRexploreR object with the name given by
 'max_distance' is the maximum distance between two two TSRs to be considered for shifting.
 }
 \examples{
-TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "TSRexploreR")
-TSSs <- readRDS(TSSs)
+data(TSSs)
 
 tsre <- TSSs[c(1, 4)] \%>\%
   tsr_explorer \%>\%

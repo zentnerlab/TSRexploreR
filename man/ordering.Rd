@@ -31,8 +31,7 @@ If '.samples' is specified, only the given samples will be used for aggregate
   calculation and ordering.
 }
 \examples{
-TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-TSSs <- readRDS(TSSs)
+data(TSSs)
 
 tsre <- TSSs[1] \%>\%
   tsr_explorer \%>\%

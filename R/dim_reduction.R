@@ -21,8 +21,7 @@
 #' 'center' and 'scale' will center and scale the data respectively.
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-#' TSSs <- readRDS(TSSs)
+#' data(TSSs)
 #'
 #' tsre_exp <- TSSs %>%
 #'   tsr_explorer %>%

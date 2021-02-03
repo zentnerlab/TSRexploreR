@@ -71,8 +71,7 @@ The gene or transcript name should be supplied to 'feature_name'.
   or the feature boundaries (if gene/transcript).
 }
 \examples{
-TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-TSSs <- readRDS(TSSs)
+data(TSSs)
 annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
 
 tsre <- TSSs[1] \%>\%

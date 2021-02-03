@@ -47,8 +47,7 @@ When clustering TSSs into TSRs using 'tss_clustering',
   both the raw and normalized counts will be stored in the new TSRs.
 }
 \examples{
-TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-TSSs <- readRDS(TSSs)
+data(TSSs)
 sample_sheet <- data.frame(
   sample_name=c(
     sprintf("S288C_D_\%s", seq_len(3)),

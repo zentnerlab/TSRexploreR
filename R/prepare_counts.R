@@ -16,8 +16,7 @@
 #'    in data.table format.
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-#' TSSs <- readRDS(TSSs)
+#' data(TSSs)
 #'
 #' TSSs[1] %>%
 #'   tsr_explorer %>%

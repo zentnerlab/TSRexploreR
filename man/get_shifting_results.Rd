@@ -18,8 +18,7 @@ List of TSS cluster shifting data.frames.
 Extract the TSS cluster shifting results.
 }
 \examples{
-TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "TSRexploreR")
-TSSs <- readRDS(TSSs)
+data(TSSs)
 
 tsre <- TSSs[c(1, 4)] \%>\%
   tsr_explorer \%>\%

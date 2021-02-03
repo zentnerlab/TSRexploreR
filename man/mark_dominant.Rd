@@ -47,8 +47,7 @@ dominant TSS per TSR, and for TSRs the dominant TSR per gene is marked. For TSSs
 'gene' can also be specified, which will mark the dominant TSS per gene.
 }
 \examples{
-TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-TSSs <- readRDS(TSSs)
+data(TSSs)
 annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
 
 tsre <- TSSs[1] \%>\%

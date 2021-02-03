@@ -13,8 +13,7 @@
 #' \code{\link{get_counts}} to get TSS or TSR counts data.frame.
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-#' TSSs <- readRDS(TSSs)
+#' data(TSSs)
 #'
 #' tsre <- tsr_explorer(TSSs[1])
 #' get_granges(tsre)
@@ -68,8 +67,7 @@ get_granges <- function(
 #' \code{\link{get_granges}} to get TSS or TSR GRanges.
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-#' TSSs <- readRDS(TSSs)
+#' data(TSSs)
 #'
 #' tsre <- tsr_explorer(TSSs[1]) %>%
 #'   format_counts(data_type="tss")
@@ -214,8 +212,7 @@ get_sample_sheet <- function(
 #' @return List of TSS cluster shifting data.frames.
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "TSRexploreR")
-#' TSSs <- readRDS(TSSs)
+#' data(TSSs)
 #'
 #' tsre <- TSSs[c(1, 4)] %>%
 #'   tsr_explorer %>%
@@ -263,8 +260,7 @@ get_shifting_results <- function(
 #' @return DESeq2 or edgeR differential expression model.
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-#' TSSs <- readRDS(TSSs)
+#' data(TSSs)
 #' sample_sheet <- data.frame(
 #'   sample_name=c(
 #'     sprintf("S288C_D_%s", seq_len(3)),
@@ -317,8 +313,7 @@ get_diff_model <- function(
 #' @return List of differential features data.frames.
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-#' TSSs <- readRDS(TSSs)
+#' data(TSSs)
 #' sample_sheet <- data.frame(
 #'   sample_name=c(
 #'     sprintf("S288C_D_%s", seq_len(3)),

@@ -40,8 +40,7 @@ must first be run up to the 'processTSS' step.
 }
 \examples{
 \donttest{
-TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-TSSs <- readRDS(TSSs)
+data(TSSs)
 
 # Export bedgraphs as example data.
 tsre <- TSSs[1] \%>\%

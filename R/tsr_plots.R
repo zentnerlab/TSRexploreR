@@ -31,8 +31,7 @@
 #' \code{\link{tsr_metrics}} to calculate additional TSR metrics.
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-#' TSSs <- readRDS(TSSs)
+#' data(TSSs)
 #'
 #' tsre <- TSSs[1] %>%
 #'   tsr_explorer %>%

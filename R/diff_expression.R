@@ -19,8 +19,7 @@
 #' \code{\link{differential_expression}} to extract differential TSSs or TSRs from model.
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-#' TSSs <- readRDS(TSSs)
+#' data(TSSs)
 #' sample_sheet <- data.frame(
 #'   sample_name=c(
 #'     sprintf("S288C_D_%s", seq_len(3)),
@@ -211,8 +210,7 @@ fit_de_model <- function(
 #' \code{\link{fit_de_model}} to fit DEseq2 or edgeR model to data.
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-#' TSSs <- readRDS(TSSs)
+#' data(TSSs)
 #' sample_sheet <- data.frame(
 #'   sample_name=c(
 #'     sprintf("S288C_D_%s", seq_len(3)),

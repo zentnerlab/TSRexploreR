@@ -88,8 +88,7 @@ The plot can be rasterized using ggrastr using 'rasterize',
   and the rasterization DPI set using 'raster_dpi'.
 }
 \examples{
-TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-TSSs <- readRDS(TSSs)
+data(TSSs)
 assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
 
 tsre <- TSSs[1] \%>\%

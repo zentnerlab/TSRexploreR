@@ -141,8 +141,7 @@
 #' \code{\link{plot_sequence_colormap}} for a sequence color map plot.
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-#' TSSs <- readRDS(TSSs)
+#' data(TSSs)
 #' assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
 #'
 #' tsre <- TSSs[1] %>%
@@ -309,8 +308,7 @@ plot_sequence_logo <- function(
 #' \code{\link{plot_sequence_logo}} to plot a sequence logo.
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-#' TSSs <- readRDS(TSSs)
+#' data(TSSs)
 #' assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
 #'
 #' tsre <- TSSs[1] %>%

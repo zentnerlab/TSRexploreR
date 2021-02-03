@@ -42,8 +42,7 @@ TSS clusters can be in ascending or descending order as controlled by 'score_ord
 This function
 }
 \examples{
-TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "TSRexploreR")
-TSSs <- readRDS(TSSs)
+data(TSSs)
 
 tsre <- TSSs[c(1, 4)] \%>\%
   tsr_explorer \%>\%

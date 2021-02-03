@@ -40,8 +40,7 @@
 #' @return TSRexploreR object with shifting scores added.
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "TSRexploreR")
-#' TSSs <- readRDS(TSSs)
+#' data(TSSs)
 #'
 #' tsre <- TSSs[c(1, 4)] %>%
 #'   tsr_explorer %>%

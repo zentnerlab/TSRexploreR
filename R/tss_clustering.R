@@ -23,8 +23,7 @@
 #' @return TSRexploreR object with TSRs added to GRanges and data.table counts.
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-#' TSSs <- readRDS(TSSs)
+#' data(TSSs)
 #'
 #' tsre <- TSSs[1] %>%
 #'   tsr_explorer %>%

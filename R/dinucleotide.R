@@ -30,8 +30,7 @@
 #'   If 'return_table' is TRUE, a data.frame of underlying data is returned.
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-#' TSSs <- readRDS(TSSs)
+#' data(TSSs)
 #' assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
 #'
 #' tsre <- TSSs[1] %>%

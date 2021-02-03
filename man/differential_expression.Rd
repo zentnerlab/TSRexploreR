@@ -46,8 +46,7 @@ The results for the contrast will be stored back into the TSRexploreR object wit
   the name provided to 'comparison_name'.
 }
 \examples{
-TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-TSSs <- readRDS(TSSs)
+data(TSSs)
 sample_sheet <- data.frame(
   sample_name=c(
     sprintf("S288C_D_\%s", seq_len(3)),

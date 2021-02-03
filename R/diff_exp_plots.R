@@ -24,8 +24,7 @@
 #' \code{\link{differential_expression}} to find differential TSSs or TSRs.
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-#' TSSs <- readRDS(TSSs)
+#' data(TSSs)
 #' sample_sheet <- data.frame(
 #'   sample_name=c(
 #'     sprintf("S288C_D_%s", seq_len(3)),
@@ -134,8 +133,7 @@ plot_ma <- function(
 #' \code{\link{differential_expression}} to find differential TSSs or TSRs.
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-#' TSSs <- readRDS(TSSs)
+#' data(TSSs)
 #' sample_sheet <- data.frame(
 #'   sample_name=c(
 #'     sprintf("S288C_D_%s", seq_len(3)),
@@ -262,8 +260,7 @@ plot_volcano <- function(
 #' \code{\link{differential_expression}} to find differential TSSs or TSRs.
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-#' TSSs <- readRDS(TSSs)
+#' data(TSSs)
 #' annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
 #' sample_sheet <- data.frame(
 #'   sample_name=c(
@@ -383,8 +380,7 @@ export_for_enrichment <- function(
 #' \code{\link{differential_expression}} to find differential TSSs or TSRs.
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-#' TSSs <- readRDS(TSSs)
+#' data(TSSs)
 #' sample_sheet <- data.frame(
 #'   sample_name=c(
 #'     sprintf("S288C_D_%s", seq_len(3)),

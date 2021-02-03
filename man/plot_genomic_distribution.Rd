@@ -61,8 +61,7 @@ If 'return_table' is TRUE, a data.frame containing the underlying data
   for the plot is returned.
 }
 \examples{
-TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-TSSs <- readRDS(TSSs)
+data(TSSs)
 annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
 
 tsre <- TSSs[1] \%>\%

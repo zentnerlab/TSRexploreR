@@ -33,8 +33,7 @@
 #' @return TSRexploreR object containing merged TSSs or TSRs.
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-#' TSSs <- readRDS(TSSs)
+#' data(TSSs)
 #' sample_sheet <- data.frame(
 #'   sample_name=sprintf("S288C_D_%s", seq_len(3)),
 #'   file_1=NA, file_2=NA,

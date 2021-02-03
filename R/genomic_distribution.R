@@ -30,8 +30,7 @@
 #' @seealso \code{\link{annotate_features}} to annotate TSSs or TSRs.
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-#' TSSs <- readRDS(TSSs)
+#' data(TSSs)
 #' annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
 #'
 #' tsre <- TSSs[1] %>%

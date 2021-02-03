@@ -28,8 +28,7 @@
 #' \code{\link{tss_shift}} to calculate TSS cluster shifting.
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "TSRexploreR")
-#' TSSs <- readRDS(TSSs)
+#' data(TSSs)
 #'
 #' tsre <- TSSs[c(1, 4)] %>%
 #'   tsr_explorer %>%
@@ -127,8 +126,7 @@ plot_shift_rank <- function(
 #'   counts for each sample.
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "TSRexploreR")
-#' TSSs <- readRDS(TSSs)
+#' data(TSSs)
 #'
 #' tsre <- TSSs[c(1, 4)] %>%
 #'   tsr_explorer %>%

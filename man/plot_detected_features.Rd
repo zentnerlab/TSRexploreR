@@ -58,8 +58,7 @@ per gene/transcript. 'data_conditionals' can be used to filter, quantile, order,
 and/or group data for plotting.
 }
 \examples{
-TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-TSSs <- readRDS(TSSs)
+data(TSSs)
 annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
 
 tsre <- TSSs[1] \%>\%

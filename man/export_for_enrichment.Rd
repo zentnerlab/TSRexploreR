@@ -57,8 +57,7 @@ This is controlled by providing a vector annotation types to 'anno_types'
   which will be kept.
 }
 \examples{
-TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-TSSs <- readRDS(TSSs)
+data(TSSs)
 annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
 sample_sheet <- data.frame(
   sample_name=c(

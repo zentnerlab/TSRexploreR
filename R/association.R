@@ -23,8 +23,7 @@
 #'   TSSs with the TSRs from the sample of the same name.
 #'   
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-#' TSSs <- readRDS(TSSs)
+#' data(TSSs)
 #'
 #' TSSs[1] %>%
 #'   tsr_explorer %>%

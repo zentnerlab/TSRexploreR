@@ -46,8 +46,7 @@ If 'return_table' is TRUE, a data.frame is returned that provides the underlying
   counts for each sample.
 }
 \examples{
-TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "TSRexploreR")
-TSSs <- readRDS(TSSs)
+data(TSSs)
 
 tsre <- TSSs[c(1, 4)] \%>\%
   tsr_explorer \%>\%

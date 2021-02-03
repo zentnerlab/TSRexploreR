@@ -20,8 +20,7 @@ List of TSS or TSR count data.frame.
 Extract the TSS or TSR count tables from the 'counts' slot.
 }
 \examples{
-TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-TSSs <- readRDS(TSSs)
+data(TSSs)
 
 tsre <- tsr_explorer(TSSs[1]) \%>\%
   format_counts(data_type="tss")
