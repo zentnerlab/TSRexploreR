@@ -43,7 +43,6 @@ Imports:
     Cairo,
     rlang,
     ggseqlogo,
-    cowplot,
     ComplexHeatmap
 Depends:
     R (>= 3.5.0)
@@ -61,7 +60,9 @@ Suggests:
     edgeR,
     apeglm,
     ggrastr,
-    ChIPseeker
+    ChIPseeker,
+    ggseqlogo,
+    cowplot
 RoxygenNote: 7.1.1
 Collate: 
     'RcppExports.R'

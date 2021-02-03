@@ -98,9 +98,7 @@
 #' @description
 #' Create a sequence logo for the sequences around TSSs.
 #'
-#' @import ggseqlogo
 #' @importFrom Biostrings consensusMatrix
-#' @importFrom cowplot plot_grid
 #'
 #' @inheritParams common_params
 #' @param distance Bases to add on each side of eacg TSS
@@ -172,6 +170,16 @@ plot_sequence_logo <- function(
   ...
 ) {
 
+  ## Check if ggseqlogo and cowplot are installed.
+  if (!requireNamespace("ggseqlogo", quietly = TRUE)) {
+    stop("Package \"ggseqlogo\" needed for this function to work. Please install it.",
+      call. = FALSE)
+  }
+  if (!requireNamespace("cowplot", quietly = TRUE)) {
+    stop("Package \"cowplot\" needed for this function to work. Please install it.",
+      call. = FALSE)
+  }
+
   ## Check inputs.
   assert_that(is(experiment, "tsr_explorer"))
   assert_that(is.character(samples))
@@ -226,7 +234,7 @@ plot_sequence_logo <- function(
   }
 
   ## Create viridis color scheme for bases.
-  viridis_bases <- make_col_scheme(
+  viridis_bases <- ggseqlogo::make_col_scheme(
     chars=c("A", "C", "G", "T"),
     groups=c("A", "C", "G", "T"),
     cols=base_colors[match(
@@ -237,16 +245,16 @@ plot_sequence_logo <- function(
 
   ## Make sequence logo.
   if (grouping_status == "none") {
-    p <- ggseqlogo(sequences, ncol=ncol, ...) +
+    p <- ggseqlogo::ggseqlogo(sequences, ncol=ncol, ...) +
       theme(text=element_text(size=font_size))
   } else {
     p <- sequences %>%
       map(function(x) {
-        ggseqlogo(x, ncol=ncol, ...) +
+        ggseqlogo::ggseqlogo(x, ncol=ncol, ...) +
           theme(text=element_text(size=font_size))
       })
 
-    p <- plot_grid(plotlist=p, labels=rev(names(sequences)), ncol=1)
+    p <- cowplot::plot_grid(plotlist=p, labels=rev(names(sequences)), ncol=1)
   }
 
   return(p)
