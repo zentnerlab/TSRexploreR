@@ -1,6 +1,7 @@
 source("setup.R")
 library("TxDb.Scerevisiae.UCSC.sacCer3.sgdGene")
 library("BSgenome.Scerevisiae.UCSC.sacCer3")
+library("magrittr")
 
 test_that("Import of assemblies", {
   ## FASTA assembly.

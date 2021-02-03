@@ -1,5 +1,4 @@
-library("edgeR")
-library("DESeq2")
+library("magrittr")
 
 source("setup.R")
 

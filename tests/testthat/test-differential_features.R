@@ -1,6 +1,5 @@
+library("magrittr")
 
-library("edgeR")
-library("DESeq2")
 source("setup.R")
 
 sample_sheet <- data.frame(

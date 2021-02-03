@@ -1,5 +1,5 @@
+library("magrittr")
 
-library("ggrastr")
 source("setup.R")
 
 test_that("TSS and TSR heatmaps.", {

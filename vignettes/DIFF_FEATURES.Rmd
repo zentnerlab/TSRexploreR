@@ -27,8 +27,7 @@ Diamide is a reducing agent that damages DNA, and was shown to cause large chang
 library("TSRexploreR")
 
 # Load example TSSs.
-TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-TSSs <- readRDS(TSSs)
+data(TSSs)
 
 # Prepare genome annotation.
 annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")

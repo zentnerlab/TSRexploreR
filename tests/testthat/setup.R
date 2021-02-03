@@ -1,5 +1,3 @@
-library("TSRexploreR")
-library("magrittr")
 library("purrr")
 
 ## Create example data.

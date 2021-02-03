@@ -1,5 +1,5 @@
+library("magrittr")
 
-library("edgeR")
 source("setup.R")
 
 test_that("Check TSS and TSR correlations.", {
