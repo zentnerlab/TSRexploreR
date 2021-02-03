@@ -31,6 +31,7 @@
 #'   'data_conditions' argument in select functions.
 #'
 #' @examples
+#' library("magrittr")
 #' data(TSSs)
 #'
 #' tsre <- TSSs[1] %>%
@@ -133,6 +134,7 @@ conditionals <- function(
 #'   of 'conditionals'.
 #'
 #' @examples
+#' library("magrittr")
 #' data(TSSs)
 #'
 #' tsre <- TSSs[1] %>%
@@ -196,6 +198,7 @@ ordering <- function(
 #'   of 'conditionals'.
 #'
 #' @examples
+#' library("magrittr")
 #' data(TSSs)
 #'
 #' tsre <- TSSs[1] %>%
@@ -453,9 +456,6 @@ condition_data <- function(
 #' @param signal_data TSS or TSR data.
 #' @param dominant Whether to use dominant TSS/TSR.
 #' @param threshold Raw count threshold for a TSS or TSR to be considered.
-#'
-#' @rdname preliminary_filter-function
-#' @export
 
 preliminary_filter <- function(signal_data, dominant, threshold) {
   

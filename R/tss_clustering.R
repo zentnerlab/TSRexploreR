@@ -23,6 +23,7 @@
 #' @return TSRexploreR object with TSRs added to GRanges and data.table counts.
 #'
 #' @examples
+#' library("magrittr")
 #' data(TSSs)
 #'
 #' tsre <- TSSs[1] %>%
@@ -172,32 +173,4 @@ tss_clustering <- function(
 
   return(overlaps)
 
-#  ## Cluster TSSs within 'max_distance'
-#  clustered <- GenomicRanges::reduce(
-#    granges, with.revmap=TRUE,
-#    min.gapwidth=maxdist + 1
-#  )
-#
-#  ## Get aggregate sum of scores.
-#  if (any(colnames(mcols(granges)) == "normalized_score")) {
-#    cluster_info <- aggregate(
-#      granges, mcols(clustered)$revmap, 
-#      score=sum(score),
-#      normalized_score=sum(normalized_score),
-#      n_unique=length(score)
-#    )
-#  } else {
-#    cluster_info <- aggregate(
-#      granges, mcols(clustered)$revmap,
-#      score=sum(score),
-#      n_unique=length(score)
-#    )
-#  }
-#
-#  clustered$score <- cluster_info$score
-#  clustered$n_unique <- cluster_info$n_unique
-#  if (any(colnames(mcols(granges)) == "normalized_score")) {
-#    clustered$normalized_score <- cluster_info$normalized_score
-#  }
-#  clustered$revmap <- NULL
 }

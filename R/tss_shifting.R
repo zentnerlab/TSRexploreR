@@ -40,6 +40,7 @@
 #' @return TSRexploreR object with shifting scores added.
 #'
 #' @examples
+#' library("magrittr")
 #' data(TSSs)
 #'
 #' tsre <- TSSs[c(1, 4)] %>%
@@ -235,10 +236,6 @@ ShiftScores <- function(
   out <- t(out)
   colnames(out) <- c("shift_score", "pval")
   outdf <- as_tibble(out)
-  # outdf <- out %>%
-  #   t %>%
-  #   as_tibble(.name_repair="unique") %>%
-  #   dplyr::rename(shift_score=1, pval=2)
 
   outdf <- dat %>%
      dplyr::distinct(fhash) %>%

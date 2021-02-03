@@ -28,6 +28,7 @@
 #' \code{\link{tss_shift}} to calculate TSS cluster shifting.
 #'
 #' @examples
+#' library("magrittr")
 #' data(TSSs)
 #'
 #' tsre <- TSSs[c(1, 4)] %>%

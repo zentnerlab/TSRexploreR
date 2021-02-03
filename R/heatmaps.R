@@ -137,6 +137,7 @@
 #' \code{\link{annotate_features}} to annotate the TSSs or TSRs.
 #'
 #' @examples
+#' library("magrittr")
 #' data(TSSs)
 #' annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
 #'

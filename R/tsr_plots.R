@@ -31,6 +31,7 @@
 #' \code{\link{tsr_metrics}} to calculate additional TSR metrics.
 #'
 #' @examples
+#' library("magrittr")
 #' data(TSSs)
 #'
 #' tsre <- TSSs[1] %>%

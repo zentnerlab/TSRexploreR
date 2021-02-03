@@ -19,6 +19,7 @@
 #'   TSSs and TSRs.
 #'
 #' @examples
+#' library("magrittr")
 #' data(TSSs)
 #'
 #' tsre <- TSSs[1] %>%

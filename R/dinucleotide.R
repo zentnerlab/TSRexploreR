@@ -30,6 +30,7 @@
 #'   If 'return_table' is TRUE, a data.frame of underlying data is returned.
 #'
 #' @examples
+#' library("magrittr")
 #' data(TSSs)
 #' assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
 #'

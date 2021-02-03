@@ -35,6 +35,7 @@
 #'   spurrious 5' Gs.
 #'
 #' @examples
+#' library("magrittr")
 #' bam_file <- system.file("extdata", "S288C.bam", package="TSRexploreR")
 #' assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
 #' samples <- data.frame(sample_name="S288C", file_1=bam_file, file_2=NA)
@@ -159,6 +160,7 @@ softclip_composition <- function(
 #'   spurrious 5' Gs.
 #'
 #' @examples
+#' library("magrittr")
 #' bam_file <- system.file("extdata", "S288C.bam", package="TSRexploreR")
 #' assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
 #' samples <- data.frame(sample_name="S288C", file_1=bam_file, file_2=NA)

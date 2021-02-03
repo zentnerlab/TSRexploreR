@@ -24,6 +24,7 @@
 #' \code{\link{differential_expression}} to find differential TSSs or TSRs.
 #'
 #' @examples
+#' library("magrittr")
 #' data(TSSs)
 #' sample_sheet <- data.frame(
 #'   sample_name=c(
@@ -133,6 +134,7 @@ plot_ma <- function(
 #' \code{\link{differential_expression}} to find differential TSSs or TSRs.
 #'
 #' @examples
+#' library("magrittr")
 #' data(TSSs)
 #' sample_sheet <- data.frame(
 #'   sample_name=c(
@@ -260,6 +262,7 @@ plot_volcano <- function(
 #' \code{\link{differential_expression}} to find differential TSSs or TSRs.
 #'
 #' @examples
+#' library("magrittr")
 #' data(TSSs)
 #' annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
 #' sample_sheet <- data.frame(
@@ -380,6 +383,7 @@ export_for_enrichment <- function(
 #' \code{\link{differential_expression}} to find differential TSSs or TSRs.
 #'
 #' @examples
+#' library("magrittr")
 #' data(TSSs)
 #' sample_sheet <- data.frame(
 #'   sample_name=c(

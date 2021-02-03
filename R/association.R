@@ -23,6 +23,7 @@
 #'   TSSs with the TSRs from the sample of the same name.
 #'   
 #' @examples
+#' library("magrittr")
 #' data(TSSs)
 #'
 #' TSSs[1] %>%

@@ -33,6 +33,7 @@
 #' @return TSRexploreR object containing merged TSSs or TSRs.
 #'
 #' @examples
+#' library("magrittr")
 #' data(TSSs)
 #' sample_sheet <- data.frame(
 #'   sample_name=sprintf("S288C_D_%s", seq_len(3)),
