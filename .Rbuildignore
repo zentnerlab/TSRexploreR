@@ -1,2 +1,6 @@
 proj$
 ^\.Rproj\.user$
+^INSTALL.md
+^documentation
+^github
+^.*\.RDS
