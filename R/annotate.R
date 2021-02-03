@@ -3,8 +3,6 @@
 #' @description
 #' Use the ChIPseeker package to annotate TSSs or TSRs relative to known genes or transcripts.
 #'
-#' @importFrom ChIPseeker annotatePeak
-#'
 #' @inheritParams common_params
 #' @param data_type Whether to annotate TSSs ('tss') or TSRs ('tsr').
 #' @param feature_type Whether to annotate at the 'gene' or 'transcript' level.
@@ -52,6 +50,12 @@ annotate_features <- function(
   upstream=1000,
   downstream=100
 ) {
+
+  ## Check if ChIPseeker is installed.
+  if (!requireNamespace("ChIPseeker", quietly = TRUE)) {
+    stop("Package \"ChIPseeker\" needed for this function to work. Please install it.",
+      call. = FALSE)
+  }
 
   ## Check inputs.
   assert_that(is(experiment, "tsr_explorer"))
@@ -126,7 +130,7 @@ annotate_features <- function(
 
   ## Annotate.
   annotated <- sample_table %>%
-    annotatePeak(
+    ChIPseeker::annotatePeak(
       tssRegion=c(-upstream, downstream),
       TxDb=annotation_data,
       sameStrand=TRUE,

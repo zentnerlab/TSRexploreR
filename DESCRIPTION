@@ -30,7 +30,6 @@ Imports:
     Rsamtools,
     GenomicFeatures,
     Biostrings,
-    ChIPseeker,
     S4Vectors,
     SummarizedExperiment,
     IRanges,
@@ -61,7 +60,8 @@ Suggests:
     DESeq2,
     edgeR,
     apeglm,
-    ggrastr
+    ggrastr,
+    ChIPseeker
 RoxygenNote: 7.1.1
 Collate: 
     'RcppExports.R'
