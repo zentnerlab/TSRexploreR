@@ -1,5 +1,11 @@
-
-# TSS Shifting
+---
+title: "TSS Shifting"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{TSS Shifting}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
 
 ## Prepare Data
 

@@ -1,12 +1,17 @@
 ---
-title: Bam Processing
-author: Robert Policastro
-output: html_document
+title: BAM Processing
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{BAM Processing}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 Create tsrexplorer object.
 
 ```{r message=FALSE}
+library("TSRexploreR")
+
 # BAM file.
 bam_file <- system.file("extdata", "S288C.bam", package="TSRexploreR")
 

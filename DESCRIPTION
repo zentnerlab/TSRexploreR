@@ -61,7 +61,9 @@ Suggests:
     ggseqlogo,
     cowplot,
     ComplexHeatmap,
-    GenomicAlignments
+    GenomicAlignments,
+    knitr,
+    rmarkdown
 RoxygenNote: 7.1.1
 Collate: 
     'RcppExports.R'
@@ -106,3 +108,4 @@ Collate:
 LinkingTo: 
     Rcpp,
     RcppArmadillo
+VignetteBuilder: knitr
