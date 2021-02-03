@@ -1,3 +1,5 @@
+  library("magrittr")
+  library("purrr")
 
   ## Create example data.
   TSSs <- readRDS(system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR"))
