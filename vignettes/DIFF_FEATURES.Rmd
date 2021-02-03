@@ -25,6 +25,8 @@ Diamide is a reducing agent that damages DNA, and was shown to cause large chang
 
 ```{r message=FALSE}
 library("TSRexploreR")
+library("magrittr")
+library("ggplot2")
 
 # Load example TSSs.
 data(TSSs)

@@ -11,6 +11,8 @@ vignette: >
 
 ```{r message=FALSE}
 library("TSRexploreR")
+library("magrittr")
+library("ggplot2")
 
 data(TSSs)
 

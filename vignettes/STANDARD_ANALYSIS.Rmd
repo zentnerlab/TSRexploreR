@@ -20,6 +20,8 @@ this vignette uses a named list of GRanges as input into the function that creat
 
 ```{r message=FALSE, warning=FALSE}
 library("TSRexploreR")
+library("magrittr")
+library("ggplot2")
 
 # Example TSSs.
 data(TSSs)

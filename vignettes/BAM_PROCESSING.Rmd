@@ -11,6 +11,7 @@ Create tsrexplorer object.
 
 ```{r message=FALSE}
 library("TSRexploreR")
+library("ggplot2")
 
 # BAM file.
 bam_file <- system.file("extdata", "S288C.bam", package="TSRexploreR")
