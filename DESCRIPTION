@@ -42,7 +42,6 @@ Imports:
     GenomeInfoDb,
     Cairo,
     rlang,
-    ggseqlogo,
     ComplexHeatmap
 Depends:
     R (>= 3.5.0)
