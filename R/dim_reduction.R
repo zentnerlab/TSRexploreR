@@ -23,7 +23,7 @@
 #' @examples
 #' data(TSSs)
 #'
-#' tsre_exp <- TSSs %>%
+#' tsre <- TSSs %>%
 #'   tsr_explorer %>%
 #'   format_counts(data_type="tss")
 #'

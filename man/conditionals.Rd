@@ -66,7 +66,7 @@ conditions <- conditionals(data_ordering=ordering(desc(score)))
 \donttest{plot_sequence_colormap(tsre, data_conditions=conditions)}
 
 # Sequence logo split by TSS score quantile.
-conditions <- conditionals(data_quantiling=quantiling(score))
+conditions <- conditionals(data_quantiling=quantiling(score, n=5))
 \donttest{plot_sequence_logo(tsre, data_conditions=conditions)}
 
 # Sequence logo split by class of TSR.

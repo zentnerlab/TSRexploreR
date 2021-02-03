@@ -50,7 +50,7 @@ tsre <- TSSs[1] \%>\%
   format_counts(data_type="tss")
 
 # Sequence base color plot quantiled by score.
-conditions <- conditionals(data_quantiling=quantiling(score))
+conditions <- conditionals(data_quantiling=quantiling(score, n=5))
 \donttest{plot_sequence_colormap(tsre, data_conditions=conditions)}
 
 }

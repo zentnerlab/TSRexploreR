@@ -71,11 +71,11 @@ tsr_explorer <- function(
 
   ## Input Check.
   assert_that(
-    is.na(TSSs) ||
+    all(is.na(TSSs)) ||
    (is.list(TSSs) && has_attr(TSSs, "names"))
   )
   assert_that(
-    is.na(TSRs) ||
+    all(is.na(TSRs)) ||
     (is.list(TSRs) && has_attr(TSRs, "names"))
   )
   assert_that(
