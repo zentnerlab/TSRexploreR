@@ -9,7 +9,6 @@
 #' @param annotated_data Annotated data.table
 #' @param upstream Bases upstream of plot center
 #' @param downstream Bases downstream of plot center
-#' @param ... Arguments passed to geom_tile
 #'
 #' @details
 #' This function makes a count matrix for each gene or transcript with detected features
@@ -49,7 +48,6 @@
 #' @seealso
 #' \code{\link{annotate_features}} to annotate the TSSs or TSRs.
 #' \code{\link{plot_heatmap}} to plot the heatmap.
-#' \code{\link{tsr_heatmap_matrix}} to generate the TSR matrix data for plotting.
 
 .tss_heatmap <- function(
   annotated_data,
@@ -101,6 +99,7 @@
 #' @param remove_antisense Remove antisense reads.
 #' @param split_by Named list with split group as name and vector of genes,
 #'   or data.frame with columns 'feature' and 'split_group'.
+#' @param data_type Either 'tss' or 'tsr'.
 #'
 #' @details
 #' This plotting function generates a ggplot2 heatmap of TSS or TSR signal
@@ -442,7 +441,7 @@ plot_heatmap <- function(
 #' Filter Heatmap.
 #'
 #' @param sample_list List of sample data.
-#' @param filter Quosure of filters.
+#' @param filtering Quosure of filters.
 
 .filter_heatmap <- function(
   sample_list,
@@ -457,6 +456,7 @@ plot_heatmap <- function(
 #' @inheritParams plot_heatmap
 #' @param count_data data.table of sample data.
 #' @param annotated_data Annotated sample data.
+#' @param data_type Either 'tss' or 'tsr'.
 
 .order_heatmap <- function(
   count_data,

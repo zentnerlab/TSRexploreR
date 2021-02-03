@@ -9,7 +9,7 @@
 #'   are present at its 5' most end.
 #' @param proper_pair Remove reads without a proper pair SAM flag.
 #'   TRUE by default when data is paired-end.
-#' @param remove_seconday Remove reads with non-primary SAM flag set (TRUE).
+#' @param remove_secondary Remove reads with non-primary SAM flag set (TRUE).
 #' @param remove_duplicate Remove reads with duplicate SAM flag set (TRUE).
 #'
 #' @details

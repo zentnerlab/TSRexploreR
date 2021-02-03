@@ -40,6 +40,8 @@ plot_heatmap(
 
 \item{samples}{A vector of sample names to analyze.}
 
+\item{data_type}{Either 'tss' or 'tsr'.}
+
 \item{upstream}{Bases upstream to consider}
 
 \item{downstream}{bases downstream to consider}

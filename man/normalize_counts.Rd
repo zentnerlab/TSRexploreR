@@ -17,12 +17,12 @@ normalize_counts(
 
 \item{data_type}{Whether TSS or gene/transcript counts should be normalized.}
 
+\item{method}{Either 'edgeR', 'DESeq2', or 'CPM'.}
+
 \item{threshold}{TSSs or TSRs with a score below this value will not be considered.}
 
 \item{n_samples}{Filter out TSSs or features not meeting the the selected threshold
 in this number of samples.}
-
-\item{normalization_method}{Either 'edgeR', 'DESeq2', or 'CPM'.}
 }
 \value{
 TSRexploreR object with normalized counts.

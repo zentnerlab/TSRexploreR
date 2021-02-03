@@ -25,7 +25,7 @@
 #' @return ggplot2 object of shifting rank plot.
 #'
 #' @seealso
-#' \code{\link{tss_shifting}} to calculate TSS cluster shifting.
+#' \code{\link{tss_shift}} to calculate TSS cluster shifting.
 #'
 #' @examples
 #' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "TSRexploreR")
@@ -111,7 +111,7 @@ plot_shift_rank <- function(
 #'   is returned instead.
 #'
 #' @seealso
-#' \code{\link{tss_shifting}} For TSS cluster shifting calculation.
+#' \code{\link{tss_shift}} For TSS cluster shifting calculation.
 #'
 #' @details
 #' The 'tss_shifting' function uses the Earth Movers Distance (EMD)

@@ -10,8 +10,6 @@ get_shifting_results(experiment, samples = "all")
 \item{experiment}{TSRexploreR object.}
 
 \item{samples}{A vector of sample names to analyze.}
-
-\item{data_type}{Either 'tss' or 'tsr'.}
 }
 \value{
 List of TSS cluster shifting data.frames.

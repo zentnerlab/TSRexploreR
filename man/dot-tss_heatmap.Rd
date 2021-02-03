@@ -12,8 +12,6 @@
 \item{upstream}{Bases upstream of plot center}
 
 \item{downstream}{Bases downstream of plot center}
-
-\item{...}{Arguments passed to geom_tile}
 }
 \value{
 DataFrame of counts for each gene/transcript and position
@@ -58,5 +56,4 @@ hm_mat <- tss_heatmap_matrix(tsre_exp)
 \seealso{
 \code{\link{annotate_features}} to annotate the TSSs or TSRs.
 \code{\link{plot_heatmap}} to plot the heatmap.
-\code{\link{tsr_heatmap_matrix}} to generate the TSR matrix data for plotting.
 }

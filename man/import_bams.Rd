@@ -29,9 +29,9 @@ are present at its 5' most end.}
 \item{proper_pair}{Remove reads without a proper pair SAM flag.
 TRUE by default when data is paired-end.}
 
-\item{remove_duplicate}{Remove reads with duplicate SAM flag set (TRUE).}
+\item{remove_secondary}{Remove reads with non-primary SAM flag set (TRUE).}
 
-\item{remove_seconday}{Remove reads with non-primary SAM flag set (TRUE).}
+\item{remove_duplicate}{Remove reads with duplicate SAM flag set (TRUE).}
 }
 \value{
 TSRexploreR object with BAM GRanges and soft-clip information.

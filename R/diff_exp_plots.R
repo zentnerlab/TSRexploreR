@@ -234,7 +234,7 @@ plot_volcano <- function(
 #' @param de_comparisons Character vector of differential expression comparisons to export.
 #' @param keep_unchanged Logical for inclusion of genes not significantly changed in
 #'   the exported list.
-#' @param Vector of annotation categories to keep.
+#' @param anno_categories Vector of annotation categories to keep.
 #'   If NULL no filtering by annotation type occurs.
 #'
 #' @details

@@ -64,5 +64,5 @@ tsre <- TSSs[c(1, 4)] \%>\%
 
 }
 \seealso{
-\code{\link{tss_shifting}} For TSS cluster shifting calculation.
+\code{\link{tss_shift}} For TSS cluster shifting calculation.
 }

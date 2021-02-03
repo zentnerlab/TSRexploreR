@@ -29,7 +29,7 @@ TSRs.}
 \item{keep_unchanged}{Logical for inclusion of genes not significantly changed in
 the exported list.}
 
-\item{Vector}{of annotation categories to keep.
+\item{anno_categories}{Vector of annotation categories to keep.
 If NULL no filtering by annotation type occurs.}
 }
 \value{

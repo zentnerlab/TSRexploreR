@@ -121,6 +121,7 @@ tss_clustering <- function(
 #' @param granges GRanges.
 #' @param maxdist Maximum distance to cluster.
 #' @param sthresh Singlet threshold.
+#' @param maxwidth Maximum allowable TSR width.
 
 .aggr_scores <- function(granges, maxdist, maxwidth, sthresh) {
 

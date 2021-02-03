@@ -29,18 +29,14 @@ Additional meta-data columns can be added with sample information such as condit
 \item{merge_group}{The name of the column in the sample sheet
 that has the factor levels to merge samples by.}
 
-\item{merge_list}{Named list of samples to merge.
+\item{merge_list}{If merge_group is set to 'FALSE',
+specify what samples to merge in list format.
 List names will be the new TSS/TSR name, and the list contents should
 be a character vector of the TSSs or TSRs to merge.}
 
 \item{max_distance}{Merge TSRs within this distance.}
 
 \item{genome_assembly}{Genome assembly in FASTA or BSgenome format.}
-
-\item{sample_list}{If merge_group is set to 'FALSE',
-specify what samples to merge in list format.
-List names will be the new TSS/TSR name, and the list contents should
-be a character vector of the TSSs or TSRs to merge.}
 }
 \value{
 TSRexploreR object containing merged TSSs or TSRs.

@@ -139,6 +139,7 @@ tss_import <- function(
 #' Import tables
 #'
 #' @inheritParams common_params
+#' @param delim Delimiter for table.
 
 .import_tables <- function(sample_sheet, delim) {
   samples <- sample_sheet[, .(sample_name, file_1)] %>%

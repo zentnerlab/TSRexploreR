@@ -10,6 +10,8 @@
 \item{sample_sheet}{A sample sheet data.frame or tab delimited file.
 Must have the columns 'sample_name', 'file_1', and 'file_2'.
 Additional meta-data columns can be added with sample information such as condition and batch.}
+
+\item{delim}{Delimiter for table.}
 }
 \description{
 Import tables

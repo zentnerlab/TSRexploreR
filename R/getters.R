@@ -210,7 +210,6 @@ get_sample_sheet <- function(
 #' Extract the TSS cluster shifting results.
 #'
 #' @inheritParams common_params
-#' @param data_type Either 'tss' or 'tsr'.
 #'
 #' @return List of TSS cluster shifting data.frames.
 #'

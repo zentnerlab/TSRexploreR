@@ -5,7 +5,7 @@
 #'
 #' @inheritParams common_params
 #' @param data_type Whether TSS or gene/transcript counts should be normalized.
-#' @param normalization_method Either 'edgeR', 'DESeq2', or 'CPM'.
+#' @param method Either 'edgeR', 'DESeq2', or 'CPM'.
 #' @param n_samples Filter out TSSs or features not meeting the the selected threshold
 #'   in this number of samples.
 #'
@@ -162,9 +162,7 @@ normalize_counts <- function(
 #' DESeq2 Normalization
 #'
 #' @param count_matrix count matrix.
-#' @param design design formula.
 #' @param coldata column data.
-#' @param blind Whether normalization is blind.
 
 .deseq2_normalize <- function(count_matrix, coldata) {
 

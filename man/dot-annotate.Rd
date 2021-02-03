@@ -14,6 +14,8 @@
 \item{downstream}{Number of bases downstream of TSS for 'promoter' annotation (integer).}
 
 \item{feature_type}{Whether to annotate at the 'gene' or 'transcript' level.}
+
+\item{annotation_data}{Genome annotation.}
 }
 \description{
 Annotate Features

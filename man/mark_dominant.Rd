@@ -71,6 +71,6 @@ tsre <- annotate_features(tsre, data_type="tsr")
 
 }
 \seealso{
-\code{\link{associate_wth_tsr}} to associate TSSs with TSRs prior to marking
+\code{\link{associate_with_tsr}} to associate TSSs with TSRs prior to marking
   dominant TSS per TSR.
 }

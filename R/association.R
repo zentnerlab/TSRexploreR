@@ -32,10 +32,6 @@
 #'   tss_clustering(threshold=3) %>%
 #'   associate_with_tsr
 #'
-#' @seealso
-#' \code{\link{add_sample_sheet}} to add a sample sheet to the TSRexploreR object.
-#'
-#' @rdname associate_with_tsr-function
 #' @export
 
 associate_with_tsr <- function(

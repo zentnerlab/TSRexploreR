@@ -116,6 +116,7 @@ annotate_features <- function(
 #'
 #' @inheritParams annotate_features
 #' @param sample_table Sample table
+#' @param annotation_data Genome annotation.
 
 .annotate <- function(
   sample_table,

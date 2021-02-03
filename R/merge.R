@@ -11,7 +11,7 @@
 #'   be a character vector of the TSSs or TSRs to merge.
 #' @param merge_group The name of the column in the sample sheet
 #'   that has the factor levels to merge samples by.
-#' @param sample_list If merge_group is set to 'FALSE',
+#' @param merge_list If merge_group is set to 'FALSE',
 #'   specify what samples to merge in list format.
 #'   List names will be the new TSS/TSR name, and the list contents should
 #'   be a character vector of the TSSs or TSRs to merge.
