@@ -78,7 +78,7 @@ After formatting counts and optionally CPM normalizing them, TSSs will be annota
 This function takes either the path and file name of a 'GTF' or 'GFF' file or a 'TxDb' package from bioconductor. The example below uses a 'GTF' file from Ensembl (R64-1-1 Release 99) and annotates each TSS to the beginning of the nearest transcript.
 
 ```{r message=FALSE, warning=FALSE}
-exp <- annotate_features(exp, data_type="tss", feature_type="transcript")
+exp <- annotate_features(exp, data_type="tss")
 ```
 
 ### Naive Threshold Exploration
@@ -231,7 +231,7 @@ exp <- tsr_metrics(exp)
 It is recommended to annotate TSRs if a genome annotation is available.
 
 ```{r message=FALSE, warning=FALSE}
-exp <- annotate_features(exp, data_type="tsr", feature_type="transcript")
+exp <- annotate_features(exp, data_type="tsr")
 ```
 
 ## TSR Correlation
