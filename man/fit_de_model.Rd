@@ -54,7 +54,7 @@ tsre <- TSSs \%>\%
   format_counts(data_type="tss")
 
 # DESeq2 model for differential TSSs.
-fit_de_model(tsre, ~condtion, data_type="tss")
+fit_de_model(tsre, ~condition, data_type="tss")
 
 # DESeq2 model for differential TSRs.
 tsre <- tss_clustering(tsre, threshold=3)

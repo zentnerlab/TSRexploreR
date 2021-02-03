@@ -55,7 +55,7 @@ data(TSSs)
 
 tsre <- TSSs[1] \%>\%
   tsr_explorer \%>\%
-  format_count(data_type="tss")
+  format_counts(data_type="tss")
 \donttest{tss_export(tsre)}
 
 }

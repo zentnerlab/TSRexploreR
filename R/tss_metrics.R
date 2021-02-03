@@ -32,8 +32,8 @@
 #' annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
 #'
 #' tsre <- TSSs[1] %>%
-#'   tsr_explorer %>%
-#'   format_counts(data_type="tss") %>%
+#'   tsr_explorer(genome_annotation=annotation) %>%
+#'   format_counts(data_type="tss")
 #'
 #' # Dominant TSS per gene.
 #' tsre <- annotate_features(tsre, data_type="tss")

@@ -69,7 +69,7 @@ data(TSSs)
 assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
 
 tsre <- TSSs[1] \%>\%
-  tsr_explorer(genome_annotation=annotation) \%>\%
+  tsr_explorer(genome_assembly=assembly) \%>\%
   format_counts(data_type="tss")
 
 \donttest{plot_dinucleotide_frequencies(tsre)}

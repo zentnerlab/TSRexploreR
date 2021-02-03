@@ -64,9 +64,10 @@ sample_sheet <- data.frame(
   file_1=NA, file_2=NA,
   condition="Diamide"
 )
+assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
 
 tsre <- TSSs \%>\%
-  tsr_explorer \%>\%
+  tsr_explorer(sample_sheet=sample_sheet, genome_assembly=assembly) \%>\%
   format_counts(data_type="tss")
 
 # Merge TSSs by condition column.

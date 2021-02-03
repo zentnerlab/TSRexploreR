@@ -38,7 +38,7 @@ tsre <- TSSs \%>\%
   format_counts(data_type="tss") \%>\%
   fit_de_model(~condition, data_type="tss") \%>\%
   differential_expression(
-    tsre, data_type="tss",
+    data_type="tss",
     comparison_name="Diamide_vs_Untreated",
     comparison_type="contrast",
     comparison=c("condition", "Diamide", "Untreated")

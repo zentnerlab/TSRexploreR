@@ -3,7 +3,6 @@
 export(G_correction)
 export(ShiftScores)
 export(add_feature_counts)
-export(add_sample_sheet)
 export(annotate_features)
 export(apply_threshold)
 export(associate_with_tsr)

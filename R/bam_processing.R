@@ -33,9 +33,8 @@
 #' assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
 #' samples <- data.frame(sample_name="S288C", file_1=bam_file, file_2=NA)
 #'
-#' bam_file %>%
-#'   tsr_explorer(sample_sheet=samples, genome_assembly=assembly) %>%
-#'   import_bams(paired=TRUE)
+#' tsre <- tsr_explorer(sample_sheet=samples, genome_assembly=assembly)
+#' import_bams(tsre, paired=TRUE)
 #'
 #' @export
 
@@ -188,8 +187,8 @@ import_bams <- function(
 #' assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
 #' samples <- data.frame(sample_name="S288C", file_1=bam_file, file_2=NA)
 #'
-#' bam_file %>%
-#'   tsr_explorer(sample_sheet=samples, genome_assembly=assembly) %>%
+#' tsre <- tsr_explorer(sample_sheet=samples, genome_assembly=assembly)
+#' tsre %>% 
 #'   import_bams(paired=TRUE) %>%
 #'   tss_aggregate
 #'

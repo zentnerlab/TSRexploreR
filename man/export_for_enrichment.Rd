@@ -77,7 +77,7 @@ tsre <- TSSs \%>\%
 diff_tss <- tsre \%>\%
   fit_de_model(data_type="tss", formula= ~condition) \%>\%
   differential_expression(
-    exp, data_type="tss",
+    data_type="tss",
     comparison_name="Diamide_vs_Untreated",
     comparison_type="name",
     comparison="condition_Untreated_vs_Diamide"
@@ -90,7 +90,7 @@ diff_tsr <- tsre \%>\%
   annotate_features(data_type="tsr") \%>\%
   fit_de_model(data_type="tsr", formula= ~condition) \%>\%
   differential_expression(
-    exp, data_type="tsr",
+    data_type="tsr",
     comparison_name="Diamide_vs_Untreated",
     comparison_type="name",
     comparison="condition_Untreated_vs_Diamide"

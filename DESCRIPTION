@@ -94,7 +94,6 @@ Collate:
     'params.R'
     'prepare_counts.R'
     'rnaseq.R'
-    'sample_sheet.R'
     'sequences.R'
     'shifting_plots.R'
     'softclip_analysis.R'

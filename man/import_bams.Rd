@@ -58,8 +58,7 @@ bam_file <- system.file("extdata", "S288C.bam", package="TSRexploreR")
 assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
 samples <- data.frame(sample_name="S288C", file_1=bam_file, file_2=NA)
 
-bam_file \%>\%
-  tsr_explorer(sample_sheet=samples, genome_assembly=assembly) \%>\%
-  import_bams(paired=TRUE)
+tsre <- tsr_explorer(sample_sheet=samples, genome_assembly=assembly)
+import_bams(tsre, paired=TRUE)
 
 }

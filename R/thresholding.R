@@ -214,6 +214,7 @@ plot_threshold_exploration <- function(
 #'
 #' @examples
 #' data(TSSs)
+#' annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
 #'
 #' tsre <- TSSs[1] %>%
 #'   tsr_explorer(genome_annotation=annotation) %>%

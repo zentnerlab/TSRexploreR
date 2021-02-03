@@ -42,7 +42,7 @@
 #' diff_tss <- tsre %>%
 #'   fit_de_model(data_type="tss", formula= ~condition) %>%
 #'   differential_expression(
-#'     exp, data_type="tss",
+#'     data_type="tss",
 #'     comparison_name="Diamide_vs_Untreated",
 #'     comparison_type="name",
 #'     comparison="condition_Untreated_vs_Diamide"
@@ -54,7 +54,7 @@
 #'   tss_clustering(threshold=3) %>%
 #'   fit_de_model(data_type="tsr", formula= ~condition) %>%
 #'   differential_expression(
-#'     exp, data_type="tsr",
+#'     data_type="tsr",
 #'     comparison_name="Diamide_vs_Untreated",
 #'     comparison_type="name",
 #'     comparison="condition_Untreated_vs_Diamide"
@@ -151,7 +151,7 @@ plot_ma <- function(
 #' diff_tss <- tsre %>%
 #'   fit_de_model(data_type="tss", formula= ~condition) %>%
 #'   differential_expression(
-#'     exp, data_type="tss",
+#'     data_type="tss",
 #'     comparison_name="Diamide_vs_Untreated",
 #'     comparison_type="name",
 #'     comparison="condition_Untreated_vs_Diamide"
@@ -163,7 +163,7 @@ plot_ma <- function(
 #'   tss_clustering(threshold=3) %>%
 #'   fit_de_model(data_type="tsr", formula= ~condition) %>%
 #'   differential_expression(
-#'     exp, data_type="tsr",
+#'     data_type="tsr",
 #'     comparison_name="Diamide_vs_Untreated",
 #'     comparison_type="name",
 #'     comparison="condition_Untreated_vs_Diamide"
@@ -280,7 +280,7 @@ plot_volcano <- function(
 #' diff_tss <- tsre %>%
 #'   fit_de_model(data_type="tss", formula= ~condition) %>%
 #'   differential_expression(
-#'     exp, data_type="tss",
+#'     data_type="tss",
 #'     comparison_name="Diamide_vs_Untreated",
 #'     comparison_type="name",
 #'     comparison="condition_Untreated_vs_Diamide"
@@ -293,7 +293,7 @@ plot_volcano <- function(
 #'   annotate_features(data_type="tsr") %>%
 #'   fit_de_model(data_type="tsr", formula= ~condition) %>%
 #'   differential_expression(
-#'     exp, data_type="tsr",
+#'     data_type="tsr",
 #'     comparison_name="Diamide_vs_Untreated",
 #'     comparison_type="name",
 #'     comparison="condition_Untreated_vs_Diamide"
@@ -398,7 +398,7 @@ export_for_enrichment <- function(
 #' diff_tss <- tsre %>%
 #'   fit_de_model(data_type="tss", formula= ~condition) %>%
 #'   differential_expression(
-#'     exp, data_type="tss",
+#'     data_type="tss",
 #'     comparison_name="Diamide_vs_Untreated",
 #'     comparison_type="name",
 #'     comparison="condition_Untreated_vs_Diamide"
@@ -410,7 +410,7 @@ export_for_enrichment <- function(
 #'   tss_clustering(threshold=3) %>%
 #'   fit_de_model(data_type="tsr", formula= ~condition) %>%
 #'   differential_expression(
-#'     exp, data_type="tsr",
+#'     data_type="tsr",
 #'     comparison_name="Diamide_vs_Untreated",
 #'     comparison_type="name",
 #'     comparison="condition_Untreated_vs_Diamide"

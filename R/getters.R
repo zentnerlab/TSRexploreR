@@ -200,7 +200,7 @@ get_sample_sheet <- function(
   ## Get the sample sheet.
   ss <- experiment@meta_data$sample_sheet
 
-  return(as.data.frame(sample_sheet))
+  return(as.data.frame(ss))
 }
 
 #' Get Shifting Results
@@ -219,13 +219,12 @@ get_sample_sheet <- function(
 #'   format_counts(data_type="tss") %>%
 #'   tss_clustering(threshold=3) %>%
 #'   tss_shift(
-#'     tsre,
 #'     sample_1=c(TSS="S288C_WT_1", TSR="S288C_WT_1"),
 #'     sample_2=c(TSS="S288C_D_1", TSR="S288C_D_1"),
 #'     comparison_name="Untreated_vs_Diamide",
 #'     max_distance = 100, min_threshold = 10, n_resamples = 1000L
 #'   )
-#' get_shifting_results(tsre)
+#' \donttest{get_shifting_results(tsre)}
 #'
 #' @export
 
@@ -245,7 +244,6 @@ get_shifting_results <- function(
 
   ## Get shifting results.
   shft <- experiment@shifting$results[samples]
-  shft <- map(shft, as.data.frame)
 
   return(shft)
 }
@@ -276,7 +274,7 @@ get_shifting_results <- function(
 #' tsre <- TSSs %>%
 #'   tsr_explorer(sample_sheet=sample_sheet) %>%
 #'   format_counts(data_type="tss") %>%
-#'   fit_de_model(tsre, ~condition, data_type="tss")
+#'   fit_de_model(~condition, data_type="tss")
 #' get_diff_model(tsre, data_type="tss")
 #'
 #' @export
@@ -331,7 +329,7 @@ get_diff_model <- function(
 #'   format_counts(data_type="tss") %>%
 #'   fit_de_model(~condition, data_type="tss") %>%
 #'   differential_expression(
-#'     tsre, data_type="tss",
+#'     data_type="tss",
 #'     comparison_name="Diamide_vs_Untreated",
 #'     comparison_type="contrast",
 #'     comparison=c("condition", "Diamide", "Untreated")

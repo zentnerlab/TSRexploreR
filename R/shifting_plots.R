@@ -35,7 +35,6 @@
 #'   format_counts(data_type="tss") %>%
 #'   tss_clustering(threshold=3) %>%
 #'   tss_shift(
-#'     tsre,
 #'     sample_1=c(TSS="S288C_WT_1", TSR="S288C_WT_1"),
 #'     sample_2=c(TSS="S288C_D_1", TSR="S288C_D_1"),
 #'     comparison_name="Untreated_vs_Diamide",
@@ -133,7 +132,6 @@ plot_shift_rank <- function(
 #'   format_counts(data_type="tss") %>%
 #'   tss_clustering(threshold=3) %>%
 #'   tss_shift(
-#'     tsre,
 #'     sample_1=c(TSS="S288C_WT_1", TSR="S288C_WT_1"),
 #'     sample_2=c(TSS="S288C_D_1", TSR="S288C_D_1"),
 #'     comparison_name="Untreated_vs_Diamide",

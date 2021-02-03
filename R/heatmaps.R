@@ -33,17 +33,6 @@
 #'
 #' @return DataFrame of counts for each gene/transcript and position
 #'
-#' @examples
-#' data(TSSs)
-#' tsre_exp <- tsr_explorer(TSSs)
-#' tsre_exp <- format_counts(tsre_exp, data_type="tss")
-#' annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
-#' tsre_exp <- annotate_features(
-#'   tsre_exp, annotation_data=annotation,
-#'   data_type="tss", feature_type="transcript"
-#' )
-#' hm_mat <- tss_heatmap_matrix(tsre_exp)
-#'
 #' @seealso
 #' \code{\link{annotate_features}} to annotate the TSSs or TSRs.
 #' \code{\link{plot_heatmap}} to plot the heatmap.
