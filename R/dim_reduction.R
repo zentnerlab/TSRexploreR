@@ -50,6 +50,12 @@ plot_reduction <- function(
   ...
 ) {
 
+  ## Check if PCAtools is installed.
+  if (!requireNamespace("PCAtools", quietly = TRUE)) {
+    stop("Package \"PCAtools\" needed for this function to work. Please install it.",
+      call. = FALSE)
+  }
+
   ## Input checks.
   assert_that(is(experiment, "tsr_explorer"))
   assert_that(is.character(samples))

@@ -40,7 +40,6 @@ Imports:
     plyranges,
     assertthat,
     GenomicAlignments,
-    PCAtools,
     GenomeInfoDb,
     Cairo,
     rlang,
@@ -61,7 +60,8 @@ Suggests:
     CAGEr,
     TxDb.Scerevisiae.UCSC.sacCer3.sgdGene,
     BSgenome.Scerevisiae.UCSC.sacCer3,
-    Gviz
+    Gviz,
+    PCAtools
 RoxygenNote: 7.1.1
 Collate: 
     'RcppExports.R'
