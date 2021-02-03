@@ -68,6 +68,12 @@ plot_correlation <- function(
   ...
 ) {
 
+  ## Check whether ComplexHeatmap is installed.
+  if (!requireNamespace("ComplexHeatmap", quietly = TRUE)) {
+    stop("Package \"ComplexHeatmap\" needed for this function to work. Please install it.",
+      call. = FALSE)
+  }
+
   ## Check inputs.
   if (!is(experiment, "tsr_explorer")) stop("experiment must be a TSRexploreR object")
   data_type <- match.arg(data_type, c("tss", "tsr", "tss_features", "tsr_features"))
@@ -129,7 +135,7 @@ plot_correlation <- function(
     ))
   }
 
-  p <- do.call(Heatmap, heatmap_args)
+  p <- do.call(ComplexHeatmap::Heatmap, heatmap_args)
 
   return(p)
 

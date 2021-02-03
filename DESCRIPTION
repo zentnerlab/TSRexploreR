@@ -41,8 +41,7 @@ Imports:
     GenomicAlignments,
     GenomeInfoDb,
     Cairo,
-    rlang,
-    ComplexHeatmap
+    rlang
 Depends:
     R (>= 3.5.0)
 Suggests:
@@ -61,7 +60,8 @@ Suggests:
     ggrastr,
     ChIPseeker,
     ggseqlogo,
-    cowplot
+    cowplot,
+    ComplexHeatmap
 RoxygenNote: 7.1.1
 Collate: 
     'RcppExports.R'
