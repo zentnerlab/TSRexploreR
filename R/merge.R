@@ -36,7 +36,7 @@
 #' data(TSSs)
 #' sample_sheet <- data.frame(
 #'   sample_name=sprintf("S288C_D_%s", seq_len(3)),
-#'   file_1=NA, file_2=NA,
+#'   file_1=rep(NA, 3), file_2=rep(NA, 3),
 #'   condition="Diamide"
 #' )
 #' assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")

@@ -264,7 +264,7 @@ get_shifting_results <- function(
 #'     sprintf("S288C_D_%s", seq_len(3)),
 #'     sprintf("S288C_WT_%s", seq_len(3))
 #'   ),
-#'   file_1=NA, file_2=NA,
+#'   file_1=rep(NA, 6), file_2=rep(NA, 6),
 #'   condition=c(
 #'     rep("Diamide", 3),
 #'     rep("Untreated", 3)
@@ -317,7 +317,7 @@ get_diff_model <- function(
 #'     sprintf("S288C_D_%s", seq_len(3)),
 #'     sprintf("S288C_WT_%s", seq_len(3))
 #'   ),
-#'   file_1=NA, file_2=NA,
+#'   file_1=rep(NA, 6), file_2=rep(NA, 6),
 #'   condition=c(
 #'     rep("Diamide", 3),
 #'     rep("Untreated", 3)
