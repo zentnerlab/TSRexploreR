@@ -32,9 +32,10 @@
 #'
 #' @examples
 #' data(TSSs)
+#' assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
 #'
 #' tsre <- TSSs[1] %>%
-#'   tsr_explorer %>%
+#'   tsr_explorer(genome_assembly=assembly) %>%
 #'   format_counts(data_type="tss") %>%
 #'   tss_clustering(threshold=3) %>%
 #'   associate_with_tsr %>%
@@ -134,9 +135,10 @@ conditionals <- function(
 #'
 #' @examples
 #' data(TSSs)
+#' assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
 #'
 #' tsre <- TSSs[1] %>%
-#'   tsr_explorer %>%
+#'   tsr_explorer(genome_assembly=assembly) %>%
 #'   format_counts(data_type="tss")
 #'
 #' # Sequence base color plot sorted by descending score.
@@ -197,9 +199,10 @@ ordering <- function(
 #'
 #' @examples
 #' data(TSSs)
+#' assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
 #'
 #' tsre <- TSSs[1] %>%
-#'   tsr_explorer %>%
+#'   tsr_explorer(genome_assembly=assembly) %>%
 #'   format_counts(data_type="tss")
 #'
 #' # Sequence base color plot quantiled by score.

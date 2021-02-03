@@ -1,13 +1,11 @@
 ---
-title: "Differential Features"
+title: Differential Features
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Differential Features}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
-
-# Differential Features
 
 It has been previously shown that there are pervasive changes in TSSs and TSRs between
 different developmental conditions, disease states, and in response to the environment.
@@ -25,7 +23,6 @@ Diamide is a reducing agent that damages DNA, and was shown to cause large chang
 
 ```{r message=FALSE}
 library("TSRexploreR")
-library("magrittr")
 library("ggplot2")
 
 # Load example TSSs.
@@ -154,10 +151,8 @@ tsrexplorer provides a convenient function to export DE features to a format rea
 
 ```{r message=FALSE}
 enrichment_data <- export_for_enrichment(exp, data_type="tsr")
-
 library("clusterProfiler")
 library("org.Sc.sgd.db")
-
 go_enrichment <- compareCluster(
   geneId ~ sample + de_status,
   data=enrichment_data,
@@ -167,11 +162,9 @@ go_enrichment <- compareCluster(
   ont="BP",
   keyType="ENSEMBL"
 )
-
 dotplot(go_enrichment, font.size=4) +
   scale_color_viridis_c() +
   theme(axis.text.x=element_text(angle=45, hjust=1))
-
 ```
 
 ## Gene Tracks.

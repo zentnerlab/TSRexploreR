@@ -5,3 +5,5 @@ src/*.dll
 *.bed
 
 inst/doc
+doc
+Meta

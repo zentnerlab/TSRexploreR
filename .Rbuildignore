@@ -7,3 +7,5 @@ proj$
 ^inst/extdata/.*\.RDS$
 ^inst/images
 ^inst/singularity
+^doc$
+^Meta$
