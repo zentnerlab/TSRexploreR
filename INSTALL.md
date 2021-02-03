@@ -47,7 +47,8 @@ bioconductor-rtracklayer \
 bioconductor-biocgenerics \
 bioconductor-plyranges \
 bioconductor-pcatools \
-bioconductor-GenomeInfoDb
+bioconductor-genomeinfodb \
+bioconductor-bsgenome \
 bioconductor-bsgenome.scerevisiae.ucsc.saccer3 \
 bioconductor-txdb.scerevisiae.ucsc.saccer3.sgdgene
 

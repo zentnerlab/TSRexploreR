@@ -40,7 +40,8 @@ Imports:
     assertthat,
     GenomeInfoDb,
     Cairo,
-    rlang
+    rlang,
+    BSgenome
 Depends:
     R (>= 3.5.0)
 Suggests:
