@@ -358,6 +358,14 @@ plot_sequence_colormap <- function(
   assert_that(is.flag(rasterize))
   assert_that(is.count(raster_dpi))
 
+  ## Check if ggrastr is installed if rasterization set.
+  if (rasterize) {
+    if (!requireNamespace("ggrastr", quietly = TRUE)) {
+      stop("Package \"ggrastr\" needed for this function to work. Please install it.",
+        call. = FALSE)
+    }
+  }
+
   ## Get sequences.
   tss_sequences <- .tss_sequences(
     experiment,
@@ -415,7 +423,7 @@ plot_sequence_colormap <- function(
   p <- ggplot(long_data, aes(x=.data$position, y=.data$FHASH))
 
   if (rasterize) {
-    p <- p + rasterize(
+    p <- p + ggrastr::rasterize(
       geom_tile(aes(fill=.data$base, color=.data$base), ...),
       dpi=raster_dpi
     )
