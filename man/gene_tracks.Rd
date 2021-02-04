@@ -79,6 +79,8 @@ tsre <- TSSs[1] \%>\%
   format_counts(data_type="tss") \%>\%
   tss_clustering(threshold=3)
 
-\donttest{gene_tracks(tsre, "YKR076W")}
+\donttest{
+gene_tracks(tsre, "YDR418W", samples=c(TSS="S288C_D_1", TSR="S288C_D_1"))
+}
 
 }

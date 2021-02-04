@@ -87,7 +87,7 @@ Gene track of an example result.
 
 ```{r message=FALSE}
 gene_tracks(
-  exp, feature_name="YEL039C",
+  exp, feature_name="YDR418W",
   samples=c(
     TSS="Untreated", TSR="Untreated",
     TSS="Diamide", TSR="Diamide"

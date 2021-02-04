@@ -173,7 +173,7 @@ You can make gene tracks for genes with differential TSRs.
 
 ```{r message=FALSE}
 gene_tracks(
-  exp, feature_name="YKR076W",
+  exp, feature_name="YDL243C",
   samples=c(
     TSS="S288C_WT_1", TSR="S288C_WT_1",
     TSS="S288C_D_1", TSR="S288C_D_1"
