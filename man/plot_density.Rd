@@ -87,6 +87,7 @@ annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexplore
 tsre <- TSSs[1] \%>\%
   tsr_explorer(genome_annotation=annotation) \%>\%
   format_counts(data_type="tss") \%>\%
+  annotate_features(data_type="tss")
 
 # TSS density plot.
 p <- plot_density(tsre, data_type="tss")

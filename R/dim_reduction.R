@@ -22,10 +22,16 @@
 #'
 #' @examples
 #' data(TSSs)
+#' samples <- data.frame(
+#'   sample_name=sprintf("S288C_D_%s", seq_len(2)),
+#'   file_1=NA, file_2=NA,
+#'   condition="Diamide"
+#' )
 #'
-#' tsre <- TSSs %>%
-#'   tsr_explorer %>%
-#'   format_counts(data_type="tss")
+#' tsre <- TSSs[seq_len(2)] %>%
+#'   tsr_explorer(sample_sheet=samples) %>%
+#'   format_counts(data_type="tss") %>%
+#'   normalize_counts(method="CPM")
 #'
 #' # TSS PCA plot.
 #' p <- plot_reduction(tsre, data_type="tss")
