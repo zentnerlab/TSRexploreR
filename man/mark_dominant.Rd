@@ -52,16 +52,15 @@ annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexplore
 
 tsre <- TSSs[1] \%>\%
   tsr_explorer(genome_annotation=annotation) \%>\%
-  format_counts(data_type="tss")
+  format_counts(data_type="tss") \%>\%
+  tss_clustering(threshold=3) \%>\%
+  associate_with_tsr
 
 # Dominant TSS per gene.
 tsre <- annotate_features(tsre, data_type="tss")
 \donttest{mark_dominant(tsre, data_type="tss", mark_per="gene")}
 
 # Dominant TSS per TSR.
-tsre <- tsre \%>\%
-  tss_clustering(threshold=3) \%>\%
-  associate_with_tsr
 \donttest{mark_dominant(tsre, data_type="tss")}
 
 # Dominant TSR per gene.
