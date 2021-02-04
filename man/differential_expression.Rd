@@ -46,14 +46,13 @@ The results for the contrast will be stored back into the TSRexploreR object wit
   the name provided to 'comparison_name'.
 }
 \examples{
-TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-TSSs <- readRDS(TSSs)
+data(TSSs)
 sample_sheet <- data.frame(
   sample_name=c(
     sprintf("S288C_D_\%s", seq_len(3)),
     sprintf("S288C_WT_\%s", seq_len(3))
   ),
-  file_1=NA, file_2=NA,
+  file_1=rep(NA, 6), file_2=rep(NA, 6),
   condition=c(
     rep("Diamide", 3),
     rep("Untreated", 3)
@@ -65,23 +64,12 @@ tsre <- TSSs \%>\%
   format_counts(data_type="tss")
 
 # Differential TSSs with DESeq2.
-tsre <- fit_de_model(tsre, ~condition, data_type="tss")
-differential_expression(
+tsre <- fit_de_model(tsre, ~condition, data_type="tss", method="edgeR")
+tsre <- differential_expression(
   tsre, data_type="tss",
   comparison_name="Diamide_vs_Untreated",
-  comparison_type="contrast",
-  comparison=c("condition", "Diamide", "Untreated")
-)
-
-# Differential TSRs with DESeq2.
-tsre <- tsre \%>\%
-  tss_clustering(threshold=3) \%>\%
-  fit_de_model(~condition, data_type="tsr")
-differential_expression(
-  tsre, data_type="tsr",
-  comparison_name="Diamide_vs_Untreated",
-  comparison_type="contrast",
-  comparison=c("condition", "Diamide", "Untreated")
+  comparison_type="coef",
+  comparison=2
 )
 
 }

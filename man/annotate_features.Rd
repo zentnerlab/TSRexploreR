@@ -45,8 +45,7 @@ TSSs or TSRs overlapping a gene on the opposite strand
   will be marked as 'Antisense'.
 }
 \examples{
-TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-TSSs <- readRDS(TSSs)
+data(TSSs)
 annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
 
 tsre <- TSSs[1] \%>\%
@@ -54,11 +53,6 @@ tsre <- TSSs[1] \%>\%
   format_counts(data_type="tss")
 
 # Annotating TSSs.
-annotate_features(tsre, data_type="tss")
-
-# Annotating TSRs
-tsre \%>\%
-  tss_clustering(threshold=3) \%>\%
-  annotate_features(data_type="tsr")
+tsre <- annotate_features(tsre, data_type="tss")
 
 }

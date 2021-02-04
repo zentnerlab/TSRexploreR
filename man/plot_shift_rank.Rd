@@ -42,23 +42,29 @@ TSS clusters can be in ascending or descending order as controlled by 'score_ord
 This function
 }
 \examples{
-TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "TSRexploreR")
-TSSs <- readRDS(TSSs)
+data(TSSs)
+assembly <- system.file("extdata", "S288C_Assembly.fasta", package = "TSRexploreR")
+samples <- data.frame(
+  sample_name=c(sprintf("S288C_D_\%s", seq_len(3)), sprintf("S288C_WT_\%s", seq_len(3))),
+  file_1=rep(NA, 6), file_2=rep(NA, 6),
+  condition=c(rep("Diamide", 3), rep("Untreated", 3))
+)
 
-tsre <- TSSs[c(1, 4)] \%>\%
-  tsr_explorer \%>\%
+tsre <- TSSs \%>\%
+  tsr_explorer(sample_sheet=samples, genome_assembly=assembly) \%>\%
   format_counts(data_type="tss") \%>\%
   tss_clustering(threshold=3) \%>\%
+  merge_samples(data_type = "tss", merge_group="condition") \%>\%
+  merge_samples(data_type = "tsr", merge_group="condition") \%>\%
   tss_shift(
-    tsre,
     sample_1=c(TSS="S288C_WT_1", TSR="S288C_WT_1"),
     sample_2=c(TSS="S288C_D_1", TSR="S288C_D_1"),
     comparison_name="Untreated_vs_Diamide",
     max_distance = 100, min_threshold = 10, n_resamples = 1000L
   )
-\donttest{plot_shift_rank(tsre)}
+p <- plot_shift_rank(tsre)
 
 }
 \seealso{
-\code{\link{tss_shifting}} to calculate TSS cluster shifting.
+\code{\link{tss_shift}} to calculate TSS cluster shifting.
 }

@@ -13,11 +13,10 @@
 #' \code{\link{get_counts}} to get TSS or TSR counts data.frame.
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-#' TSSs <- readRDS(TSSs)
+#' data(TSSs)
 #'
 #' tsre <- tsr_explorer(TSSs[1])
-#' get_granges(tsre)
+#' tsre <- get_granges(tsre)
 #'
 #' @export
 
@@ -68,12 +67,11 @@ get_granges <- function(
 #' \code{\link{get_granges}} to get TSS or TSR GRanges.
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-#' TSSs <- readRDS(TSSs)
+#' data(TSSs)
 #'
 #' tsre <- tsr_explorer(TSSs[1]) %>%
 #'   format_counts(data_type="tss")
-#' get_counts(tsre)
+#' tsre <- get_counts(tsre)
 #'
 #' @export
 
@@ -156,7 +154,7 @@ get_annotation <- function(
 #' @examples
 #' assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
 #' tsre <- tsr_explorer(genome_assembly=assembly)
-#' get_assembly(tsre)
+#' tsre <- get_assembly(tsre)
 #'
 #' @export
 
@@ -188,7 +186,7 @@ get_assembly <- function(
 #'   condition=rep("Untreated", 3)
 #' )
 #' tsre <- tsr_explorer(sample_sheet=sample_sheet)
-#' get_sample_sheet(tsre)
+#' tsre <- get_sample_sheet(tsre)
 #'
 #' @export
 
@@ -202,7 +200,7 @@ get_sample_sheet <- function(
   ## Get the sample sheet.
   ss <- experiment@meta_data$sample_sheet
 
-  return(as.data.frame(sample_sheet))
+  return(as.data.frame(ss))
 }
 
 #' Get Shifting Results
@@ -210,26 +208,31 @@ get_sample_sheet <- function(
 #' Extract the TSS cluster shifting results.
 #'
 #' @inheritParams common_params
-#' @param data_type Either 'tss' or 'tsr'.
 #'
 #' @return List of TSS cluster shifting data.frames.
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package = "TSRexploreR")
-#' TSSs <- readRDS(TSSs)
+#' data(TSSs)
+#' assembly <- system.file("extdata", "S288C_Assembly.fasta", package = "TSRexploreR")
+#' samples <- data.frame(
+#'   sample_name=c(sprintf("S288C_D_%s", seq_len(3)), sprintf("S288C_WT_%s", seq_len(3))),
+#'   file_1=rep(NA, 6), file_2=rep(NA, 6),
+#'   condition=c(rep("Diamide", 3), rep("Untreated", 3))
+#' )
 #'
-#' tsre <- TSSs[c(1, 4)] %>%
-#'   tsr_explorer %>%
+#' tsre <- TSSs %>%
+#'   tsr_explorer(sample_sheet=samples, genome_assembly=assembly) %>%
 #'   format_counts(data_type="tss") %>%
 #'   tss_clustering(threshold=3) %>%
+#'   merge_samples(data_type = "tss", merge_group="condition") %>%
+#'   merge_samples(data_type = "tsr", merge_group="condition") %>%
 #'   tss_shift(
-#'     tsre,
 #'     sample_1=c(TSS="S288C_WT_1", TSR="S288C_WT_1"),
 #'     sample_2=c(TSS="S288C_D_1", TSR="S288C_D_1"),
 #'     comparison_name="Untreated_vs_Diamide",
 #'     max_distance = 100, min_threshold = 10, n_resamples = 1000L
 #'   )
-#' get_shifting_results(tsre)
+#' tsre <- get_shifting_results(tsre)
 #'
 #' @export
 
@@ -243,13 +246,12 @@ get_shifting_results <- function(
   assert_that(is.character(samples))
 
   ## Get sample names.
-  if (samples == "all") {
-    samples <- names(samples@shifting$results)
+  if (all(samples == "all")) {
+    samples <- names(experiment@shifting$results)
   }
 
   ## Get shifting results.
   shft <- experiment@shifting$results[samples]
-  shft <- map(shft, as.data.frame)
 
   return(shft)
 }
@@ -264,14 +266,13 @@ get_shifting_results <- function(
 #' @return DESeq2 or edgeR differential expression model.
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-#' TSSs <- readRDS(TSSs)
+#' data(TSSs)
 #' sample_sheet <- data.frame(
 #'   sample_name=c(
 #'     sprintf("S288C_D_%s", seq_len(3)),
 #'     sprintf("S288C_WT_%s", seq_len(3))
 #'   ),
-#'   file_1=NA, file_2=NA,
+#'   file_1=rep(NA, 6), file_2=rep(NA, 6),
 #'   condition=c(
 #'     rep("Diamide", 3),
 #'     rep("Untreated", 3)
@@ -281,8 +282,8 @@ get_shifting_results <- function(
 #' tsre <- TSSs %>%
 #'   tsr_explorer(sample_sheet=sample_sheet) %>%
 #'   format_counts(data_type="tss") %>%
-#'   fit_de_model(tsre, ~condition, data_type="tss")
-#' get_diff_model(tsre, data_type="tss")
+#'   fit_de_model(~condition, data_type="tss", method="edgeR")
+#' tsre <- get_diff_model(tsre, data_type="tss")
 #'
 #' @export
 
@@ -318,14 +319,13 @@ get_diff_model <- function(
 #' @return List of differential features data.frames.
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-#' TSSs <- readRDS(TSSs)
+#' data(TSSs)
 #' sample_sheet <- data.frame(
 #'   sample_name=c(
 #'     sprintf("S288C_D_%s", seq_len(3)),
 #'     sprintf("S288C_WT_%s", seq_len(3))
 #'   ),
-#'   file_1=NA, file_2=NA,
+#'   file_1=rep(NA, 6), file_2=rep(NA, 6),
 #'   condition=c(
 #'     rep("Diamide", 3),
 #'     rep("Untreated", 3)
@@ -335,14 +335,14 @@ get_diff_model <- function(
 #' tsre <- TSSs %>%
 #'   tsr_explorer(sample_sheet=sample_sheet) %>%
 #'   format_counts(data_type="tss") %>%
-#'   fit_de_model(~condition, data_type="tss") %>%
+#'   fit_de_model(~condition, data_type="tss", method="edgeR") %>%
 #'   differential_expression(
-#'     tsre, data_type="tss",
+#'     data_type="tss",
 #'     comparison_name="Diamide_vs_Untreated",
-#'     comparison_type="contrast",
-#'     comparison=c("condition", "Diamide", "Untreated")
+#'     comparison_type="coef",
+#'     comparison=2
 #'   )
-#' get_diff_results(tsre, data_type="tss")
+#' tsre <- get_diff_results(tsre, data_type="tss")
 #'
 #' @export
 
@@ -361,7 +361,7 @@ get_diff_results <- function(
   assert_that(is.character(samples))
 
   ## Get the sample names.
-  if (samples == "all") {
+  if (all(samples == "all")) {
     samples <- switch(
       data_type,
       "tss"=names(experiment@diff_features$TSSs$results),

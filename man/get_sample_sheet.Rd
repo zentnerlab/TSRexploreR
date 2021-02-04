@@ -22,6 +22,6 @@ sample_sheet <- data.frame(
   condition=rep("Untreated", 3)
 )
 tsre <- tsr_explorer(sample_sheet=sample_sheet)
-get_sample_sheet(tsre)
+tsre <- get_sample_sheet(tsre)
 
 }

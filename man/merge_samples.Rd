@@ -29,18 +29,14 @@ Additional meta-data columns can be added with sample information such as condit
 \item{merge_group}{The name of the column in the sample sheet
 that has the factor levels to merge samples by.}
 
-\item{merge_list}{Named list of samples to merge.
+\item{merge_list}{If merge_group is set to 'FALSE',
+specify what samples to merge in list format.
 List names will be the new TSS/TSR name, and the list contents should
 be a character vector of the TSSs or TSRs to merge.}
 
 \item{max_distance}{Merge TSRs within this distance.}
 
 \item{genome_assembly}{Genome assembly in FASTA or BSgenome format.}
-
-\item{sample_list}{If merge_group is set to 'FALSE',
-specify what samples to merge in list format.
-List names will be the new TSS/TSR name, and the list contents should
-be a character vector of the TSSs or TSRs to merge.}
 }
 \value{
 TSRexploreR object containing merged TSSs or TSRs.
@@ -62,23 +58,19 @@ If 'merge_list' is specified instead,
   distance from other TSRs.
 }
 \examples{
-TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-TSSs <- readRDS(TSSs)
+data(TSSs)
 sample_sheet <- data.frame(
-  sample_name=sprintf("S288C_D_\%s", seq_len(3)),
-  file_1=NA, file_2=NA,
+  sample_name=sprintf("S288C_D_\%s", seq_len(2)),
+  file_1=rep(NA, 2), file_2=rep(NA, 2),
   condition="Diamide"
 )
+assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
 
 tsre <- TSSs \%>\%
-  tsr_explorer \%>\%
+  tsr_explorer(sample_sheet=sample_sheet, genome_assembly=assembly) \%>\%
   format_counts(data_type="tss")
 
 # Merge TSSs by condition column.
-merge_samples(tsre, data_type="tss", merge_group="condition")
-
-# Merge TSRs by condition column.
-tsre <- tss_clustering(tsre, threshold=3)
-merge_samples(tsre, data_type="tsr", merge_group="condition")
+tsre <- merge_samples(tsre, data_type="tss", merge_group="condition")
 
 }

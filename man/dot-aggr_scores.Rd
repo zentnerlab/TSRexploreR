@@ -11,6 +11,8 @@
 
 \item{maxdist}{Maximum distance to cluster.}
 
+\item{maxwidth}{Maximum allowable TSR width.}
+
 \item{sthresh}{Singlet threshold.}
 }
 \description{

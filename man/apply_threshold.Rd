@@ -34,13 +34,13 @@ This function will permantly filter TSSs from the TSS data.table if no sample ha
  at least 'threshold' number of reads in at least 'n_samples' number of samples.
 }
 \examples{
-TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-TSSs <- readRDS(TSSs)
+data(TSSs)
+annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
 
 tsre <- TSSs[1] \%>\%
   tsr_explorer(genome_annotation=annotation) \%>\%
   format_counts(data_type="tss")
-apply_threshold(tsre, threshold=3)
+tsre <- apply_threshold(tsre, threshold=3)
 
 }
 \seealso{

@@ -47,12 +47,11 @@ The clustered TSSs cannot encompass more than 'max_width' bases.
   A global singlet threshold can be applied using 'singlet_threshold'.
 }
 \examples{
-TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-TSSs <- readRDS(TSSs)
+data(TSSs)
 
 tsre <- TSSs[1] \%>\%
   tsr_explorer \%>\%
   format_counts(data_type="tss")
-tss_clustering(tsre, threshold=3)
+tsre <- tss_clustering(tsre, threshold=3)
 
 }

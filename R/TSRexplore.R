@@ -53,8 +53,7 @@ setClass(
 #' @return A TSRexploreR object containing TSSs and/or TSRs
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-#' TSSs <- readRDS(TSSs)
+#' data(TSSs)
 #' exp <- tsr_explorer(TSSs)
 #'
 #' @rdname tsr_explorer-class
@@ -71,11 +70,11 @@ tsr_explorer <- function(
 
   ## Input Check.
   assert_that(
-    is.na(TSSs) ||
+    all(is.na(TSSs)) ||
    (is.list(TSSs) && has_attr(TSSs, "names"))
   )
   assert_that(
-    is.na(TSRs) ||
+    all(is.na(TSRs)) ||
     (is.list(TSRs) && has_attr(TSRs, "names"))
   )
   assert_that(

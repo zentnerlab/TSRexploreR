@@ -18,14 +18,13 @@ DESeq2 or edgeR differential expression model.
 Get the DESeq2 or edgeR model.
 }
 \examples{
-TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-TSSs <- readRDS(TSSs)
+data(TSSs)
 sample_sheet <- data.frame(
   sample_name=c(
     sprintf("S288C_D_\%s", seq_len(3)),
     sprintf("S288C_WT_\%s", seq_len(3))
   ),
-  file_1=NA, file_2=NA,
+  file_1=rep(NA, 6), file_2=rep(NA, 6),
   condition=c(
     rep("Diamide", 3),
     rep("Untreated", 3)
@@ -35,7 +34,7 @@ sample_sheet <- data.frame(
 tsre <- TSSs \%>\%
   tsr_explorer(sample_sheet=sample_sheet) \%>\%
   format_counts(data_type="tss") \%>\%
-  fit_de_model(tsre, ~condition, data_type="tss")
-get_diff_model(tsre, data_type="tss")
+  fit_de_model(~condition, data_type="tss", method="edgeR")
+tsre <- get_diff_model(tsre, data_type="tss")
 
 }

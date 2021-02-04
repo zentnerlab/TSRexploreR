@@ -20,11 +20,10 @@ List of TSS or TSR GRanges.
 Extract the TSS or TSR GRanges from the 'experiment' slot.
 }
 \examples{
-TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-TSSs <- readRDS(TSSs)
+data(TSSs)
 
 tsre <- tsr_explorer(TSSs[1])
-get_granges(tsre)
+tsre <- get_granges(tsre)
 
 }
 \seealso{

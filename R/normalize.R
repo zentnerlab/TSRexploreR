@@ -5,7 +5,7 @@
 #'
 #' @inheritParams common_params
 #' @param data_type Whether TSS or gene/transcript counts should be normalized.
-#' @param normalization_method Either 'edgeR', 'DESeq2', or 'CPM'.
+#' @param method Either 'edgeR', 'DESeq2', or 'CPM'.
 #' @param n_samples Filter out TSSs or features not meeting the the selected threshold
 #'   in this number of samples.
 #'
@@ -28,14 +28,13 @@
 #' @return TSRexploreR object with normalized counts.
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-#' TSSs <- readRDS(TSSs)
+#' data(TSSs)
 #' sample_sheet <- data.frame(
 #'   sample_name=c(
 #'     sprintf("S288C_D_%s", seq_len(3)),
 #'     sprintf("S288C_WT_%s", seq_len(3))
 #'   ),
-#'   file_1=NA, file_2=NA,
+#'   file_1=rep(NA, 6), file_2=rep(NA, 6),
 #'   condition=c(
 #'     rep("Diamide", 3),
 #'     rep("Untreated", 3)
@@ -47,13 +46,7 @@
 #'   format_counts(data_type="tss")
 #'
 #' # CPM normalization
-#' \donttest{normalize_counts(tsre, method="CPM")}
-#'
-#' # DESeq2 normalization
-#' \donttest{normalize_counts(tsre, method="DESeq2")}
-#'
-#' # edgeR normalization
-#' \donttest{normalize_counts(tsre, method="edgeR")}
+#' tsre <- normalize_counts(tsre, method="CPM")
 #'
 #' @export
 
@@ -78,6 +71,19 @@ normalize_counts <- function(
     assert_that(!is.null(experiment@meta_data$sample_sheet))
   }
 
+  ## Check whether DESeq2 or edgeR is required.
+  if (method == "deseq2") {
+    if (!requireNamespace("DESeq2", quietly = TRUE)) {
+      stop("Package \"DESeq2\" needed for this function to work. Please install it.",
+        call. = FALSE)
+    }
+  } else if (method %in% c("edger", "cpm")) {
+    if (!requireNamespace("edgeR", quietly = TRUE)) {
+      stop("Package \"edgeR\" needed for this function to work. Please install it.",
+        call. = FALSE)
+    }
+  }
+
   ## Get selected samples.
   select_samples <- extract_counts(experiment, data_type, "all")
 
@@ -99,7 +105,7 @@ normalize_counts <- function(
   normalized_counts <- switch(
     method,
     "edger"=.edger_normalize(filtered_counts),
-    "cpm"=cpm(filtered_counts),
+    "cpm"=edgeR::cpm(filtered_counts),
     "deseq2"=.deseq2_normalize(filtered_counts, coldata)
   )
 
@@ -139,9 +145,9 @@ normalize_counts <- function(
 
   ## TMM Normalization.
   normalized_counts <- count_matrix %>%
-    DGEList %>%
-    calcNormFactors %>%
-    cpm
+    edgeR::DGEList(.) %>%
+    edgeR::calcNormFactors(.) %>%
+    edgeR::cpm(.)
 
   return(normalized_counts)   
 }
@@ -149,9 +155,7 @@ normalize_counts <- function(
 #' DESeq2 Normalization
 #'
 #' @param count_matrix count matrix.
-#' @param design design formula.
 #' @param coldata column data.
-#' @param blind Whether normalization is blind.
 
 .deseq2_normalize <- function(count_matrix, coldata) {
 
@@ -161,9 +165,9 @@ normalize_counts <- function(
 
   ## DESeq2 normalization.
   normalized_counts <- count_matrix %>%
-    DESeqDataSetFromMatrix(colData=coldata, design= ~ 1) %>%
-    estimateSizeFactors %>%
-    counts(normalized=TRUE)
+    DESeq2::DESeqDataSetFromMatrix(colData=coldata, design= ~ 1) %>%
+    DESeq2::estimateSizeFactors(.) %>%
+    DESeq2::counts(normalized=TRUE)
 
   return(normalized_counts)
 }

@@ -28,14 +28,13 @@ TSRexploreR allows for the calculation of various common TSR shape indicators
 'iqr_lower' and 'iqr_upper' determine the upper and lower quantile bounds for calculation.
 }
 \examples{
-TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-TSSs <- readRDS(TSSs)
+data(TSSs)
 
 tsre <- TSSs[1] \%>\%
   tsr_explorer \%>\%
   format_counts(data_type="tss") \%>\%
   tss_clustering(threshold=3) \%>\%
   associate_with_tsr
-tsr_metrics(tsre)
+tsre <- tsr_metrics(tsre)
 
 }

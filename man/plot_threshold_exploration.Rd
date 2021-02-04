@@ -64,15 +64,14 @@ For STRIPE-seq We have found that a threshold of 3 often provides an appropriate
   transcripts with at least one unique TSS.
 }
 \examples{
-TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-TSSs <- readRDS(TSSs)
+data(TSSs)
 annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
 
 tsre <- TSSs[1] \%>\%
   tsr_explorer(genome_annotation=annotation) \%>\%
   format_counts(data_type="tss") \%>\%
   annotate_features(data_type="tss")
-\donttest{plot_threshold_exploration(tsre)}
+p <- plot_threshold_exploration(tsre)
 
 }
 \seealso{

@@ -65,14 +65,13 @@ For TSSs this can be either dominant per TSR or gene.
   of data.
 }
 \examples{
-TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-TSSs <- readRDS(TSSs)
+data(TSSs)
 assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
 
 tsre <- TSSs[1] \%>\%
-  tsr_explorer(genome_annotation=annotation) \%>\%
+  tsr_explorer(genome_assembly=assembly) \%>\%
   format_counts(data_type="tss")
 
-\donttest{plot_dinucleotide_frequencies(tsre)}
+p <- plot_dinucleotide_frequencies(tsre)
 
 }

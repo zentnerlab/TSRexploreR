@@ -30,14 +30,13 @@
 #' \code{\link{tsr_export}} to export TSRs.
 #'
 #' @examples
-#' \donttest{
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-#' TSSs <- readRDS(TSSs)
+#' \dontrun{
+#' data(TSSs)
 #'
 #' # Export bedgraphs as example data.
 #' tsre <- TSSs[1] %>%
 #'   tsr_explorer %>%
-#'   format_count(data_type="tss")
+#'   format_counts(data_type="tss")
 #' tss_export(tsre)
 #'
 #' # Import the previously created bedgraphs.
@@ -47,7 +46,7 @@
 #'   file_2="S288C_D_1_min.bedgraph"
 #' )
 #' tss <- tsr_explorer(sample_sheet=samples)
-#' tss_import(tss)
+#' tss <- tss_import(tss)
 #' }
 #'
 #' @export
@@ -139,6 +138,7 @@ tss_import <- function(
 #' Import tables
 #'
 #' @inheritParams common_params
+#' @param delim Delimiter for table.
 
 .import_tables <- function(sample_sheet, delim) {
   samples <- sample_sheet[, .(sample_name, file_1)] %>%
@@ -269,14 +269,13 @@ tss_import <- function(
 #' \code{\link{tsr_export}} to export TSRs.
 #'
 #' @examples
-#' \donttest{
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-#' TSSs <- readRDS(TSSs)
+#' \dontrun{
+#' data(TSSs)
 #'
 #' # Export bed as example data.
 #' tsre <- TSSs[1] %>%
 #'   tsr_explorer %>%
-#'   format_count(data_type="tss") %>%
+#'   format_counts(data_type="tss") %>%
 #'   tss_clustering(threshold=3)
 #' tsr_export(tsre)
 #'
@@ -287,7 +286,7 @@ tss_import <- function(
 #'   file_2=NA
 #' )
 #' tsr <- tsr_explorer(sample_sheet=samples)
-#' tsr_import(tsr)
+#' tsr <- tsr_import(tsr)
 #' }
 #'
 #' @export

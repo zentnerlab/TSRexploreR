@@ -98,9 +98,7 @@
 #' @description
 #' Create a sequence logo for the sequences around TSSs.
 #'
-#' @import ggseqlogo
 #' @importFrom Biostrings consensusMatrix
-#' @importFrom cowplot plot_grid
 #'
 #' @inheritParams common_params
 #' @param distance Bases to add on each side of eacg TSS
@@ -143,14 +141,13 @@
 #' \code{\link{plot_sequence_colormap}} for a sequence color map plot.
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-#' TSSs <- readRDS(TSSs)
+#' data(TSSs)
 #' assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
 #'
 #' tsre <- TSSs[1] %>%
-#'   tsr_explorer(genome_aassembly=assembly) %>%
+#'   tsr_explorer(genome_assembly=assembly) %>%
 #'   format_counts(data_type="tss")
-#' \donttest{plot_sequence_logo(tsre)}
+#' p <- plot_sequence_logo(tsre, distance=5)
 #'
 #' @export
 
@@ -171,6 +168,16 @@ plot_sequence_logo <- function(
   ),
   ...
 ) {
+
+  ## Check if ggseqlogo and cowplot are installed.
+  if (!requireNamespace("ggseqlogo", quietly = TRUE)) {
+    stop("Package \"ggseqlogo\" needed for this function to work. Please install it.",
+      call. = FALSE)
+  }
+  if (!requireNamespace("cowplot", quietly = TRUE)) {
+    stop("Package \"cowplot\" needed for this function to work. Please install it.",
+      call. = FALSE)
+  }
 
   ## Check inputs.
   assert_that(is(experiment, "tsr_explorer"))
@@ -226,7 +233,7 @@ plot_sequence_logo <- function(
   }
 
   ## Create viridis color scheme for bases.
-  viridis_bases <- make_col_scheme(
+  viridis_bases <- ggseqlogo::make_col_scheme(
     chars=c("A", "C", "G", "T"),
     groups=c("A", "C", "G", "T"),
     cols=base_colors[match(
@@ -237,16 +244,16 @@ plot_sequence_logo <- function(
 
   ## Make sequence logo.
   if (grouping_status == "none") {
-    p <- ggseqlogo(sequences, ncol=ncol, ...) +
+    p <- ggseqlogo::ggseqlogo(sequences, ncol=ncol, ...) +
       theme(text=element_text(size=font_size))
   } else {
     p <- sequences %>%
       map(function(x) {
-        ggseqlogo(x, ncol=ncol, ...) +
+        ggseqlogo::ggseqlogo(x, ncol=ncol, ...) +
           theme(text=element_text(size=font_size))
       })
 
-    p <- plot_grid(plotlist=p, labels=rev(names(sequences)), ncol=1)
+    p <- cowplot::plot_grid(plotlist=p, labels=rev(names(sequences)), ncol=1)
   }
 
   return(p)
@@ -301,14 +308,13 @@ plot_sequence_logo <- function(
 #' \code{\link{plot_sequence_logo}} to plot a sequence logo.
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-#' TSSs <- readRDS(TSSs)
+#' data(TSSs)
 #' assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
 #'
 #' tsre <- TSSs[1] %>%
 #'   tsr_explorer(genome_assembly=assembly) %>%
 #'   format_counts(data_type="tss")
-#' \donttest{plot_sequence_colormap(tsre)}
+#' p <- plot_sequence_colormap(tsre, distance=5)
 #'
 #' @export
 
@@ -351,6 +357,14 @@ plot_sequence_colormap <- function(
   )
   assert_that(is.flag(rasterize))
   assert_that(is.count(raster_dpi))
+
+  ## Check if ggrastr is installed if rasterization set.
+  if (rasterize) {
+    if (!requireNamespace("ggrastr", quietly = TRUE)) {
+      stop("Package \"ggrastr\" needed for this function to work. Please install it.",
+        call. = FALSE)
+    }
+  }
 
   ## Get sequences.
   tss_sequences <- .tss_sequences(
@@ -409,7 +423,7 @@ plot_sequence_colormap <- function(
   p <- ggplot(long_data, aes(x=.data$position, y=.data$FHASH))
 
   if (rasterize) {
-    p <- p + rasterize(
+    p <- p + ggrastr::rasterize(
       geom_tile(aes(fill=.data$base, color=.data$base), ...),
       dpi=raster_dpi
     )

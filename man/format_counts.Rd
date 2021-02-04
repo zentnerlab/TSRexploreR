@@ -27,8 +27,7 @@ This function converts these into data.table format,
   and adds a few important columns for downstream analysis.
 }
 \examples{
-TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-TSSs <- readRDS(TSSs)
+data(TSSs)
 
 TSSs[1] \%>\%
   tsr_explorer \%>\%

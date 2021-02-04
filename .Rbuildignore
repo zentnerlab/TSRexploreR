@@ -1,2 +1,11 @@
 proj$
 ^\.Rproj\.user$
+^INSTALL.md
+^documentation
+^github
+^.*\.RDS
+^inst/extdata/.*\.RDS$
+^inst/images
+^inst/singularity
+^doc$
+^Meta$

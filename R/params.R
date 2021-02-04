@@ -21,4 +21,23 @@
 #' @param raster_dpi If rasterization is set, this controls the rasterization DPI.
 #' @param return_table Return a table of results instead of a plot.
 
-common_params <- function(x) NULL
+common_params <- function(
+  experiment,
+  genome_assembly,
+  genome_annotation,
+  sample_sheet,
+  threshold,
+  samples,
+  use_normalized,
+  ncol,
+  log2fc_cutoff,
+  fdr_cutoff,
+  dominant,
+  exclude_antisense,
+  data_conditions,
+  rasterize,
+  raster_dpi,
+  return_table
+) {
+NULL
+}

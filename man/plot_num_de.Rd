@@ -53,8 +53,7 @@ If 'keep_unchaged' is TRUE, a table with the numbers is returned instead of the 
 This may be useful if exact numbers underlying the plot are required.
 }
 \examples{
-TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-TSSs <- readRDS(TSSs)
+data(TSSs)
 sample_sheet <- data.frame(
   sample_name=c(
     sprintf("S288C_D_\%s", seq_len(3)),
@@ -70,26 +69,14 @@ tsre <- TSSs \%>\%
 
 # Differential TSS quantities plot.
 diff_tss <- tsre \%>\%
-  fit_de_model(data_type="tss", formula= ~condition) \%>\%
+  fit_de_model(data_type="tss", formula= ~condition, method="edgeR") \%>\%
   differential_expression(
-    exp, data_type="tss",
+    data_type="tss",
     comparison_name="Diamide_vs_Untreated",
-    comparison_type="name",
-    comparison="condition_Untreated_vs_Diamide"
+    comparison_type="coef",
+    comparison=2
   )
-\donttest{plot_num_de(diff_tss, data_type="tss")}
-
-# Differential TSR quantities plot.
-diff_tsr <- tsre \%>\%
-  tss_clustering(threshold=3) \%>\%
-  fit_de_model(data_type="tsr", formula= ~condition) \%>\%
-  differential_expression(
-    exp, data_type="tsr",
-    comparison_name="Diamide_vs_Untreated",
-    comparison_type="name",
-    comparison="condition_Untreated_vs_Diamide"
-  )
-\donttest{plot_num_de(diff_tsr, data_type="tsr")}
+p <- plot_num_de(diff_tss, data_type="tss")
 
 }
 \seealso{

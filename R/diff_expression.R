@@ -19,14 +19,13 @@
 #' \code{\link{differential_expression}} to extract differential TSSs or TSRs from model.
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-#' TSSs <- readRDS(TSSs)
+#' data(TSSs)
 #' sample_sheet <- data.frame(
 #'   sample_name=c(
 #'     sprintf("S288C_D_%s", seq_len(3)),
 #'     sprintf("S288C_WT_%s", seq_len(3))
 #'   ),
-#'   file_1=NA, file_2=NA,
+#'   file_1=rep(NA, 6), file_2=rep(NA, 6),
 #'   condition=c(
 #'     rep("Diamide", 3),
 #'     rep("Untreated", 3)
@@ -38,11 +37,7 @@
 #'   format_counts(data_type="tss")
 #'
 #' # DESeq2 model for differential TSSs.
-#' fit_de_model(tsre, ~condtion, data_type="tss")
-#'
-#' # DESeq2 model for differential TSRs.
-#' tsre <- tss_clustering(tsre, threshold=3)
-#' fit_de_model(tsre, ~condition, data_type="tsr")
+#' tsre <- fit_de_model(tsre, ~condition, data_type="tss", method="edgeR")
 #'
 #' @export
 
@@ -53,6 +48,21 @@ fit_de_model <- function(
   samples="all",
   method="DESeq2"
 ) {
+
+  ## Check if edgeR and/or DESeq2 is installed.
+  method <- match.arg(str_to_lower(method), c("deseq2", "edger"))
+  
+  if (method == "deseq2") {
+    if (!requireNamespace("DESeq2", quietly = TRUE)) {
+      stop("Package \"DESeq2\" needed for this function to work. Please install it.",
+        call. = FALSE)
+    }
+  } else if (method == "edger") {
+    if (!requireNamespace("edgeR", quietly = TRUE)) {
+      stop("Package \"edgeR\" needed for this function to work. Please install it.",
+        call. = FALSE)
+    }
+  }
 
   ## Input checks.
   assert_that(is(experiment, "tsr_explorer"))
@@ -121,18 +131,18 @@ fit_de_model <- function(
 
   ## Differential Expression.
   de_model <- count_data %>%
-    DGEList(samples=sample_sheet) %>%
+    edgeR::DGEList(samples=sample_sheet) %>%
     {.[
-      filterByExpr(.,
+      edgeR::filterByExpr(.,
         design,
         min.count=3,
         min.total.count=9
       ), ,
       keep.lib.sizes=FALSE
     ]} %>%
-    calcNormFactors %>%
-    estimateDisp(design) %>%
-    glmQLFit(design)
+    edgeR::calcNormFactors(.) %>%
+    edgeR::estimateDisp(design) %>%
+    edgeR::glmQLFit(design)
 
   return(de_model)
 
@@ -157,8 +167,8 @@ fit_de_model <- function(
 
   ## Differential expression.
   de_model <- count_data %>%
-    DESeqDataSetFromMatrix(colData=sample_sheet, design=formula) %>%
-    DESeq
+    DESeq2::DESeqDataSetFromMatrix(colData=sample_sheet, design=formula) %>%
+    DESeq2::DESeq(.)
 
   return(de_model)
 }
@@ -168,7 +178,6 @@ fit_de_model <- function(
 #' Find differential TSSs or TSRs from previous edgeR or DESeq2 model.
 #'
 #' @importFrom SummarizedExperiment rowData
-#' @importFrom edgeR glmQLFTest
 #' @importFrom purrr map_dbl
 #'
 #' @inheritParams common_params
@@ -197,14 +206,13 @@ fit_de_model <- function(
 #' \code{\link{fit_de_model}} to fit DEseq2 or edgeR model to data.
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-#' TSSs <- readRDS(TSSs)
+#' data(TSSs)
 #' sample_sheet <- data.frame(
 #'   sample_name=c(
 #'     sprintf("S288C_D_%s", seq_len(3)),
 #'     sprintf("S288C_WT_%s", seq_len(3))
 #'   ),
-#'   file_1=NA, file_2=NA,
+#'   file_1=rep(NA, 6), file_2=rep(NA, 6),
 #'   condition=c(
 #'     rep("Diamide", 3),
 #'     rep("Untreated", 3)
@@ -216,23 +224,12 @@ fit_de_model <- function(
 #'   format_counts(data_type="tss")
 #'
 #' # Differential TSSs with DESeq2.
-#' tsre <- fit_de_model(tsre, ~condition, data_type="tss")
-#' differential_expression(
+#' tsre <- fit_de_model(tsre, ~condition, data_type="tss", method="edgeR")
+#' tsre <- differential_expression(
 #'   tsre, data_type="tss",
 #'   comparison_name="Diamide_vs_Untreated",
-#'   comparison_type="contrast",
-#'   comparison=c("condition", "Diamide", "Untreated")
-#' )
-#'
-#' # Differential TSRs with DESeq2.
-#' tsre <- tsre %>%
-#'   tss_clustering(threshold=3) %>%
-#'   fit_de_model(~condition, data_type="tsr")
-#' differential_expression(
-#'   tsre, data_type="tsr",
-#'   comparison_name="Diamide_vs_Untreated",
-#'   comparison_type="contrast",
-#'   comparison=c("condition", "Diamide", "Untreated")
+#'   comparison_type="coef",
+#'   comparison=2
 #' )
 #'
 #' @export
@@ -245,6 +242,14 @@ differential_expression <- function(
   comparison,
   shrink_lfc=FALSE
 ) {
+
+  ## If LFC shrinkage is true, check for apeglm.
+  if (shrink_lfc) {
+    if (!requireNamespace("apeglm", quietly = TRUE)) {
+      stop("Package \"apeglm\" needed for this function to work. Please install it.",
+        call. = FALSE)
+    }
+  }
 
   ## Input checks.
   assert_that(is(experiment, "tsr_explorer"))
@@ -276,15 +281,15 @@ differential_expression <- function(
   de_args <- list()
   if (de_method == "edger") {
     de_args[[comparison_type]] <- comparison
-    de_results <- do.call(glmQLFTest, c(list(de_model), de_args))
+    de_results <- do.call(edgeR::glmQLFTest, c(list(de_model), de_args))
   } else if (de_method == "deseq2") {
     if (shrink_lfc) {
       de_args <- list(type="apeglm", coef=comparison)
-      de_results <- do.call(lfcShrink, c(list(de_model), de_args))
+      de_results <- do.call(DESeq2::lfcShrink, c(list(de_model), de_args))
     } else {
       de_args[[comparison_type]] <- comparison
       de_args[["cooksCutoff"]] <- FALSE
-      de_results <- do.call(results, c(list(de_model), de_args))
+      de_results <- do.call(DESeq2::results, c(list(de_model), de_args))
     }
   }
 
@@ -363,40 +368,4 @@ differential_expression <- function(
     de_status := factor(de_status, levels=c("up", "unchanged", "down"))
   ]
 
-}
-
-#' DE Table
-#'
-#' Output a table with differential features
-#'
-#' @inheritParams common_params
-#' @param data_type Either 'tss', 'tsr', 'tss_features', or 'tsr_features'
-#' @param de_comparisons The name of the DE comparison
-#' @param de_type A single value or combination of 'up, 'unchanged', and/or 'down' (qq a list?)
-#'
-#' @rdname de_table-function
-#' @export
-
-de_table <- function(
-  experiment,
-  data_type=c("tss", "tsr", "tss_features", "tsr_features"),
-  de_comparisons="all",
-  de_type=c("up", "unchanged", "down")
-) {
-  ## Input checks.
-  assert_that(is(experiment, "tsr_explorer"))
-  data_type <- match.arg(str_to_lower(data_type), c("tss", "tsr", "tss_features", "tsr_features"))
-  assert_that(is.character(de_comparisons))
-  de_type <- match.arg(str_to_lower(de_type), c("up", "unchanged", "down"), several.ok=TRUE)
-
-  ## Grab tables.
-  de_tables <- experiment %>%
-    extract_de(data_type, de_comparisons) %>%
-    bind_rows
-
-  ## Filter tables.
-  de_tables <- de_tables[DE %in% de_type]
-
-  ## Return tables.
-  return(de_tables)
 }

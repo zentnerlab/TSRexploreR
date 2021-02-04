@@ -14,6 +14,8 @@
 \arguments{
 \item{count_data}{Named list of counts.}
 
+\item{data_type}{either 'tss' or 'tsr'.}
+
 \item{use_normalized}{Whether to use the normalized (TRUE) or raw (FALSE) counts.}
 
 \item{threshold}{TSSs or TSRs with a score below this value will not be considered.}

@@ -4,3 +4,6 @@ src/*.dll
 *.bedgraph
 *.bed
 
+inst/doc
+doc
+Meta

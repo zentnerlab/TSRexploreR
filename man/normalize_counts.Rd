@@ -17,12 +17,12 @@ normalize_counts(
 
 \item{data_type}{Whether TSS or gene/transcript counts should be normalized.}
 
+\item{method}{Either 'edgeR', 'DESeq2', or 'CPM'.}
+
 \item{threshold}{TSSs or TSRs with a score below this value will not be considered.}
 
 \item{n_samples}{Filter out TSSs or features not meeting the the selected threshold
 in this number of samples.}
-
-\item{normalization_method}{Either 'edgeR', 'DESeq2', or 'CPM'.}
 }
 \value{
 TSRexploreR object with normalized counts.
@@ -47,14 +47,13 @@ When clustering TSSs into TSRs using 'tss_clustering',
   both the raw and normalized counts will be stored in the new TSRs.
 }
 \examples{
-TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-TSSs <- readRDS(TSSs)
+data(TSSs)
 sample_sheet <- data.frame(
   sample_name=c(
     sprintf("S288C_D_\%s", seq_len(3)),
     sprintf("S288C_WT_\%s", seq_len(3))
   ),
-  file_1=NA, file_2=NA,
+  file_1=rep(NA, 6), file_2=rep(NA, 6),
   condition=c(
     rep("Diamide", 3),
     rep("Untreated", 3)
@@ -66,12 +65,6 @@ tsre <- TSSs \%>\%
   format_counts(data_type="tss")
 
 # CPM normalization
-\donttest{normalize_counts(tsre, method="CPM")}
-
-# DESeq2 normalization
-\donttest{normalize_counts(tsre, method="DESeq2")}
-
-# edgeR normalization
-\donttest{normalize_counts(tsre, method="edgeR")}
+tsre <- normalize_counts(tsre, method="CPM")
 
 }

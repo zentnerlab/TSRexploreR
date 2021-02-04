@@ -71,8 +71,7 @@ The gene or transcript name should be supplied to 'feature_name'.
   or the feature boundaries (if gene/transcript).
 }
 \examples{
-TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-TSSs <- readRDS(TSSs)
+data(TSSs)
 annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
 
 tsre <- TSSs[1] \%>\%
@@ -80,6 +79,8 @@ tsre <- TSSs[1] \%>\%
   format_counts(data_type="tss") \%>\%
   tss_clustering(threshold=3)
 
-\donttest{gene_tracks(tsre, "YKR076W")}
+\dontrun{
+gene_tracks(tsre, "YDR418W", samples=c(TSS="S288C_D_1", TSR="S288C_D_1"))
+}
 
 }

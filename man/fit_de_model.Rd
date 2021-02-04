@@ -36,14 +36,13 @@ This function uses either DESeq2 or edgeR depending on what is specified in 'met
   where the formula components are any columns present in the sample sheet.
 }
 \examples{
-TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-TSSs <- readRDS(TSSs)
+data(TSSs)
 sample_sheet <- data.frame(
   sample_name=c(
     sprintf("S288C_D_\%s", seq_len(3)),
     sprintf("S288C_WT_\%s", seq_len(3))
   ),
-  file_1=NA, file_2=NA,
+  file_1=rep(NA, 6), file_2=rep(NA, 6),
   condition=c(
     rep("Diamide", 3),
     rep("Untreated", 3)
@@ -55,11 +54,7 @@ tsre <- TSSs \%>\%
   format_counts(data_type="tss")
 
 # DESeq2 model for differential TSSs.
-fit_de_model(tsre, ~condtion, data_type="tss")
-
-# DESeq2 model for differential TSRs.
-tsre <- tss_clustering(tsre, threshold=3)
-fit_de_model(tsre, ~condition, data_type="tsr")
+tsre <- fit_de_model(tsre, ~condition, data_type="tss", method="edgeR")
 
 }
 \seealso{

@@ -81,14 +81,13 @@ For TSSs this can be either dominant per TSR or gene, and for TSRs
   of data.
 }
 \examples{
-TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-TSSs <- readRDS(TSSs)
+data(TSSs)
 assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
 
 tsre <- TSSs[1] \%>\%
-  tsr_explorer(genome_aassembly=assembly) \%>\%
+  tsr_explorer(genome_assembly=assembly) \%>\%
   format_counts(data_type="tss")
-\donttest{plot_sequence_logo(tsre)}
+p <- plot_sequence_logo(tsre, distance=5)
 
 }
 \seealso{

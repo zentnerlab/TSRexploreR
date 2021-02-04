@@ -40,6 +40,8 @@ plot_heatmap(
 
 \item{samples}{A vector of sample names to analyze.}
 
+\item{data_type}{Either 'tss' or 'tsr'.}
+
 \item{upstream}{Bases upstream to consider}
 
 \item{downstream}{bases downstream to consider}
@@ -141,8 +143,7 @@ An option to rasterize the heatmaps using ggrastr is provided with the 'rasteriz
   and the DPI (resolution) is controlled by 'raster_dpi'.
 }
 \examples{
-TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-TSSs <- readRDS(TSSs)
+data(TSSs)
 annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
 
 tsre <- TSSs[1] \%>\%
@@ -151,13 +152,7 @@ tsre <- TSSs[1] \%>\%
   annotate_features(data_type="tss")
 
 # TSS heatmap.
-\donttest{plot_heatmap(tsre, data_type="tss")}
-
-# TSR heatmap.
-tsre <- tsre \%>\%
-  tss_clustering(threshold=3) \%>\%
-  annotate_features(data_type="tsr")
-\donttest{plot_heatmap(tsre, data_type="tsr")}
+p <- plot_heatmap(tsre, data_type="tss")
 
 }
 \seealso{

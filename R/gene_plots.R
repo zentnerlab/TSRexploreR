@@ -28,8 +28,7 @@
 #' \code{\link{annotate_features}} to annotate the TSSs or TSRs.
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-#' TSSs <- readRDS(TSSs)
+#' data(TSSs)
 #' annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
 #'
 #' tsre <- TSSs[1] %>%
@@ -38,13 +37,7 @@
 #'   annotate_features(data_type="tss")
 #'
 #' # Detected features with TSSs plot.
-#' \donttest{plot_detected_features(tsre, data_type="tss")}
-#'
-#' # Detected features with TSRs plot.
-#' tsre <- tsre %>%
-#'   tss_clustering(threshold=3) %>%
-#'   annotate_features(data_type="tss")
-#' \donttest{plot_detected_features(tsre, data_type="tsr")}
+#' p <- plot_detected_features(tsre, data_type="tss")
 #'
 #' @export
 

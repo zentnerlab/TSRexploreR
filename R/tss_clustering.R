@@ -23,13 +23,12 @@
 #' @return TSRexploreR object with TSRs added to GRanges and data.table counts.
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-#' TSSs <- readRDS(TSSs)
+#' data(TSSs)
 #'
 #' tsre <- TSSs[1] %>%
 #'   tsr_explorer %>%
 #'   format_counts(data_type="tss")
-#' tss_clustering(tsre, threshold=3)
+#' tsre <- tss_clustering(tsre, threshold=3)
 #'
 #' @export
 
@@ -121,6 +120,7 @@ tss_clustering <- function(
 #' @param granges GRanges.
 #' @param maxdist Maximum distance to cluster.
 #' @param sthresh Singlet threshold.
+#' @param maxwidth Maximum allowable TSR width.
 
 .aggr_scores <- function(granges, maxdist, maxwidth, sthresh) {
 
@@ -172,32 +172,4 @@ tss_clustering <- function(
 
   return(overlaps)
 
-#  ## Cluster TSSs within 'max_distance'
-#  clustered <- GenomicRanges::reduce(
-#    granges, with.revmap=TRUE,
-#    min.gapwidth=maxdist + 1
-#  )
-#
-#  ## Get aggregate sum of scores.
-#  if (any(colnames(mcols(granges)) == "normalized_score")) {
-#    cluster_info <- aggregate(
-#      granges, mcols(clustered)$revmap, 
-#      score=sum(score),
-#      normalized_score=sum(normalized_score),
-#      n_unique=length(score)
-#    )
-#  } else {
-#    cluster_info <- aggregate(
-#      granges, mcols(clustered)$revmap,
-#      score=sum(score),
-#      n_unique=length(score)
-#    )
-#  }
-#
-#  clustered$score <- cluster_info$score
-#  clustered$n_unique <- cluster_info$n_unique
-#  if (any(colnames(mcols(granges)) == "normalized_score")) {
-#    clustered$normalized_score <- cluster_info$normalized_score
-#  }
-#  clustered$revmap <- NULL
 }

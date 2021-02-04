@@ -37,14 +37,13 @@ To import TSRs directly from a TSRchitect tssObject, the TSRchitect workflow mus
 first be run up to the 'determineTSR' step.
 }
 \examples{
-\donttest{
-TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-TSSs <- readRDS(TSSs)
+\dontrun{
+data(TSSs)
 
 # Export bed as example data.
 tsre <- TSSs[1] \%>\%
   tsr_explorer \%>\%
-  format_count(data_type="tss") \%>\%
+  format_counts(data_type="tss") \%>\%
   tss_clustering(threshold=3)
 tsr_export(tsre)
 
@@ -55,7 +54,7 @@ samples <- data.frame(
   file_2=NA
 )
 tsr <- tsr_explorer(sample_sheet=samples)
-tsr_import(tsr)
+tsr <- tsr_import(tsr)
 }
 
 }

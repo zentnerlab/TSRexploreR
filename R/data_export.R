@@ -32,13 +32,14 @@
 #' \code{\link{tsr_import}} to import TSRs.
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-#' TSSs <- readRDS(TSSs)
+#' data(TSSs)
 #'
+#' \dontrun{
 #' tsre <- TSSs[1] %>%
 #'   tsr_explorer %>%
-#'   format_count(data_type="tss")
-#' \donttest{tss_export(tsre)}
+#'   format_counts(data_type="tss")
+#' tss_export(tsre)
+#' }
 #'
 #' @export
 
@@ -177,14 +178,15 @@ tss_export <- function(
 #' \code{\link{tsr_import}} to import TSRs.
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-#' TSSs <- readRDS(TSSs)
+#' \dontrun{
+#' data(TSSs)
 #'
 #' tsre <- TSSs[1] %>%
 #'   tsr_explorer %>%
 #'   format_counts(data_type="tss") %>%
 #'   tss_clustering(threshold=3)
-#' \donttest{tsr_export(tsre)}
+#' tsr_export(tsre)
+#' }
 #'
 #' @export
 
