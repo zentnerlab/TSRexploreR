@@ -246,8 +246,8 @@ get_shifting_results <- function(
   assert_that(is.character(samples))
 
   ## Get sample names.
-  if (samples == "all") {
-    samples <- names(samples@shifting$results)
+  if (all(samples == "all")) {
+    samples <- names(experiment@shifting$results)
   }
 
   ## Get shifting results.
@@ -361,7 +361,7 @@ get_diff_results <- function(
   assert_that(is.character(samples))
 
   ## Get the sample names.
-  if (samples == "all") {
+  if (all(samples == "all")) {
     samples <- switch(
       data_type,
       "tss"=names(experiment@diff_features$TSSs$results),
