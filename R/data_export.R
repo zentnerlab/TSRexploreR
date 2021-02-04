@@ -34,7 +34,7 @@
 #' @examples
 #' data(TSSs)
 #'
-#' \donttest{
+#' \dontrun{
 #' tsre <- TSSs[1] %>%
 #'   tsr_explorer %>%
 #'   format_counts(data_type="tss")
@@ -178,7 +178,7 @@ tss_export <- function(
 #' \code{\link{tsr_import}} to import TSRs.
 #'
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' data(TSSs)
 #'
 #' tsre <- TSSs[1] %>%

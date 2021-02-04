@@ -30,13 +30,13 @@
 #' \code{\link{tsr_export}} to export TSRs.
 #'
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' data(TSSs)
 #'
 #' # Export bedgraphs as example data.
 #' tsre <- TSSs[1] %>%
 #'   tsr_explorer %>%
-#'   format_count(data_type="tss")
+#'   format_counts(data_type="tss")
 #' tss_export(tsre)
 #'
 #' # Import the previously created bedgraphs.
@@ -269,13 +269,13 @@ tss_import <- function(
 #' \code{\link{tsr_export}} to export TSRs.
 #'
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' data(TSSs)
 #'
 #' # Export bed as example data.
 #' tsre <- TSSs[1] %>%
 #'   tsr_explorer %>%
-#'   format_count(data_type="tss") %>%
+#'   format_counts(data_type="tss") %>%
 #'   tss_clustering(threshold=3)
 #' tsr_export(tsre)
 #'

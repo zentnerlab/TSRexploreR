@@ -37,13 +37,13 @@ To import TSRs directly from a TSRchitect tssObject, the TSRchitect workflow mus
 first be run up to the 'determineTSR' step.
 }
 \examples{
-\donttest{
+\dontrun{
 data(TSSs)
 
 # Export bed as example data.
 tsre <- TSSs[1] \%>\%
   tsr_explorer \%>\%
-  format_count(data_type="tss") \%>\%
+  format_counts(data_type="tss") \%>\%
   tss_clustering(threshold=3)
 tsr_export(tsre)
 
