@@ -16,7 +16,7 @@
 #' data(TSSs)
 #'
 #' tsre <- tsr_explorer(TSSs[1])
-#' get_granges(tsre)
+#' tsre <- get_granges(tsre)
 #'
 #' @export
 
@@ -71,7 +71,7 @@ get_granges <- function(
 #'
 #' tsre <- tsr_explorer(TSSs[1]) %>%
 #'   format_counts(data_type="tss")
-#' get_counts(tsre)
+#' tsre <- get_counts(tsre)
 #'
 #' @export
 
@@ -154,7 +154,7 @@ get_annotation <- function(
 #' @examples
 #' assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
 #' tsre <- tsr_explorer(genome_assembly=assembly)
-#' get_assembly(tsre)
+#' tsre <- get_assembly(tsre)
 #'
 #' @export
 
@@ -186,7 +186,7 @@ get_assembly <- function(
 #'   condition=rep("Untreated", 3)
 #' )
 #' tsre <- tsr_explorer(sample_sheet=sample_sheet)
-#' get_sample_sheet(tsre)
+#' tsre <- get_sample_sheet(tsre)
 #'
 #' @export
 
@@ -232,7 +232,7 @@ get_sample_sheet <- function(
 #'     comparison_name="Untreated_vs_Diamide",
 #'     max_distance = 100, min_threshold = 10, n_resamples = 1000L
 #'   )
-#' \donttest{get_shifting_results(tsre)}
+#' tsre <- get_shifting_results(tsre)
 #'
 #' @export
 
@@ -282,8 +282,8 @@ get_shifting_results <- function(
 #' tsre <- TSSs %>%
 #'   tsr_explorer(sample_sheet=sample_sheet) %>%
 #'   format_counts(data_type="tss") %>%
-#'   fit_de_model(~condition, data_type="tss")
-#' get_diff_model(tsre, data_type="tss")
+#'   fit_de_model(~condition, data_type="tss", method="edgeR")
+#' tsre <- get_diff_model(tsre, data_type="tss")
 #'
 #' @export
 
@@ -335,14 +335,14 @@ get_diff_model <- function(
 #' tsre <- TSSs %>%
 #'   tsr_explorer(sample_sheet=sample_sheet) %>%
 #'   format_counts(data_type="tss") %>%
-#'   fit_de_model(~condition, data_type="tss") %>%
+#'   fit_de_model(~condition, data_type="tss", method="edgeR") %>%
 #'   differential_expression(
 #'     data_type="tss",
 #'     comparison_name="Diamide_vs_Untreated",
-#'     comparison_type="contrast",
-#'     comparison=c("condition", "Diamide", "Untreated")
+#'     comparison_type="coef",
+#'     comparison=2
 #'   )
-#' get_diff_results(tsre, data_type="tss")
+#' tsre <- get_diff_results(tsre, data_type="tss")
 #'
 #' @export
 

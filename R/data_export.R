@@ -34,10 +34,12 @@
 #' @examples
 #' data(TSSs)
 #'
+#' \donttest{
 #' tsre <- TSSs[1] %>%
 #'   tsr_explorer %>%
 #'   format_counts(data_type="tss")
-#' \donttest{tss_export(tsre)}
+#' tss_export(tsre)
+#' }
 #'
 #' @export
 
@@ -176,13 +178,15 @@ tss_export <- function(
 #' \code{\link{tsr_import}} to import TSRs.
 #'
 #' @examples
+#' \donttest{
 #' data(TSSs)
 #'
 #' tsre <- TSSs[1] %>%
 #'   tsr_explorer %>%
 #'   format_counts(data_type="tss") %>%
 #'   tss_clustering(threshold=3)
-#' \donttest{tsr_export(tsre)}
+#' tsr_export(tsre)
+#' }
 #'
 #' @export
 

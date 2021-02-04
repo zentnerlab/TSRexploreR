@@ -53,11 +53,6 @@ tsre <- TSSs[1] \%>\%
   format_counts(data_type="tss")
 
 # Annotating TSSs.
-annotate_features(tsre, data_type="tss")
-
-# Annotating TSRs
-tsre \%>\%
-  tss_clustering(threshold=3) \%>\%
-  annotate_features(data_type="tsr")
+tsre <- annotate_features(tsre, data_type="tss")
 
 }

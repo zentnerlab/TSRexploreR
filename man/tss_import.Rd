@@ -55,7 +55,7 @@ samples <- data.frame(
   file_2="S288C_D_1_min.bedgraph"
 )
 tss <- tsr_explorer(sample_sheet=samples)
-tss_import(tss)
+tss <- tss_import(tss)
 }
 
 }

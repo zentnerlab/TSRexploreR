@@ -37,13 +37,7 @@
 #'   annotate_features(data_type="tss")
 #'
 #' # Detected features with TSSs plot.
-#' \donttest{plot_detected_features(tsre, data_type="tss")}
-#'
-#' # Detected features with TSRs plot.
-#' tsre <- tsre %>%
-#'   tss_clustering(threshold=3) %>%
-#'   annotate_features(data_type="tss")
-#' \donttest{plot_detected_features(tsre, data_type="tsr")}
+#' p <- plot_detected_features(tsre, data_type="tss")
 #'
 #' @export
 

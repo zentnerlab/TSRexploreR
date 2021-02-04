@@ -31,6 +31,7 @@ If '.samples' is specified, only the given samples will be used for aggregate
   calculation and ordering.
 }
 \examples{
+\donttest{
 data(TSSs)
 assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
 
@@ -40,7 +41,8 @@ tsre <- TSSs[1] \%>\%
 
 # Sequence base color plot sorted by descending score.
 conditions <- conditionals(data_ordering=ordering(desc(score)))
-\donttest{plot_sequence_colormap(tsre, data_conditions=conditions)}
+p <- plot_sequence_colormap(tsre, data_conditions=conditions)
+}
 
 }
 \seealso{

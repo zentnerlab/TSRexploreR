@@ -40,26 +40,14 @@
 #'
 #' # Differential TSS MA plot.
 #' diff_tss <- tsre %>%
-#'   fit_de_model(data_type="tss", formula= ~condition) %>%
+#'   fit_de_model(data_type="tss", formula= ~condition, method="edgeR") %>%
 #'   differential_expression(
 #'     data_type="tss",
 #'     comparison_name="Diamide_vs_Untreated",
-#'     comparison_type="name",
-#'     comparison="condition_Untreated_vs_Diamide"
+#'     comparison_type="coef",
+#'     comparison=2
 #'   )
-#' \donttest{plot_ma(diff_tss, data_type="tss")}
-#'
-#' # Differential TSR MA plot.
-#' diff_tsr <- tsre %>%
-#'   tss_clustering(threshold=3) %>%
-#'   fit_de_model(data_type="tsr", formula= ~condition) %>%
-#'   differential_expression(
-#'     data_type="tsr",
-#'     comparison_name="Diamide_vs_Untreated",
-#'     comparison_type="name",
-#'     comparison="condition_Untreated_vs_Diamide"
-#'   )
-#' \donttest{plot_ma(diff_tsr, data_type="tsr")}
+#' p <- plot_ma(diff_tss, data_type="tss")
 #'
 #' @export
 
@@ -149,26 +137,14 @@ plot_ma <- function(
 #'
 #' # Differential TSS volcano plot.
 #' diff_tss <- tsre %>%
-#'   fit_de_model(data_type="tss", formula= ~condition) %>%
+#'   fit_de_model(data_type="tss", formula= ~condition, method="edgeR") %>%
 #'   differential_expression(
 #'     data_type="tss",
 #'     comparison_name="Diamide_vs_Untreated",
-#'     comparison_type="name",
-#'     comparison="condition_Untreated_vs_Diamide"
+#'     comparison_type="coef",
+#'     comparison=2
 #'   )
-#' \donttest{plot_volcano(diff_tss, data_type="tss")}
-#'
-#' # Differential TSR volcano plot.
-#' diff_tsr <- tsre %>%
-#'   tss_clustering(threshold=3) %>%
-#'   fit_de_model(data_type="tsr", formula= ~condition) %>%
-#'   differential_expression(
-#'     data_type="tsr",
-#'     comparison_name="Diamide_vs_Untreated",
-#'     comparison_type="name",
-#'     comparison="condition_Untreated_vs_Diamide"
-#'   )
-#' \donttest{plot_volcano(diff_tsr, data_type="tsr")}
+#' p <- plot_volcano(diff_tss, data_type="tss")
 #'
 #' @export
 
@@ -278,27 +254,14 @@ plot_volcano <- function(
 #'
 #' # Differential TSS table.
 #' diff_tss <- tsre %>%
-#'   fit_de_model(data_type="tss", formula= ~condition) %>%
+#'   fit_de_model(data_type="tss", formula= ~condition, method="edgeR") %>%
 #'   differential_expression(
 #'     data_type="tss",
 #'     comparison_name="Diamide_vs_Untreated",
-#'     comparison_type="name",
-#'     comparison="condition_Untreated_vs_Diamide"
+#'     comparison_type="coef",
+#'     comparison=2
 #'   )
-#' export_for_enrichment(diff_tss, data_type="tss")
-#'
-#' # Differential TSR table.
-#' diff_tsr <- tsre %>%
-#'   tss_clustering(threshold=3) %>%
-#'   annotate_features(data_type="tsr") %>%
-#'   fit_de_model(data_type="tsr", formula= ~condition) %>%
-#'   differential_expression(
-#'     data_type="tsr",
-#'     comparison_name="Diamide_vs_Untreated",
-#'     comparison_type="name",
-#'     comparison="condition_Untreated_vs_Diamide"
-#'   )
-#' export_for_enrichment(diff_tsr, data_type="tsr")
+#' diff_tss <- export_for_enrichment(diff_tss, data_type="tss")
 #'
 #' @export
 
@@ -396,26 +359,14 @@ export_for_enrichment <- function(
 #'
 #' # Differential TSS quantities plot.
 #' diff_tss <- tsre %>%
-#'   fit_de_model(data_type="tss", formula= ~condition) %>%
+#'   fit_de_model(data_type="tss", formula= ~condition, method="edgeR") %>%
 #'   differential_expression(
 #'     data_type="tss",
 #'     comparison_name="Diamide_vs_Untreated",
-#'     comparison_type="name",
-#'     comparison="condition_Untreated_vs_Diamide"
+#'     comparison_type="coef",
+#'     comparison=2
 #'   )
-#' \donttest{plot_num_de(diff_tss, data_type="tss")}
-#'
-#' # Differential TSR quantities plot.
-#' diff_tsr <- tsre %>%
-#'   tss_clustering(threshold=3) %>%
-#'   fit_de_model(data_type="tsr", formula= ~condition) %>%
-#'   differential_expression(
-#'     data_type="tsr",
-#'     comparison_name="Diamide_vs_Untreated",
-#'     comparison_type="name",
-#'     comparison="condition_Untreated_vs_Diamide"
-#'   )
-#' \donttest{plot_num_de(diff_tsr, data_type="tsr")}
+#' p <- plot_num_de(diff_tss, data_type="tss")
 #'
 #' @export
 

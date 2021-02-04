@@ -43,19 +43,19 @@
 #'
 #' # Sequence logo of TSSs from peaked TSRs.
 #' conditions <- conditionals(shape_class == "peaked")
-#' \donttest{plot_sequence_logo(tsre, data_conditions=conditions)}
+#' p <- plot_sequence_logo(tsre, data_conditions=conditions)
 #'
 #' # Sequence base color plot sorted by descending score.
 #' conditions <- conditionals(data_ordering=ordering(desc(score)))
-#' \donttest{plot_sequence_colormap(tsre, data_conditions=conditions)}
+#' p <- plot_sequence_colormap(tsre, data_conditions=conditions)
 #'
 #' # Sequence logo split by TSS score quantile.
 #' conditions <- conditionals(data_quantiling=quantiling(score, n=5))
-#' \donttest{plot_sequence_logo(tsre, data_conditions=conditions)}
+#' p <- plot_sequence_logo(tsre, data_conditions=conditions)
 #'
 #' # Sequence logo split by class of TSR.
 #' conditions <- conditionals(data_grouping=shape_class)
-#' \donttest{plot_sequence_logo(tsre, data_conditions=conditions)}
+#' p <- plot_sequence_logo(tsre, data_conditions=conditions)
 #'
 #' @seealso
 #' \code{\link{ordering}} for ordering information.
@@ -134,6 +134,7 @@ conditionals <- function(
 #'   of 'conditionals'.
 #'
 #' @examples
+#' \donttest{
 #' data(TSSs)
 #' assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
 #'
@@ -143,7 +144,8 @@ conditionals <- function(
 #'
 #' # Sequence base color plot sorted by descending score.
 #' conditions <- conditionals(data_ordering=ordering(desc(score)))
-#' \donttest{plot_sequence_colormap(tsre, data_conditions=conditions)}
+#' p <- plot_sequence_colormap(tsre, data_conditions=conditions)
+#' }
 #'
 #' @seealso
 #' \code{\link{conditionals}} For more information on advanced data conditions.
@@ -198,6 +200,7 @@ ordering <- function(
 #'   of 'conditionals'.
 #'
 #' @examples
+#' \donttest{
 #' data(TSSs)
 #' assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
 #'
@@ -207,7 +210,8 @@ ordering <- function(
 #'
 #' # Sequence base color plot quantiled by score.
 #' conditions <- conditionals(data_quantiling=quantiling(score, n=5))
-#' \donttest{plot_sequence_colormap(tsre, data_conditions=conditions)}
+#' p <- plot_sequence_colormap(tsre, data_conditions=conditions)
+#' }
 #'
 #' @seealso
 #' \code{\link{conditionals}} For more information on advanced data conditions.

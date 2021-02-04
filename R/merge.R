@@ -35,8 +35,8 @@
 #' @examples
 #' data(TSSs)
 #' sample_sheet <- data.frame(
-#'   sample_name=sprintf("S288C_D_%s", seq_len(3)),
-#'   file_1=rep(NA, 3), file_2=rep(NA, 3),
+#'   sample_name=sprintf("S288C_D_%s", seq_len(2)),
+#'   file_1=rep(NA, 2), file_2=rep(NA, 2),
 #'   condition="Diamide"
 #' )
 #' assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
@@ -46,11 +46,7 @@
 #'   format_counts(data_type="tss")
 #'
 #' # Merge TSSs by condition column.
-#' merge_samples(tsre, data_type="tss", merge_group="condition")
-#'
-#' # Merge TSRs by condition column.
-#' tsre <- tss_clustering(tsre, threshold=3)
-#' merge_samples(tsre, data_type="tsr", merge_group="condition")
+#' tsre <- merge_samples(tsre, data_type="tss", merge_group="condition")
 #'
 #' @export
 

@@ -36,13 +36,13 @@ sample_sheet <- data.frame(
 tsre <- TSSs \%>\%
   tsr_explorer(sample_sheet=sample_sheet) \%>\%
   format_counts(data_type="tss") \%>\%
-  fit_de_model(~condition, data_type="tss") \%>\%
+  fit_de_model(~condition, data_type="tss", method="edgeR") \%>\%
   differential_expression(
     data_type="tss",
     comparison_name="Diamide_vs_Untreated",
-    comparison_type="contrast",
-    comparison=c("condition", "Diamide", "Untreated")
+    comparison_type="coef",
+    comparison=2
   )
-get_diff_results(tsre, data_type="tss")
+tsre <- get_diff_results(tsre, data_type="tss")
 
 }

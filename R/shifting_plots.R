@@ -48,7 +48,7 @@
 #'     comparison_name="Untreated_vs_Diamide",
 #'     max_distance = 100, min_threshold = 10, n_resamples = 1000L
 #'   )
-#' \donttest{plot_shift_rank(tsre)}
+#' p <- plot_shift_rank(tsre)
 #'
 #' @export
 
@@ -153,7 +153,7 @@ plot_shift_rank <- function(
 #'     comparison_name="Untreated_vs_Diamide",
 #'     max_distance = 100, min_threshold = 10, n_resamples = 1000L
 #'   )
-#' \donttest{plot_shift_count(tsre)}
+#' p <- plot_shift_count(tsre)
 #'
 #' @export
 

@@ -41,11 +41,7 @@
 #'   normalize_counts(data_type="tss", method="CPM")
 #'
 #' # TSS correlation.
-#' \donttest{plot_correlation(tsre, data_type="tss")}
-#'
-#' # TSR correlation.
-#' tsre <- tss_clustering(tsre, threshold=3)
-#' \donttest{plot_correlation(tsre, data_type="tsr")}
+#' p <- plot_correlation(tsre, data_type="tss")
 #'
 #' @seealso \code{\link{normalize_counts}} for TSS and TSR normalization.
 #'

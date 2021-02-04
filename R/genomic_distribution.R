@@ -39,13 +39,7 @@
 #'   annotate_features(data_type="tss")
 #'
 #' # TSS genomic distribution plot.
-#' \donttest{plot_genomic_distribution(tsre, data_type="tss")}
-#'
-#' # TSR genomic distribution plot.
-#' tsre <- tsre %>%
-#'   tss_clustering(threshold=3) %>%
-#'   annotate_features(data_type="tsr")
-#' \donttest{plot_genomic_distribution(tsre, data_type="tsr")}
+#' p <- plot_genomic_distribution(tsre, data_type="tss")
 #'
 #' @export 
 

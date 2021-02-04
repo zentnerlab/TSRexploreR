@@ -35,6 +35,6 @@ tsre <- TSSs[1] \%>\%
   format_counts(data_type="tss") \%>\%
   tss_clustering(threshold=3) \%>\%
   associate_with_tsr
-tsr_metrics(tsre)
+tsre <- tsr_metrics(tsre)
 
 }

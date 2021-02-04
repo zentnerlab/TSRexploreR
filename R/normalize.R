@@ -46,13 +46,7 @@
 #'   format_counts(data_type="tss")
 #'
 #' # CPM normalization
-#' \donttest{normalize_counts(tsre, method="CPM")}
-#'
-#' # DESeq2 normalization
-#' \donttest{normalize_counts(tsre, method="DESeq2")}
-#'
-#' # edgeR normalization
-#' \donttest{normalize_counts(tsre, method="edgeR")}
+#' tsre <- normalize_counts(tsre, method="CPM")
 #'
 #' @export
 

@@ -41,7 +41,7 @@
 #'
 #' tsre <- tsr_explorer(sample_sheet=samples, genome_assembly=assembly) %>%
 #'   import_bams(paired=TRUE)
-#' \donttest{softclip_composition(tsre)}
+#' p <- softclip_composition(tsre)
 #'
 #' @export
 
@@ -165,7 +165,7 @@ softclip_composition <- function(
 #'
 #' tsre <- tsr_explorer(sample_sheet=samples, genome_assembly=assembly) %>%
 #'   import_bams(paired=TRUE)
-#' \donttest{softclip_histogram(tsre)}
+#' p <- softclip_histogram(tsre)
 #'
 #' @export
 

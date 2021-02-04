@@ -59,7 +59,7 @@ samples <- data.frame(sample_name="S288C", file_1=bam_file, file_2=NA)
 
 tsre <- tsr_explorer(sample_sheet=samples, genome_assembly=assembly) \%>\%
   import_bams(paired=TRUE)
-\donttest{softclip_composition(tsre)}
+p <- softclip_composition(tsre)
 
 }
 \seealso{

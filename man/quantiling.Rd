@@ -42,6 +42,7 @@ If 'samples' is specified, only the given samples will be used for aggregate
   ascending (FALSE) order, and 'n' allows specification of number of quantiles.
 }
 \examples{
+\donttest{
 data(TSSs)
 assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
 
@@ -51,7 +52,8 @@ tsre <- TSSs[1] \%>\%
 
 # Sequence base color plot quantiled by score.
 conditions <- conditionals(data_quantiling=quantiling(score, n=5))
-\donttest{plot_sequence_colormap(tsre, data_conditions=conditions)}
+p <- plot_sequence_colormap(tsre, data_conditions=conditions)
+}
 
 }
 \seealso{

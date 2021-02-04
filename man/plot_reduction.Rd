@@ -54,10 +54,6 @@ tsre <- TSSs \%>\%
   format_counts(data_type="tss")
 
 # TSS PCA plot.
-\donttest{plot_reduction(tsre, data_type="tss")}
-
-# TSR PCA plot.
-tsre <- tss_clustering(tsre, threshold=3)
-\donttest{plot_reduction(tsre, data_type="tsr")}
+p <- plot_reduction(tsre, data_type="tss")
 
 }

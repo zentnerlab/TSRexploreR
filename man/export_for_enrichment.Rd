@@ -75,27 +75,14 @@ tsre <- TSSs \%>\%
 
 # Differential TSS table.
 diff_tss <- tsre \%>\%
-  fit_de_model(data_type="tss", formula= ~condition) \%>\%
+  fit_de_model(data_type="tss", formula= ~condition, method="edgeR") \%>\%
   differential_expression(
     data_type="tss",
     comparison_name="Diamide_vs_Untreated",
-    comparison_type="name",
-    comparison="condition_Untreated_vs_Diamide"
+    comparison_type="coef",
+    comparison=2
   )
-export_for_enrichment(diff_tss, data_type="tss")
-
-# Differential TSR table.
-diff_tsr <- tsre \%>\%
-  tss_clustering(threshold=3) \%>\%
-  annotate_features(data_type="tsr") \%>\%
-  fit_de_model(data_type="tsr", formula= ~condition) \%>\%
-  differential_expression(
-    data_type="tsr",
-    comparison_name="Diamide_vs_Untreated",
-    comparison_type="name",
-    comparison="condition_Untreated_vs_Diamide"
-  )
-export_for_enrichment(diff_tsr, data_type="tsr")
+diff_tss <- export_for_enrichment(diff_tss, data_type="tss")
 
 }
 \seealso{

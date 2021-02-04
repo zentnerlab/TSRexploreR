@@ -28,7 +28,7 @@
 #' tsre <- TSSs[1] %>%
 #'   tsr_explorer %>%
 #'   format_counts(data_type="tss")
-#' tss_clustering(tsre, threshold=3)
+#' tsre <- tss_clustering(tsre, threshold=3)
 #'
 #' @export
 

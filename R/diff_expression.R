@@ -37,11 +37,7 @@
 #'   format_counts(data_type="tss")
 #'
 #' # DESeq2 model for differential TSSs.
-#' fit_de_model(tsre, ~condition, data_type="tss")
-#'
-#' # DESeq2 model for differential TSRs.
-#' tsre <- tss_clustering(tsre, threshold=3)
-#' fit_de_model(tsre, ~condition, data_type="tsr")
+#' tsre <- fit_de_model(tsre, ~condition, data_type="tss", method="edgeR")
 #'
 #' @export
 
@@ -228,23 +224,12 @@ fit_de_model <- function(
 #'   format_counts(data_type="tss")
 #'
 #' # Differential TSSs with DESeq2.
-#' tsre <- fit_de_model(tsre, ~condition, data_type="tss")
-#' differential_expression(
+#' tsre <- fit_de_model(tsre, ~condition, data_type="tss", method="edgeR")
+#' tsre <- differential_expression(
 #'   tsre, data_type="tss",
 #'   comparison_name="Diamide_vs_Untreated",
-#'   comparison_type="contrast",
-#'   comparison=c("condition", "Diamide", "Untreated")
-#' )
-#'
-#' # Differential TSRs with DESeq2.
-#' tsre <- tsre %>%
-#'   tss_clustering(threshold=3) %>%
-#'   fit_de_model(~condition, data_type="tsr")
-#' differential_expression(
-#'   tsre, data_type="tsr",
-#'   comparison_name="Diamide_vs_Untreated",
-#'   comparison_type="contrast",
-#'   comparison=c("condition", "Diamide", "Untreated")
+#'   comparison_type="coef",
+#'   comparison=2
 #' )
 #'
 #' @export

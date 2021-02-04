@@ -71,7 +71,7 @@ tsre <- TSSs[1] \%>\%
   tsr_explorer(genome_annotation=annotation) \%>\%
   format_counts(data_type="tss") \%>\%
   annotate_features(data_type="tss")
-\donttest{plot_threshold_exploration(tsre)}
+p <- plot_threshold_exploration(tsre)
 
 }
 \seealso{

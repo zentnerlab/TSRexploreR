@@ -53,10 +53,12 @@ If 'diff_tss' is TRUE, only differential TSSs will be output.
 \examples{
 data(TSSs)
 
+\donttest{
 tsre <- TSSs[1] \%>\%
   tsr_explorer \%>\%
   format_counts(data_type="tss")
-\donttest{tss_export(tsre)}
+tss_export(tsre)
+}
 
 }
 \seealso{

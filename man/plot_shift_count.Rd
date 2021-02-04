@@ -66,7 +66,7 @@ tsre <- TSSs \%>\%
     comparison_name="Untreated_vs_Diamide",
     max_distance = 100, min_threshold = 10, n_resamples = 1000L
   )
-\donttest{plot_shift_count(tsre)}
+p <- plot_shift_count(tsre)
 
 }
 \seealso{

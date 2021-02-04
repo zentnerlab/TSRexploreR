@@ -24,7 +24,7 @@ data(TSSs)
 
 tsre <- tsr_explorer(TSSs[1]) \%>\%
   format_counts(data_type="tss")
-get_counts(tsre)
+tsre <- get_counts(tsre)
 
 }
 \seealso{

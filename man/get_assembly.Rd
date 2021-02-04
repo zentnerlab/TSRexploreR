@@ -18,7 +18,7 @@ Extract the genome assembly.
 \examples{
 assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
 tsre <- tsr_explorer(genome_assembly=assembly)
-get_assembly(tsre)
+tsre <- get_assembly(tsre)
 
 }
 \seealso{

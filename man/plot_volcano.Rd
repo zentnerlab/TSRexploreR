@@ -61,26 +61,14 @@ tsre <- TSSs \%>\%
 
 # Differential TSS volcano plot.
 diff_tss <- tsre \%>\%
-  fit_de_model(data_type="tss", formula= ~condition) \%>\%
+  fit_de_model(data_type="tss", formula= ~condition, method="edgeR") \%>\%
   differential_expression(
     data_type="tss",
     comparison_name="Diamide_vs_Untreated",
-    comparison_type="name",
-    comparison="condition_Untreated_vs_Diamide"
+    comparison_type="coef",
+    comparison=2
   )
-\donttest{plot_volcano(diff_tss, data_type="tss")}
-
-# Differential TSR volcano plot.
-diff_tsr <- tsre \%>\%
-  tss_clustering(threshold=3) \%>\%
-  fit_de_model(data_type="tsr", formula= ~condition) \%>\%
-  differential_expression(
-    data_type="tsr",
-    comparison_name="Diamide_vs_Untreated",
-    comparison_type="name",
-    comparison="condition_Untreated_vs_Diamide"
-  )
-\donttest{plot_volcano(diff_tsr, data_type="tsr")}
+p <- plot_volcano(diff_tss, data_type="tss")
 
 }
 \seealso{

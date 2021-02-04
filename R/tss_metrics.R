@@ -39,14 +39,7 @@
 #'
 #' # Dominant TSS per gene.
 #' tsre <- annotate_features(tsre, data_type="tss")
-#' \donttest{mark_dominant(tsre, data_type="tss", mark_per="gene")}
-#'
-#' # Dominant TSS per TSR.
-#' \donttest{mark_dominant(tsre, data_type="tss")}
-#'
-#' # Dominant TSR per gene.
-#' tsre <- annotate_features(tsre, data_type="tsr")
-#' \donttest{mark_dominant(tsre, data_type="tsr")}
+#' tsre <- mark_dominant(tsre, data_type="tss", mark_per="gene")
 #'
 #' @export
 

@@ -188,7 +188,7 @@ import_bams <- function(
 #' samples <- data.frame(sample_name="S288C", file_1=bam_file, file_2=NA)
 #'
 #' tsre <- tsr_explorer(sample_sheet=samples, genome_assembly=assembly)
-#' tsre %>% 
+#' tsre <- tsre %>% 
 #'   import_bams(paired=TRUE) %>%
 #'   tss_aggregate
 #'

@@ -25,7 +25,7 @@
 #' @examples
 #' data(TSSs)
 #'
-#' TSSs[1] %>%
+#' tsre <- TSSs[1] %>%
 #'   tsr_explorer %>%
 #'   format_counts(data_type="tss") %>%
 #'   tss_clustering(threshold=3) %>%

@@ -72,6 +72,6 @@ tsre <- TSSs[1] \%>\%
   tsr_explorer(genome_assembly=assembly) \%>\%
   format_counts(data_type="tss")
 
-\donttest{plot_dinucleotide_frequencies(tsre)}
+p <- plot_dinucleotide_frequencies(tsre)
 
 }

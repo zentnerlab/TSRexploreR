@@ -38,6 +38,6 @@ tsre <- TSSs \%>\%
     comparison_name="Untreated_vs_Diamide",
     max_distance = 100, min_threshold = 10, n_resamples = 1000L
   )
-\donttest{get_shifting_results(tsre)}
+tsre <- get_shifting_results(tsre)
 
 }

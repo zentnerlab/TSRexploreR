@@ -40,7 +40,7 @@ annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexplore
 tsre <- TSSs[1] \%>\%
   tsr_explorer(genome_annotation=annotation) \%>\%
   format_counts(data_type="tss")
-apply_threshold(tsre, threshold=3)
+tsre <- apply_threshold(tsre, threshold=3)
 
 }
 \seealso{

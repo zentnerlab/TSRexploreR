@@ -71,7 +71,7 @@ tsre <- TSSs[1] \%>\%
   tsr_explorer \%>\%
   format_counts(data_type="tss") \%>\%
   tss_clustering(threshold=3)
-\donttest{plot_tsr_metric(tsre, "width")}
+p <- plot_tsr_metric(tsre, "width")
 
 }
 \seealso{

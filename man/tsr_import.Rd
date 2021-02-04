@@ -54,7 +54,7 @@ samples <- data.frame(
   file_2=NA
 )
 tsr <- tsr_explorer(sample_sheet=samples)
-tsr_import(tsr)
+tsr <- tsr_import(tsr)
 }
 
 }

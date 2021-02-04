@@ -82,7 +82,7 @@ tsre <- TSSs \%>\%
   merge_samples(data_type = "tss", merge_group="condition") \%>\%
   merge_samples(data_type = "tsr", merge_group="condition")
 
-tss_shift(
+tsre <- tss_shift(
   tsre,
   sample_1=c(TSS="S288C_WT_1", TSR="S288C_WT_1"),
   sample_2=c(TSS="S288C_D_1", TSR="S288C_D_1"),

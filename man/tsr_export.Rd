@@ -46,13 +46,15 @@ save the files to the working directory by default.
 If 'diff_tsr' is TRUE, only differential TSRs will be output.
 }
 \examples{
+\donttest{
 data(TSSs)
 
 tsre <- TSSs[1] \%>\%
   tsr_explorer \%>\%
   format_counts(data_type="tss") \%>\%
   tss_clustering(threshold=3)
-\donttest{tsr_export(tsre)}
+tsr_export(tsre)
+}
 
 }
 \seealso{

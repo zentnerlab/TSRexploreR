@@ -147,7 +147,7 @@
 #' tsre <- TSSs[1] %>%
 #'   tsr_explorer(genome_assembly=assembly) %>%
 #'   format_counts(data_type="tss")
-#' \donttest{plot_sequence_logo(tsre)}
+#' p <- plot_sequence_logo(tsre, distance=5)
 #'
 #' @export
 
@@ -308,14 +308,13 @@ plot_sequence_logo <- function(
 #' \code{\link{plot_sequence_logo}} to plot a sequence logo.
 #'
 #' @examples
-#' library("magrittr")
 #' data(TSSs)
 #' assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
 #'
 #' tsre <- TSSs[1] %>%
 #'   tsr_explorer(genome_assembly=assembly) %>%
 #'   format_counts(data_type="tss")
-#' \donttest{plot_sequence_colormap(tsre)}
+#' p <- plot_sequence_colormap(tsre, distance=5)
 #'
 #' @export
 
