@@ -15,15 +15,17 @@ tsr_explorer(
 )
 }
 \arguments{
-\item{TSSs}{Named list of TSS GRanges}
+\item{TSSs}{Named list of TSS GRanges.}
 
-\item{TSRs}{Named list of TSR GRanges}
+\item{TSRs}{Named list of TSR GRanges.}
 
-\item{sample_sheet}{Sample sheet}
+\item{sample_sheet}{A sample sheet data.frame or tab delimited file.
+Must have the columns 'sample_name', 'file_1', and 'file_2'.
+Additional meta-data columns can be added with sample information such as condition and batch.}
 
-\item{genome_annotation}{Genome annotation}
+\item{genome_annotation}{Genome annotation in GTF, GFF3, or TxDb format.}
 
-\item{genome_assembly}{Genome assembly}
+\item{genome_assembly}{Genome assembly in FASTA or BSgenome format.}
 }
 \value{
 A TSRexploreR object containing TSSs and/or TSRs
@@ -56,4 +58,9 @@ start regions (TSRs).
 data(TSSs)
 exp <- tsr_explorer(TSSs)
 
+}
+\seealso{
+\code{\link{import_bams}} to import BAM files.
+\code{\link{tss_import}} to import TSSs in various formats.
+\code{\link{tsr_import}} to import TSRs in various formats.
 }

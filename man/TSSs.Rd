@@ -8,7 +8,7 @@
 A list of GRanges:
 }
 \source{
-\link{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE142524}
+\href{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE142524}{GSE14254}
 }
 \usage{
 TSSs

@@ -4,5 +4,5 @@
 #' as determined by STRIPE-seq.
 #'
 #' @format A list of GRanges:
-#' @source \link{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE142524}
+#' @source \href{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE142524}{GSE14254}
 "TSSs"

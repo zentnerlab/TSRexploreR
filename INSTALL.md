@@ -19,6 +19,7 @@ conda info --envs
 Now create and activate the TSRexploreR environment:
 ```bash
 conda create -n TSRexploreR -y -c conda-forge -c bioconda \
+qpdf \
 r-tidyverse \
 r-data.table \
 r-devtools \

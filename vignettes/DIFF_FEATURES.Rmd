@@ -37,6 +37,10 @@ sample_sheet <- data.frame(
   file_1=rep(NA, 6), file_2=rep(NA, 6),
   condition=c(rep("Diamide", 3), rep("Untreated", 3))
 )
+sample_sheet <- dplyr::mutate(
+  sample_sheet,
+  condition=forcats::fct_relevel(condition, "Untreated")
+)
 
 # Create TSRexploreR object.
 exp <- tsr_explorer(TSSs, sample_sheet=sample_sheet, genome_annotation=annotation)
@@ -51,7 +55,7 @@ but all analysis and plots can be generated for the different treatment conditio
 
 ```{r message=FALSE}
 exp <- format_counts(exp, data_type="tss") %>%
-  normalize_counts(data_type="tss") %>%
+  normalize_counts(data_type="tss", method="edgeR") %>%
   tss_clustering(threshold=3, max_distance=25)
 ```
 
@@ -94,7 +98,7 @@ The first step is to build an edgeR model that contains the samples and their (r
 This can be done at the TSS, TSR, or feature level. This example will be looking at differential TSRs.
 
 ```{r message=FALSE}
-exp <- fit_de_model(exp, data_type="tsr", formula= ~ condition)
+exp <- fit_de_model(exp, data_type="tsr", formula= ~ condition, method="edgeR")
 ```
 
 After building the edgeR model, the model can then be used to call differential TSRs.
@@ -103,8 +107,8 @@ After building the edgeR model, the model can then be used to call differential 
 exp <- differential_expression(
   exp, data_type="tsr",
   comparison_name="Diamide_vs_Untreated",
-  comparison_type="name",
-  comparison="condition_Untreated_vs_Diamide"
+  comparison_type="coef",
+  comparison=2
 )
 ```
 ### Annotating Differential Features
