@@ -24,14 +24,13 @@
 #' \code{\link{differential_expression}} to find differential TSSs or TSRs.
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-#' TSSs <- readRDS(TSSs)
+#' data(TSSs)
 #' sample_sheet <- data.frame(
 #'   sample_name=c(
 #'     sprintf("S288C_D_%s", seq_len(3)),
 #'     sprintf("S288C_WT_%s", seq_len(3))
 #'   ),
-#'   file_1=NA, file_2=NA,
+#'   file_1=rep(NA, 6), file_2=rep(NA, 6),
 #'   condition=c(rep("Diamide", 3), rep("Untreated", 3))
 #' )
 #'
@@ -41,26 +40,14 @@
 #'
 #' # Differential TSS MA plot.
 #' diff_tss <- tsre %>%
-#'   fit_de_model(data_type="tss", formula= ~condition) %>%
+#'   fit_de_model(data_type="tss", formula= ~condition, method="edgeR") %>%
 #'   differential_expression(
-#'     exp, data_type="tss",
+#'     data_type="tss",
 #'     comparison_name="Diamide_vs_Untreated",
-#'     comparison_type="name",
-#'     comparison="condition_Untreated_vs_Diamide"
+#'     comparison_type="coef",
+#'     comparison=2
 #'   )
-#' \donttest{plot_ma(diff_tss, data_type="tss")}
-#'
-#' # Differential TSR MA plot.
-#' diff_tsr <- tsre %>%
-#'   tss_clustering(threshold=3) %>%
-#'   fit_de_model(data_type="tsr", formula= ~condition) %>%
-#'   differential_expression(
-#'     exp, data_type="tsr",
-#'     comparison_name="Diamide_vs_Untreated",
-#'     comparison_type="name",
-#'     comparison="condition_Untreated_vs_Diamide"
-#'   )
-#' \donttest{plot_ma(diff_tsr, data_type="tsr")}
+#' p <- plot_ma(diff_tss, data_type="tss")
 #'
 #' @export
 
@@ -134,14 +121,13 @@ plot_ma <- function(
 #' \code{\link{differential_expression}} to find differential TSSs or TSRs.
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-#' TSSs <- readRDS(TSSs)
+#' data(TSSs)
 #' sample_sheet <- data.frame(
 #'   sample_name=c(
 #'     sprintf("S288C_D_%s", seq_len(3)),
 #'     sprintf("S288C_WT_%s", seq_len(3))
 #'   ),
-#'   file_1=NA, file_2=NA,
+#'   file_1=rep(NA, 6), file_2=rep(NA, 6),
 #'   condition=c(rep("Diamide", 3), rep("Untreated", 3))
 #' )
 #'
@@ -151,26 +137,14 @@ plot_ma <- function(
 #'
 #' # Differential TSS volcano plot.
 #' diff_tss <- tsre %>%
-#'   fit_de_model(data_type="tss", formula= ~condition) %>%
+#'   fit_de_model(data_type="tss", formula= ~condition, method="edgeR") %>%
 #'   differential_expression(
-#'     exp, data_type="tss",
+#'     data_type="tss",
 #'     comparison_name="Diamide_vs_Untreated",
-#'     comparison_type="name",
-#'     comparison="condition_Untreated_vs_Diamide"
+#'     comparison_type="coef",
+#'     comparison=2
 #'   )
-#' \donttest{plot_volcano(diff_tss, data_type="tss")}
-#'
-#' # Differential TSR volcano plot.
-#' diff_tsr <- tsre %>%
-#'   tss_clustering(threshold=3) %>%
-#'   fit_de_model(data_type="tsr", formula= ~condition) %>%
-#'   differential_expression(
-#'     exp, data_type="tsr",
-#'     comparison_name="Diamide_vs_Untreated",
-#'     comparison_type="name",
-#'     comparison="condition_Untreated_vs_Diamide"
-#'   )
-#' \donttest{plot_volcano(diff_tsr, data_type="tsr")}
+#' p <- plot_volcano(diff_tss, data_type="tss")
 #'
 #' @export
 
@@ -234,7 +208,7 @@ plot_volcano <- function(
 #' @param de_comparisons Character vector of differential expression comparisons to export.
 #' @param keep_unchanged Logical for inclusion of genes not significantly changed in
 #'   the exported list.
-#' @param Vector of annotation categories to keep.
+#' @param anno_categories Vector of annotation categories to keep.
 #'   If NULL no filtering by annotation type occurs.
 #'
 #' @details
@@ -262,15 +236,14 @@ plot_volcano <- function(
 #' \code{\link{differential_expression}} to find differential TSSs or TSRs.
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-#' TSSs <- readRDS(TSSs)
+#' data(TSSs)
 #' annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
 #' sample_sheet <- data.frame(
 #'   sample_name=c(
 #'     sprintf("S288C_D_%s", seq_len(3)),
 #'     sprintf("S288C_WT_%s", seq_len(3))
 #'   ),
-#'   file_1=NA, file_2=NA,
+#'   file_1=rep(NA, 6), file_2=rep(NA, 6),
 #'   condition=c(rep("Diamide", 3), rep("Untreated", 3))
 #' )
 #'
@@ -281,27 +254,14 @@ plot_volcano <- function(
 #'
 #' # Differential TSS table.
 #' diff_tss <- tsre %>%
-#'   fit_de_model(data_type="tss", formula= ~condition) %>%
+#'   fit_de_model(data_type="tss", formula= ~condition, method="edgeR") %>%
 #'   differential_expression(
-#'     exp, data_type="tss",
+#'     data_type="tss",
 #'     comparison_name="Diamide_vs_Untreated",
-#'     comparison_type="name",
-#'     comparison="condition_Untreated_vs_Diamide"
+#'     comparison_type="coef",
+#'     comparison=2
 #'   )
-#' export_for_enrichment(diff_tss, data_type="tss")
-#'
-#' # Differential TSR table.
-#' diff_tsr <- tsre %>%
-#'   tss_clustering(threshold=3) %>%
-#'   annotate_features(data_type="tsr") %>%
-#'   fit_de_model(data_type="tsr", formula= ~condition) %>%
-#'   differential_expression(
-#'     exp, data_type="tsr",
-#'     comparison_name="Diamide_vs_Untreated",
-#'     comparison_type="name",
-#'     comparison="condition_Untreated_vs_Diamide"
-#'   )
-#' export_for_enrichment(diff_tsr, data_type="tsr")
+#' diff_tss <- export_for_enrichment(diff_tss, data_type="tss")
 #'
 #' @export
 
@@ -383,8 +343,7 @@ export_for_enrichment <- function(
 #' \code{\link{differential_expression}} to find differential TSSs or TSRs.
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-#' TSSs <- readRDS(TSSs)
+#' data(TSSs)
 #' sample_sheet <- data.frame(
 #'   sample_name=c(
 #'     sprintf("S288C_D_%s", seq_len(3)),
@@ -400,26 +359,14 @@ export_for_enrichment <- function(
 #'
 #' # Differential TSS quantities plot.
 #' diff_tss <- tsre %>%
-#'   fit_de_model(data_type="tss", formula= ~condition) %>%
+#'   fit_de_model(data_type="tss", formula= ~condition, method="edgeR") %>%
 #'   differential_expression(
-#'     exp, data_type="tss",
+#'     data_type="tss",
 #'     comparison_name="Diamide_vs_Untreated",
-#'     comparison_type="name",
-#'     comparison="condition_Untreated_vs_Diamide"
+#'     comparison_type="coef",
+#'     comparison=2
 #'   )
-#' \donttest{plot_num_de(diff_tss, data_type="tss")}
-#'
-#' # Differential TSR quantities plot.
-#' diff_tsr <- tsre %>%
-#'   tss_clustering(threshold=3) %>%
-#'   fit_de_model(data_type="tsr", formula= ~condition) %>%
-#'   differential_expression(
-#'     exp, data_type="tsr",
-#'     comparison_name="Diamide_vs_Untreated",
-#'     comparison_type="name",
-#'     comparison="condition_Untreated_vs_Diamide"
-#'   )
-#' \donttest{plot_num_de(diff_tsr, data_type="tsr")}
+#' p <- plot_num_de(diff_tss, data_type="tss")
 #'
 #' @export
 

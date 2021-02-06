@@ -17,6 +17,33 @@ required to have read counts above threshold.}
 
 \item{use_normalized}{Whether to use the normalized (TRUE) or raw (FALSE) counts.}
 }
+\value{
+TSRexploreR object with weak TSSs filtered out of counts table.
+}
 \description{
-Apply a threshold to TSSs or TSRs
+Filter TSSs based on given threshold.
+}
+\details{
+All TSSs mapping methods produce spurious 5' reads.
+For the most part, these spurious reads tend to be weak and somewhat uniformly
+  distributed through the promoter and gene body.
+This means that this background can be mitigated by requiring a minimum read threshold
+  for a TSS to be retained in the filtered dataset.
+
+This function will permantly filter TSSs from the TSS data.table if no sample has
+ at least 'threshold' number of reads in at least 'n_samples' number of samples.
+}
+\examples{
+data(TSSs)
+annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
+
+tsre <- TSSs[1] \%>\%
+  tsr_explorer(genome_annotation=annotation) \%>\%
+  format_counts(data_type="tss")
+tsre <- apply_threshold(tsre, threshold=3)
+
+}
+\seealso{
+\code{\link{plot_threshold_exploration}} to explore fraction of
+  promoter proximal TSSs, and absolute number of detected genes.
 }

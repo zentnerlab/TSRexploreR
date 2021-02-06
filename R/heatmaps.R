@@ -9,7 +9,6 @@
 #' @param annotated_data Annotated data.table
 #' @param upstream Bases upstream of plot center
 #' @param downstream Bases downstream of plot center
-#' @param ... Arguments passed to geom_tile
 #'
 #' @details
 #' This function makes a count matrix for each gene or transcript with detected features
@@ -34,22 +33,9 @@
 #'
 #' @return DataFrame of counts for each gene/transcript and position
 #'
-#' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-#' TSSs <- readRDS(TSSs)
-#' tsre_exp <- tsr_explorer(TSSs)
-#' tsre_exp <- format_counts(tsre_exp, data_type="tss")
-#' annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
-#' tsre_exp <- annotate_features(
-#'   tsre_exp, annotation_data=annotation,
-#'   data_type="tss", feature_type="transcript"
-#' )
-#' hm_mat <- tss_heatmap_matrix(tsre_exp)
-#'
 #' @seealso
 #' \code{\link{annotate_features}} to annotate the TSSs or TSRs.
 #' \code{\link{plot_heatmap}} to plot the heatmap.
-#' \code{\link{tsr_heatmap_matrix}} to generate the TSR matrix data for plotting.
 
 .tss_heatmap <- function(
   annotated_data,
@@ -101,6 +87,7 @@
 #' @param remove_antisense Remove antisense reads.
 #' @param split_by Named list with split group as name and vector of genes,
 #'   or data.frame with columns 'feature' and 'split_group'.
+#' @param data_type Either 'tss' or 'tsr'.
 #'
 #' @details
 #' This plotting function generates a ggplot2 heatmap of TSS or TSR signal
@@ -150,8 +137,7 @@
 #' \code{\link{annotate_features}} to annotate the TSSs or TSRs.
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-#' TSSs <- readRDS(TSSs)
+#' data(TSSs)
 #' annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
 #'
 #' tsre <- TSSs[1] %>%
@@ -160,13 +146,7 @@
 #'   annotate_features(data_type="tss")
 #'
 #' # TSS heatmap.
-#' \donttest{plot_heatmap(tsre, data_type="tss")}
-#'
-#' # TSR heatmap.
-#' tsre <- tsre %>%
-#'   tss_clustering(threshold=3) %>%
-#'   annotate_features(data_type="tsr")
-#' \donttest{plot_heatmap(tsre, data_type="tsr")}
+#' p <- plot_heatmap(tsre, data_type="tss")
 #'
 #' @export
 
@@ -231,6 +211,14 @@ plot_heatmap <- function(
     (is.list(split_by) && has_attr(split_by, "names")) ||
     (is.data.frame(split_by) && colnames(split_by) %in% c("feature", "split_group"))
   )
+
+  ## Check if ggrastr is installed if rasterization requested.
+  if (rasterize) {
+    if (!requireNamespace("ggrastr", quietly = TRUE)) {
+      stop("Package \"ggrastr\" needed for this function to work. Please install it.",
+        call. = FALSE)
+    }
+  }
 
   ## Get requested samples.
   annotated <- experiment %>%
@@ -312,7 +300,7 @@ plot_heatmap <- function(
 
   # Apply rasterization if required.
   if (rasterize) {
-    p <- p + rasterize(
+    p <- p + ggrastr::rasterize(
       geom_tile(aes(fill=.data$score, color=.data$score), ...),
       dpi=raster_dpi
     )
@@ -434,7 +422,7 @@ plot_heatmap <- function(
 #' Filter Heatmap.
 #'
 #' @param sample_list List of sample data.
-#' @param filter Quosure of filters.
+#' @param filtering Quosure of filters.
 
 .filter_heatmap <- function(
   sample_list,
@@ -449,6 +437,7 @@ plot_heatmap <- function(
 #' @inheritParams plot_heatmap
 #' @param count_data data.table of sample data.
 #' @param annotated_data Annotated sample data.
+#' @param data_type Either 'tss' or 'tsr'.
 
 .order_heatmap <- function(
   count_data,

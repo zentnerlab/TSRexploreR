@@ -10,10 +10,6 @@
 \item{count_matrix}{count matrix.}
 
 \item{coldata}{column data.}
-
-\item{design}{design formula.}
-
-\item{blind}{Whether normalization is blind.}
 }
 \description{
 DESeq2 Normalization

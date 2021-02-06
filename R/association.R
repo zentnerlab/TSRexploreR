@@ -23,19 +23,14 @@
 #'   TSSs with the TSRs from the sample of the same name.
 #'   
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-#' TSSs <- readRDS(TSSs)
+#' data(TSSs)
 #'
-#' TSSs[1] %>%
+#' tsre <- TSSs[1] %>%
 #'   tsr_explorer %>%
 #'   format_counts(data_type="tss") %>%
 #'   tss_clustering(threshold=3) %>%
 #'   associate_with_tsr
 #'
-#' @seealso
-#' \code{\link{add_sample_sheet}} to add a sample sheet to the TSRexploreR object.
-#'
-#' @rdname associate_with_tsr-function
 #' @export
 
 associate_with_tsr <- function(

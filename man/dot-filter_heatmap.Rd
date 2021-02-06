@@ -9,7 +9,7 @@
 \arguments{
 \item{sample_list}{List of sample data.}
 
-\item{filter}{Quosure of filters.}
+\item{filtering}{Quosure of filters.}
 }
 \description{
 Filter Heatmap.

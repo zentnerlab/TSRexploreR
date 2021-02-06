@@ -2,8 +2,7 @@
 
 NULL
 
-#' @importFrom tibble tibble as_tibble
-#' @importFrom magrittr %>%
+#' @importFrom tibble tibble as_tibble column_to_rownames
 #' @importFrom stringr
 #'   str_detect str_replace str_c str_split str_to_lower
 #'   str_extract str_sub str_pad
@@ -29,9 +28,7 @@ NULL
 #' @importFrom assertthat
 #'   assert_that is.count is.flag is.string has_name has_attr
 #'   is.readable
-#' @importFrom knitr kable
 #' @importFrom rlang .data enquo enquos quo_is_null "!!" "!!!" quo_text ensym
-#' @importFrom ggrastr rasterize
 
 NULL
 
@@ -52,15 +49,5 @@ NULL
 #' @importFrom SummarizedExperiment rowRanges SummarizedExperiment rowData
 #'   assay "assay<-"
 #' @importFrom S4Vectors "metadata<-" metadata DataFrame mcols elementMetadata
-
-NULL
-
-#' @importFrom edgeR
-#'   DGEList calcNormFactors cpm filterByExpr
-#'   estimateDisp glmQLFit
-#' @importFrom DESeq2
-#'   DESeqDataSetFromMatrix estimateSizeFactors
-#'   DESeq lfcShrink results rlog counts
-#' @importFrom apeglm apeglm
 
 NULL

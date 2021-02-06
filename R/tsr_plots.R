@@ -8,9 +8,14 @@
 #' @param log2_transform Whether the metric should be log2 + 1 transformed prior to plotting.
 #' @param ... Arguments passed to ggplot2 plotting functions.
 #'
-#' @return ggplot2 object with TSR matrix plotted.
-#' 
-#' @details 
+#' @details
+#'
+#' Plot any TSR metrics contained within the counts data.table.
+#' Metrics can be supplied as a character vector to 'tsr_metrics',
+#'   and will be optionally Log2 transformed if 'log2_transform' is TRUE.
+#' Valid plot types that can be supplied to 'plot_type' include
+#'   'violin', 'box', 'jitter', and 'boxjitter' (a combination of boxplot and jitterplot).
+#'
 #' A set of functions to control data structure for plotting are included. 'use_normalized' 
 #' will use  normalized scores, which only matters if 'consider_score' is TRUE.
 #' 'threshold' defines the minimum number of raw counts a TSS or TSR must have to be 
@@ -20,7 +25,19 @@
 #' per gene/transcript. 'data_conditionals' can be used to filter, quantile, order, 
 #' and/or group data for plotting.
 #'
-#' @rdname plot_tsr_metric-function
+#' @return ggplot2 object with TSR matrix plotted.
+#'
+#' @seealso
+#' \code{\link{tsr_metrics}} to calculate additional TSR metrics.
+#'
+#' @examples
+#' data(TSSs)
+#'
+#' tsre <- TSSs[1] %>%
+#'   tsr_explorer %>%
+#'   format_counts(data_type="tss") %>%
+#'   tss_clustering(threshold=3)
+#' p <- plot_tsr_metric(tsre, "width")
 #'
 #' @export
 

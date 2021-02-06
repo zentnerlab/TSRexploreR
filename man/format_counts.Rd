@@ -27,9 +27,10 @@ This function converts these into data.table format,
   and adds a few important columns for downstream analysis.
 }
 \examples{
-TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-TSSs <- readRDS(TSSs)
-tsre_exp <- tsr_explorer(TSSs)
-tsre_exp <- format_counts(tsre_exp, data_type="tss")
+data(TSSs)
+
+TSSs[1] \%>\%
+  tsr_explorer \%>\%
+  format_counts(data_type="tss")
 
 }

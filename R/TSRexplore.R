@@ -44,21 +44,22 @@ setClass(
 #'
 #' @import methods
 #'
-#' @param TSSs Named list of TSS GRanges
-#' @param TSRs Named list of TSR GRanges
-#' @param sample_sheet Sample sheet
-#' @param genome_annotation Genome annotation
-#' @param genome_assembly Genome assembly
+#' @inheritParams common_params
+#' @param TSSs Named list of TSS GRanges.
+#' @param TSRs Named list of TSR GRanges.
 #'
 #' @return A TSRexploreR object containing TSSs and/or TSRs
 #'
+#' @seealso
+#' \code{\link{import_bams}} to import BAM files.
+#' \code{\link{tss_import}} to import TSSs in various formats.
+#' \code{\link{tsr_import}} to import TSRs in various formats.
+#'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-#' TSSs <- readRDS(TSSs)
+#' data(TSSs)
 #' exp <- tsr_explorer(TSSs)
 #'
 #' @rdname tsr_explorer-class
-#'
 #' @export
 
 tsr_explorer <- function(
@@ -71,11 +72,11 @@ tsr_explorer <- function(
 
   ## Input Check.
   assert_that(
-    is.na(TSSs) ||
+    all(is.na(TSSs)) ||
    (is.list(TSSs) && has_attr(TSSs, "names"))
   )
   assert_that(
-    is.na(TSRs) ||
+    all(is.na(TSRs)) ||
     (is.list(TSRs) && has_attr(TSRs, "names"))
   )
   assert_that(

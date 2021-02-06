@@ -61,8 +61,7 @@ If 'return_table' is TRUE, a data.frame containing the underlying data
   for the plot is returned.
 }
 \examples{
-TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-TSSs <- readRDS(TSSs)
+data(TSSs)
 annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
 
 tsre <- TSSs[1] \%>\%
@@ -71,13 +70,7 @@ tsre <- TSSs[1] \%>\%
   annotate_features(data_type="tss")
 
 # TSS genomic distribution plot.
-\donttest{plot_genomic_distribution(tsre, data_type="tss")}
-
-# TSR genomic distribution plot.
-tsre <- tsre \%>\%
-  tss_clustering(threshold=3) \%>\%
-  annotate_features(data_type="tsr")
-\donttest{plot_genomic_distribution(tsre, data_type="tsr")}
+p <- plot_genomic_distribution(tsre, data_type="tss")
 
 }
 \seealso{

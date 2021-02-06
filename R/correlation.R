@@ -2,7 +2,6 @@
 #'
 #' Heatmaps and/or scatter plots to explore replicate concordance of TSSs or TSRs.
 #'
-#' @importFrom ComplexHeatmap Heatmap
 #' @importFrom circlize colorRamp2 
 #' @importFrom viridis viridis
 #' @importFrom grid gpar grid.text
@@ -34,8 +33,7 @@
 #'   or correlation matrix if 'return_matrix' is TRUE.
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-#' TSSs <- readRDS(TSSs)
+#' data(TSSs)
 #'
 #' tsre <- TSSs[1] %>%
 #'   tsr_explorer %>%
@@ -43,11 +41,7 @@
 #'   normalize_counts(data_type="tss", method="CPM")
 #'
 #' # TSS correlation.
-#' \donttest{plot_correlation(tsre, data_type="tss")}
-#'
-#' # TSR correlation.
-#' tsre <- tss_clustering(tsre, threshold=3)
-#' \donttest{plot_correlation(tsre, data_type="tsr")}
+#' p <- plot_correlation(tsre, data_type="tss")
 #'
 #' @seealso \code{\link{normalize_counts}} for TSS and TSR normalization.
 #'
@@ -67,6 +61,12 @@ plot_correlation <- function(
   return_matrix=FALSE,
   ...
 ) {
+
+  ## Check whether ComplexHeatmap is installed.
+  if (!requireNamespace("ComplexHeatmap", quietly = TRUE)) {
+    stop("Package \"ComplexHeatmap\" needed for this function to work. Please install it.",
+      call. = FALSE)
+  }
 
   ## Check inputs.
   if (!is(experiment, "tsr_explorer")) stop("experiment must be a TSRexploreR object")
@@ -103,12 +103,6 @@ plot_correlation <- function(
     "tsr_features"="#29AF7FFF"
   )
 
-#  ## Log2 + 1 transform data if indicated.
-#  pre_transformed <- copy(normalized_counts)
-#  if (log2_transform) {
-#    normalized_counts <- log2(normalized_counts + 1)
-#  }
-
   ## Correlation Matrix.
   cor_mat <- cor(normalized_counts, method=correlation_metric)
 
@@ -135,7 +129,7 @@ plot_correlation <- function(
     ))
   }
 
-  p <- do.call(Heatmap, heatmap_args)
+  p <- do.call(ComplexHeatmap::Heatmap, heatmap_args)
 
   return(p)
 

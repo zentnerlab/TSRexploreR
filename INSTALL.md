@@ -19,6 +19,7 @@ conda info --envs
 Now create and activate the TSRexploreR environment:
 ```bash
 conda create -n TSRexploreR -y -c conda-forge -c bioconda \
+qpdf \
 r-tidyverse \
 r-data.table \
 r-devtools \
@@ -47,7 +48,8 @@ bioconductor-rtracklayer \
 bioconductor-biocgenerics \
 bioconductor-plyranges \
 bioconductor-pcatools \
-bioconductor-GenomeInfoDb
+bioconductor-genomeinfodb \
+bioconductor-bsgenome \
 bioconductor-bsgenome.scerevisiae.ucsc.saccer3 \
 bioconductor-txdb.scerevisiae.ucsc.saccer3.sgdgene
 

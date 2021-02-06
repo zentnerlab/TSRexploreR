@@ -24,13 +24,6 @@
 #'
 #' If 'diff_tss' is TRUE, only differential TSSs will be output.
 #'
-#' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-#' TSSs <- readRDS(TSSs)
-#' exp <- tsr_explorer(TSSs)
-#' exp <- format_counts(exp, data_type="tss")
-#' tss_export(exp)
-#'
 #' @return Either bedGraphs or bigWigs split by strand, or a table.
 #'
 #' @seealso
@@ -38,7 +31,16 @@
 #' \code{\link{tss_import}} to import TSSs.
 #' \code{\link{tsr_import}} to import TSRs.
 #'
-#' @rdname tss_export-function
+#' @examples
+#' data(TSSs)
+#'
+#' \dontrun{
+#' tsre <- TSSs[1] %>%
+#'   tsr_explorer %>%
+#'   format_counts(data_type="tss")
+#' tss_export(tsre)
+#' }
+#'
 #' @export
 
 tss_export <- function(
@@ -168,14 +170,6 @@ tss_export <- function(
 #'
 #' If 'diff_tsr' is TRUE, only differential TSRs will be output.
 #'
-#' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-#' TSSs <- readRDS(TSSs)
-#' exp <- tsr_explorer(TSSs)
-#' exp <- format_counts(exp, data_type="tss")
-#' exp <- tss_clustering(exp)
-#' tsr_export(exp)
-#'
 #' @return Either a BED file or a table.
 #'
 #' @seealso
@@ -183,7 +177,17 @@ tss_export <- function(
 #' \code{\link{tss_import}} to import TSSs.
 #' \code{\link{tsr_import}} to import TSRs.
 #'
-#' @rdname tsr_export-function
+#' @examples
+#' \dontrun{
+#' data(TSSs)
+#'
+#' tsre <- TSSs[1] %>%
+#'   tsr_explorer %>%
+#'   format_counts(data_type="tss") %>%
+#'   tss_clustering(threshold=3)
+#' tsr_export(tsre)
+#' }
+#'
 #' @export
 
 tsr_export <- function(

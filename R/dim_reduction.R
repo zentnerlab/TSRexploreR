@@ -3,8 +3,6 @@
 #' @description
 #' Dimensionality reduction plot using PCA
 #'
-#' @importFrom PCAtools pca biplot
-#'
 #' @inheritParams common_params
 #' @param data_type Either 'tss' or 'tsr'.
 #' @param remove_var Remove features in this bottom fraction.
@@ -23,19 +21,20 @@
 #' 'center' and 'scale' will center and scale the data respectively.
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-#' TSSs <- readRDS(TSSs)
+#' data(TSSs)
+#' samples <- data.frame(
+#'   sample_name=sprintf("S288C_D_%s", seq_len(2)),
+#'   file_1=NA, file_2=NA,
+#'   condition="Diamide"
+#' )
 #'
-#' tsre_exp <- TSSs %>%
-#'   tsr_explorer %>%
-#'   format_counts(data_type="tss")
+#' tsre <- TSSs[seq_len(2)] %>%
+#'   tsr_explorer(sample_sheet=samples) %>%
+#'   format_counts(data_type="tss") %>%
+#'   normalize_counts(method="CPM")
 #'
 #' # TSS PCA plot.
-#' \donttest{plot_reduction(tsre, data_type="tss")}
-#'
-#' # TSR PCA plot.
-#' tsre <- tss_clustering(tsre, threshold=3)
-#' \donttest{plot_reduction(tsre, data_type="tsr")}
+#' p <- plot_reduction(tsre, data_type="tss")
 #'
 #' @export
 
@@ -49,6 +48,12 @@ plot_reduction <- function(
   scale=TRUE,
   ...
 ) {
+
+  ## Check if PCAtools is installed.
+  if (!requireNamespace("PCAtools", quietly = TRUE)) {
+    stop("Package \"PCAtools\" needed for this function to work. Please install it.",
+      call. = FALSE)
+  }
 
   ## Input checks.
   assert_that(is(experiment, "tsr_explorer"))
@@ -71,11 +76,11 @@ plot_reduction <- function(
 
   ## Create biplot.
   p <- count_mat %>%
-    pca(
+    PCAtools::pca(
       center=center, scale=scale, metadata=metadata,
       removeVar=remove_var
     ) %>%
-    biplot(...)
+    PCAtools::biplot(...)
 
   return(p) 
 }

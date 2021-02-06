@@ -3,8 +3,6 @@
 #' @description
 #' Generate gene tracks in GViz by gene name.
 #'
-#' @importFrom Gviz GeneRegionTrack DataTrack AnnotationTrack plotTracks
-#'   GenomeAxisTrack
 #' @importFrom stringr str_count
 #' @importFrom GenomicFeatures genes transcripts promoters
 #'
@@ -35,8 +33,7 @@
 #' @return GViz gene track plot.
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-#' TSSs <- readRDS(TSSs)
+#' data(TSSs)
 #' annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
 #'
 #' tsre <- TSSs[1] %>%
@@ -44,7 +41,9 @@
 #'   format_counts(data_type="tss") %>%
 #'   tss_clustering(threshold=3)
 #'
-#' \donttest{gene_tracks(tsre, "YKR076W")}
+#' \dontrun{
+#' gene_tracks(tsre, "YDR418W", samples=c(TSS="S288C_D_1", TSR="S288C_D_1"))
+#' }
 #'
 #' @export
 
@@ -65,6 +64,12 @@ gene_tracks <- function(
   ymax=NA,
   anno_pos="top"
 ) {
+
+  ## Check for Gviz library.
+  if (!requireNamespace("Gviz", quietly = TRUE)) {
+    stop("Package \"Gviz\" needed for this function to work. Please install it.",
+      call. = FALSE)
+  }
 
   ## Input checks.
   assert_that(is(experiment, "tsr_explorer"))
@@ -191,7 +196,7 @@ gene_tracks <- function(
   }
 
   # Genome annotation track.
-  genome_track <- GeneRegionTrack(
+  genome_track <- Gviz::GeneRegionTrack(
     anno, name="", shape="arrow", col=NA, fill="black",
     showId=TRUE, cex.group=axis_scale
   )
@@ -206,14 +211,14 @@ gene_tracks <- function(
       )
       if (!is.na(ymax)) track_args <- c(track_args, list(ylim=c(0, ymax)))
 
-      data_track <- do.call(DataTrack, track_args)
+      data_track <- do.call(Gviz::DataTrack, track_args)
       return(data_track)
     })
   }
 
   if (use_tsr) {
     tsr_tracks <- imap(selected_TSRs, function(gr, sample_name) {
-      anno_track <- AnnotationTrack(
+      anno_track <- Gviz::AnnotationTrack(
         gr, name=sample_name, fill=tsr_colors[sample_name],
         cex.title=axis_scale, col=NA 
       )
@@ -236,7 +241,7 @@ gene_tracks <- function(
 
   if (anno_pos == "top") {
     tracks <- c(
-      list("axis_track"=GenomeAxisTrack()),
+      list("axis_track"=Gviz::GenomeAxisTrack()),
       list("genome_track"=genome_track),
       tracks
     )
@@ -244,11 +249,11 @@ gene_tracks <- function(
     tracks <- c(
       tracks,
       list("genome_track"=genome_track),
-      list("axis_track"=GenomeAxisTrack())
+      list("axis_track"=Gviz::GenomeAxisTrack())
     )
   }
 
-  plotTracks(
+  Gviz::plotTracks(
     tracks,
     chromosome=seqnames(feature_ranges),
     from=start(feature_ranges),

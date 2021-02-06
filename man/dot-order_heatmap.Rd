@@ -17,6 +17,8 @@
 \arguments{
 \item{count_data}{data.table of sample data.}
 
+\item{data_type}{Either 'tss' or 'tsr'.}
+
 \item{annotated_data}{Annotated sample data.}
 
 \item{ordering}{Symbol/name specifying the column to order by.}

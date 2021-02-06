@@ -1,7 +1,10 @@
 ---
-title: "Standard Analysis"
-author: Robert A Policastro
-output: html_document
+title: Standard Analysis
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Standard Analysis}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 A transcription Start Site (TSS) represents the position of the first base of a transcript to be transcribed by an RNA polymerase. Most genes do not have a single TSS, but rather a collection of TSS positions collectively referred to as a Transcription Start Region (TSR). Variation in TSS selection influences transcript stability and translation as the function of the encoded protein. Furthermore, variations in TSS usage have been observed during organismal development as well as in diseases such as cancer.
@@ -17,15 +20,13 @@ this vignette uses a named list of GRanges as input into the function that creat
 
 ```{r message=FALSE, warning=FALSE}
 library("TSRexploreR")
+library("ggplot2")
 
 # Example TSSs.
-TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-TSSs <- readRDS(TSSs)
+data(TSSs)
 
-# Keep only the 3 WT samples for now.
-TSSs <- names(TSSs) %>%
-  stringr::str_detect("WT") %>%
-  purrr::keep(TSSs, .)
+# Keep only the WT sample for now.
+TSSs <- TSSs[stringr::str_detect(names(TSSs), "WT")]
 
 # Genome assembly and annotation.
 assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
@@ -33,7 +34,7 @@ annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexplore
 
 # Sample sheet.
 sample_sheet <- data.frame(
-  sample_name=sprintf("S288C_WT_%s", seq_len(3)),
+  sample_name=stringr::str_glue("S288C_WT_{seq_len(3)}"),
   file_1=NA, file_2=NA,
   condition=rep("Untreated", 3)
 )
@@ -62,19 +63,21 @@ exp <- format_counts(exp, data_type="tss")
 
 ### Normalize TSSs
 
-The next step is to normalize TSS counts using the Counts Per Million (CPM) approach. This step is optional - if the counts you input were already normalized, this step can be safely skipped.
+The next step is to normalize TSS counts using the edgeR TMM method -
+if the counts you input were already normalized, this step can be safely skipped.
 
 ```{r message=FALSE}
-exp <- normalize_counts(exp, data_type="tss")
+exp <- normalize_counts(exp, data_type="tss", method="edgeR")
 ```
 
 ### TSS Annotation
 
 After formatting counts and optionally CPM normalizing them, TSSs will be annotated relative to known genomic features.
-This function takes either the path and file name of a 'GTF' or 'GFF' file or a 'TxDb' package from bioconductor. The example below uses a 'GTF' file from Ensembl (R64-1-1 Release 99) and annotates each TSS to the beginning of the nearest transcript.
+This function takes either the path and file name of a 'GTF' or 'GFF' file or a 'TxDb' package from bioconductor.
+The example below uses a 'GTF' file from Ensembl (R64-1-1 Release 99) and annotates each TSS to the beginning of the nearest gene.
 
 ```{r message=FALSE, warning=FALSE}
-exp <- annotate_features(exp, data_type="tss", feature_type="transcript")
+exp <- annotate_features(exp, data_type="tss")
 ```
 
 ### Naive Threshold Exploration
@@ -84,7 +87,7 @@ This background can complicate downstream analysis, but it can largely be remove
 
 
 ```{r fig.height=3}
-plot_threshold_exploration(exp, ncol=3, point_size=0.5) +
+plot_threshold_exploration(exp, samples="S288C_WT_1", point_size=0.5) +
   scale_color_viridis_c() 
 ```
 
@@ -93,7 +96,7 @@ Looking at the plot, a threshold of three or more reads is a sensible choice:
 TSSs will be discarded if no samples have at least 1 TSS at that position with three or more reads.
 
 ```{r message=FALSE}
-exp <- apply_threshold(exp, threshold=3)
+exp <- apply_threshold(exp, threshold=3, n_samples=1)
 ```
 
 ## TSS Correlation
@@ -122,7 +125,7 @@ As part of the initial TSS processing, TSSs are annotated relative to known feat
 A stacked bar plot can be generated to showcase the fractional distribution of TSSs relative to known features.
 
 ```{r message=FALSE, fig.height=4}
-plot_genomic_distribution(exp, data_type="tss") +
+plot_genomic_distribution(exp, data_type="tss", samples="S288C_WT_1") +
   scale_fill_viridis_d(direction=-1, name="Annotation")
 ```
 
@@ -131,7 +134,7 @@ plot_genomic_distribution(exp, data_type="tss") +
 The number of features detected and fraction of features with a promoter-proximal TSSs can be displayed as a stacked bar plot or jitter plot.
 
 ```{r message=FALSE, fig.height=4, fig.width=5}
-plot_detected_features(exp, data_type="tss") +
+plot_detected_features(exp, data_type="tss", samples="S288C_WT_1") +
   scale_fill_viridis_d(direction=-1)
 ```
 
@@ -140,7 +143,7 @@ plot_detected_features(exp, data_type="tss") +
 Density plots are useful for visualizing where TSSs tend to be located relative to annotated TSSs. The current yeast genome annotation does not contain information on 5' UTRs, so density plots are centered on annotated start codons and it is expected that the maximum density would be slightly upstream of the plot center. Most other organisms have 5' UTR information in their genome annotations, with the UTR length corresponding to the distance between the start codon and the most distal TSS detected. This would result in a centered density plot.
 
 ```{r message=FALSE, fig.height=2, fig.width=6}
-plot_density(exp, data_type="tss", ncol=3)
+plot_density(exp, data_type="tss", samples="S288C_WT_1")
 ```
 
 ### Heatmaps
@@ -149,7 +152,7 @@ While a density plot gives a general overview of TSS distribution relative to an
 
 ```{r message=FALSE}
 plot_heatmap(
-  exp, data_type="tss",
+  exp, data_type="tss", samples="S288C_WT_1",
   upstream=250, downstream=250,
   rasterize=TRUE, raster_dpi=150
 )
@@ -166,7 +169,7 @@ Generating sequence logos around TSSs is a good first step in ascertaining the s
 To generate analyze TSS sequence context, TSRexploreR retrieves sequences centered on TSSs from a 'FASTA' genome assembly or 'BSgenome' object. This example uses the Ensembl R64-1-1 Release 99 FASTA.
 
 ```{r message=FALSE, fig.height=2, fig.width=6}
-plot_sequence_logo(exp, ncol=3)
+plot_sequence_logo(exp, samples="S288C_WT_1")
 ```
 
 ### Sequence Color Map
@@ -174,7 +177,7 @@ plot_sequence_logo(exp, ncol=3)
 A sequence logo "averages" the bases when displaying data, but as with TSSs, it can be useful to view the information without aggregation. In a sequence color map, each row represents the window around a TSS and each column represents a specific position relative to this TSS. These display conventions are analogous to those used in a heatmap. Each base is assigned a color and displayed in this two-dimensional space. The prevalence of colors in certain positions can give further evidence towards putative sequence contexts. The same genome assembly and retrieved sequences that were used to make the sequence logos above are used here.
 
 ```{r message=FALSE, fig.width=6, fig.height=4}
-plot_sequence_colormap(exp, ncol=3, rasterize=TRUE)
+plot_sequence_colormap(exp, samples="S288C_WT_1", rasterize=TRUE)
 ```
 
 ### Dinucleotide Frequency
@@ -182,7 +185,7 @@ plot_sequence_colormap(exp, ncol=3, rasterize=TRUE)
 As previously discused, organisms often have a specific TSS sequence context. This function explores the fraction of each potential dinucleotide at the -1/+1 positions of all TSSs, where the +1 position is the TSS.
 
 ```{r message=FALSE, fig.height=3, fig.width=6}
-plot_dinucleotide_frequencies(exp)
+plot_dinucleotide_frequencies(exp, samples="S288C_WT_1")
 ```
 
 ## Clustering TSSs
@@ -227,7 +230,7 @@ exp <- tsr_metrics(exp)
 It is recommended to annotate TSRs if a genome annotation is available.
 
 ```{r message=FALSE, warning=FALSE}
-exp <- annotate_features(exp, data_type="tsr", feature_type="transcript")
+exp <- annotate_features(exp, data_type="tsr")
 ```
 
 ## TSR Correlation
@@ -254,7 +257,7 @@ As for TSSs, it is expected that TSRs will be be enriched upstream of annotated 
 A stacked bar plot can be generated to visualize the fractional distribution of TSRs relative to known features.
 
 ```{r message=FALSE, fig.height=3, fig.width=6}
-plot_genomic_distribution(exp, data_type="tsr") +
+plot_genomic_distribution(exp, data_type="tsr", samples="S288C_WT_1") +
   scale_fill_viridis_d(direction=-1)
 ```
 
@@ -263,7 +266,7 @@ plot_genomic_distribution(exp, data_type="tsr") +
 The number of features detected and fraction of features with a promoter-proximal TSSs can be displayed as a stacked bar plot or jitter plot.
 
 ```{r message=FALSE, fig.height=4, fig.width=6}
-plot_detected_features(exp, data_type="tsr") +
+plot_detected_features(exp, data_type="tsr", samples="S288C_WT_1") +
   scale_fill_viridis_d(direction=-1)
 ```
 
@@ -272,7 +275,7 @@ plot_detected_features(exp, data_type="tsr") +
 As for TSSs, density plots can be generated for TSRs.
 
 ```{r message=FALSE, fig.height=4, fig.width=6}
-plot_density(exp, data_type="tsr", ncol=3)
+plot_density(exp, data_type="tsr", samples="S288C_WT_1")
 ```
 
 ### Heatmaps
@@ -281,7 +284,7 @@ TSR heatmaps provide a global view of TSR distribution relative to annotated sta
 
 ```{r message=FALSE, fig.height=3, fig.width=8}
 plot_heatmap(
-  exp, data_type="tsr",
+  exp, data_type="tsr", samples="S288C_WT_1",
   upstream=500, downstream=500,
   rasterize=TRUE, raster_dpi=150
 )
@@ -296,7 +299,7 @@ After clustering TSSs into TSRs, various descriptive and quantative measures are
 Summary plots can be generated for most TSR metrics. In this example, we generate violin plots of the log2 + 1 transformed TSR score and TSR width.
 
 ```{r message=FALSE, fig.height=3, fig.width=7}
-plot_tsr_metric(exp, tsr_metrics=c("score", "width"), log2_transform=TRUE, ncol=2)
+plot_tsr_metric(exp, tsr_metrics=c("score", "width"), log2_transform=TRUE, samples="S288C_WT_1")
 ```
 
 ### Descriptive Plots
@@ -305,7 +308,7 @@ Most plots in this vignette can be filtered, ordered, grouped, and quantiled by 
 
 ```{r message=FALSE, fig.height=5, fig.width=8}
 plot_sequence_logo(
-  exp, threshold=10, dominant=TRUE,
+  exp, threshold=10, dominant=TRUE, samples="S288C_WT_1",
   data_conditions=conditionals(data_grouping=shape_class)
 )
 ```
@@ -317,12 +320,7 @@ In TSRexploreR, tracks can be created based on a gene/transcript name or genomic
 
 ```{r message=FALSE}
 gene_tracks(
-  exp, feature_name="YAL012W",
-  samples=c(
-    TSS="S288C_WT_1", TSR="S288C_WT_1",
-    TSS="S288C_WT_2", TSR="S288C_WT_2",
-    TSS="S288C_WT_3", TSR="S288C_WT_3"
-  ),
-  ymax=80, tss_colors=viridis::viridis(3), tsr_colors=viridis::viridis(3)
+  exp, feature_name="YDR418W", ymax=80,
+  samples=c(TSS="S288C_WT_1", TSR="S288C_WT_1")
 )
 ```

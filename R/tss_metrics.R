@@ -21,25 +21,26 @@
 #' dominant TSS per TSR, and for TSRs the dominant TSR per gene is marked. For TSSs, 
 #' 'gene' can also be specified, which will mark the dominant TSS per gene.  
 #'
-#' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-#' TSSs <- readRDS(TSSs)
-#' exp <- tsr_explorer(TSSs)
-#' exp <- format_counts(exp, data_type="tss")
-#' exp <- tss_clustering(exp)
-#' exp <- associate_with_tsr(exp, sample_list=list(
-#'   "S288C_WT_1"="S288C_WT_1", "S288C_WT_2"="S288C_WT_2", "S288C_WT_3"="S288C_WT_3",
-#'   "S288C_D_1"="S288C_D_1", "S288C_D_2"="S288C_D_2", "S288C_D_3"="S288C_D_3"
-#' ))
-#' exp <- mark_dominant(exp, data_type="tss")
-#'
 #' @return TSRexploreR object with dominant status added to TSSs or TSRs.
 #'
 #' @seealso
-#' \code{\link{associate_wth_tsr}} to associate TSSs with TSRs prior to marking
+#' \code{\link{associate_with_tsr}} to associate TSSs with TSRs prior to marking
 #'   dominant TSS per TSR.
 #'
-#' @rdname mark_dominant-function
+#' @examples
+#' data(TSSs)
+#' annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
+#'
+#' tsre <- TSSs[1] %>%
+#'   tsr_explorer(genome_annotation=annotation) %>%
+#'   format_counts(data_type="tss") %>%
+#'   tss_clustering(threshold=3) %>%
+#'   associate_with_tsr
+#'
+#' # Dominant TSS per gene.
+#' tsre <- annotate_features(tsre, data_type="tss")
+#' tsre <- mark_dominant(tsre, data_type="tss", mark_per="gene")
+#'
 #' @export
 
 mark_dominant <- function(
@@ -134,123 +135,4 @@ mark_dominant <- function(
   )
 
   return(experiment)
-}
-
-#' Max UTR Length
-#'
-#' Get TSS with furthest distance to the annotated gene start.
-#'
-#' @inheritParams common_params
-#' @param threshold Number of reads required for each TSS.
-#' @param max_upstream Max upstream distance of TSS to consider.
-#' @param max_downstream Max downstream distance of TSS to consider.
-#' @param feature_type Feature type used when finding distance to TSS ("geneId", "transcriptId").
-#'
-#' @return tibble with max UTR length for features.
-#'
-#' @rdname max_utr-function
-#'
-#' @export
-
-max_utr <- function(
-  experiment,
-  samples="all",
-  threshold=1,
-  max_upstream=1000,
-  max_downstream=100,
-  feature_type=c("geneId", "transcriptId"),
-  quantiles=NA
-) {
-  ## Get selected samples.
-  max_utr <- experiment %>%
-    extract_counts("tss", samples) %>%
-    bind_rows(.id="sample") %>%
-    as.data.table
-
-  setnames(max_utr, old=feature_type, new="feature")
-
-  ## Filter data.
-  max_utr <- max_utr[
-    score >= threshold &
-    dplyr::between(distanceToTSS, -max_upstream, max_downstream),
-    .(sample, distanceToTSS, feature, score)
-  ]
-
-  ## Get TSS with minimum distance to start codon.
-  max_utr <- max_utr[,
-    .SD[which.min(distanceToTSS)],
-    by=.(sample, feature)
-  ]
-
-  ## Add quantiles if requested.
-  if (!is.na(quantiles)) {
-    max_utr[, ntile := ntile(score, quantiles), by=sample]
-  }
-
-  ## Return DataFrame.
-  max_utr <- DataFrame(max_utr)
-  metadata(max_utr)$quantiles <- quantiles
-  metadata(max_utr)$max_upstream <- max_upstream
-  metadata(max_utr)$max_downstream <- max_downstream
-  metadata(max_utr)$threshold <- threshold
-
-  return(max_utr)
-}
-
-#' Plot Max UTR Length
-#'
-#' Plot TSS with furthest distance
-#'
-#' @param max_utr tibble of max UTRs output by max_utr
-#' @param upstream Bases upstream to extend average to
-#' @param downstream Bases downstream to extend average to
-#' @param ncol Number of columns to plot the data to
-#' @param consider_score Whether the score of the TSS should be
-#' considered when plotting
-#' @param ... Arguments passed to geom_density
-#'
-#' @return ggplot2 object of max UTR length average
-#'
-#' @rdname plot_max_utr-function
-#'
-#' @export
-
-plot_max_utr <- function(
-  max_utr, upstream=1000, downstream=100,
-  ncol=1, consider_score=FALSE, ...
-) {
-
-  ## Grab some info from DataFrame.
-  quantiles <- metadata(max_utr)$quantiles
-
-  ## Prepare data for plotting.
-  utr_plot <- as.data.table(max_utr)
-  
-  if (!is.na(quantiles)) {
-    utr_plot[, ntile := fct_rev(factor(ntile))]
-  }
-
-  ## Format data if score should be considered.
-  if (consider_score) {
-    utr_plot <- utr_plot[rep(seq_length(.N), score)]
-  }
-
-  ## Plot max UTR length detected.
-  p <- ggplot(utr_plot, aes(x=.data$distanceToTSS)) +
-    geom_density(fill="#431352", color="#431352")+#, ...) +
-    xlim(-upstream, downstream) +
-    theme_bw() +
-    labs(
-      x="Max UTR Length",
-      y="Density"
-    ) +
-    geom_vline(xintercept=0, lty=2)
-
-  if (!is.na(quantiles)) {
-    p <- p + facet_grid(ntile ~ sample)
-  } else {
-    p <- p + facet_wrap(~ sample, ncol=ncol)
-  }
-
-  return(p)
 }

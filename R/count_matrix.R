@@ -3,6 +3,7 @@
 #'
 #' @inheritParams common_params
 #' @param count_data Named list of counts.
+#' @param data_type either 'tss' or 'tsr'.
 
 .count_matrix <- function(
   count_data,

@@ -36,6 +36,28 @@ file_2 can be left blank or filled with NA values.
 To import TSRs directly from a TSRchitect tssObject, the TSRchitect workflow must 
 first be run up to the 'determineTSR' step.
 }
+\examples{
+\dontrun{
+data(TSSs)
+
+# Export bed as example data.
+tsre <- TSSs[1] \%>\%
+  tsr_explorer \%>\%
+  format_counts(data_type="tss") \%>\%
+  tss_clustering(threshold=3)
+tsr_export(tsre)
+
+# Import the previously created bed.
+samples <- data.frame(
+  sample_name="S288C_D_1",
+  file_1="S288C_D_1.bed",
+  file_2=NA
+)
+tsr <- tsr_explorer(sample_sheet=samples)
+tsr <- tsr_import(tsr)
+}
+
+}
 \seealso{
 \code{\link{tss_import}} to import TSSs.
 \code{\link{tss_export}} to export TSSs.

@@ -12,8 +12,6 @@
 \item{upstream}{Bases upstream of plot center}
 
 \item{downstream}{Bases downstream of plot center}
-
-\item{...}{Arguments passed to geom_tile}
 }
 \value{
 DataFrame of counts for each gene/transcript and position
@@ -42,21 +40,7 @@ For TSSs this can be either dominant per TSR or gene, and for TSRs
 'data_conditions' allows for the advanced filtering, ordering, and grouping
   of data.
 }
-\examples{
-TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-TSSs <- readRDS(TSSs)
-tsre_exp <- tsr_explorer(TSSs)
-tsre_exp <- format_counts(tsre_exp, data_type="tss")
-annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
-tsre_exp <- annotate_features(
-  tsre_exp, annotation_data=annotation,
-  data_type="tss", feature_type="transcript"
-)
-hm_mat <- tss_heatmap_matrix(tsre_exp)
-
-}
 \seealso{
 \code{\link{annotate_features}} to annotate the TSSs or TSRs.
 \code{\link{plot_heatmap}} to plot the heatmap.
-\code{\link{tsr_heatmap_matrix}} to generate the TSR matrix data for plotting.
 }

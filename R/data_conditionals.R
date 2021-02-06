@@ -31,11 +31,11 @@
 #'   'data_conditions' argument in select functions.
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-#' TSSs <- readRDS(TSSs)
+#' data(TSSs)
+#' assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
 #'
 #' tsre <- TSSs[1] %>%
-#'   tsr_explorer %>%
+#'   tsr_explorer(genome_assembly=assembly) %>%
 #'   format_counts(data_type="tss") %>%
 #'   tss_clustering(threshold=3) %>%
 #'   associate_with_tsr %>%
@@ -43,19 +43,19 @@
 #'
 #' # Sequence logo of TSSs from peaked TSRs.
 #' conditions <- conditionals(shape_class == "peaked")
-#' \donttest{plot_sequence_logo(tsre, data_conditions=conditions)}
+#' p <- plot_sequence_logo(tsre, data_conditions=conditions)
 #'
 #' # Sequence base color plot sorted by descending score.
 #' conditions <- conditionals(data_ordering=ordering(desc(score)))
-#' \donttest{plot_sequence_colormap(tsre, data_conditions=conditions)}
+#' p <- plot_sequence_colormap(tsre, data_conditions=conditions)
 #'
 #' # Sequence logo split by TSS score quantile.
-#' conditions <- conditionals(data_quantiling=quantiling(score))
-#' \donttest{plot_sequence_logo(tsre, data_conditions=conditions)}
+#' conditions <- conditionals(data_quantiling=quantiling(score, n=5))
+#' p <- plot_sequence_logo(tsre, data_conditions=conditions)
 #'
 #' # Sequence logo split by class of TSR.
 #' conditions <- conditionals(data_grouping=shape_class)
-#' \donttest{plot_sequence_logo(tsre, data_conditions=conditions)}
+#' p <- plot_sequence_logo(tsre, data_conditions=conditions)
 #'
 #' @seealso
 #' \code{\link{ordering}} for ordering information.
@@ -134,16 +134,18 @@ conditionals <- function(
 #'   of 'conditionals'.
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-#' TSSs <- readRDS(TSSs)
+#' \donttest{
+#' data(TSSs)
+#' assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
 #'
 #' tsre <- TSSs[1] %>%
-#'   tsr_explorer %>%
+#'   tsr_explorer(genome_assembly=assembly) %>%
 #'   format_counts(data_type="tss")
 #'
 #' # Sequence base color plot sorted by descending score.
 #' conditions <- conditionals(data_ordering=ordering(desc(score)))
-#' \donttest{plot_sequence_colormap(tsre, data_conditions=conditions)}
+#' p <- plot_sequence_colormap(tsre, data_conditions=conditions)
+#' }
 #'
 #' @seealso
 #' \code{\link{conditionals}} For more information on advanced data conditions.
@@ -198,16 +200,18 @@ ordering <- function(
 #'   of 'conditionals'.
 #'
 #' @examples
-#' TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-#' TSSs <- readRDS(TSSs)
+#' \donttest{
+#' data(TSSs)
+#' assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
 #'
 #' tsre <- TSSs[1] %>%
-#'   tsr_explorer %>%
+#'   tsr_explorer(genome_assembly=assembly) %>%
 #'   format_counts(data_type="tss")
 #'
 #' # Sequence base color plot quantiled by score.
-#' conditions <- conditionals(data_quantiling=quantiling(score))
-#' \donttest{plot_sequence_colormap(tsre, data_conditions=conditions)}
+#' conditions <- conditionals(data_quantiling=quantiling(score, n=5))
+#' p <- plot_sequence_colormap(tsre, data_conditions=conditions)
+#' }
 #'
 #' @seealso
 #' \code{\link{conditionals}} For more information on advanced data conditions.
@@ -456,9 +460,6 @@ condition_data <- function(
 #' @param signal_data TSS or TSR data.
 #' @param dominant Whether to use dominant TSS/TSR.
 #' @param threshold Raw count threshold for a TSS or TSR to be considered.
-#'
-#' @rdname preliminary_filter-function
-#' @export
 
 preliminary_filter <- function(signal_data, dominant, threshold) {
   

@@ -64,8 +64,7 @@ such as STRIPE-seq vs. CAGE, due to the expectation of a roughly linear relation
 between the ranks, rather than the specific values, of each feature.
 }
 \examples{
-TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-TSSs <- readRDS(TSSs)
+data(TSSs)
 
 tsre <- TSSs[1] \%>\%
   tsr_explorer \%>\%
@@ -73,11 +72,7 @@ tsre <- TSSs[1] \%>\%
   normalize_counts(data_type="tss", method="CPM")
 
 # TSS correlation.
-\donttest{plot_correlation(tsre, data_type="tss")}
-
-# TSR correlation.
-tsre <- tss_clustering(tsre, threshold=3)
-\donttest{plot_correlation(tsre, data_type="tsr")}
+p <- plot_correlation(tsre, data_type="tss")
 
 }
 \seealso{

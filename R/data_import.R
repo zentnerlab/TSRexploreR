@@ -29,6 +29,26 @@
 #' \code{\link{tss_export}} to export TSSs.
 #' \code{\link{tsr_export}} to export TSRs.
 #'
+#' @examples
+#' \dontrun{
+#' data(TSSs)
+#'
+#' # Export bedgraphs as example data.
+#' tsre <- TSSs[1] %>%
+#'   tsr_explorer %>%
+#'   format_counts(data_type="tss")
+#' tss_export(tsre)
+#'
+#' # Import the previously created bedgraphs.
+#' samples <- data.frame(
+#'   sample_name="S288C_D_1",
+#'   file_1="S288C_D_1_pos.bedgraph",
+#'   file_2="S288C_D_1_min.bedgraph"
+#' )
+#' tss <- tsr_explorer(sample_sheet=samples)
+#' tss <- tss_import(tss)
+#' }
+#'
 #' @export
 
 tss_import <- function(
@@ -118,6 +138,7 @@ tss_import <- function(
 #' Import tables
 #'
 #' @inheritParams common_params
+#' @param delim Delimiter for table.
 
 .import_tables <- function(sample_sheet, delim) {
   samples <- sample_sheet[, .(sample_name, file_1)] %>%
@@ -246,6 +267,27 @@ tss_import <- function(
 #' \code{\link{tss_import}} to import TSSs.
 #' \code{\link{tss_export}} to export TSSs.
 #' \code{\link{tsr_export}} to export TSRs.
+#'
+#' @examples
+#' \dontrun{
+#' data(TSSs)
+#'
+#' # Export bed as example data.
+#' tsre <- TSSs[1] %>%
+#'   tsr_explorer %>%
+#'   format_counts(data_type="tss") %>%
+#'   tss_clustering(threshold=3)
+#' tsr_export(tsre)
+#'
+#' # Import the previously created bed.
+#' samples <- data.frame(
+#'   sample_name="S288C_D_1",
+#'   file_1="S288C_D_1.bed",
+#'   file_2=NA
+#' )
+#' tsr <- tsr_explorer(sample_sheet=samples)
+#' tsr <- tsr_import(tsr)
+#' }
 #'
 #' @export
 

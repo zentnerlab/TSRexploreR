@@ -47,19 +47,21 @@ dominant TSS per TSR, and for TSRs the dominant TSR per gene is marked. For TSSs
 'gene' can also be specified, which will mark the dominant TSS per gene.
 }
 \examples{
-TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-TSSs <- readRDS(TSSs)
-exp <- tsr_explorer(TSSs)
-exp <- format_counts(exp, data_type="tss")
-exp <- tss_clustering(exp)
-exp <- associate_with_tsr(exp, sample_list=list(
-  "S288C_WT_1"="S288C_WT_1", "S288C_WT_2"="S288C_WT_2", "S288C_WT_3"="S288C_WT_3",
-  "S288C_D_1"="S288C_D_1", "S288C_D_2"="S288C_D_2", "S288C_D_3"="S288C_D_3"
-))
-exp <- mark_dominant(exp, data_type="tss")
+data(TSSs)
+annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
+
+tsre <- TSSs[1] \%>\%
+  tsr_explorer(genome_annotation=annotation) \%>\%
+  format_counts(data_type="tss") \%>\%
+  tss_clustering(threshold=3) \%>\%
+  associate_with_tsr
+
+# Dominant TSS per gene.
+tsre <- annotate_features(tsre, data_type="tss")
+tsre <- mark_dominant(tsre, data_type="tss", mark_per="gene")
 
 }
 \seealso{
-\code{\link{associate_wth_tsr}} to associate TSSs with TSRs prior to marking
+\code{\link{associate_with_tsr}} to associate TSSs with TSRs prior to marking
   dominant TSS per TSR.
 }

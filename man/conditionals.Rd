@@ -47,11 +47,11 @@ group data prior to downstream analysis.
   quantiling is not set.
 }
 \examples{
-TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-TSSs <- readRDS(TSSs)
+data(TSSs)
+assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
 
 tsre <- TSSs[1] \%>\%
-  tsr_explorer \%>\%
+  tsr_explorer(genome_assembly=assembly) \%>\%
   format_counts(data_type="tss") \%>\%
   tss_clustering(threshold=3) \%>\%
   associate_with_tsr \%>\%
@@ -59,19 +59,19 @@ tsre <- TSSs[1] \%>\%
 
 # Sequence logo of TSSs from peaked TSRs.
 conditions <- conditionals(shape_class == "peaked")
-\donttest{plot_sequence_logo(tsre, data_conditions=conditions)}
+p <- plot_sequence_logo(tsre, data_conditions=conditions)
 
 # Sequence base color plot sorted by descending score.
 conditions <- conditionals(data_ordering=ordering(desc(score)))
-\donttest{plot_sequence_colormap(tsre, data_conditions=conditions)}
+p <- plot_sequence_colormap(tsre, data_conditions=conditions)
 
 # Sequence logo split by TSS score quantile.
-conditions <- conditionals(data_quantiling=quantiling(score))
-\donttest{plot_sequence_logo(tsre, data_conditions=conditions)}
+conditions <- conditionals(data_quantiling=quantiling(score, n=5))
+p <- plot_sequence_logo(tsre, data_conditions=conditions)
 
 # Sequence logo split by class of TSR.
 conditions <- conditionals(data_grouping=shape_class)
-\donttest{plot_sequence_logo(tsre, data_conditions=conditions)}
+p <- plot_sequence_logo(tsre, data_conditions=conditions)
 
 }
 \seealso{

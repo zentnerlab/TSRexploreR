@@ -47,18 +47,19 @@ This helps to visualize the relative similarity of samples
 'center' and 'scale' will center and scale the data respectively.
 }
 \examples{
-TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-TSSs <- readRDS(TSSs)
+data(TSSs)
+samples <- data.frame(
+  sample_name=sprintf("S288C_D_\%s", seq_len(2)),
+  file_1=NA, file_2=NA,
+  condition="Diamide"
+)
 
-tsre_exp <- TSSs \%>\%
-  tsr_explorer \%>\%
-  format_counts(data_type="tss")
+tsre <- TSSs[seq_len(2)] \%>\%
+  tsr_explorer(sample_sheet=samples) \%>\%
+  format_counts(data_type="tss") \%>\%
+  normalize_counts(method="CPM")
 
 # TSS PCA plot.
-\donttest{plot_reduction(tsre, data_type="tss")}
-
-# TSR PCA plot.
-tsre <- tss_clustering(tsre, threshold=3)
-\donttest{plot_reduction(tsre, data_type="tsr")}
+p <- plot_reduction(tsre, data_type="tss")
 
 }

@@ -81,20 +81,16 @@ and/or group data for plotting. Finally, 'exclude_antisense' removes anti-sense 
   TSRs prior to plotting.
 }
 \examples{
-TSSs <- system.file("extdata", "S288C_TSSs.RDS", package="TSRexploreR")
-TSSs <- readRDS(TSSs)
+data(TSSs)
 annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
 
 tsre <- TSSs[1] \%>\%
   tsr_explorer(genome_annotation=annotation) \%>\%
-  format_counts(data_type="tss")
+  format_counts(data_type="tss") \%>\%
+  annotate_features(data_type="tss")
 
 # TSS density plot.
-\donttest{plot_density(tsre, data_type="tss")}
-
-# TSR density plot.
-tsre <- tss_clustering(tsre, threshold=3)
-\donttest{plot_density(tsre, data_type="tsr")}
+p <- plot_density(tsre, data_type="tss")
 
 }
 \seealso{
