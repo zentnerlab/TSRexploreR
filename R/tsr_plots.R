@@ -31,9 +31,9 @@
 #' \code{\link{tsr_metrics}} to calculate additional TSR metrics.
 #'
 #' @examples
-#' data(TSSs)
+#' data(TSSs_reduced)
 #'
-#' tsre <- TSSs[1] %>%
+#' tsre <- TSSs %>%
 #'   tsr_explorer %>%
 #'   format_counts(data_type="tss") %>%
 #'   tss_clustering(threshold=3)

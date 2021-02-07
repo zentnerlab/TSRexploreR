@@ -40,10 +40,10 @@ must first be run up to the 'processTSS' step.
 }
 \examples{
 \dontrun{
-data(TSSs)
+data(TSSs_reduced)
 
 # Export bedgraphs as example data.
-tsre <- TSSs[1] \%>\%
+tsre <- TSSs \%>\%
   tsr_explorer \%>\%
   format_counts(data_type="tss")
 tss_export(tsre)
