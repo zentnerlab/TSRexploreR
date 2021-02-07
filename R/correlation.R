@@ -33,7 +33,7 @@
 #'   or correlation matrix if 'return_matrix' is TRUE.
 #'
 #' @examples
-#' data(TSSs)
+#' data(TSSs_reduced)
 #'
 #' tsre <- TSSs[1] %>%
 #'   tsr_explorer %>%

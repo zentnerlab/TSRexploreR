@@ -88,10 +88,10 @@ The plot can be rasterized using ggrastr using 'rasterize',
   and the rasterization DPI set using 'raster_dpi'.
 }
 \examples{
-data(TSSs)
+data(TSSs_reduced)
 assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
 
-tsre <- TSSs[1] \%>\%
+tsre <- TSSs \%>\%
   tsr_explorer(genome_assembly=assembly) \%>\%
   format_counts(data_type="tss")
 p <- plot_sequence_colormap(tsre, distance=5)

@@ -31,9 +31,9 @@ TSS samples can be associated with TSR samples using a list or sample sheet.
   TSSs with the TSRs from the sample of the same name.
 }
 \examples{
-data(TSSs)
+data(TSSs_reduced)
 
-tsre <- TSSs[1] \%>\%
+tsre <- TSSs \%>\%
   tsr_explorer \%>\%
   format_counts(data_type="tss") \%>\%
   tss_clustering(threshold=3) \%>\%

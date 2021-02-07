@@ -16,9 +16,9 @@
 #'    in data.table format.
 #'
 #' @examples
-#' data(TSSs)
+#' data(TSSs_reduced)
 #'
-#' TSSs[1] %>%
+#' TSSs %>%
 #'   tsr_explorer %>%
 #'   format_counts(data_type="tss")
 #'

@@ -61,10 +61,10 @@ If 'return_table' is TRUE, a data.frame containing the underlying data
   for the plot is returned.
 }
 \examples{
-data(TSSs)
+data(TSSs_reduced)
 annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
 
-tsre <- TSSs[1] \%>\%
+tsre <- TSSs \%>\%
   tsr_explorer(genome_annotation=annotation) \%>\%
   format_counts(data_type="tss") \%>\%
   annotate_features(data_type="tss")

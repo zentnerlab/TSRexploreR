@@ -33,10 +33,10 @@
 #' @return GViz gene track plot.
 #'
 #' @examples
-#' data(TSSs)
+#' data(TSSs_reduced)
 #' annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
 #'
-#' tsre <- TSSs[1] %>%
+#' tsre <- TSSs %>%
 #'   tsr_explorer(genome_annotation=annotation) %>%
 #'   format_counts(data_type="tss") %>%
 #'   tss_clustering(threshold=3)

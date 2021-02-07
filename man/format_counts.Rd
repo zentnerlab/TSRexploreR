@@ -27,9 +27,9 @@ This function converts these into data.table format,
   and adds a few important columns for downstream analysis.
 }
 \examples{
-data(TSSs)
+data(TSSs_reduced)
 
-TSSs[1] \%>\%
+TSSs \%>\%
   tsr_explorer \%>\%
   format_counts(data_type="tss")
 

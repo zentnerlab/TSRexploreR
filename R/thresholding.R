@@ -129,10 +129,10 @@
 #' \code{\link{apply_threshold}} to permantly filter TSSs below threshold value.
 #'
 #' @examples
-#' data(TSSs)
+#' data(TSSs_reduced)
 #' annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
 #'
-#' tsre <- TSSs[1] %>%
+#' tsre <- TSSs %>%
 #'   tsr_explorer(genome_annotation=annotation) %>%
 #'   format_counts(data_type="tss") %>%
 #'   annotate_features(data_type="tss")
@@ -244,9 +244,9 @@ apply_threshold <- function(
 
   ## Filter TSSs below threshold.
   if (!is.null(n_samples)) {
-    count_mat <- count_mat[rowSums(count_mat >= threshold) >= n_samples, ]
+    count_mat <- count_mat[rowSums(count_mat >= threshold) >= n_samples, , drop=FALSE]
   } else {
-    count_mat <- count_mat[rowSums(count_mat >= threshold) == ncol(count_mat), ]
+    count_mat <- count_mat[rowSums(count_mat >= threshold) == ncol(count_mat), , drop=FALSE]
   }
 
   ## Keep only surviving TSSs in each sample.

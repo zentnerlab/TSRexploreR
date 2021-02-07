@@ -64,7 +64,7 @@ such as STRIPE-seq vs. CAGE, due to the expectation of a roughly linear relation
 between the ranks, rather than the specific values, of each feature.
 }
 \examples{
-data(TSSs)
+data(TSSs_reduced)
 
 tsre <- TSSs[1] \%>\%
   tsr_explorer \%>\%
