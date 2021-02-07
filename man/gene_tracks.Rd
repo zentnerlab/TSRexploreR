@@ -71,10 +71,10 @@ The gene or transcript name should be supplied to 'feature_name'.
   or the feature boundaries (if gene/transcript).
 }
 \examples{
-data(TSSs)
+data(TSSs_reduced)
 annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
 
-tsre <- TSSs[1] \%>\%
+tsre <- TSSs \%>\%
   tsr_explorer(genome_annotation=annotation) \%>\%
   format_counts(data_type="tss") \%>\%
   tss_clustering(threshold=3)

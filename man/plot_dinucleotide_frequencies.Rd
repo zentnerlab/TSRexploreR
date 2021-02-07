@@ -65,10 +65,10 @@ For TSSs this can be either dominant per TSR or gene.
   of data.
 }
 \examples{
-data(TSSs)
+data(TSSs_reduced)
 assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
 
-tsre <- TSSs[1] \%>\%
+tsre <- TSSs \%>\%
   tsr_explorer(genome_assembly=assembly) \%>\%
   format_counts(data_type="tss")
 

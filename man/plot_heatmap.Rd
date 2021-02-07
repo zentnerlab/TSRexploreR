@@ -143,10 +143,10 @@ An option to rasterize the heatmaps using ggrastr is provided with the 'rasteriz
   and the DPI (resolution) is controlled by 'raster_dpi'.
 }
 \examples{
-data(TSSs)
+data(TSSs_reduced)
 annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
 
-tsre <- TSSs[1] \%>\%
+tsre <- TSSs \%>\%
   tsr_explorer(genome_annotation=annotation) \%>\%
   format_counts(data_type="tss") \%>\%
   annotate_features(data_type="tss")

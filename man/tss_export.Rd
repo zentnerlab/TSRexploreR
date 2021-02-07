@@ -51,7 +51,7 @@ save the files to the working directory.
 If 'diff_tss' is TRUE, only differential TSSs will be output.
 }
 \examples{
-data(TSSs)
+data(TSSs_reduced)
 
 \dontrun{
 tsre <- TSSs[1] \%>\%
