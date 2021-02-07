@@ -2,7 +2,7 @@
 title: "Data Conditioning"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Standard Analysis}
+  %\VignetteIndexEntry{Data Conditioning}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
