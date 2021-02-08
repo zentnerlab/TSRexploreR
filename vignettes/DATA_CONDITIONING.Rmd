@@ -61,7 +61,7 @@ exp <- annotate_features(exp, data_type="tss", upstream=250, downstream=100,
 exp <- normalize_counts(exp, data_type="tss", method="deseq2")
 
 # Cluster TSSs
-exp <- tss_clustering(exp, threshold=3, max_distance=25)
+exp <- tss_clustering(exp, threshold=3, max_distance=25, n_samples=1)
 
 # Associate TSSs with TSRs
 exp <- associate_with_tsr(exp)
@@ -136,7 +136,7 @@ up- or downregulated TSRs and use them to split the heatmaps by the direction of
 TSR signal change. Heatmaps are also ordered descending by median signal in the
 control sample.
 
-```{r fig.align="center"}
+```{r fig.align="center", fig.width=6, fig.height=6}
 # Build DE model
 exp <- fit_de_model(exp, data_type="tsr", formula=~condition)
 
