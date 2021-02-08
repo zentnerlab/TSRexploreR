@@ -50,6 +50,7 @@ bioconductor-plyranges \
 bioconductor-pcatools \
 bioconductor-genomeinfodb \
 bioconductor-bsgenome \
+bioconductor-bioccheck \
 bioconductor-bsgenome.scerevisiae.ucsc.saccer3 \
 bioconductor-txdb.scerevisiae.ucsc.saccer3.sgdgene
 
