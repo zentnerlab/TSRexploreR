@@ -1,13 +1,13 @@
 #' Data Conditions Input
 #'
 #' @description
-#' This function allows advanced filtering, ordering, quantilihng,
-#'   and/or grouping of data for plotting.
+#' This function allows  filtering, ordering, quantiling,
+#'   and grouping of data for plotting.
 #'
-#' @param data_filters Logical statements to filter data by columns.
-#' @param data_ordering Ordering object with order settings.
+#' @param data_filters Logical statements by which to filter data.
+#' @param data_ordering Order object with order settings.
 #'   See ?ordering for more information.
-#' @param data_quantiling Quantiling object with quantile settings.
+#' @param data_quantiling Quantile object with quantile settings.
 #'   See ?quantiling for more information.
 #' @param data_grouping If quantiles not set,
 #'   split data by the specified categorical variable.
@@ -18,13 +18,13 @@
 #' various other functions by adding the ability to filter, quantile, order, and/or 
 #' group data prior to downstream analysis.
 #'
-#' 'data_filters' should be a logical statement to filter TSSs or TSRs
+#' 'data_filters' takes logical statements to filter TSSs or TSRs
 #'   by any column stored in the data.
 #' 'data_ordering' takes an 'ordering' object as input,
 #'   which allows ordering of data by one or more columns.
 #' 'data_quantiling' takes a 'quantiling' object as input,
 #'   and will split plots by the given number of quantiles.
-#' 'data_grouping' will split a splot by the given column if
+#' 'data_grouping' will split a plot by the given column if
 #'   quantiling is not set.
 #'
 #' @return 'data_conditions' object for input to the corresponding
@@ -34,7 +34,7 @@
 #' data(TSSs)
 #' assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
 #'
-#' tsre <- TSSs[1] %>%
+#' exp <- TSSs[1] %>%
 #'   tsr_explorer(genome_assembly=assembly) %>%
 #'   format_counts(data_type="tss") %>%
 #'   tss_clustering(threshold=3) %>%
@@ -43,19 +43,19 @@
 #'
 #' # Sequence logo of TSSs from peaked TSRs.
 #' conditions <- conditionals(shape_class == "peaked")
-#' p <- plot_sequence_logo(tsre, data_conditions=conditions)
+#' plot_sequence_logo(exp, data_conditions=conditions)
 #'
-#' # Sequence base color plot sorted by descending score.
+#' # Sequence color map sorted by descending TSS score.
 #' conditions <- conditionals(data_ordering=ordering(desc(score)))
-#' p <- plot_sequence_colormap(tsre, data_conditions=conditions)
+#' plot_sequence_colormap(exp, data_conditions=conditions)
 #'
-#' # Sequence logo split by TSS score quantile.
+#' # Sequence logos split by TSS score quantile.
 #' conditions <- conditionals(data_quantiling=quantiling(score, n=5))
-#' p <- plot_sequence_logo(tsre, data_conditions=conditions)
+#' plot_sequence_logo(exp, data_conditions=conditions)
 #'
-#' # Sequence logo split by class of TSR.
+#' # Sequence logo split by TSR shape class.
 #' conditions <- conditionals(data_grouping=shape_class)
-#' p <- plot_sequence_logo(tsre, data_conditions=conditions)
+#' plot_sequence_logo(exp, data_conditions=conditions)
 #'
 #' @seealso
 #' \code{\link{ordering}} for ordering information.
@@ -138,13 +138,13 @@ conditionals <- function(
 #' data(TSSs)
 #' assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
 #'
-#' tsre <- TSSs[1] %>%
+#' exp <- TSSs[1] %>%
 #'   tsr_explorer(genome_assembly=assembly) %>%
 #'   format_counts(data_type="tss")
 #'
 #' # Sequence base color plot sorted by descending score.
 #' conditions <- conditionals(data_ordering=ordering(desc(score)))
-#' p <- plot_sequence_colormap(tsre, data_conditions=conditions)
+#' plot_sequence_colormap(exp, data_conditions=conditions)
 #' }
 #'
 #' @seealso
@@ -178,19 +178,19 @@ ordering <- function(
 #'
 #' @description
 #' This is a companion function to 'conditionals' that allows the
-#'   specification of a variable to split the data into quantiles
-#'   before plotting.
+#'   specification of a variable by which to split the data into 
+#'   quantiles before plotting.
 #'
 #' @param by Continuous metric for calculating quantiles.
-#' @param n Number of quantiles to calculate for continuous metric.
+#' @param n Number of quantiles to calculate.
 #' @param samples Samples to use when setting quantiles.
 #' @param descending Order quantiles in descending order.
-#' @param aggr_fun Function to aggregate scores if more than one sample selected.
+#' @param aggr_fun Function by which to aggregate scores if more than one sample selected.
 #'
 #' @details
 #' Column to order by should be specified by names/symbol and not character.
-#' By default quantiling is calculated based on the aggregate value (based on 'aggr_fun')
-#'   of the variable accross all samples.
+#' By default ,quantiling is calculated based on the aggregate value (based on 'aggr_fun')
+#'   of the variable across all samples.
 #' If 'samples' is specified, only the given samples will be used for aggregate
 #'   calculation and ordering.
 #' 'descending' controls whether quantiling is calculated in descending (TRUE) or
@@ -204,13 +204,13 @@ ordering <- function(
 #' data(TSSs)
 #' assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
 #'
-#' tsre <- TSSs[1] %>%
+#' exp <- TSSs[1] %>%
 #'   tsr_explorer(genome_assembly=assembly) %>%
 #'   format_counts(data_type="tss")
 #'
 #' # Sequence base color plot quantiled by score.
 #' conditions <- conditionals(data_quantiling=quantiling(score, n=5))
-#' p <- plot_sequence_colormap(tsre, data_conditions=conditions)
+#' plot_sequence_colormap(exp, data_conditions=conditions)
 #' }
 #'
 #' @seealso
@@ -357,8 +357,8 @@ condition_data <- function(
 
 #' Quantiling
 #'
-#' @param signal_data list of TSSs or TSRs
-#' @param quantiling list of quantiling parameters
+#' @param signal_data List of TSSs or TSRs
+#' @param quantiling List of quantiling parameters
 
 .quantile_data <- function(
   signal_data,

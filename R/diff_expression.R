@@ -1,15 +1,14 @@
-#' Model for differential feature analysis
+#' Differential feature analysis
 #'
 #' Find differential TSSs or TSRs.
 #'
 #' @inheritParams common_params
-#' @param data_type Whether TSS, TSR, or gene/transcript counts should be analyzed.
-#' @param formula DE formula.
-#' @param method Either 'DESeq2' or 'edgeR.
+#' @param data_type Whether TSSs ('tss') or TSRs ('tsr') should be analyzed
+#' @param formula Formula for differenatial feature analysis.
+#' @param method Build DE model using either 'DESeq2' or 'edgeR'.
 #'
 #' @details
-#' This function uses either DESeq2 or edgeR depending on what is specified in 'method'
-#'   to find differential TSSs or TSRs.
+#' This function uses either DESeq2 or edgeR to find differential TSSs or TSRs.
 #' 'formula' should be a valid R formula in any form accepted by DESeq2 or edgeR,
 #'   where the formula components are any columns present in the sample sheet.
 #'
@@ -32,12 +31,12 @@
 #'   )
 #' )
 #'
-#' tsre <- TSSs %>%
+#' exp <- TSSs %>%
 #'   tsr_explorer(sample_sheet=sample_sheet) %>%
 #'   format_counts(data_type="tss")
 #'
 #' # DESeq2 model for differential TSSs.
-#' tsre <- fit_de_model(tsre, ~condition, data_type="tss", method="edgeR")
+#' exp <- fit_de_model(exp, data_type="tss", formula=~condition, method="DESeq2")
 #'
 #' @export
 
@@ -175,24 +174,24 @@ fit_de_model <- function(
 
 #' Analyze Differential Features
 #'
-#' Find differential TSSs or TSRs from previous edgeR or DESeq2 model.
+#' Find differential TSSs or TSRs from previously generated edgeR or DESeq2 model.
 #'
 #' @importFrom SummarizedExperiment rowData
 #' @importFrom purrr map_dbl
 #'
 #' @inheritParams common_params
-#' @param data_type Whether the input was generated from TSSs, TSRs, or genes/transcripts
+#' @param data_type Whether the input was generated from TSSs ('tss') or TSRs ('tsr').
 #' @param comparison_name The name given to the comparison when stored back into the TSRexploreR object.
 #' @param comparison_type For DEseq2, either 'contrast' or 'name'. For edgeR, either 'contrast' or 'coef'.
 #' @param comparison For DESeq2, the contrast or name. For edgeR, the coefficients or contrasts.
 #' @param shrink_lfc For DESeq2, whether the log2 fold changes are shrunk (TRUE) or not (FALSE).
 #'
 #' @details
-#' Calculate the differential TSSs or TSRs for the desired contrast.
-#' 'comparison_type' corresponds to the way the contrast will be provided,
+#' Calculatse the differential TSSs or TSRs for the desired contrast.
+#' 'comparison_type' corresponds to the way the comparison will be performed,
 #'   with edgeR having the 'contrast' and 'coef' options,
 #'   and DESeq2 having the 'contrast' and 'name' options.
-#' The actual contrast is specified with 'comparison,
+#' The actual contrast is specified with 'comparison',
 #'   the format of which should match with the option provided to 'comparison_type'.
 #' If DESeq2 is used and 'shrink_lfc' is TRUE,
 #'   apeglm is used to shrink the Log2 fold changes to mitigate the effect size of
@@ -219,18 +218,18 @@ fit_de_model <- function(
 #'   )
 #' )
 #'
-#' tsre <- TSSs %>%
+#' exp <- TSSs %>%
 #'   tsr_explorer(sample_sheet=sample_sheet) %>%
 #'   format_counts(data_type="tss")
 #'
 #' # Differential TSSs with DESeq2.
-#' tsre <- fit_de_model(tsre, ~condition, data_type="tss", method="edgeR")
-#' tsre <- differential_expression(
-#'   tsre, data_type="tss",
-#'   comparison_name="Diamide_vs_Untreated",
-#'   comparison_type="coef",
-#'   comparison=2
-#' )
+#' exp <- fit_de_model(exp, data_type = "tsr", formula = ~condition, method = "deseq2")
+#' 
+#' exp <- differential_expression(
+#'   exp, data_type = "tsr", 
+#'   comparison_name = "Diamide_vs_Untreated",
+#'   comparison_type = "contrast",
+#'   comparison = c("condition", "Diamide", "Untreated"))
 #'
 #' @export
 

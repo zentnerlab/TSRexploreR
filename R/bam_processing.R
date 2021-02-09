@@ -1,30 +1,30 @@
 #' Import BAMs
 #'
 #' @description 
-#' Import BAM files with optional quality control parameters.
+#' Import and process BAM files.
 #'
 #' @inheritParams common_params
 #' @param paired Whether the BAMs are paired (TRUE) or unpaired (FALSE).
 #' @param soft_remove Remove read if greater than this number of soft-clipped bases 
-#'   are present at its 5' most end.
-#' @param proper_pair Remove reads without a proper pair SAM flag.
+#'   is present at its 5' most end.
+#' @param proper_pair Remove reads flagged as improperly paired.
 #'   TRUE by default when data is paired-end.
-#' @param remove_secondary Remove reads with non-primary SAM flag set (TRUE).
-#' @param remove_duplicate Remove reads with duplicate SAM flag set (TRUE).
+#' @param remove_secondary Remove secondary alignments (TRUE).
+#' @param remove_duplicate Remove duplicate reads (paired-end only) (TRUE).
 #'
 #' @details
 #' Import BAMs using the information from the sample sheet.
-#' If the BAMs are from paired end data,
+#' If the BAMs are from paired-end data,
 #'   'proper_pair' allows removal of reads without a proper-pair SAM flag.
-#' Additionally 'remove_seconday' and 'remove_duplicate' will remove reads
-#'   with the secondary alignments and duplicate flags set.
+#' Additionally 'remove_secondary' and 'remove_duplicate' will remove reads
+#'   with the secondary alignment and duplicate flags set.
 #'
 #' Most TSS mapping methodologies tend to add at least one non-templated base
 #'   at the 5' end of the read.
-#' Futhermore, template switching reverse transcription (TSRT) methods such
+#' Furthermore, template switching reverse transcription (TSRT)-based methods such
 #'   as STRIPE-seq or nanoCAGE can have up to 3 or 4 non-templated 5' bases.
 #' We recommend setting `soft_remove` to at minimum 3 because of this,
-#'   Which removes the read if the given number of soft-clip bases are exceeded.
+#'   which removes the read if the given number of soft-clip bases is exceeded.
 #'
 #' @return TSRexploreR object with BAM GRanges and soft-clip information.
 #'
@@ -33,8 +33,8 @@
 #' assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
 #' samples <- data.frame(sample_name="S288C", file_1=bam_file, file_2=NA)
 #'
-#' tsre <- tsr_explorer(sample_sheet=samples, genome_assembly=assembly)
-#' import_bams(tsre, paired=TRUE)
+#' exp <- tsr_explorer(sample_sheet=samples, genome_assembly=assembly)
+#' import_bams(exp, paired=TRUE)
 #'
 #' @export
 
@@ -66,7 +66,7 @@ import_bams <- function(
   assert_that(is.flag(remove_secondary))
   assert_that(is.flag(remove_duplicate))
 
-  ## Prepare sample sheet if required.
+  ## Prepare sample sheet if necessary.
   sample_sheet_type <- case_when(
     is.null(sample_sheet) ~ "internal",
     is.character(sample_sheet) ~ "file",
@@ -161,7 +161,7 @@ import_bams <- function(
 
   bams <- map(bams, as_granges)
 
-  ## Add GRanges and sample sheet to tsr explorer object.
+  ## Add GRanges and sample sheet to TSRexploreR object.
   experiment@experiment$TSSs <- bams
   experiment@meta_data$sample_sheet <- sample_sheet
 
@@ -171,7 +171,7 @@ import_bams <- function(
 #' Aggregate TSSs
 #'
 #' @description
-#' Aggregate overlapping TSSs into a total sum score.
+#' Aggregate overlapping TSSs to generate positional scores.
 #'
 #' @inheritParams common_params
 #'

@@ -1,11 +1,11 @@
 #' Density Plots
 #'
 #' @description
-#' Generate density plots of TSS or TSR positions relative to annotated TSSs.
+#' Generate plots of TSS or TSR positional density relative to annotated TSSs.
 #'
 #' @inheritParams common_params
-#' @param data_type Whether to plot TSS or TSR density.
-#' @param consider_score Whether the score of each TSS or TSR score be considered
+#' @param data_type Whether to plot TSS ('tss') or TSR ('tsr') density.
+#' @param consider_score Whether the score of each TSS or TSR score should be be considered
 #'   in addition to its unique location.
 #' @param upstream Bases upstream of plot center.
 #' @param downstream Bases downstream of plot center.
@@ -40,13 +40,13 @@
 #' data(TSSs_reduced)
 #' annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
 #'
-#' tsre <- TSSs %>%
+#' exp <- TSSs %>%
 #'   tsr_explorer(genome_annotation=annotation) %>%
 #'   format_counts(data_type="tss") %>%
 #'   annotate_features(data_type="tss")
 #'
 #' # TSS density plot.
-#' p <- plot_density(tsre, data_type="tss")
+#' plot_density(tsre, data_type="tss")
 #'
 #' @seealso
 #' \code{\link{annotate_features}} to annotate TSSs or TSRs.
