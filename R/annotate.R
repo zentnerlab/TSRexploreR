@@ -31,7 +31,6 @@
 #'   tsr_explorer(genome_annotation=annotation) %>%
 #'   format_counts(data_type="tss")
 #'
-#' # Annotate TSSs
 #' exp <- annotate_features(exp, data_type="tss")
 #'
 #' @export

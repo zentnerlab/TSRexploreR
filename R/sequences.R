@@ -2,15 +2,16 @@
 #' Retrieve Sequences
 #'
 #' @inheritParams common_params
-#' @param data_type Either 'tss', 'tsr', or 'shift'
+#' @param data_type Get sequences around TSSs ('tss'), TSRs ('tsr'), 
+#'   or TSS shifting results ('shift').
 #' @param fixed_size Whether all returned sequences should have the
-#'   same fixed size starting from the center of the ranges
-#' @param extend_upstream Distance to extend ranges upstream
-#' @param extend_downstream Distance to extend ranges downstream
-#' @param return_format Either 'table' or 'biostrings'
-#' @param output_dir If set the results will be saved to this directory.
+#'   same fixed size starting from the center of the ranges.
+#' @param extend_upstream Distance to extend ranges upstream.
+#' @param extend_downstream Distance to extend ranges downstream.
+#' @param return_format Either 'table' or 'biostrings'.
+#' @param output_dir If set, the results will be saved to this directory.
 #'   If return format is set to 'biostrings' the sequences will be saved as
-#'   FASTA files. If return format is a table it will be saved as a
+#'   FASTA files. If return format is a table, it will be saved as a
 #'   tab delimited table.
 #'
 #' @export

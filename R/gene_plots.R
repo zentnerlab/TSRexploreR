@@ -5,7 +5,7 @@
 #' features detected with and without a promoter proximal TSS or TSR. The information 
 #'
 #' @inheritParams common_params
-#' @param data_type Whether TSSs or TSRs should be analyzed.
+#' @param data_type Whether TSSs ('tss') or TSRs ('tsr') should be analyzed.
 #' @param ... Arguments passed to geom_col.
 #'
 #' @details
@@ -19,7 +19,7 @@
 #' considered. dominant' specifies whether only the dominant TSS or TSR (determined
 #' using the 'mark_dominant' function) is considered. For TSSs, this can be either 
 #' dominant TSS per TSR or gene/transcript, and for TSRs it is the dominant TSR 
-#' per gene/transcript. 'data_conditionals' can be used to filter, quantile, order, 
+#' per gene/transcript. 'data_conditions' can be used to filter, quantile, order, 
 #' and/or group data for plotting.
 #'
 #' @return ggplot2 object of detected features.
@@ -31,13 +31,12 @@
 #' data(TSSs_reduced)
 #' annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
 #'
-#' tsre <- TSSs %>%
+#' exp <- TSSs %>%
 #'   tsr_explorer(genome_annotation=annotation) %>%
 #'   format_counts(data_type="tss") %>%
 #'   annotate_features(data_type="tss")
 #'
-#' # Detected features with TSSs plot.
-#' p <- plot_detected_features(tsre, data_type="tss")
+#' plot_detected_features(exp, data_type="tss")
 #'
 #' @export
 

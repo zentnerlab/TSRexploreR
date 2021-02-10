@@ -26,7 +26,7 @@
 #' We recommend setting `soft_remove` to at minimum 3 because of this,
 #'   which removes the read if the given number of soft-clip bases is exceeded.
 #'
-#' @return TSRexploreR object with BAM GRanges and soft-clip information.
+#' @return TSRexploreR object with BAM GRanges and soft-clipped base information.
 #'
 #' @examples
 #' bam_file <- system.file("extdata", "S288C.bam", package="TSRexploreR")
@@ -187,8 +187,8 @@ import_bams <- function(
 #' assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
 #' samples <- data.frame(sample_name="S288C", file_1=bam_file, file_2=NA)
 #'
-#' tsre <- tsr_explorer(sample_sheet=samples, genome_assembly=assembly)
-#' tsre <- tsre %>% 
+#' exp <- tsr_explorer(sample_sheet=samples, genome_assembly=assembly)
+#' exp <- exp %>% 
 #'   import_bams(paired=TRUE) %>%
 #'   tss_aggregate
 #'
@@ -224,6 +224,33 @@ tss_aggregate <- function(experiment) {
 #' @param experiment TSRexploreR object.
 #' @param assembly Genome assembly in FASTA or BSgenome format.
 #'
+#' @details
+#' A common artifact in most TSS mapping methods is the presence of a G base upstream
+#' of the true TSS, presumably templated by the 5' cap during reverse transcription.
+#' Soft-clipping analysis can remove such Gs if they are not incidentally templated
+#' onto the genome; however, in cases where they match the genome during alignment,
+#' they cannot be distinguished from true TSSs. In order to account for this artifact,
+#' TSRexploreR first determines the frequency of reads with a soft-clipped G in a 
+#' given sample. For each read with a non-soft-clipped G at its 5' end, a Bernoulli
+#' trial is performed, with the above-mentioned frequency used as the probability of
+#' "success" (removal of the 5' G).
+#' 
+#' @return TSRexploreR object with G-corrected TSS GRanges.
+#'
+#' @seealso
+#' \code{\link{import_bams}} to import BAMs.
+#' \code{\link{softclip_analysis}} to remove soft-clipped bases at 5' read ends.
+#' 
+#' @examples
+#' bam_file <- system.file("extdata", "S288C.bam", package="TSRexploreR")
+#' assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
+#' samples <- data.frame(sample_name="S288C", file_1=bam_file, file_2=NA)
+#'
+#' exp <- tsr_explorer(sample_sheet=samples, genome_assembly=assembly) %>%
+#'   import_bams(paired=TRUE)
+#'   
+#' exp <- G_correction(exp, assembly=assembly)
+#' 
 #' @export
 
 G_correction <- function(

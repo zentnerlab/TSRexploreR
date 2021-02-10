@@ -33,7 +33,6 @@
 #'   format_counts(data_type="tss") %>%
 #'   normalize_counts(method="DESeq2")
 #'
-#' # TSS PCA plot.
 #' plot_reduction(exp, data_type="tss")
 #'
 #' @export

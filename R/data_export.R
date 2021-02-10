@@ -180,11 +180,11 @@ tss_export <- function(
 #' \dontrun{
 #' data(TSSs_reduced)
 #'
-#' tsre <- TSSs %>%
+#' exp <- TSSs %>%
 #'   tsr_explorer %>%
 #'   format_counts(data_type="tss") %>%
 #'   tss_clustering(threshold=3)
-#' tsr_export(tsre)
+#' tsr_export(exp)
 #' }
 #'
 #' @export

@@ -1,14 +1,14 @@
 #' Retrieve Sequences Near TSSs
 #'
 #' @description
-#' Retrieve sequences surrounding TSSs for further plotting
+#' Retrieve sequences surrounding TSSs for further plotting.
 #'
 #' @include TSRexplore.R
 #'
 #' @importFrom tools file_ext
 #'
 #' @inheritParams common_params
-#' @param distance Bases to add on each side of eacg TSS
+#' @param distance Bases to add on each side of each TSS.
 
 .tss_sequences <- function(
   experiment,
@@ -101,28 +101,28 @@
 #' @importFrom Biostrings consensusMatrix
 #'
 #' @inheritParams common_params
-#' @param distance Bases to add on each side of eacg TSS
-#' @param font_size Font size for plots
+#' @param distance Bases to add on each side of each TSS.
+#' @param font_size Font size for plots.
 #' @param base_colors Colors for each base.
 #' @param ... Arguments passed to ggseqlogo.
 #'
 #' @details
 #' This plotting function uses the ggseqlogo library to make sequence logos
 #'   from the sequences retrieved by the 'tss_sequences' function.
-#' Sequence logos show the enrichment of bases with certain positional biases
-#'   in a centered set of sequences.
-#' This is particularly important for TSS analysis since literature has shown
-#'   strong base preferences spanning TSSs and surrounding sequences.
+#' Sequence logos illustrate positional biases for certain bases at specific
+#' positions in a set of centered sequences. This is particularly important for 
+#' TSS analysis since literature has shown strong base preferences spanning TSSs 
+#' and surrounding sequences.
 #'
 #' 'genome_assembly' must be a valid genome assembly in either fasta or BSgenome format.
 #' fasta formatted genome assemblies should have the file extension '.fasta' or '.fa'.
 #' BSgenome assemblies are precompiled Bioconductor libraries for common organisms.
 #'
 #' 'distance' controls the length upstream and downstream of the TSS
-#'   from which the sequence will be retrieved.
+#'   for which the sequence will be retrieved.
 #'
 #' The color of each base is set using the 'base_colors' argument.
-#' The argument input should be a named vector, with the base as the name,
+#' The argument input should be a named vector, with the base as the name
 #' and the desired color of the base as the vector element.
 #'
 #' A set of functions to control data structure for plotting are included.
@@ -144,10 +144,11 @@
 #' data(TSSs_reduced)
 #' assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
 #'
-#' tsre <- TSSs %>%
+#' exp <- TSSs %>%
 #'   tsr_explorer(genome_assembly=assembly) %>%
 #'   format_counts(data_type="tss")
-#' p <- plot_sequence_logo(tsre, distance=5)
+#' 
+#' plot_sequence_logo(exp, distance=5)
 #'
 #' @export
 
@@ -259,24 +260,24 @@ plot_sequence_logo <- function(
   return(p)
 }
 
-#' Plot Sequence Colormap
+#' Plot Sequence Color Map
 #'
-#' Make a sequence colormap for the sequences around TSSs.
+#' Make a color map for the sequences around TSSs.
 #'
 #' @importFrom dplyr bind_cols
 #' @importFrom stringr str_length
 #'
 #' @inheritParams common_params
-#' @param base_colors Named vector specifying colors for each base
-#' @param distance Bases to add on each side of eacg TSS
-#' @param font_size Size of text for plots
-#' @param ... Arguments passed to geom_tile
+#' @param base_colors Named vector specifying colors for each base.
+#' @param distance Bases to add on each side of each TSS.
+#' @param font_size Size of text for plots.
+#' @param ... Arguments passed to geom_tile.
 #'
 #' @details
-#' This plotting function generates a ggplot2 base color map surrounding TSSs.
-#' Base color maps represent each base surrounding a TSS as a different color.
-#' Since the base composition for every TSS can be seen in one plot, it's a good
-#'   companion figure to sequence logos.
+#' This plotting function generates a ggplot2 base color map for the sequences
+#' around TSSs. Color maps represent each base surrounding a TSS as a different color.
+#' Since the base composition for every TSS region can be seen in one plot, it's a good
+#'   companion for sequence logos.
 #'
 #' The color of each base is set using the 'base_colors' argument.
 #' The argument input should be a named vector, with the base as the name,
@@ -311,10 +312,11 @@ plot_sequence_logo <- function(
 #' data(TSSs_reduced)
 #' assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
 #'
-#' tsre <- TSSs %>%
+#' exp <- TSSs %>%
 #'   tsr_explorer(genome_assembly=assembly) %>%
 #'   format_counts(data_type="tss")
-#' p <- plot_sequence_colormap(tsre, distance=5)
+#' 
+#' plot_sequence_colormap(exp, distance=5)
 #'
 #' @export
 

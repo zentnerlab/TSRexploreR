@@ -5,10 +5,10 @@
 #'
 #' @inheritParams common_params
 #' @param sample_1 First sample to compare.
-#'   Vector with sample name for TSS and TSR,
+#'   Vector with sample names for TSSs and TSRs,
 #'   with names 'TSS' and 'TSR'.
 #' @param sample_2 Second sample to compare.
-#'   Vector with sample name for TSS and TSR,
+#'   Vector with sample name for TSSs and TSRs,
 #'   with names 'TSS' and 'TSR'.
 #' @param comparison_name Name assigned to the results in the TSRexploreR object.
 #' @param tss_threshold Minimum number of raw counts required at a TSS for it to
@@ -19,18 +19,17 @@
 #'
 #' @details
 #' This function assesses the difference between TSS distributions from two distinct samples
-#' in a set of consensus TSRs by calculating the earth mover's distance (EMD) between
-#' them. For this approach, we imagine that the two TSS distributions in questions are piles 
-#' of dirt, and ask how much dirt from one pile we would need to move, how far, and in which 
-#' direction, to mimic the distribution of the other sample. The resulting score is between 
-#' -1 and 1, with larger magnitudes indicating larger shifts and the sign indicating direction 
-#' (negative values indicate upstream shifts and positive values indicate downstream shifts). 
-#' The function also calculates a p-value for the null hypothesis that there is no difference 
-#' (EMD = 0) based on a permutation test.
+#' in a set of consensus TSRs by calculating a signed version of the earth mover's distance
+#' that we term earth mover's score (EMS). For this approach, we imagine that the two TSS 
+#' distributions in questions are piles of dirt, and ask how much dirt from one pile we would 
+#' need to move, how far, and in which direction, to mimic the distribution of the other sample.
+#' The resulting EMS is between -1 and 1, with larger magnitudes indicating larger shifts and 
+#' the sign indicating direction (negative values indicate upstream shifts and positive values 
+#' indicate downstream shifts). The function also calculates a p-value for the null hypothesis 
+#' that there is no difference betwen the two samples, based on a permutation test.
 #'
-#' 'sample_1' and 'sample_2' should be the names of the two samples to compare.
-#' For the directions to make sense for the results 'sample_1' should be the control.
-#'   and 'sample_2' the treatment sample.
+#' 'sample_1' and 'sample_2' should be the names of the two samples to compare. 'sample_1' should 
+#' be the control and 'sample_2' the treatment sample.
 #' The results will be stored back in the TSRexploreR object with the name given by
 #'   'comparison_name'.
 #' 'tss_threshold' applies a global threshold to remove TSSs below a certain score,
@@ -48,15 +47,15 @@
 #'   condition=c(rep("Diamide", 3), rep("Untreated", 3))
 #' )
 #'
-#' tsre <- TSSs %>%
+#' exp <- TSSs %>%
 #'   tsr_explorer(sample_sheet=samples, genome_assembly=assembly) %>%
 #'   format_counts(data_type="tss") %>%
 #'   tss_clustering(threshold=3) %>%
 #'   merge_samples(data_type = "tss", merge_group="condition") %>%
 #'   merge_samples(data_type = "tsr", merge_group="condition")
 #'
-#' tsre <- tss_shift(
-#'   tsre,
+#' exp <- tss_shift(
+#'   exp,
 #'   sample_1=c(TSS="S288C_WT_1", TSR="S288C_WT_1"),
 #'   sample_2=c(TSS="S288C_D_1", TSR="S288C_D_1"),
 #'   comparison_name="Untreated_vs_Diamide",

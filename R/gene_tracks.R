@@ -1,13 +1,13 @@
 #' Gene Tracks
 #'
 #' @description
-#' Generate gene tracks in GViz by gene name.
+#' Generate gene tracks with GViz.
 #'
 #' @importFrom stringr str_count
 #' @importFrom GenomicFeatures genes transcripts promoters
 #'
 #' @inheritParams common_params
-#' @param feature_name Name of gene or transcript to plot.
+#' @param feature_name Name of gene or transcript to visualize
 #' @param feature_type Either 'gene' or 'transcript'
 #' @param samples Names of samples to plot. Append sample names with 'TSS:' or 'TSR:' 
 #' for TSS and TSR tracks, respectively.
@@ -23,7 +23,7 @@
 #'
 #' @details
 #' This function generates a GViz gene track of either the promoter region,
-#'   or the gene or transcript and surrounding region.
+#'   or the specified gene or transcript and surrounding region.
 #' The gene or transcript name should be supplied to 'feature_name'.
 #' 'promoter_only' controls whether the plot is of the feature promoter
 #'   or the entire gene.
@@ -36,7 +36,7 @@
 #' data(TSSs_reduced)
 #' annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
 #'
-#' tsre <- TSSs %>%
+#' exp <- TSSs %>%
 #'   tsr_explorer(genome_annotation=annotation) %>%
 #'   format_counts(data_type="tss") %>%
 #'   tss_clustering(threshold=3)

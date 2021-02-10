@@ -4,13 +4,13 @@
 #' Format TSS or TSR counts for further analysis. 
 #'
 #' @inheritParams common_params
-#' @param data_type Whether to format TSS or TSR counts 
+#' @param data_type Whether to format TSS ('tss') or TSR ('tsr') counts.
 #'
 #' @details
 #' When TSSs or TSRs are first loaded into the TSRexploreR object
 #'   they are stored as GRanges objects.
-#' This function converts these into data.table format,
-#'   and adds a few important columns for downstream analysis.
+#' This function converts these into data.table format
+#'   and adds a few columns to facilitate downstream analysis.
 #'
 #' @return TSRexploreR object with properly formatted features
 #'    in data.table format.

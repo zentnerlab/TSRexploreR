@@ -45,7 +45,6 @@
 #'   format_counts(data_type="tss") %>%
 #'   annotate_features(data_type="tss")
 #'
-#' # TSS density plot.
 #' plot_density(tsre, data_type="tss")
 #'
 #' @seealso

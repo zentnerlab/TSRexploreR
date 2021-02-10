@@ -33,13 +33,13 @@
 #' \dontrun{
 #' data(TSSs_reduced)
 #'
-#' # Export bedgraphs as example data.
+#' # Export bedGraphs as example data.
 #' exp <- TSSs %>%
 #'   tsr_explorer %>%
 #'   format_counts(data_type="tss")
 #' tss_export(exp)
 #'
-#' # Import the previously created bedgraphs.
+#' # Import the previously created bedGraphs.
 #' samples <- data.frame(
 #'   sample_name="S288C_D_1",
 #'   file_1="S288C_D_1_pos.bedgraph",
@@ -272,14 +272,14 @@ tss_import <- function(
 #' \dontrun{
 #' data(TSSs_reduced)
 #'
-#' # Export bed as example data.
+#' # Export BED as example data.
 #' exp <- TSSs %>%
 #'   tsr_explorer %>%
 #'   format_counts(data_type="tss") %>%
 #'   tss_clustering(threshold=3)
 #' tsr_export(exp)
 #'
-#' # Import the previously created bed.
+#' # Import the previously created BED.
 #' samples <- data.frame(
 #'   sample_name="S288C_D_1",
 #'   file_1="S288C_D_1.bed",

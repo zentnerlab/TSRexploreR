@@ -5,17 +5,18 @@
 #' @importFrom purrr map_df
 #'
 #' @inheritParams common_params
-#' @param max_threshold Thresholds from 1 to max_threshold will be explored
-#' @param steps Steps to get the threshold values
+#' @param max_threshold Thresholds from 1 to max_threshold will be explored.
+#' @param steps Steps to get the threshold values.
 
 #' @details
-#' All TSS mapping technologies have some degree of spurious background reads.
-#' tsr_explorer allows for basic thresholding of data by requiring
-#'   a minimum number of reads for a TSS to be considered.
+#' All TSS mapping technologies have some degree of background reads.
+#' TSRexplroeR allows for basic thresholding of data by requiring
+#'   a minimum number of reads for a TSS to be considered in downstream
+#'   analyses.
 #'
 #' An easy way to pick a threshold is with the threshold plot generated
 #'   by 'plot_exploration_threshold'.
-#' This plot shows the proportion TSS positions that are promoter-proximal when
+#' This plot shows the proportion of TSS positions that are promoter-proximal when
 #'   various threshold values are tested.
 #' 'max_threshold' defines the maximum threshold value that will be analyzed.
 #'
@@ -96,30 +97,29 @@
 #' Make a plot to explore threshold values.
 #'
 #' @inheritParams common_params
-#' @param max_threshold Thresholds from 1 to max_threshold will be explored
-#' @param steps Steps to get the threshold values
-#' @param point_size The size of the points on the plot
-#' @param ... Arguments passed to geom_point
+#' @param max_threshold Thresholds from 1 to max_threshold will be explored.
+#' @param steps Steps to get the threshold values.
+#' @param point_size The size of the points on the plot.
+#' @param ... Arguments passed to geom_point.
 #'
 #' @details
-#' All TSSs mapping methods produce spurious 5' reads.
-#' For the most part, these spurious reads tend to be weak and somewhat uniformly
-#'   distributed through the promoter and gene body.
-#' This means that this background can be mitigated by requiring a minimum read threshold
-#'   for a TSS to be retained in the filtered dataset.
+#' All TSSs mapping methods produce spurious TSSs. For the most part, these spurious 
+#' reads TSSs to be weak and somewhat uniformly distributed throughout promoters and
+#' gene bodies. This means that this background can be mitigated by requiring a 
+#' minimum read threshold for a TSS to be considered in downstream analyses.
 #'
-#' This plotting function generates a line-plot, where the x-axis is the nieve read threshold,
-#'   and the y-axis is the number of TSSs within annotated gene/transcript promoters.
+#' This plotting function generates a line plot, where the x-axis is the naive read threshold
+#'   and the y-axis is the proportion of TSSs within annotated gene/transcript promoters.
 #' Additionally, the point color represents the absolute number of genes with at least 1 surviving
-#'   TSSs after filtering.
+#'   TSS after filtering.
 #' 'max_threshold' controls the maximum threshold value explored,
-#'   and 'steps' is the value that is used to count between 1 and the 'max_threshold'.
+#'   and 'steps' is the value that is used to increment between 1 and 'max_threshold'.
 #'
 #' At a certain threshold there are diminishing returns,
-#'   where an increase in threshold results in little increase in promoter proximal fraction,
+#'   where an increase in threshold results in little increase in promoter-proximal fraction,
 #'   but a precipitous loss in number of genes with a TSS.
 #' A threshold should be chosen that balances these two competing metrics.
-#' For STRIPE-seq We have found that a threshold of 3 often provides an appropriate balance between
+#' For STRIPE-seq, we have found that a threshold of 3 often provides an appropriate balance between
 #'   a high promoter-proximal fraction (>= 0.8) and the number of unique genes or
 #'   transcripts with at least one unique TSS.
 #'
@@ -132,11 +132,12 @@
 #' data(TSSs_reduced)
 #' annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
 #'
-#' tsre <- TSSs %>%
+#' exp <- TSSs %>%
 #'   tsr_explorer(genome_annotation=annotation) %>%
 #'   format_counts(data_type="tss") %>%
 #'   annotate_features(data_type="tss")
-#' p <- plot_threshold_exploration(tsre)
+#'   
+#' plot_threshold_exploration(exp)
 #'
 #' @export
 
@@ -194,16 +195,15 @@ plot_threshold_exploration <- function(
 #' @inheritParams common_params
 #' @param n_samples Number of samples threshold must be reached to keep TSS.
 #'   By default set to 1 sample. A NULL value will result in all samples being
-#'   required to have read counts above threshold.
+#'   required to have read counts above the threshold at a given TSS position
 #'
 #' @details
-#' All TSSs mapping methods produce spurious 5' reads.
-#' For the most part, these spurious reads tend to be weak and somewhat uniformly
-#'   distributed through the promoter and gene body.
-#' This means that this background can be mitigated by requiring a minimum read threshold
-#'   for a TSS to be retained in the filtered dataset.
+#' All TSSs mapping methods produce spurious TSSs. For the most part, these spurious 
+#' reads TSSs to be weak and somewhat uniformly distributed throughout promoters and
+#' gene bodies. This means that this background can be mitigated by requiring a 
+#' minimum read threshold for a TSS to be considered in downstream analyses.
 #'
-#' This function will permantly filter TSSs from the TSS data.table if no sample has
+#' This function will remove TSSs from the TSS data.table if no sample has
 #'  at least 'threshold' number of reads in at least 'n_samples' number of samples.
 #'
 #' @return TSRexploreR object with weak TSSs filtered out of counts table.
@@ -216,10 +216,11 @@ plot_threshold_exploration <- function(
 #' data(TSSs)
 #' annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
 #'
-#' tsre <- TSSs[1] %>%
+#' exp <- TSSs[1] %>%
 #'   tsr_explorer(genome_annotation=annotation) %>%
 #'   format_counts(data_type="tss")
-#' tsre <- apply_threshold(tsre, threshold=3)
+#'   
+#' exp <- apply_threshold(exp, threshold=3)
 #'
 #' @export
 

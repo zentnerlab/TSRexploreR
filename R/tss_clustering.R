@@ -6,13 +6,13 @@
 #' @inheritParams common_params
 #' @param max_distance Maximum allowable distance between TSSs for clustering.
 #' @param max_width Maximum allowable TSR width.
-#' @param n_samples Keep TSS if threshold number of reads are present in n_samples
+#' @param n_samples Keep TSS if 'threshold' number of counts is present in n_samples
 #'   number of samples.
 #' @param singlet_threshold TSRs of width 1 must have a score greater than
 #'   or equal to this threshold to be kept.
 #'
 #' @details
-#' Genes rarely have a singular TSS, but rather a cluster of TSSs.
+#' Genes rarely have a single TSS, but rather a cluster of TSSs.
 #' This function clusters TSSs into Transcription Start Regions (TSRs).
 #' TSSs are clustered if their score is greater than or equal to 'threshold'
 #'   in at least 'n_samples' number of samples,

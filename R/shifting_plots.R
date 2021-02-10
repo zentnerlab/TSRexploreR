@@ -2,27 +2,19 @@
 #' Shifting Rank Plot
 #'
 #' @description
-#' Barplot of shift ranks ordered by score.
+#' Barplot of shift scores ranked by score.
 #'
 #' @inheritParams common_params
-#' @param score_order Either descending or ascending
+#' @param score_order Either 'descending' or 'ascending'.
 #'
 #' @details
-#' The 'tss_shifting' function uses the Earth Movers Distance (EMD)
-#'   to find significant upstream or downstream shifts in TSS clusters.
-#' EMD returns a score between -1 and 1 inclusive, with negative and positive scores
-#'   correspending to upstream and downstream shifts respectively.
-#' In rarer cases you can have a shifting scores of 0,
-#'   indicating an equal shift of TSS cluster 'mass' upstream and downstream.
+#' The 'tss_shifting' function uses the earth mover's score (EMS) to assess shifts
+#' in TSS distribution in consensus TSRs between two samples. This function generates 
+#' a barplot of shifting scores, with the x-axis corresponding to TSS clusters ordered 
+#' by tss shifting score, and the y-axis the shifting score. TSRs can be in ascending 
+#' or descending order as controlled by 'score_order'.
 #'
-#' This functions generates a barplot of shifting score,
-#'   with the x-axis corresponding to TSS clusters ordered by tss shifting score,
-#'   and the y-axis the shifting score.
-#' TSS clusters can be in ascending or descending order as controlled by 'score_order'.
-#'
-#' This function 
-#'
-#' @return ggplot2 object of shifting rank plot.
+#' @return ggplot2 object of ranked shifting scores.
 #'
 #' @seealso
 #' \code{\link{tss_shift}} to calculate TSS cluster shifting.
@@ -36,7 +28,7 @@
 #'   condition=c(rep("Diamide", 3), rep("Untreated", 3))
 #' )
 #'
-#' tsre <- TSSs %>%
+#' exp <- TSSs %>%
 #'   tsr_explorer(sample_sheet=samples, genome_assembly=assembly) %>%
 #'   format_counts(data_type="tss") %>%
 #'   tss_clustering(threshold=3) %>%
@@ -48,7 +40,8 @@
 #'     comparison_name="Untreated_vs_Diamide",
 #'     max_distance = 100, min_threshold = 10, n_resamples = 1000L
 #'   )
-#' p <- plot_shift_rank(tsre)
+#'   
+#' plot_shift_rank(exp)
 #'
 #' @export
 
@@ -106,11 +99,11 @@ plot_shift_rank <- function(
 #' Shift Count Plot
 #'
 #' @description
-#' Generate a stacked barplot for the number of TSS clusters
-#'   shifted upstream and/or downstream per sample.
+#' Generate a stacked barplot for the number of TSRs with significant
+#'   upstream and/or downstream shifts for each comparison.
 #'
 #' @inheritParams common_params
-#' @param ... Arguments passed to geom_col
+#' @param ... Arguments passed to geom_col.
 #'
 #' @return ggplot2 of stacked barplot of shifted TSS clusters.
 #'   If 'return_table' is TRUE, a data.frame of underlying counts
@@ -120,15 +113,11 @@ plot_shift_rank <- function(
 #' \code{\link{tss_shift}} For TSS cluster shifting calculation.
 #'
 #' @details
-#' The 'tss_shifting' function uses the Earth Movers Distance (EMD)
-#'   to find significant upstream or downstream shifts in TSS clusters.
-#' EMD returns a score between -1 and 1 inclusive, with negative and positive scores
-#'   correspending to upstream and downstream shifts respectively.
-#' In rarer cases you can have a shifting scores of 0,
-#'   indicating an equal shift of TSS cluster 'mass' upstream and downstream.
+#' The 'tss_shifting' function uses the earth mover's score (EMS) to assess shifts
+#' in TSS distribution in consensus TSRs between two samples. This function generates 
+#' a stacked barplot of the number of upstream and downstream shifts in each
+#' comparison. 
 #'
-#' This function generates a stacked barplot for the number of TSS clusters
-#'   with an upstream and downstream shift.
 #' If 'return_table' is TRUE, a data.frame is returned that provides the underlying
 #'   counts for each sample.
 #'
@@ -141,7 +130,7 @@ plot_shift_rank <- function(
 #'   condition=c(rep("Diamide", 3), rep("Untreated", 3))
 #' )
 #'
-#' tsre <- TSSs %>%
+#' exp <- TSSs %>%
 #'   tsr_explorer(sample_sheet=samples, genome_assembly=assembly) %>%
 #'   format_counts(data_type="tss") %>%
 #'   tss_clustering(threshold=3) %>%
@@ -153,7 +142,8 @@ plot_shift_rank <- function(
 #'     comparison_name="Untreated_vs_Diamide",
 #'     max_distance = 100, min_threshold = 10, n_resamples = 1000L
 #'   )
-#' p <- plot_shift_count(tsre)
+#'   
+#' plot_shift_count(exp)
 #'
 #' @export
 

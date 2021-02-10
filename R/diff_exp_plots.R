@@ -6,8 +6,6 @@
 #' @inheritParams common_params
 #' @param data_type Whether to plot differential TSSs ('tss') or TSRs ('tsr').
 #' @param de_comparisons Character vector of differential expression comparisons to plot.
-#' @param log2fc_cutoff Log2(fold change) threshold for determination of significance.
-#' @param fdr_cutoff FDR threshold for determination of significance.
 #' @param ... Arguments passed to geom_point.
 #'
 #' @details
@@ -40,7 +38,6 @@
 #'   tsr_explorer(sample_sheet=sample_sheet) %>%
 #'   format_counts(data_type="tss")
 #'
-#' # Differential TSS MA plot.
 #' diff_tss <- exp %>%
 #'   fit_de_model(data_type="tss", formula= ~condition, method="DESeq2") %>%
 #'   differential_expression(
@@ -105,8 +102,6 @@ plot_ma <- function(
 #' @inheritParams common_params
 #' @param data_type Whether to plot differential TSSs ('tss') or TSRs ('tsr').
 #' @param de_comparisons Character vector of differential expression comparisons to plot.
-#' @param log2fc_cutoff Log2(fold change) threshold for determination of significance.
-#' @param fdr_cutoff FDR threshold for determination of significance.
 #' @param ... Arguments passed to geom_point.
 #'
 #' @details
@@ -139,7 +134,6 @@ plot_ma <- function(
 #'   tsr_explorer(sample_sheet=sample_sheet) %>%
 #'   format_counts(data_type="tss")
 #'
-#' # Differential TSS volcano plot.
 #' diff_tss <- exp %>%
 #'   fit_de_model(data_type="tss", formula= ~condition, method="DESeq2") %>%
 #'   differential_expression(
@@ -255,7 +249,6 @@ plot_volcano <- function(
 #'   format_counts(data_type="tss") %>%
 #'   annotate_features(data_type="tss")
 #'
-#' # Differential TSS table.
 #' diff_tss <- exp %>%
 #'   fit_de_model(data_type="tss", formula= ~condition, method="DESeq2") %>%
 #'   differential_expression(
@@ -360,7 +353,6 @@ export_for_enrichment <- function(
 #'   tsr_explorer(sample_sheet=sample_sheet) %>%
 #'   format_counts(data_type="tss")
 #'
-#' # Differential TSS number plot.
 #' diff_tss <- exp %>%
 #'   fit_de_model(data_type="tss", formula= ~condition, method="DESeq2") %>%
 #'   differential_expression(

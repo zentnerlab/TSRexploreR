@@ -35,7 +35,6 @@
 #'   tsr_explorer(sample_sheet=sample_sheet) %>%
 #'   format_counts(data_type="tss")
 #'
-#' # DESeq2 model for differential TSSs.
 #' exp <- fit_de_model(exp, data_type="tss", formula=~condition, method="DESeq2")
 #'
 #' @export

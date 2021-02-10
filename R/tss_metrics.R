@@ -4,7 +4,7 @@
 #' Mark TSSs as dominant per TSR or gene/transcript, or TSRs as dominant per gene/transcript. 
 #'
 #' @inheritParams common_params
-#' @param data_type Whether to mark dominant TSSs or TSRs.
+#' @param data_type Whether to mark dominant TSSs ('tss') or TSRs ('tsr').
 #' @param mark_per By default, the function marks dominant TSR per gene, and dominant TSS per TSR.
 #'   TSSs can also be set per as dominant TSS per 'gene'.
 #'
@@ -31,15 +31,14 @@
 #' data(TSSs_reduced)
 #' annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
 #'
-#' tsre <- TSSs %>%
+#' exp <- TSSs %>%
 #'   tsr_explorer(genome_annotation=annotation) %>%
 #'   format_counts(data_type="tss") %>%
 #'   tss_clustering(threshold=3) %>%
 #'   associate_with_tsr
 #'
-#' # Dominant TSS per gene.
-#' tsre <- annotate_features(tsre, data_type="tss")
-#' tsre <- mark_dominant(tsre, data_type="tss", mark_per="gene")
+#' exp <- annotate_features(exp, data_type="tss")
+#' exp <- mark_dominant(exp, data_type="tss", mark_per="gene")
 #'
 #' @export
 

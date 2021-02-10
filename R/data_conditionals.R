@@ -41,19 +41,19 @@
 #'   associate_with_tsr %>%
 #'   tsr_metrics
 #'
-#' # Sequence logo of TSSs from peaked TSRs.
+#' # Sequence logo of TSSs from peaked TSRs
 #' conditions <- conditionals(shape_class == "peaked")
 #' plot_sequence_logo(exp, data_conditions=conditions)
 #'
-#' # Sequence color map sorted by descending TSS score.
+#' # Sequence color map sorted by descending TSS score
 #' conditions <- conditionals(data_ordering=ordering(desc(score)))
 #' plot_sequence_colormap(exp, data_conditions=conditions)
 #'
-#' # Sequence logos split by TSS score quantile.
+#' # Sequence logos split by TSS score quantile
 #' conditions <- conditionals(data_quantiling=quantiling(score, n=5))
 #' plot_sequence_logo(exp, data_conditions=conditions)
 #'
-#' # Sequence logo split by TSR shape class.
+#' # Sequence logo split by TSR shape class
 #' conditions <- conditionals(data_grouping=shape_class)
 #' plot_sequence_logo(exp, data_conditions=conditions)
 #'
@@ -142,7 +142,7 @@ conditionals <- function(
 #'   tsr_explorer(genome_assembly=assembly) %>%
 #'   format_counts(data_type="tss")
 #'
-#' # Sequence base color plot sorted by descending score.
+#' # Sequence color map sorted by descending score.
 #' conditions <- conditionals(data_ordering=ordering(desc(score)))
 #' plot_sequence_colormap(exp, data_conditions=conditions)
 #' }
