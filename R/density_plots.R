@@ -45,7 +45,7 @@
 #'   format_counts(data_type="tss") %>%
 #'   annotate_features(data_type="tss")
 #'
-#' plot_density(tsre, data_type="tss")
+#' p <- plot_density(tsre, data_type="tss")
 #'
 #' @seealso
 #' \code{\link{annotate_features}} to annotate TSSs or TSRs.
