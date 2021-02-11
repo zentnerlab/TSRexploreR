@@ -137,7 +137,7 @@
 #'   format_counts(data_type="tss") %>%
 #'   annotate_features(data_type="tss")
 #'   
-#' plot_threshold_exploration(exp)
+#' p <- plot_threshold_exploration(exp)
 #'
 #' @export
 
