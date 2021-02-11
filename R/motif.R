@@ -148,7 +148,7 @@
 #'   tsr_explorer(genome_assembly=assembly) %>%
 #'   format_counts(data_type="tss")
 #' 
-#' plot_sequence_logo(exp, distance=5)
+#' p <- plot_sequence_logo(exp, distance=5)
 #'
 #' @export
 
@@ -316,7 +316,7 @@ plot_sequence_logo <- function(
 #'   tsr_explorer(genome_assembly=assembly) %>%
 #'   format_counts(data_type="tss")
 #' 
-#' plot_sequence_colormap(exp, distance=5)
+#' p <- plot_sequence_colormap(exp, distance=5)
 #'
 #' @export
 
