@@ -41,7 +41,7 @@
 #' exp <- tsr_explorer(sample_sheet=samples, genome_assembly=assembly) %>%
 #'   import_bams(paired=TRUE)
 #'   
-#' softclip_composition(exp)
+#' p <- softclip_composition(exp)
 #'
 #' @export
 
@@ -166,7 +166,7 @@ softclip_composition <- function(
 #' exp <- tsr_explorer(sample_sheet=samples, genome_assembly=assembly) %>%
 #'   import_bams(paired=TRUE)
 #'   
-#' softclip_histogram(exp)
+#' p <- softclip_histogram(exp)
 #'
 #' @export
 
