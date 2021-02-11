@@ -43,19 +43,19 @@
 #'
 #' # Sequence logo of TSSs from peaked TSRs
 #' conditions <- conditionals(shape_class == "peaked")
-#' plot_sequence_logo(exp, data_conditions=conditions)
+#' p <- plot_sequence_logo(exp, data_conditions=conditions)
 #'
 #' # Sequence color map sorted by descending TSS score
 #' conditions <- conditionals(data_ordering=ordering(desc(score)))
-#' plot_sequence_colormap(exp, data_conditions=conditions)
+#' p <- plot_sequence_colormap(exp, data_conditions=conditions)
 #'
 #' # Sequence logos split by TSS score quantile
 #' conditions <- conditionals(data_quantiling=quantiling(score, n=5))
-#' plot_sequence_logo(exp, data_conditions=conditions)
+#' p <- plot_sequence_logo(exp, data_conditions=conditions)
 #'
 #' # Sequence logo split by TSR shape class
 #' conditions <- conditionals(data_grouping=shape_class)
-#' plot_sequence_logo(exp, data_conditions=conditions)
+#' p <- plot_sequence_logo(exp, data_conditions=conditions)
 #'
 #' @seealso
 #' \code{\link{ordering}} for ordering information.
@@ -144,7 +144,7 @@ conditionals <- function(
 #'
 #' # Sequence color map sorted by descending score.
 #' conditions <- conditionals(data_ordering=ordering(desc(score)))
-#' plot_sequence_colormap(exp, data_conditions=conditions)
+#' p <- plot_sequence_colormap(exp, data_conditions=conditions)
 #' }
 #'
 #' @seealso
@@ -210,7 +210,7 @@ ordering <- function(
 #'
 #' # Sequence base color plot quantiled by score.
 #' conditions <- conditionals(data_quantiling=quantiling(score, n=5))
-#' plot_sequence_colormap(exp, data_conditions=conditions)
+#' p <- plot_sequence_colormap(exp, data_conditions=conditions)
 #' }
 #'
 #' @seealso
