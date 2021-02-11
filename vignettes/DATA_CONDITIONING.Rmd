@@ -21,7 +21,7 @@ variables. Conditionals can be applied to most functions via the `data_condition
 argument. For heatmaps, the distinct data structure necessitates a separate group
 of arguments to mimic these data conditioning features. Below, we provide several
 examples of data conditioning with TSRexploreR, using the provided *S. cerevisiae*
-STRIPE-seq data.
+[STRIPE-seq](https://genome.cshlp.org/content/30/6/910.long) data.
 
 ## Prepare data
 

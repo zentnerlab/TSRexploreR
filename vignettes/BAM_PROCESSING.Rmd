@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-In addition to accepting TSSs and/or TSRs in a variety of formats, TSRexploreR can import and process alignment BAM files. Any method-specific sequences present in the reads (for instance, the 8-bp UMI and TATAGGG spacer sequence present in the R1 reads of STRIPE-seq datasets) should be trimmed prior to import. Here, we illustrate BAM processing using a small example alignment of paired-end *S. cerevisiae* STRIPE-seq data to the sacCer3 genome assembly.
+In addition to accepting TSSs and/or TSRs in a variety of formats, TSRexploreR can import and process alignment BAM files. Any method-specific sequences present in the reads (for instance, the 8-bp UMI and TATAGGG spacer sequence present in the R1 reads of STRIPE-seq datasets) should be trimmed prior to import. Here, we illustrate BAM processing using a small example alignment of paired-end *S. cerevisiae* [STRIPE-seq](https://genome.cshlp.org/content/30/6/910.long) data to the sacCer3 genome assembly.
 
 ## Prepare TSRexploreR object and import BAM file
 
@@ -45,7 +45,8 @@ exp <- import_bams(exp, paired=TRUE, proper_pair=TRUE, remove_duplicate=TRUE, re
 
 ## Analysis of soft-clipped bases
 
-A frequent observation in TSS mapping protocols is the presence of spurious, non-templated nucleotides at the 5' end of the R1 read. Addition of a single non-templated G, speculated to be templated by the 7-methylguanosine cap, is particularly prevalent. If these spurious bases are not incidentally aligned to the genome, they are soft-clipped. TSRexploreR provides two plots for assessment of soft-clipped bases.
+A frequent observation in TSS mapping protocols is the presence of spurious, non-templated nucleotides at the 5' end of the R1 read ([Carninci et al. 2006](https://www.nature.com/articles/ng1789)).
+Addition of a single non-templated G, likely templated by the 7-methylguanosine cap ([Wulf et al. 2019](https://www.jbc.org/article/S0021-9258(20)30687-6/fulltext)), is particularly prevalent. If these spurious bases are not incidentally aligned to the genome, they are soft-clipped. TSRexploreR provides two plots for assessment of soft-clipped bases.
 
 First, a plot of the number of reads with certain numbers of soft-clipped bases can be generated. From this, we can see that most reads that were soft-clipped during alignment have a single such base. By default, reads with >3 soft-clipped bases are removed during BAM import.  
 
