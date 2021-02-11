@@ -38,7 +38,7 @@
 #'   format_counts(data_type="tss") %>%
 #'   annotate_features(data_type="tss")
 #'
-#' plot_genomic_distribution(exp, data_type="tss")
+#' p <- plot_genomic_distribution(exp, data_type="tss")
 #'
 #' @export 
 
