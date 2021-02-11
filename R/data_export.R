@@ -23,7 +23,7 @@
 #'
 #' If 'diff_tss' is TRUE, only differential TSSs will be output.
 #'
-#' @returnbedGraphs or bigWigs split by strand, or a table.
+#' @return bedGraphs or bigWigs split by strand, or a table.
 #'
 #' @seealso
 #' \code{\link{tsr_export}} to export TSRs.
