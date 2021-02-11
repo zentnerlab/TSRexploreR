@@ -33,7 +33,7 @@
 #'   format_counts(data_type="tss") %>%
 #'   normalize_counts(method="CPM")
 #'
-#' plot_reduction(exp, data_type="tss")
+#' p <- plot_reduction(exp, data_type="tss")
 #'
 #' @export
 
