@@ -32,8 +32,8 @@
 #'   tsr_explorer(sample_sheet=samples, genome_assembly=assembly) %>%
 #'   format_counts(data_type="tss") %>%
 #'   tss_clustering(threshold=3) %>%
-#'   merge_samples(data_type = "tss", merge_group="condition") %>%
-#'   merge_samples(data_type = "tsr", merge_group="condition") %>%
+#'   merge_samples(data_type="tss", merge_group="condition") %>%
+#'   merge_samples(data_type="tsr", merge_group="condition") %>%
 #'   tss_shift(
 #'     sample_1=c(TSS="S288C_WT_1", TSR="S288C_WT_1"),
 #'     sample_2=c(TSS="S288C_D_1", TSR="S288C_D_1"),
@@ -41,7 +41,7 @@
 #'     max_distance = 100, min_threshold = 10, n_resamples = 1000L
 #'   )
 #'   
-#' plot_shift_rank(exp)
+#' p <- plot_shift_rank(exp)
 #'
 #' @export
 
@@ -134,8 +134,8 @@ plot_shift_rank <- function(
 #'   tsr_explorer(sample_sheet=samples, genome_assembly=assembly) %>%
 #'   format_counts(data_type="tss") %>%
 #'   tss_clustering(threshold=3) %>%
-#'   merge_samples(data_type = "tss", merge_group="condition") %>%
-#'   merge_samples(data_type = "tsr", merge_group="condition") %>%
+#'   merge_samples(data_type="tss", merge_group="condition") %>%
+#'   merge_samples(data_type="tsr", merge_group="condition") %>%
 #'   tss_shift(
 #'     sample_1=c(TSS="S288C_WT_1", TSR="S288C_WT_1"),
 #'     sample_2=c(TSS="S288C_D_1", TSR="S288C_D_1"),
@@ -143,7 +143,7 @@ plot_shift_rank <- function(
 #'     max_distance = 100, min_threshold = 10, n_resamples = 1000L
 #'   )
 #'   
-#' plot_shift_count(exp)
+#' p <- plot_shift_count(exp)
 #'
 #' @export
 
