@@ -38,7 +38,7 @@
 #'   format_counts(data_type="tss") %>%
 #'   tss_clustering(threshold=3)
 #'
-#' plot_tsr_metric(exp, "width")
+#' p <- plot_tsr_metric(exp, "width")
 #'
 #' @export
 
