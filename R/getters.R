@@ -17,7 +17,7 @@
 #'
 #' exp <- tsr_explorer(TSSs[1])
 #' 
-#' get_granges(exp)
+#' gr <- get_granges(exp)
 #'
 #' @export
 
@@ -73,7 +73,7 @@ get_granges <- function(
 #' exp <- tsr_explorer(TSSs[1]) %>%
 #'   format_counts(data_type="tss")
 #' 
-#' get_counts(exp)
+#' cts <- get_counts(exp)
 #'
 #' @export
 
@@ -158,7 +158,7 @@ get_annotation <- function(
 #' assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
 #' exp <- tsr_explorer(genome_assembly=assembly)
 #' 
-#' get_assembly(exp)
+#' a <- get_assembly(exp)
 #'
 #' @export
 
@@ -192,7 +192,7 @@ get_assembly <- function(
 #' 
 #' exp <- tsr_explorer(sample_sheet=sample_sheet)
 #' 
-#' get_sample_sheet(exp)
+#' ss <- get_sample_sheet(exp)
 #'
 #' @export
 
@@ -239,7 +239,7 @@ get_sample_sheet <- function(
 #'     max_distance = 100, min_threshold = 10, n_resamples = 1000L
 #'   )
 #'   
-#' get_shifting_results(exp)
+#' sr <- get_shifting_results(exp)
 #'
 #' @export
 
@@ -289,9 +289,9 @@ get_shifting_results <- function(
 #' exp <- TSSs %>%
 #'   tsr_explorer(sample_sheet=sample_sheet) %>%
 #'   format_counts(data_type="tss") %>%
-#'   fit_de_model(~condition, data_type="tss", method="DESeq2")
+#'   fit_de_model(~condition, data_type="tss", method="edgeR")
 #' 
-#' get_diff_model(exp, data_type="tss")
+#' dm <- get_diff_model(exp, data_type="tss")
 #'
 #' @export
 
@@ -351,7 +351,7 @@ get_diff_model <- function(
 #'     comparison=2
 #'   )
 #' 
-#' get_diff_results(exp, data_type="tss")
+#' dr <- get_diff_results(exp, data_type="tss")
 #'
 #' @export
 
