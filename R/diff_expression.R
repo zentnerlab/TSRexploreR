@@ -222,13 +222,13 @@ fit_de_model <- function(
 #'   format_counts(data_type="tss")
 #'
 #' # Differential TSSs with DESeq2.
-#' exp <- fit_de_model(exp, data_type = "tss", formula = ~condition, method = "edgeR")
+#' exp <- fit_de_model(exp, data_type="tss", formula=~condition, method="edgeR")
 #' 
 #' exp <- differential_expression(
-#'   exp, data_type = "tss", 
-#'   comparison_name = "Diamide_vs_Untreated",
-#'   comparison_type = "coef",
-#'   comparison = 2)
+#'   exp, data_type="tss", 
+#'   comparison_name="Diamide_vs_Untreated",
+#'   comparison_type="coef",
+#'   comparison=2)
 #'
 #' @export
 
