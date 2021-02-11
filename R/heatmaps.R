@@ -541,7 +541,7 @@ plot_heatmap <- function(
 ) {
 
   ## Change list to data.table if list provided.
-  if (is.list(split_by)) {
+  if (!is(split_by, "data.frame")) {
     split_by <- map(split_by, ~data.table(feature=.x))
     split_by <- rbindlist(split_by, idcol="split_group")
   } else {
