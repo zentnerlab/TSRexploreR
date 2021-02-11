@@ -42,7 +42,7 @@
 #'   tss_clustering(threshold=3)
 #'
 #' \dontrun{
-#' gene_tracks(tsre, "YDR418W", samples=c(TSS="S288C_D_1", TSR="S288C_D_1"))
+#' gene_tracks(exp, "YDR418W", samples=c(TSS="S288C_D_1", TSR="S288C_D_1"))
 #' }
 #'
 #' @export

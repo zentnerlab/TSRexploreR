@@ -89,7 +89,7 @@ exp <- TSSs \%>\%
   format_counts(data_type="tss") \%>\%
   annotate_features(data_type="tss")
 
-p <- plot_density(tsre, data_type="tss")
+p <- plot_density(exp, data_type="tss")
 
 }
 \seealso{

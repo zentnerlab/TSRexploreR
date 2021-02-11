@@ -25,10 +25,10 @@
 #' @examples
 #' data(TSSs)
 #'
-#' tsre <- TSSs[1] %>%
+#' exp <- TSSs[1] %>%
 #'   tsr_explorer %>%
 #'   format_counts(data_type="tss")
-#' tsre <- tss_clustering(tsre, threshold=3)
+#' exp <- tss_clustering(exp, threshold=3)
 #'
 #' @export
 
