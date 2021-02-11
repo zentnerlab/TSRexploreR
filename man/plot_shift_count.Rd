@@ -21,7 +21,7 @@ plot_shift_count(
 
 \item{return_table}{Return a table of results instead of a plot.}
 
-\item{...}{Arguments passed to geom_col}
+\item{...}{Arguments passed to geom_col.}
 }
 \value{
 ggplot2 of stacked barplot of shifted TSS clusters.
@@ -29,19 +29,15 @@ ggplot2 of stacked barplot of shifted TSS clusters.
   is returned instead.
 }
 \description{
-Generate a stacked barplot for the number of TSS clusters
-  shifted upstream and/or downstream per sample.
+Generate a stacked barplot for the number of TSRs with significant
+  upstream and/or downstream shifts for each comparison.
 }
 \details{
-The 'tss_shifting' function uses the Earth Movers Distance (EMD)
-  to find significant upstream or downstream shifts in TSS clusters.
-EMD returns a score between -1 and 1 inclusive, with negative and positive scores
-  correspending to upstream and downstream shifts respectively.
-In rarer cases you can have a shifting scores of 0,
-  indicating an equal shift of TSS cluster 'mass' upstream and downstream.
+The 'tss_shifting' function uses the earth mover's score (EMS) to assess shifts
+in TSS distribution in consensus TSRs between two samples. This function generates 
+a stacked barplot of the number of upstream and downstream shifts in each
+comparison. 
 
-This function generates a stacked barplot for the number of TSS clusters
-  with an upstream and downstream shift.
 If 'return_table' is TRUE, a data.frame is returned that provides the underlying
   counts for each sample.
 }
@@ -54,19 +50,20 @@ samples <- data.frame(
   condition=c(rep("Diamide", 3), rep("Untreated", 3))
 )
 
-tsre <- TSSs \%>\%
+exp <- TSSs \%>\%
   tsr_explorer(sample_sheet=samples, genome_assembly=assembly) \%>\%
   format_counts(data_type="tss") \%>\%
   tss_clustering(threshold=3) \%>\%
-  merge_samples(data_type = "tss", merge_group="condition") \%>\%
-  merge_samples(data_type = "tsr", merge_group="condition") \%>\%
+  merge_samples(data_type="tss", merge_group="condition") \%>\%
+  merge_samples(data_type="tsr", merge_group="condition") \%>\%
   tss_shift(
     sample_1=c(TSS="S288C_WT_1", TSR="S288C_WT_1"),
     sample_2=c(TSS="S288C_D_1", TSR="S288C_D_1"),
     comparison_name="Untreated_vs_Diamide",
     max_distance = 100, min_threshold = 10, n_resamples = 1000L
   )
-p <- plot_shift_count(tsre)
+  
+p <- plot_shift_count(exp)
 
 }
 \seealso{

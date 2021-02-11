@@ -45,7 +45,7 @@
 #'   tsr_explorer(sample_sheet=sample_sheet, genome_assembly=assembly) %>%
 #'   format_counts(data_type="tss")
 #'
-#' exp <- merge_samples(tsre, data_type="tss", merge_group="condition")
+#' exp <- merge_samples(exp, data_type="tss", merge_group="condition")
 #'
 #' @export
 

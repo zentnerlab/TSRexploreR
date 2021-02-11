@@ -20,15 +20,15 @@ plot_reduction(
 
 \item{samples}{A vector of sample names to analyze.}
 
-\item{data_type}{Either 'tss' or 'tsr'.}
+\item{data_type}{Whether to analyze TSSs ('tss') or TSRs ('tsr').}
 
 \item{use_normalized}{Whether to use the normalized (TRUE) or raw (FALSE) counts.}
 
 \item{remove_var}{Remove features in this bottom fraction.}
 
-\item{center}{Center the data.}
+\item{center}{Center the data (TRUE).}
 
-\item{scale}{Scale the data.}
+\item{scale}{Scale the data (TRUE).}
 
 \item{...}{Additional arguments passed to PCAtools::biplot.}
 }
@@ -36,15 +36,15 @@ plot_reduction(
 ggplot2 object of PCA plot.
 }
 \description{
-Dimensionality reduction plot using PCA
+Dimensionality reduction using PCA.
 }
 \details{
 This function will generatete a PCA plot of the first two PCs.
 This helps to visualize the relative similarity of samples
-  based on the most variables features.
+  based on the most variable features.
 
 'remove_var' removes features in the bottom fraction of variance.
-'center' and 'scale' will center and scale the data respectively.
+'center' and 'scale' will center and scale the data, respectively.
 }
 \examples{
 data(TSSs)
@@ -54,12 +54,11 @@ samples <- data.frame(
   condition="Diamide"
 )
 
-tsre <- TSSs[seq_len(2)] \%>\%
+exp <- TSSs[seq_len(2)] \%>\%
   tsr_explorer(sample_sheet=samples) \%>\%
   format_counts(data_type="tss") \%>\%
   normalize_counts(method="CPM")
 
-# TSS PCA plot.
-p <- plot_reduction(tsre, data_type="tss")
+p <- plot_reduction(exp, data_type="tss")
 
 }

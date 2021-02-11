@@ -13,7 +13,7 @@ tss_aggregate(experiment)
 TSRexploreR object with GRanges of aggregated TSSs.
 }
 \description{
-Aggregate overlapping TSSs into a total sum score.
+Aggregate overlapping TSSs to generate positional scores.
 }
 \details{
 'import_bams' generates a GRanges object of non-aggregated TSSs.
@@ -25,8 +25,8 @@ bam_file <- system.file("extdata", "S288C.bam", package="TSRexploreR")
 assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
 samples <- data.frame(sample_name="S288C", file_1=bam_file, file_2=NA)
 
-tsre <- tsr_explorer(sample_sheet=samples, genome_assembly=assembly)
-tsre <- tsre \%>\% 
+exp <- tsr_explorer(sample_sheet=samples, genome_assembly=assembly)
+exp <- exp \%>\% 
   import_bams(paired=TRUE) \%>\%
   tss_aggregate
 

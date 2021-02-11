@@ -33,7 +33,7 @@ sample_sheet <- data.frame(
   )
 )
 
-tsre <- TSSs \%>\%
+exp <- TSSs \%>\%
   tsr_explorer(sample_sheet=sample_sheet) \%>\%
   format_counts(data_type="tss") \%>\%
   fit_de_model(~condition, data_type="tss", method="edgeR") \%>\%
@@ -43,6 +43,7 @@ tsre <- TSSs \%>\%
     comparison_type="coef",
     comparison=2
   )
-tsre <- get_diff_results(tsre, data_type="tss")
+
+dr <- get_diff_results(exp, data_type="tss")
 
 }

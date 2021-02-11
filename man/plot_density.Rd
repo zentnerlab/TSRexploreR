@@ -24,11 +24,11 @@ plot_density(
 \arguments{
 \item{experiment}{TSRexploreR object.}
 
-\item{data_type}{Whether to plot TSS or TSR density.}
+\item{data_type}{Whether to plot TSS ('tss') or TSR ('tsr') density.}
 
 \item{samples}{A vector of sample names to analyze.}
 
-\item{consider_score}{Whether the score of each TSS or TSR score be considered
+\item{consider_score}{Whether the score of each TSS or TSR score should be be considered
 in addition to its unique location.}
 
 \item{upstream}{Bases upstream of plot center.}
@@ -56,7 +56,7 @@ highest-scoring TSR per gene or transcript.}
 ggplot2 object of density plot.
 }
 \description{
-Generate density plots of TSS or TSR positions relative to annotated TSSs.
+Generate plots of TSS or TSR positional density relative to annotated TSSs.
 }
 \details{
 This plotting function generates a density plot of TSS or TSR positions relative 
@@ -84,12 +84,11 @@ and/or group data for plotting. Finally, 'exclude_antisense' removes anti-sense 
 data(TSSs_reduced)
 annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
 
-tsre <- TSSs \%>\%
+exp <- TSSs \%>\%
   tsr_explorer(genome_annotation=annotation) \%>\%
   format_counts(data_type="tss") \%>\%
   annotate_features(data_type="tss")
 
-# TSS density plot.
 p <- plot_density(tsre, data_type="tss")
 
 }

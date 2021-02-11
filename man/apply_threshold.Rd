@@ -13,7 +13,7 @@ apply_threshold(experiment, threshold, n_samples = 1, use_normalized = FALSE)
 
 \item{n_samples}{Number of samples threshold must be reached to keep TSS.
 By default set to 1 sample. A NULL value will result in all samples being
-required to have read counts above threshold.}
+required to have read counts above the threshold at a given TSS position}
 
 \item{use_normalized}{Whether to use the normalized (TRUE) or raw (FALSE) counts.}
 }
@@ -24,23 +24,23 @@ TSRexploreR object with weak TSSs filtered out of counts table.
 Filter TSSs based on given threshold.
 }
 \details{
-All TSSs mapping methods produce spurious 5' reads.
-For the most part, these spurious reads tend to be weak and somewhat uniformly
-  distributed through the promoter and gene body.
-This means that this background can be mitigated by requiring a minimum read threshold
-  for a TSS to be retained in the filtered dataset.
+All TSSs mapping methods produce spurious TSSs. For the most part, these spurious 
+reads TSSs to be weak and somewhat uniformly distributed throughout promoters and
+gene bodies. This means that this background can be mitigated by requiring a 
+minimum read threshold for a TSS to be considered in downstream analyses.
 
-This function will permantly filter TSSs from the TSS data.table if no sample has
+This function will remove TSSs from the TSS data.table if no sample has
  at least 'threshold' number of reads in at least 'n_samples' number of samples.
 }
 \examples{
 data(TSSs)
 annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
 
-tsre <- TSSs[1] \%>\%
+exp <- TSSs[1] \%>\%
   tsr_explorer(genome_annotation=annotation) \%>\%
   format_counts(data_type="tss")
-tsre <- apply_threshold(tsre, threshold=3)
+  
+exp <- apply_threshold(exp, threshold=3)
 
 }
 \seealso{

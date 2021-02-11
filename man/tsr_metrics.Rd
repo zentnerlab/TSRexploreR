@@ -18,23 +18,23 @@ TSRexplorer object with TSR metrics added to
   TSSs and TSRs.
 }
 \description{
-Calculate various TSR Metrics including:
-  IQR width, peak balance and shape index.
+Calculate various TSR metrics
 
 TSR shape descriptors such as peaked versus broad can enrich for
   different functional classes of genes.
 TSRexploreR allows for the calculation of various common TSR shape indicators
-  such as Interquartile width (IQR), shape index (broad versus peaked), and peak balance.
+  such as inter-quantile width (IQR), shape index (broad versus peaked), and peak balance.
 'iqr_lower' and 'iqr_upper' determine the upper and lower quantile bounds for calculation.
 }
 \examples{
 data(TSSs_reduced)
 
-tsre <- TSSs \%>\%
+exp <- TSSs \%>\%
   tsr_explorer \%>\%
   format_counts(data_type="tss") \%>\%
   tss_clustering(threshold=3) \%>\%
   associate_with_tsr
-tsre <- tsr_metrics(tsre)
+  
+exp <- tsr_metrics(exp)
 
 }

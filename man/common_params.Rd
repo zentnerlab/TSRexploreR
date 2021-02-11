@@ -42,7 +42,7 @@ Additional meta-data columns can be added with sample information such as condit
 
 \item{ncol}{Integer specifying the number of columns to arrange multiple plots.}
 
-\item{log2fc_cutoff}{Differential features not meeting this |Log2 FC| threshold will not be considered.}
+\item{log2fc_cutoff}{Differential features not meeting this |log2(fold change)| threshold will not be considered.}
 
 \item{fdr_cutoff}{Differential features not meeting this significance threshold will not be considered.}
 

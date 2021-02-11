@@ -18,11 +18,11 @@ plot_num_de(
 \arguments{
 \item{experiment}{TSRexploreR object.}
 
-\item{data_type}{Either 'tss' or 'tsr'.}
+\item{data_type}{Whether to plot numbers of differential TSSs ('tss') or TSRs ('tsr').}
 
 \item{de_comparisons}{Character vector of differential expression comparisons to plot.}
 
-\item{log2fc_cutoff}{Differential features not meeting this |Log2 FC| threshold will not be considered.}
+\item{log2fc_cutoff}{Differential features not meeting this |log2(fold change)| threshold will not be considered.}
 
 \item{fdr_cutoff}{Differential features not meeting this significance threshold will not be considered.}
 
@@ -45,12 +45,12 @@ Generate a stacked barplot with the number of differential TSSs or TSRs per comp
 
 'de_comparisons' are the names given to the comparisons from the 'comparison_name'
   argument of the 'differential_expression' function.
-'log2fc_cutoff' and 'fdr_cutoff' are the Log2 Fold Change and FDR cutoffs used
-  for consideration of significance in the plot.
-'keep_unchaged' controls whether non-significant feature numbers are included in the plot.
+'log2fc_cutoff' and 'fdr_cutoff' are the log2(fold change) and FDR cutoffs used
+  for determination of significance in the plot.
+'keep_unchanged' controls whether non-significant feature numbers are included in the plot.
 
-If 'keep_unchaged' is TRUE, a table with the numbers is returned instead of the ggplot.
-This may be useful if exact numbers underlying the plot are required.
+If 'keep_unchanged' is TRUE, a table with the numbers is returned instead of the ggplot.
+This may be useful if the exact numbers underlying the plot are required.
 }
 \examples{
 data(TSSs)
@@ -63,19 +63,18 @@ sample_sheet <- data.frame(
   condition=c(rep("Diamide", 3), rep("Untreated", 3))
 )
 
-tsre <- TSSs \%>\%
+exp <- TSSs \%>\%
   tsr_explorer(sample_sheet=sample_sheet) \%>\%
   format_counts(data_type="tss")
 
-# Differential TSS quantities plot.
-diff_tss <- tsre \%>\%
+diff_tss <- exp \%>\%
   fit_de_model(data_type="tss", formula= ~condition, method="edgeR") \%>\%
   differential_expression(
-    data_type="tss",
-    comparison_name="Diamide_vs_Untreated",
-    comparison_type="coef",
-    comparison=2
-  )
+  data_type="tss", 
+  comparison_name="Diamide_vs_Untreated",
+  comparison_type="coef",
+  comparison=2)
+  
 p <- plot_num_de(diff_tss, data_type="tss")
 
 }

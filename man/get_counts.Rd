@@ -9,7 +9,7 @@ get_counts(experiment, data_type = c("tss", "tsr"), samples = "all")
 \arguments{
 \item{experiment}{TSRexploreR object.}
 
-\item{data_type}{Either 'tss' or 'tsr'.}
+\item{data_type}{Get either TSS ('tss') or TSR ('tsr') count tables.}
 
 \item{samples}{A vector of sample names to analyze.}
 }
@@ -22,9 +22,10 @@ Extract the TSS or TSR count tables from the 'counts' slot.
 \examples{
 data(TSSs)
 
-tsre <- tsr_explorer(TSSs[1]) \%>\%
+exp <- tsr_explorer(TSSs[1]) \%>\%
   format_counts(data_type="tss")
-tsre <- get_counts(tsre)
+
+cts <- get_counts(exp)
 
 }
 \seealso{

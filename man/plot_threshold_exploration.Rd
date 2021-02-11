@@ -19,9 +19,9 @@ plot_threshold_exploration(
 \arguments{
 \item{experiment}{TSRexploreR object.}
 
-\item{max_threshold}{Thresholds from 1 to max_threshold will be explored}
+\item{max_threshold}{Thresholds from 1 to max_threshold will be explored.}
 
-\item{steps}{Steps to get the threshold values}
+\item{steps}{Steps to get the threshold values.}
 
 \item{samples}{A vector of sample names to analyze.}
 
@@ -29,11 +29,11 @@ plot_threshold_exploration(
 
 \item{ncol}{Integer specifying the number of columns to arrange multiple plots.}
 
-\item{point_size}{The size of the points on the plot}
+\item{point_size}{The size of the points on the plot.}
 
 \item{return_table}{Return a table of results instead of a plot.}
 
-\item{...}{Arguments passed to geom_point}
+\item{...}{Arguments passed to geom_point.}
 }
 \value{
 ggplot2 object containing the threshold exploration plot
@@ -42,24 +42,23 @@ ggplot2 object containing the threshold exploration plot
 Make a plot to explore threshold values.
 }
 \details{
-All TSSs mapping methods produce spurious 5' reads.
-For the most part, these spurious reads tend to be weak and somewhat uniformly
-  distributed through the promoter and gene body.
-This means that this background can be mitigated by requiring a minimum read threshold
-  for a TSS to be retained in the filtered dataset.
+All TSSs mapping methods produce spurious TSSs. For the most part, these spurious 
+reads TSSs to be weak and somewhat uniformly distributed throughout promoters and
+gene bodies. This means that this background can be mitigated by requiring a 
+minimum read threshold for a TSS to be considered in downstream analyses.
 
-This plotting function generates a line-plot, where the x-axis is the nieve read threshold,
-  and the y-axis is the number of TSSs within annotated gene/transcript promoters.
+This plotting function generates a line plot, where the x-axis is the naive read threshold
+  and the y-axis is the proportion of TSSs within annotated gene/transcript promoters.
 Additionally, the point color represents the absolute number of genes with at least 1 surviving
-  TSSs after filtering.
+  TSS after filtering.
 'max_threshold' controls the maximum threshold value explored,
-  and 'steps' is the value that is used to count between 1 and the 'max_threshold'.
+  and 'steps' is the value that is used to increment between 1 and 'max_threshold'.
 
 At a certain threshold there are diminishing returns,
-  where an increase in threshold results in little increase in promoter proximal fraction,
+  where an increase in threshold results in little increase in promoter-proximal fraction,
   but a precipitous loss in number of genes with a TSS.
 A threshold should be chosen that balances these two competing metrics.
-For STRIPE-seq We have found that a threshold of 3 often provides an appropriate balance between
+For STRIPE-seq, we have found that a threshold of 3 often provides an appropriate balance between
   a high promoter-proximal fraction (>= 0.8) and the number of unique genes or
   transcripts with at least one unique TSS.
 }
@@ -67,11 +66,12 @@ For STRIPE-seq We have found that a threshold of 3 often provides an appropriate
 data(TSSs_reduced)
 annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
 
-tsre <- TSSs \%>\%
+exp <- TSSs \%>\%
   tsr_explorer(genome_annotation=annotation) \%>\%
   format_counts(data_type="tss") \%>\%
   annotate_features(data_type="tss")
-p <- plot_threshold_exploration(tsre)
+  
+p <- plot_threshold_exploration(exp)
 
 }
 \seealso{

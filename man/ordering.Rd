@@ -35,13 +35,13 @@ If '.samples' is specified, only the given samples will be used for aggregate
 data(TSSs)
 assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
 
-tsre <- TSSs[1] \%>\%
+exp <- TSSs[1] \%>\%
   tsr_explorer(genome_assembly=assembly) \%>\%
   format_counts(data_type="tss")
 
-# Sequence base color plot sorted by descending score.
+# Sequence color map sorted by descending score.
 conditions <- conditionals(data_ordering=ordering(desc(score)))
-p <- plot_sequence_colormap(tsre, data_conditions=conditions)
+p <- plot_sequence_colormap(exp, data_conditions=conditions)
 }
 
 }

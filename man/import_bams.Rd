@@ -24,41 +24,41 @@ Must have the columns 'sample_name', 'file_1', and 'file_2'.
 Additional meta-data columns can be added with sample information such as condition and batch.}
 
 \item{soft_remove}{Remove read if greater than this number of soft-clipped bases 
-are present at its 5' most end.}
+is present at its 5' most end.}
 
-\item{proper_pair}{Remove reads without a proper pair SAM flag.
+\item{proper_pair}{Remove reads flagged as improperly paired.
 TRUE by default when data is paired-end.}
 
-\item{remove_secondary}{Remove reads with non-primary SAM flag set (TRUE).}
+\item{remove_secondary}{Remove secondary alignments (TRUE).}
 
-\item{remove_duplicate}{Remove reads with duplicate SAM flag set (TRUE).}
+\item{remove_duplicate}{Remove duplicate reads (paired-end only) (TRUE).}
 }
 \value{
-TSRexploreR object with BAM GRanges and soft-clip information.
+TSRexploreR object with BAM GRanges and soft-clipped base information.
 }
 \description{
-Import BAM files with optional quality control parameters.
+Import and process BAM files.
 }
 \details{
 Import BAMs using the information from the sample sheet.
-If the BAMs are from paired end data,
+If the BAMs are from paired-end data,
   'proper_pair' allows removal of reads without a proper-pair SAM flag.
-Additionally 'remove_seconday' and 'remove_duplicate' will remove reads
-  with the secondary alignments and duplicate flags set.
+Additionally 'remove_secondary' and 'remove_duplicate' will remove reads
+  with the secondary alignment and duplicate flags set.
 
 Most TSS mapping methodologies tend to add at least one non-templated base
   at the 5' end of the read.
-Futhermore, template switching reverse transcription (TSRT) methods such
+Furthermore, template switching reverse transcription (TSRT)-based methods such
   as STRIPE-seq or nanoCAGE can have up to 3 or 4 non-templated 5' bases.
 We recommend setting `soft_remove` to at minimum 3 because of this,
-  Which removes the read if the given number of soft-clip bases are exceeded.
+  which removes the read if the given number of soft-clip bases is exceeded.
 }
 \examples{
 bam_file <- system.file("extdata", "S288C.bam", package="TSRexploreR")
 assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
 samples <- data.frame(sample_name="S288C", file_1=bam_file, file_2=NA)
 
-tsre <- tsr_explorer(sample_sheet=samples, genome_assembly=assembly)
-import_bams(tsre, paired=TRUE)
+exp <- tsr_explorer(sample_sheet=samples, genome_assembly=assembly)
+import_bams(exp, paired=TRUE)
 
 }

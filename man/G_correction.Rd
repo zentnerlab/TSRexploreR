@@ -11,6 +11,35 @@ G_correction(experiment, assembly = NULL)
 
 \item{assembly}{Genome assembly in FASTA or BSgenome format.}
 }
+\value{
+TSRexploreR object with G-corrected TSS GRanges.
+}
 \description{
 Correct overrepresentation of 5' G bases added during reverse transcription.
+}
+\details{
+A common artifact in most TSS mapping methods is the presence of a G base upstream
+of the true TSS, presumably templated by the 5' cap during reverse transcription.
+Soft-clipping analysis can remove such Gs if they are not incidentally templated
+onto the genome; however, in cases where they match the genome during alignment,
+they cannot be distinguished from true TSSs. In order to account for this artifact,
+TSRexploreR first determines the frequency of reads with a soft-clipped G in a 
+given sample. For each read with a non-soft-clipped G at its 5' end, a Bernoulli
+trial is performed, with the above-mentioned frequency used as the probability of
+"success" (removal of the 5' G).
+}
+\examples{
+bam_file <- system.file("extdata", "S288C.bam", package="TSRexploreR")
+assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
+samples <- data.frame(sample_name="S288C", file_1=bam_file, file_2=NA)
+
+exp <- tsr_explorer(sample_sheet=samples, genome_assembly=assembly) \%>\%
+  import_bams(paired=TRUE)
+  
+exp <- G_correction(exp, assembly=assembly)
+
+}
+\seealso{
+\code{\link{import_bams}} to import BAMs.
+\code{\link{softclip_analysis}} to remove soft-clipped bases at 5' read ends.
 }

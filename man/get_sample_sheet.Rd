@@ -21,7 +21,9 @@ sample_sheet <- data.frame(
   file_1=NA, file_2=NA,
   condition=rep("Untreated", 3)
 )
-tsre <- tsr_explorer(sample_sheet=sample_sheet)
-tsre <- get_sample_sheet(tsre)
+
+exp <- tsr_explorer(sample_sheet=sample_sheet)
+
+ss <- get_sample_sheet(exp)
 
 }

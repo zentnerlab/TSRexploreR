@@ -9,7 +9,7 @@ get_granges(experiment, data_type = c("tss", "tsr"), samples = "all")
 \arguments{
 \item{experiment}{TSRexploreR object.}
 
-\item{data_type}{Either 'tss' or 'tsr'.}
+\item{data_type}{Get either TSS ('tss') or TSR ('tsr') GRanges.}
 
 \item{samples}{A vector of sample names to analyze.}
 }
@@ -22,8 +22,9 @@ Extract the TSS or TSR GRanges from the 'experiment' slot.
 \examples{
 data(TSSs)
 
-tsre <- tsr_explorer(TSSs[1])
-tsre <- get_granges(tsre)
+exp <- tsr_explorer(TSSs[1])
+
+gr <- get_granges(exp)
 
 }
 \seealso{

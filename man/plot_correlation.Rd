@@ -22,11 +22,11 @@ plot_correlation(
 \arguments{
 \item{experiment}{TSRexploreR object.}
 
-\item{data_type}{Whether to make scatter plots from TSS or TSRs.}
+\item{data_type}{Whether to correlate TSSs ('tss') or TSRs ('tsr').}
 
 \item{samples}{A vector of sample names to analyze.}
 
-\item{correlation_metric}{Whether to use Spearman or Pearson correlation.}
+\item{correlation_metric}{Whether to use 'spearman' or 'pearson' correlation.}
 
 \item{threshold}{TSSs or TSRs with a score below this value will not be considered.}
 
@@ -50,29 +50,29 @@ ggplot2 object of correlation heatmap,
   or correlation matrix if 'return_matrix' is TRUE.
 }
 \description{
-Heatmaps and/or scatter plots to explore replicate concordance of TSSs or TSRs.
+Analyze sample similarity with correlation analysis.
 }
 \details{
-Correlation plots are a good way to assess the similarity of samples.
-This can be useful to determine replicate concordance and for the initial assessment of
+Correlation plots are a good way to assess sample similarity.
+This can be useful in determining replicate concordance and for the initial assessment of
   differences between samples from different conditions.
-This function generates various plots using a previously TMM- or MOR-normalized count matrix.
+This function generates a correlation heatmap from a previously TMM- or MOR-normalized count matrix.
 Pearson correlation is recommended for samples from the same technology due to 
 the expectation of a roughly linear relationship between the magnitudes of values 
-for each feature. Spearman correlation is recommended for samples from different technologies,
-such as STRIPE-seq vs. CAGE, due to the expectation of a roughly linear relationship 
-between the ranks, rather than the specific values, of each feature.
+for each feature. Spearman correlation is recommended for comparison of samples 
+from different technologies, such as STRIPE-seq vs. CAGE, due to the expectation 
+of a roughly linear relationship between the ranks, rather than the specific values, 
+of each feature.
 }
 \examples{
 data(TSSs_reduced)
 
-tsre <- TSSs[1] \%>\%
+exp <- TSSs[1] \%>\%
   tsr_explorer \%>\%
   format_counts(data_type="tss") \%>\%
   normalize_counts(data_type="tss", method="CPM")
 
-# TSS correlation.
-p <- plot_correlation(tsre, data_type="tss")
+p <- plot_correlation(exp, data_type="tss")
 
 }
 \seealso{

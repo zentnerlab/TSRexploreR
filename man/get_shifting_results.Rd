@@ -12,10 +12,10 @@ get_shifting_results(experiment, samples = "all")
 \item{samples}{A vector of sample names to analyze.}
 }
 \value{
-List of TSS cluster shifting data.frames.
+List of TSR shifting data.frames.
 }
 \description{
-Extract the TSS cluster shifting results.
+Extract the TSR shifting results.
 }
 \examples{
 data(TSSs)
@@ -26,7 +26,7 @@ samples <- data.frame(
   condition=c(rep("Diamide", 3), rep("Untreated", 3))
 )
 
-tsre <- TSSs \%>\%
+exp <- TSSs \%>\%
   tsr_explorer(sample_sheet=samples, genome_assembly=assembly) \%>\%
   format_counts(data_type="tss") \%>\%
   tss_clustering(threshold=3) \%>\%
@@ -38,6 +38,7 @@ tsre <- TSSs \%>\%
     comparison_name="Untreated_vs_Diamide",
     max_distance = 100, min_threshold = 10, n_resamples = 1000L
   )
-tsre <- get_shifting_results(tsre)
+  
+sr <- get_shifting_results(exp)
 
 }

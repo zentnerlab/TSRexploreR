@@ -16,7 +16,7 @@ mark_dominant(
 \arguments{
 \item{experiment}{TSRexploreR object.}
 
-\item{data_type}{Whether to mark dominant TSSs or TSRs.}
+\item{data_type}{Whether to mark dominant TSSs ('tss') or TSRs ('tsr').}
 
 \item{threshold}{TSSs or TSRs with a score below this value will not be considered.}
 
@@ -50,15 +50,14 @@ dominant TSS per TSR, and for TSRs the dominant TSR per gene is marked. For TSSs
 data(TSSs_reduced)
 annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
 
-tsre <- TSSs \%>\%
+exp <- TSSs \%>\%
   tsr_explorer(genome_annotation=annotation) \%>\%
   format_counts(data_type="tss") \%>\%
   tss_clustering(threshold=3) \%>\%
   associate_with_tsr
 
-# Dominant TSS per gene.
-tsre <- annotate_features(tsre, data_type="tss")
-tsre <- mark_dominant(tsre, data_type="tss", mark_per="gene")
+exp <- annotate_features(exp, data_type="tss")
+exp <- mark_dominant(exp, data_type="tss", mark_per="gene")
 
 }
 \seealso{

@@ -21,7 +21,7 @@ tss_clustering(
 
 \item{threshold}{TSSs or TSRs with a score below this value will not be considered.}
 
-\item{n_samples}{Keep TSS if threshold number of reads are present in n_samples
+\item{n_samples}{Keep TSS if 'threshold' number of counts is present in n_samples
 number of samples.}
 
 \item{max_distance}{Maximum allowable distance between TSSs for clustering.}
@@ -38,7 +38,7 @@ TSRexploreR object with TSRs added to GRanges and data.table counts.
 Basic distance and threshold-based clustering of TSSs.
 }
 \details{
-Genes rarely have a singular TSS, but rather a cluster of TSSs.
+Genes rarely have a single TSS, but rather a cluster of TSSs.
 This function clusters TSSs into Transcription Start Regions (TSRs).
 TSSs are clustered if their score is greater than or equal to 'threshold'
   in at least 'n_samples' number of samples,

@@ -15,13 +15,13 @@ quantiling(
 \arguments{
 \item{by}{Continuous metric for calculating quantiles.}
 
-\item{n}{Number of quantiles to calculate for continuous metric.}
+\item{n}{Number of quantiles to calculate.}
 
 \item{samples}{Samples to use when setting quantiles.}
 
 \item{descending}{Order quantiles in descending order.}
 
-\item{aggr_fun}{Function to aggregate scores if more than one sample selected.}
+\item{aggr_fun}{Function by which to aggregate scores if more than one sample selected.}
 }
 \value{
 A list of quantiling parameters to be passed to the 'data_quantiling' argument
@@ -29,13 +29,13 @@ A list of quantiling parameters to be passed to the 'data_quantiling' argument
 }
 \description{
 This is a companion function to 'conditionals' that allows the
-  specification of a variable to split the data into quantiles
-  before plotting.
+  specification of a variable by which to split the data into 
+  quantiles before plotting.
 }
 \details{
 Column to order by should be specified by names/symbol and not character.
-By default quantiling is calculated based on the aggregate value (based on 'aggr_fun')
-  of the variable accross all samples.
+By default ,quantiling is calculated based on the aggregate value (based on 'aggr_fun')
+  of the variable across all samples.
 If 'samples' is specified, only the given samples will be used for aggregate
   calculation and ordering.
 'descending' controls whether quantiling is calculated in descending (TRUE) or
@@ -46,13 +46,13 @@ If 'samples' is specified, only the given samples will be used for aggregate
 data(TSSs)
 assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
 
-tsre <- TSSs[1] \%>\%
+exp <- TSSs[1] \%>\%
   tsr_explorer(genome_assembly=assembly) \%>\%
   format_counts(data_type="tss")
 
 # Sequence base color plot quantiled by score.
 conditions <- conditionals(data_quantiling=quantiling(score, n=5))
-p <- plot_sequence_colormap(tsre, data_conditions=conditions)
+p <- plot_sequence_colormap(exp, data_conditions=conditions)
 }
 
 }

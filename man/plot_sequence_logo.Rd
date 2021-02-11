@@ -30,7 +30,7 @@ plot_sequence_logo(
 
 \item{use_normalized}{Whether to use the normalized (TRUE) or raw (FALSE) counts.}
 
-\item{distance}{Bases to add on each side of eacg TSS}
+\item{distance}{Bases to add on each side of each TSS.}
 
 \item{dominant}{If TRUE, will only consider the highest-scoring TSS per gene, transcript, or TSR or 
 highest-scoring TSR per gene or transcript.}
@@ -39,7 +39,7 @@ highest-scoring TSR per gene or transcript.}
 
 \item{ncol}{Integer specifying the number of columns to arrange multiple plots.}
 
-\item{font_size}{Font size for plots}
+\item{font_size}{Font size for plots.}
 
 \item{base_colors}{Colors for each base.}
 
@@ -54,20 +54,20 @@ Create a sequence logo for the sequences around TSSs.
 \details{
 This plotting function uses the ggseqlogo library to make sequence logos
   from the sequences retrieved by the 'tss_sequences' function.
-Sequence logos show the enrichment of bases with certain positional biases
-  in a centered set of sequences.
-This is particularly important for TSS analysis since literature has shown
-  strong base preferences spanning TSSs and surrounding sequences.
+Sequence logos illustrate positional biases for certain bases at specific
+positions in a set of centered sequences. This is particularly important for 
+TSS analysis since literature has shown strong base preferences spanning TSSs 
+and surrounding sequences.
 
 'genome_assembly' must be a valid genome assembly in either fasta or BSgenome format.
 fasta formatted genome assemblies should have the file extension '.fasta' or '.fa'.
 BSgenome assemblies are precompiled Bioconductor libraries for common organisms.
 
 'distance' controls the length upstream and downstream of the TSS
-  from which the sequence will be retrieved.
+  for which the sequence will be retrieved.
 
 The color of each base is set using the 'base_colors' argument.
-The argument input should be a named vector, with the base as the name,
+The argument input should be a named vector, with the base as the name
 and the desired color of the base as the vector element.
 
 A set of functions to control data structure for plotting are included.
@@ -84,10 +84,11 @@ For TSSs this can be either dominant per TSR or gene, and for TSRs
 data(TSSs_reduced)
 assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
 
-tsre <- TSSs \%>\%
+exp <- TSSs \%>\%
   tsr_explorer(genome_assembly=assembly) \%>\%
   format_counts(data_type="tss")
-p <- plot_sequence_logo(tsre, distance=5)
+
+p <- plot_sequence_logo(exp, distance=5)
 
 }
 \seealso{

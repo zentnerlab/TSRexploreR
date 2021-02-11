@@ -7,9 +7,9 @@
 .quantile_data(signal_data, quantiling)
 }
 \arguments{
-\item{signal_data}{list of TSSs or TSRs}
+\item{signal_data}{List of TSSs or TSRs}
 
-\item{quantiling}{list of quantiling parameters}
+\item{quantiling}{List of quantiling parameters}
 }
 \description{
 Quantiling

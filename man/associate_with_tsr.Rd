@@ -10,17 +10,16 @@ associate_with_tsr(experiment, sample_list = NULL)
 \item{experiment}{TSRexploreR object.}
 
 \item{sample_list}{List with TSRs as names and TSSs as vector.
-If NULL will associate TSSs with TSRs from the sample of the same name.}
+If NULL, will associate TSSs with TSRs from the sample of the same name.}
 }
 \description{
-Associate TSSs with TSRs
+Associate TSSs with TSRs.
 }
 \details{
 TSRexploreR provides many options for the import and merging of TSSs and TSRs.
 Because of this, TSS samples must be associated with TSR samples after TSR import,
   TSR merging, or TSS clustering using this function.
-This adds an extra workflow step, but provides more analytical flexibility.
-Each TSS with genomic coordinates overlapping those of a TSR in the specified TSR sample
+Each TSS with genomic coordinates overlapping those of a TSR in the specified sample
   will be linked to that TSR.
 TSSs not overlapping a TSR in the specified sample will not be associated with any TSR.
 
@@ -33,7 +32,7 @@ TSS samples can be associated with TSR samples using a list or sample sheet.
 \examples{
 data(TSSs_reduced)
 
-tsre <- TSSs \%>\%
+exp <- TSSs \%>\%
   tsr_explorer \%>\%
   format_counts(data_type="tss") \%>\%
   tss_clustering(threshold=3) \%>\%

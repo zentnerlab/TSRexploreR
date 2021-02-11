@@ -16,7 +16,7 @@ differential_expression(
 \arguments{
 \item{experiment}{TSRexploreR object.}
 
-\item{data_type}{Whether the input was generated from TSSs, TSRs, or genes/transcripts}
+\item{data_type}{Whether the input was generated from TSSs ('tss') or TSRs ('tsr').}
 
 \item{comparison_name}{The name given to the comparison when stored back into the TSRexploreR object.}
 
@@ -30,14 +30,14 @@ differential_expression(
 TSRexploreR object with results for given contrast.
 }
 \description{
-Find differential TSSs or TSRs from previous edgeR or DESeq2 model.
+Find differential TSSs or TSRs from previously generated edgeR or DESeq2 model.
 }
 \details{
-Calculate the differential TSSs or TSRs for the desired contrast.
-'comparison_type' corresponds to the way the contrast will be provided,
+Calculatse the differential TSSs or TSRs for the desired contrast.
+'comparison_type' corresponds to the way the comparison will be performed,
   with edgeR having the 'contrast' and 'coef' options,
   and DESeq2 having the 'contrast' and 'name' options.
-The actual contrast is specified with 'comparison,
+The actual contrast is specified with 'comparison',
   the format of which should match with the option provided to 'comparison_type'.
 If DESeq2 is used and 'shrink_lfc' is TRUE,
   apeglm is used to shrink the Log2 fold changes to mitigate the effect size of
@@ -59,14 +59,15 @@ sample_sheet <- data.frame(
   )
 )
 
-tsre <- TSSs \%>\%
+exp <- TSSs \%>\%
   tsr_explorer(sample_sheet=sample_sheet) \%>\%
   format_counts(data_type="tss")
 
 # Differential TSSs with DESeq2.
-tsre <- fit_de_model(tsre, ~condition, data_type="tss", method="edgeR")
-tsre <- differential_expression(
-  tsre, data_type="tss",
+exp <- fit_de_model(exp, data_type="tss", formula=~condition, method="edgeR")
+
+exp <- differential_expression(
+  exp, data_type="tss", 
   comparison_name="Diamide_vs_Untreated",
   comparison_type="coef",
   comparison=2

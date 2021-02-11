@@ -2,7 +2,7 @@
 % Please edit documentation in R/motif.R
 \name{plot_sequence_colormap}
 \alias{plot_sequence_colormap}
-\title{Plot Sequence Colormap}
+\title{Plot Sequence Color Map}
 \usage{
 plot_sequence_colormap(
   experiment,
@@ -32,7 +32,7 @@ plot_sequence_colormap(
 
 \item{use_normalized}{Whether to use the normalized (TRUE) or raw (FALSE) counts.}
 
-\item{distance}{Bases to add on each side of eacg TSS}
+\item{distance}{Bases to add on each side of each TSS.}
 
 \item{dominant}{If TRUE, will only consider the highest-scoring TSS per gene, transcript, or TSR or 
 highest-scoring TSR per gene or transcript.}
@@ -41,27 +41,27 @@ highest-scoring TSR per gene or transcript.}
 
 \item{ncol}{Integer specifying the number of columns to arrange multiple plots.}
 
-\item{base_colors}{Named vector specifying colors for each base}
+\item{base_colors}{Named vector specifying colors for each base.}
 
-\item{font_size}{Size of text for plots}
+\item{font_size}{Size of text for plots.}
 
 \item{rasterize}{Rasterize a ggplot.}
 
 \item{raster_dpi}{If rasterization is set, this controls the rasterization DPI.}
 
-\item{...}{Arguments passed to geom_tile}
+\item{...}{Arguments passed to geom_tile.}
 }
 \value{
 ggplot2 object of sequence colormap.
 }
 \description{
-Make a sequence colormap for the sequences around TSSs.
+Make a color map for the sequences around TSSs.
 }
 \details{
-This plotting function generates a ggplot2 base color map surrounding TSSs.
-Base color maps represent each base surrounding a TSS as a different color.
-Since the base composition for every TSS can be seen in one plot, it's a good
-  companion figure to sequence logos.
+This plotting function generates a ggplot2 base color map for the sequences
+around TSSs. Color maps represent each base surrounding a TSS as a different color.
+Since the base composition for every TSS region can be seen in one plot, it's a good
+  companion for sequence logos.
 
 The color of each base is set using the 'base_colors' argument.
 The argument input should be a named vector, with the base as the name,
@@ -91,10 +91,11 @@ The plot can be rasterized using ggrastr using 'rasterize',
 data(TSSs_reduced)
 assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
 
-tsre <- TSSs \%>\%
+exp <- TSSs \%>\%
   tsr_explorer(genome_assembly=assembly) \%>\%
   format_counts(data_type="tss")
-p <- plot_sequence_colormap(tsre, distance=5)
+
+p <- plot_sequence_colormap(exp, distance=5)
 
 }
 \seealso{

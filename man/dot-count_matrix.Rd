@@ -14,7 +14,7 @@
 \arguments{
 \item{count_data}{Named list of counts.}
 
-\item{data_type}{either 'tss' or 'tsr'.}
+\item{data_type}{Whether to get matrix of TSS ('tss') or TSR ('tsr') counts.}
 
 \item{use_normalized}{Whether to use the normalized (TRUE) or raw (FALSE) counts.}
 

@@ -41,7 +41,7 @@
 #' diff_tss <- exp %>%
 #'   fit_de_model(data_type="tss", formula= ~condition, method="edgeR") %>%
 #'   differential_expression(
-#'   exp, data_type="tss", 
+#'   data_type="tss", 
 #'   comparison_name="Diamide_vs_Untreated",
 #'   comparison_type="coef",
 #'   comparison=2)
@@ -137,7 +137,7 @@ plot_ma <- function(
 #' diff_tss <- exp %>%
 #'   fit_de_model(data_type="tss", formula=~condition, method="edgeR") %>%
 #'   differential_expression(
-#'   exp, data_type="tss", 
+#'   data_type="tss", 
 #'   comparison_name="Diamide_vs_Untreated",
 #'   comparison_type="coef",
 #'   comparison=2)
@@ -252,7 +252,7 @@ plot_volcano <- function(
 #' diff_tss <- exp %>%
 #'   fit_de_model(data_type="tss", formula=~condition, method="edgeR") %>%
 #'   differential_expression(
-#'   exp, data_type="tss", 
+#'   data_type="tss", 
 #'   comparison_name="Diamide_vs_Untreated",
 #'   comparison_type="coef",
 #'   comparison=2)
@@ -356,7 +356,7 @@ export_for_enrichment <- function(
 #' diff_tss <- exp %>%
 #'   fit_de_model(data_type="tss", formula= ~condition, method="edgeR") %>%
 #'   differential_expression(
-#'   exp, data_type="tss", 
+#'   data_type="tss", 
 #'   comparison_name="Diamide_vs_Untreated",
 #'   comparison_type="coef",
 #'   comparison=2)

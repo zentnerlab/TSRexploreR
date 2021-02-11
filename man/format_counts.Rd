@@ -9,7 +9,7 @@ format_counts(experiment, data_type = c("tss", "tsr"), samples = "all")
 \arguments{
 \item{experiment}{TSRexploreR object.}
 
-\item{data_type}{Whether to format TSS or TSR counts}
+\item{data_type}{Whether to format TSS ('tss') or TSR ('tsr') counts.}
 
 \item{samples}{A vector of sample names to analyze.}
 }
@@ -23,8 +23,8 @@ Format TSS or TSR counts for further analysis.
 \details{
 When TSSs or TSRs are first loaded into the TSRexploreR object
   they are stored as GRanges objects.
-This function converts these into data.table format,
-  and adds a few important columns for downstream analysis.
+This function converts these into data.table format
+  and adds a few columns to facilitate downstream analysis.
 }
 \examples{
 data(TSSs_reduced)
