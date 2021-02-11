@@ -7,13 +7,15 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-A Transcription Start Site (TSS) represents the position of the first base of a transcript to be transcribed by an RNA polymerase. Most genes do not have a single TSS, but rather a collection of TSS positions collectively referred to as a Transcription Start Region (TSR). Variation in TSS selection influences transcript stability and translation as the function of the encoded protein. Furthermore, variations in TSS usage have been observed during organismal development as well as in diseases such as cancer.
+A Transcription Start Site (TSS) represents the position of the first base of a transcript to be transcribed by an RNA polymerase. Most genes do not have a single TSS, but rather a collection of TSS positions collectively referred to as a Transcription Start Region (TSR). Variation in TSS selection influences transcript stability ([Malabat et al. 2015](https://elifesciences.org/articles/06722)) and translation ([Rojas-Duran and Gilbert 2012](https://rnajournal.cshlp.org/content/18/12/2299.long)) as well as the domain composition ([Mej&#237;a-Guerra et al. 2015](http://www.plantcell.org/content/27/12/3309)) or localization ([Ushijima et al. 2018](https://www.sciencedirect.com/science/article/pii/S0092867417312400)) of the encoded protein. Furthermore, variations in TSS usage have been observed during organismal development ([Haberle et al. 2014](https://www.nature.com/articles/nature12974), 
+[Zhang et al. 2017](https://bmcgenomics.biomedcentral.com/articles/10.1186/s12864-017-3834-z), 
+[Danks et al. 2018](https://bmcgenomics.biomedcentral.com/articles/10.1186/s12864-018-4504-5)) as well as in diseases such as cancer ([Demircio&#287;lu et al. 2019](https://www.cell.com/cell/fulltext/S0092-8674(19)30906-7?_returnURL=https%3A%2F%2Flinkinghub.elsevier.com%2Fretrieve%2Fpii%2FS0092867419309067%3Fshowall%3Dtrue)).
 
 TSRexploreR offers a series of analysis and plotting functions that allow deep exploration of TSSs and TSRs. Here, we describe the standard TSRexploreR analysis pipeline.
 
 ## Preparing Data
 
-This example uses a set of *S. cerevisiae* TSSs identified with [STRIPE-seq](https://genome.cshlp.org/content/30/6/910.full?sid=5c332807-b1dc-447f-81ab-1f324172c07b). There are many ways to 
+This example uses a set of *S. cerevisiae* TSSs identified with [STRIPE-seq](https://genome.cshlp.org/content/30/6/910.long). There are many ways to 
 import TSSs into TSRexploreR; this vignette uses a named list of GRanges as input into the function that creates the TSRexploreR object.
 
 ```{r message=FALSE, warning=FALSE}
@@ -159,7 +161,7 @@ TSSs tend to occur within certain sequence contexts, and this context can vary b
 
 ### TSS Sequence Logo
 
-Generating sequence logos around TSSs is a good first step in determining the sequence context of TSSs. For example, in *S. cerevisiae* it has been reported that there is a pyrimidine-purine bias at the -1 and +1 positions, respectively. Furthermore, stronger TSSs tend to have an adenine at the -8 position, the loss of which diminishes promoter strength.
+Generating sequence logos around TSSs is a good first step in determining the sequence context of TSSs. For example, in *S. cerevisiae* it has been reported that there is a pyrimidine-purine bias at the -1 and +1 positions, respectively ([Zhang and Dietrich 2005](https://academic.oup.com/nar/article/33/9/2838/2401448)). Furthermore, stronger TSSs tend to have an adenine at the -8 position ([Policastro et al. 2020](https://genome.cshlp.org/content/30/6/910.long), [Qiu et al. 2020](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-020-02040-0)).
 
 To analyze TSS sequence context, TSRexploreR retrieves sequences centered on TSSs from a 'FASTA' genome assembly or 'BSgenome' object. This example uses the Ensembl R64-1-1 Release 99 FASTA.
 
@@ -186,12 +188,11 @@ plot_dinucleotide_frequencies(exp, samples="S288C_WT_1") +
 
 ## Clustering TSSs
 
-Transcription initiation is rarely homogenous; it is generally the case that a gene will have multiple TSSs clustered into a TSR,
-and so analyzing TSRs versus individual TSSs will provide more realistic information on initiation. Moreover, TSR shape features have been shown to correlate with distinct gene classes.
+Transcription initiation is rarely homogenous; it is generally the case that a gene will have multiple TSSs clustered into a TSR, and so analyzing TSRs versus individual TSSs will provide more realistic information on initiation. Moreover, TSR shape features have been shown to correlate with differential enrichment of core promoter motifs ([Carninci et al. 2006](https://www.nature.com/articles/ng1789), [Hoskins et al. 2011](https://genome.cshlp.org/content/21/2/182.long), [Cvetesic et al. 2019](https://genome.cshlp.org/content/28/12/1943.full)), as well as distinct gene classes ([Lu and Lin 2019](https://genome.cshlp.org/content/29/7/1198.full)).
 
 ### Distance Clustering
 
-To identify TSRs, TSRexploreR uses a distance clustering method. This approach groups TSSs that pass a certain read threshold and are within a certain distance of one another into TSRs. Alteratively, if you have called TSRs using other methods (e.g. Paraclu or RECLU), they can be imported directly. Here, we cluster TSSs supported by at least 3 counts into TSRs.
+To identify TSRs, TSRexploreR uses a distance clustering method. This approach groups TSSs that pass a certain read threshold and are within a certain distance of one another into TSRs. Alteratively, if you have called TSRs using other methods (e.g. [Paraclu](https://genome.cshlp.org/content/18/1/1.long) or [RECLU](https://bmcgenomics.biomedcentral.com/articles/10.1186/1471-2164-15-269)), they can be imported directly. Here, we cluster TSSs supported by at least 3 counts into TSRs.
 
 ```{r message=FALSE}
 exp <- tss_clustering(exp, threshold=3, max_distance=25)

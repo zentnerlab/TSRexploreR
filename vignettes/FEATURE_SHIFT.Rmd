@@ -7,20 +7,14 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-Numerous studies have demonstrated that the distribution of TSSs within a given region can shift during development or
-in response to a given stimulus. Mathematically speaking, detecting a shift in TSS distribution within a region of
-interest can be thought of as finding the difference between two discrete probability distributions. To enable detection
-of TSS shifts, TSRexploreR implements a signed version of [earth mover's distance](https://en.wikipedia.org/wiki/Earth_mover%27s_distance) that we term earth mover's score (EMS). In essence, we
-think of the TSS distributions in our two samples to be compared as piles of dirt and ask how much dirt would need to be
-moved from one pile, how far, and in which direction to recreate the other pile. EMS thus indicates the minimum "cost" of
-converting one distribution to the other. EMS is between -1 and 1, with larger (or more negative) values indicating larger
-shifts and the sign indicating direction in accordance with convention for denoting the position of one sequence feature
-relative to another (negative indicates an upstream shift, positive indicates a downstream shift). EMS is statistically
-controlled through a permutation test, which produces a p-value and FDR threshold.
+Numerous studies have demonstrated that the distribution of TSSs within a given region can shift during development or in response to a given stimulus ([Haberle et al. 2014](https://www.nature.com/articles/nature12974), 
+[Zhang et al. 2017](https://bmcgenomics.biomedcentral.com/articles/10.1186/s12864-017-3834-z), 
+[Danks et al. 2018](https://bmcgenomics.biomedcentral.com/articles/10.1186/s12864-018-4504-5),
+[Ushijima et al. 2018](https://www.sciencedirect.com/science/article/pii/S0092867417312400), [Lu and Lin 2019](https://genome.cshlp.org/content/29/7/1198.full)). Mathematically speaking, detecting a shift in TSS distribution within a region of interest can be thought of as finding the difference between two discrete probability distributions. To enable detection of TSS shifts, TSRexploreR implements a signed version of [earth mover's distance](https://en.wikipedia.org/wiki/Earth_mover%27s_distance) that we term earth mover's score (EMS). In essence, we think of the TSS distributions in our two samples to be compared as piles of dirt and ask how much dirt would need to be moved from one pile, how far, and in which direction to recreate the other pile. EMS thus indicates the minimum "cost" of converting one distribution to the other. EMS is between -1 and 1, with larger (or more negative) values indicating larger shifts and the sign indicating direction in accordance with convention for denoting the position of one sequence feature relative to another (negative indicates an upstream shift, positive indicates a downstream shift). EMS is statistically controlled through a permutation test, which produces a p-value and FDR threshold.
 
 ## Prepare Data
 
-In this vignette, we detect TSS shifts in TSRs identified by STRIPE-seq in control and diamide-treated yeast. 
+In this vignette, we detect TSS shifts in TSRs identified by [STRIPE-seq](https://genome.cshlp.org/content/30/6/910.long) in control and diamide-treated yeast. 
 
 ```{r message=FALSE}
 library("TSRexploreR")

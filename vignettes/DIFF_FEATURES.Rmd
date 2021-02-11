@@ -7,11 +7,11 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-Changes in gene transcription, driven by alterations in TSS and TSR usage, are pervasive between different environmental conditions, cell types, developmental stages, and normal and disease states. To facilitate differential TSS and TSR analysis, TSRexploreR uses DESeq2 or edgeR in an RNA-seq-like analysis, treating TSRs as "genes."
+Changes in gene transcription, driven by alterations in TSS and TSR usage, are pervasive between different environmental conditions, cell types, developmental stages, and normal and disease states. To facilitate differential TSS and TSR analysis, TSRexploreR uses [DESeq2](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-014-0550-8) or [edgeR](https://academic.oup.com/bioinformatics/article/26/1/139/182458) in an RNA-seq-like analysis, treating TSRs as "genes."
 
 ## Preparing Data
 
-This example uses a set of STRIPE-seq-detected TSRs from *S. cerevisiae* cells treated with 1.5 mM diamide for 1 hour and their corresponding control cells. Diamide is an oxidizing agent that induces a transcriptional stress response.
+This example uses a set of [STRIPE-seq](https://genome.cshlp.org/content/30/6/910.long)-detected TSRs from *S. cerevisiae* cells treated with 1.5 mM diamide for 1 hour and their corresponding control cells. Diamide is an oxidizing agent that induces substantial changes in transcript levels as measured by microarray analysis ([Gasch et al. 2000](https://www.molbiolcell.org/doi/10.1091/mbc.11.12.4241)).
 
 ```{r message=FALSE}
 library("TSRexploreR")
@@ -130,7 +130,7 @@ plot_num_de(exp, data_type="tsr", de_comparisons="Diamide_vs_Untreated") +
 
 ## Gene Ontology
 
-To functionally annotate changes in TSR usage, GO analysis can be performed. TSRexploreR exports annotated differential TSRs ready for GO analysis with [clusterProfiler](https://www.bioconductor.org/packages/release/bioc/html/clusterProfiler.html), the package of choice for GO analysis in R. In this example, we export significantly altered TSRs with an annotation of "promoter," specified above as positions -250 to 100 relative to an annotated gene start. By default, a log2(fold change) cutoff of 1 and an FDR cutoff of 0.05 are enforced. While due to the small size of this example dataset there are no significantly enriched biological process terms, downregulated TSRs are highly associated with genes involved in ribosome biogenesis. This is consistent with the previously reported downregulation of such genes during the environmental stress response.
+To functionally annotate changes in TSR usage, GO analysis can be performed. TSRexploreR exports annotated differential TSRs ready for GO analysis with [clusterProfiler](https://www.bioconductor.org/packages/release/bioc/html/clusterProfiler.html), the package of choice for GO analysis in R. In this example, we export significantly altered TSRs with an annotation of "promoter," specified above as positions -250 to 100 relative to an annotated gene start. By default, a log2(fold change) cutoff of 1 and an FDR cutoff of 0.05 are enforced. While due to the small size of this example dataset there are no significantly enriched biological process terms, downregulated TSRs are highly associated with genes involved in ribosome biogenesis. This is consistent with the previously reported downregulation of such genes in response to diamide ([Gasch et al. 2000](https://www.molbiolcell.org/doi/10.1091/mbc.11.12.4241), [Weiner and Chen et al. 2012](https://journals.plos.org/plosbiology/article?id=10.1371/journal.pbio.1001369))
 
 ```{r message=FALSE, fig.align="center", fig.width=7, fig.height=5}
 # Export differential promoter TSRs
@@ -158,7 +158,7 @@ dotplot(go_enrichment) +
 
 ## Gene Tracks
 
-Individual examples of differential TSR usage can be viewed as signal tracks. Here, we visualize signal at *YDL243/AAD4*, encoding an alcohol dehydrogenase involved in the oxidative stress response.
+Individual examples of differential TSR usage can be viewed as signal tracks. Here, we visualize signal at *YDL243*/*AAD4*, encoding an alcohol dehydrogenase involved in the oxidative stress response.
 
 ```{r message=FALSE, fig.align="center", fig.width=7, fig.height=5}
 gene_tracks(
