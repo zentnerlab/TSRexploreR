@@ -41,10 +41,10 @@
 #' diff_tss <- exp %>%
 #'   fit_de_model(data_type="tss", formula= ~condition, method="edgeR") %>%
 #'   differential_expression(
-#'   exp, data_type = "tss", 
-#'   comparison_name = "Diamide_vs_Untreated",
-#'   comparison_type = "coef",
-#'   comparison = 2)
+#'   exp, data_type="tss", 
+#'   comparison_name="Diamide_vs_Untreated",
+#'   comparison_type="coef",
+#'   comparison=2)
 #' 
 #' p <- plot_ma(diff_tss, data_type="tss")
 #'
@@ -135,12 +135,12 @@ plot_ma <- function(
 #'   format_counts(data_type="tss")
 #'
 #' diff_tss <- exp %>%
-#'   fit_de_model(data_type="tss", formula= ~condition, method="edgeR") %>%
+#'   fit_de_model(data_type="tss", formula=~condition, method="edgeR") %>%
 #'   differential_expression(
-#'   exp, data_type = "tss", 
-#'   comparison_name = "Diamide_vs_Untreated",
-#'   comparison_type = "coef",
-#'   comparison = 2)
+#'   exp, data_type="tss", 
+#'   comparison_name="Diamide_vs_Untreated",
+#'   comparison_type="coef",
+#'   comparison=2)
 #'  
 #' p <- plot_volcano(diff_tss, data_type="tss")
 #'
@@ -250,12 +250,12 @@ plot_volcano <- function(
 #'   annotate_features(data_type="tss")
 #'
 #' diff_tss <- exp %>%
-#'   fit_de_model(data_type="tss", formula= ~condition, method="edgeR") %>%
+#'   fit_de_model(data_type="tss", formula=~condition, method="edgeR") %>%
 #'   differential_expression(
-#'   exp, data_type = "tss", 
-#'   comparison_name = "Diamide_vs_Untreated",
-#'   comparison_type = "coef",
-#'   comparison = 2)
+#'   exp, data_type="tss", 
+#'   comparison_name="Diamide_vs_Untreated",
+#'   comparison_type="coef",
+#'   comparison=2)
 #'   
 #' diff_tss <- export_for_enrichment(diff_tss, data_type="tss")
 #'
@@ -356,10 +356,10 @@ export_for_enrichment <- function(
 #' diff_tss <- exp %>%
 #'   fit_de_model(data_type="tss", formula= ~condition, method="edgeR") %>%
 #'   differential_expression(
-#'   exp, data_type = "tss", 
-#'   comparison_name = "Diamide_vs_Untreated",
-#'   comparison_type = "coef",
-#'   comparison = 2)
+#'   exp, data_type="tss", 
+#'   comparison_name="Diamide_vs_Untreated",
+#'   comparison_type="coef",
+#'   comparison=2)
 #'   
 #' p <- plot_num_de(diff_tss, data_type="tss")
 #'
