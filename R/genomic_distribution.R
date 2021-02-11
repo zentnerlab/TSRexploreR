@@ -1,16 +1,16 @@
 #' Genomic Distribution
 #'
 #' @description
-#' Get genomic distribution of TSSs and TSRs.
+#' Get genomic distributions of TSSs and TSRs.
 #'
 #' @inheritParams common_params
-#' @param data_type Whether to get distribution of TSSs or TSRs.
+#' @param data_type Whether to get distribution of TSSs ('tss') or TSRs ('tsr').
 #' @param ... Arguments passed to geom_col.
 #'
 #' @details
-#' This plotting function will create a stacked barplot of genomic feature types for each sample.
-#' Genomic features include exons, introns, intergenic, downstream, antisense, and promoter regions.
-#' The promoter region is user-defined during annotation.
+#' This plotting function will create a stacked barplot of the proportion of TSSs
+#' or TSRs containing within several types of genomic feature: exons, introns, intergenic, 
+#' downstream, antisense, and promoter regions. The promoter region is user-defined during annotation.
 #'
 #' A set of functions to control data structure for plotting are included. 'use_normalized' 
 #' will use  normalized scores, which only matters if 'consider_score' is TRUE.
@@ -33,13 +33,12 @@
 #' data(TSSs_reduced)
 #' annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
 #'
-#' tsre <- TSSs %>%
+#' exp <- TSSs %>%
 #'   tsr_explorer(genome_annotation=annotation) %>%
 #'   format_counts(data_type="tss") %>%
 #'   annotate_features(data_type="tss")
 #'
-#' # TSS genomic distribution plot.
-#' p <- plot_genomic_distribution(tsre, data_type="tss")
+#' p <- plot_genomic_distribution(exp, data_type="tss")
 #'
 #' @export 
 

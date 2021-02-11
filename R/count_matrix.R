@@ -3,7 +3,7 @@
 #'
 #' @inheritParams common_params
 #' @param count_data Named list of counts.
-#' @param data_type either 'tss' or 'tsr'.
+#' @param data_type Whether to get matrix of TSS ('tss') or TSR ('tsr') counts.
 
 .count_matrix <- function(
   count_data,

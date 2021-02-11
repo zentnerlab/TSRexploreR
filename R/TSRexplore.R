@@ -1,12 +1,12 @@
 #' TSRexploreR Class
 #'
-#' @slot experiment Named lists containing GRanges of TSSs and/or TSRs
-#' @slot counts Named lists of TMM and CPM normalized TSSs and/or TSRs
-#' @slot correlation Named lists of correlation values for TSS and/or TSR sets
-#' @slot diff_features Differential features
-#' @slot shifting TSS shifting data
-#' @slot settings Storage location for arguments used in various functions
-#' @slot meta_data Storage for meta_data (what metadata? qq)
+#' @slot experiment Named lists containing GRanges of TSSs and/or TSRs.
+#' @slot counts Named lists of normalized TSSs and/or TSRs.
+#' @slot correlation Named lists of correlation values for TSS and/or TSR sets.
+#' @slot diff_features Differential features.
+#' @slot shifting TSS shifting data.
+#' @slot settings Storage location for arguments used in various functions.
+#' @slot meta_data Storage for experiment metadata.
 #'
 #' @rdname tsr_explorer-class
 #'

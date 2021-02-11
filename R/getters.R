@@ -5,7 +5,7 @@
 #' Extract the TSS or TSR GRanges from the 'experiment' slot.
 #'
 #' @inheritParams common_params
-#' @param data_type Either 'tss' or 'tsr'.
+#' @param data_type Get either TSS ('tss') or TSR ('tsr') GRanges.
 #'
 #' @return List of TSS or TSR GRanges.
 #'
@@ -15,8 +15,9 @@
 #' @examples
 #' data(TSSs)
 #'
-#' tsre <- tsr_explorer(TSSs[1])
-#' tsre <- get_granges(tsre)
+#' exp <- tsr_explorer(TSSs[1])
+#' 
+#' gr <- get_granges(exp)
 #'
 #' @export
 
@@ -59,7 +60,7 @@ get_granges <- function(
 #' Extract the TSS or TSR count tables from the 'counts' slot.
 #'
 #' @inheritParams common_params
-#' @param data_type Either 'tss' or 'tsr'.
+#' @param data_type Get either TSS ('tss') or TSR ('tsr') count tables.
 #'
 #' @return List of TSS or TSR count data.frame.
 #'
@@ -69,9 +70,10 @@ get_granges <- function(
 #' @examples
 #' data(TSSs)
 #'
-#' tsre <- tsr_explorer(TSSs[1]) %>%
+#' exp <- tsr_explorer(TSSs[1]) %>%
 #'   format_counts(data_type="tss")
-#' tsre <- get_counts(tsre)
+#' 
+#' cts <- get_counts(exp)
 #'
 #' @export
 
@@ -122,8 +124,9 @@ get_counts <- function(
 #'
 #' @examples
 #' annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
-#' tsre <- tsr_explorer(genome_annotation=annotation)
-#' get_annotation(tsre)
+#' exp <- tsr_explorer(genome_annotation=annotation)
+#' 
+#' get_annotation(exp)
 #'
 #' @export
 
@@ -153,8 +156,9 @@ get_annotation <- function(
 #'
 #' @examples
 #' assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
-#' tsre <- tsr_explorer(genome_assembly=assembly)
-#' tsre <- get_assembly(tsre)
+#' exp <- tsr_explorer(genome_assembly=assembly)
+#' 
+#' a <- get_assembly(exp)
 #'
 #' @export
 
@@ -185,8 +189,10 @@ get_assembly <- function(
 #'   file_1=NA, file_2=NA,
 #'   condition=rep("Untreated", 3)
 #' )
-#' tsre <- tsr_explorer(sample_sheet=sample_sheet)
-#' tsre <- get_sample_sheet(tsre)
+#' 
+#' exp <- tsr_explorer(sample_sheet=sample_sheet)
+#' 
+#' ss <- get_sample_sheet(exp)
 #'
 #' @export
 
@@ -205,11 +211,11 @@ get_sample_sheet <- function(
 
 #' Get Shifting Results
 #'
-#' Extract the TSS cluster shifting results.
+#' Extract the TSR shifting results.
 #'
 #' @inheritParams common_params
 #'
-#' @return List of TSS cluster shifting data.frames.
+#' @return List of TSR shifting data.frames.
 #'
 #' @examples
 #' data(TSSs)
@@ -220,7 +226,7 @@ get_sample_sheet <- function(
 #'   condition=c(rep("Diamide", 3), rep("Untreated", 3))
 #' )
 #'
-#' tsre <- TSSs %>%
+#' exp <- TSSs %>%
 #'   tsr_explorer(sample_sheet=samples, genome_assembly=assembly) %>%
 #'   format_counts(data_type="tss") %>%
 #'   tss_clustering(threshold=3) %>%
@@ -232,7 +238,8 @@ get_sample_sheet <- function(
 #'     comparison_name="Untreated_vs_Diamide",
 #'     max_distance = 100, min_threshold = 10, n_resamples = 1000L
 #'   )
-#' tsre <- get_shifting_results(tsre)
+#'   
+#' sr <- get_shifting_results(exp)
 #'
 #' @export
 
@@ -279,11 +286,12 @@ get_shifting_results <- function(
 #'   )
 #' )
 #'
-#' tsre <- TSSs %>%
+#' exp <- TSSs %>%
 #'   tsr_explorer(sample_sheet=sample_sheet) %>%
 #'   format_counts(data_type="tss") %>%
 #'   fit_de_model(~condition, data_type="tss", method="edgeR")
-#' tsre <- get_diff_model(tsre, data_type="tss")
+#' 
+#' dm <- get_diff_model(exp, data_type="tss")
 #'
 #' @export
 
@@ -332,7 +340,7 @@ get_diff_model <- function(
 #'   )
 #' )
 #'
-#' tsre <- TSSs %>%
+#' exp <- TSSs %>%
 #'   tsr_explorer(sample_sheet=sample_sheet) %>%
 #'   format_counts(data_type="tss") %>%
 #'   fit_de_model(~condition, data_type="tss", method="edgeR") %>%
@@ -342,7 +350,8 @@ get_diff_model <- function(
 #'     comparison_type="coef",
 #'     comparison=2
 #'   )
-#' tsre <- get_diff_results(tsre, data_type="tss")
+#' 
+#' dr <- get_diff_results(exp, data_type="tss")
 #'
 #' @export
 

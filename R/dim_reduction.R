@@ -1,13 +1,13 @@
 #' Dimensionality Reduction.
 #'
 #' @description
-#' Dimensionality reduction plot using PCA
+#' Dimensionality reduction using PCA.
 #'
 #' @inheritParams common_params
-#' @param data_type Either 'tss' or 'tsr'.
+#' @param data_type Whether to analyze TSSs ('tss') or TSRs ('tsr').
 #' @param remove_var Remove features in this bottom fraction.
-#' @param center Center the data.
-#' @param scale Scale the data.
+#' @param center Center the data (TRUE).
+#' @param scale Scale the data (TRUE).
 #' @param ... Additional arguments passed to PCAtools::biplot.
 #'
 #' @return ggplot2 object of PCA plot.
@@ -15,10 +15,10 @@
 #' @details
 #' This function will generatete a PCA plot of the first two PCs.
 #' This helps to visualize the relative similarity of samples
-#'   based on the most variables features.
+#'   based on the most variable features.
 #'
 #' 'remove_var' removes features in the bottom fraction of variance.
-#' 'center' and 'scale' will center and scale the data respectively.
+#' 'center' and 'scale' will center and scale the data, respectively.
 #'
 #' @examples
 #' data(TSSs)
@@ -28,13 +28,12 @@
 #'   condition="Diamide"
 #' )
 #'
-#' tsre <- TSSs[seq_len(2)] %>%
+#' exp <- TSSs[seq_len(2)] %>%
 #'   tsr_explorer(sample_sheet=samples) %>%
 #'   format_counts(data_type="tss") %>%
 #'   normalize_counts(method="CPM")
 #'
-#' # TSS PCA plot.
-#' p <- plot_reduction(tsre, data_type="tss")
+#' p <- plot_reduction(exp, data_type="tss")
 #'
 #' @export
 

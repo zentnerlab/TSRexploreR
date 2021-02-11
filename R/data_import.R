@@ -1,7 +1,7 @@
 #' Import TSSs
 #'
 #' @description
-#' Function to import TSSs from various sources.
+#' Import TSSs from a variety of file formats.
 #'
 #' @inheritParams common_params
 #' @param file_type Either 'auto', 'bedgraph', 'bigwig', 'table', or 'ctss'.
@@ -14,9 +14,9 @@
 #' To import TSSs from files, a sample sheet must first be created. The sample 
 #' sheet can be a data.frame or tabular file. It should have three columns: 
 #' sample_name, file_1, and file_2. sample_name specifies the sample name that 
-#' will be added for that TSS in the TSRexploreR object. For bedGraphs and bigWigs,
+#' will be added to that TSS in the TSRexploreR object. For bedGraphs and bigWigs,
 #' file_1 and file_2 should be the paths to the plus and minus strand TSS files. For
-#' CTSS or tabular import, file_1 should be the path to the file, and file_2can be 
+#' CTSS or tabular import, file_1 should be the path to the file, and file_2 can be 
 #' left blank or filled with NA values.
 #'
 #' To import TSSs directly from a TSRchitect tssObject, the TSRchitect workflow 
@@ -33,13 +33,13 @@
 #' \dontrun{
 #' data(TSSs_reduced)
 #'
-#' # Export bedgraphs as example data.
-#' tsre <- TSSs %>%
+#' # Export bedGraphs as example data.
+#' exp <- TSSs %>%
 #'   tsr_explorer %>%
 #'   format_counts(data_type="tss")
-#' tss_export(tsre)
+#' tss_export(exp)
 #'
-#' # Import the previously created bedgraphs.
+#' # Import the previously created bedGraphs.
 #' samples <- data.frame(
 #'   sample_name="S288C_D_1",
 #'   file_1="S288C_D_1_pos.bedgraph",
@@ -272,14 +272,14 @@ tss_import <- function(
 #' \dontrun{
 #' data(TSSs_reduced)
 #'
-#' # Export bed as example data.
-#' tsre <- TSSs %>%
+#' # Export BED as example data.
+#' exp <- TSSs %>%
 #'   tsr_explorer %>%
 #'   format_counts(data_type="tss") %>%
 #'   tss_clustering(threshold=3)
-#' tsr_export(tsre)
+#' tsr_export(exp)
 #'
-#' # Import the previously created bed.
+#' # Import the previously created BED.
 #' samples <- data.frame(
 #'   sample_name="S288C_D_1",
 #'   file_1="S288C_D_1.bed",

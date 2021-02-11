@@ -33,11 +33,11 @@
 #' data(TSSs_reduced)
 #' assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
 #'
-#' tsre <- TSSs %>%
+#' exp <- TSSs %>%
 #'   tsr_explorer(genome_assembly=assembly) %>%
 #'   format_counts(data_type="tss")
 #'
-#' p <- plot_dinucleotide_frequencies(tsre)
+#' p <- plot_dinucleotide_frequencies(exp)
 #'
 #' @export
 

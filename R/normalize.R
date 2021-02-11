@@ -1,10 +1,10 @@
 #' Normalize TSS counts
 #'
 #' @description
-#' edgeR, DESeq2, or CPM normalization of TSSs or gene/transcript counts.
+#' edgeR, DESeq2, or CPM normalization of TSS counts
 #'
 #' @inheritParams common_params
-#' @param data_type Whether TSS or gene/transcript counts should be normalized.
+#' @param data_type Whether TSS ('tss') or gene/transcript counts (in development) should be normalized.
 #' @param method Either 'edgeR', 'DESeq2', or 'CPM'.
 #' @param n_samples Filter out TSSs or features not meeting the the selected threshold
 #'   in this number of samples.
@@ -41,12 +41,11 @@
 #'   )
 #' )
 #'
-#' tsre <- TSSs %>%
+#' exp <- TSSs %>%
 #'   tsr_explorer(sample_sheet=sample_sheet) %>%
 #'   format_counts(data_type="tss")
 #'
-#' # CPM normalization
-#' tsre <- normalize_counts(tsre, method="CPM")
+#' exp <- normalize_counts(exp, method="CPM")
 #'
 #' @export
 

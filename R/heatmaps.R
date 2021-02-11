@@ -75,23 +75,23 @@
 #' @param high_color Color for maximum value.
 #' @param log2_transform Log2 + 1 transform values for plotting.
 #' @param x_axis_breaks The distance breaks to show values on the x-axis.
-#' @param filtering Logical statment to filter data by.
-#' @param ordering Symbol/name specifying the column to order by.
+#' @param filtering Logical statement by which to filter data.
+#' @param ordering Symbol/name specifying the column by which to order.
 #' @param order_fun Function to aggregate variable by before ordering.
 #' @param order_descending Whether to order in descending (TRUE) order.
 #' @param order_samples Samples that are used to calculate ordering.
-#' @param quantiling Character specifying column to quantile by.
+#' @param quantiling Character specifying column by which to quantile..
 #' @param quantile_fun Functiont o aggregate variable by before quantiling.
 #' @param n_quantiles Number of quantiles.
 #' @param quantile_samples Samples to use for quantiling.
 #' @param remove_antisense Remove antisense reads.
 #' @param split_by Named list with split group as name and vector of genes,
 #'   or data.frame with columns 'feature' and 'split_group'.
-#' @param data_type Either 'tss' or 'tsr'.
+#' @param data_type Plot TSS ('tss') or TSR ('tsr') scores.
 #'
 #' @details
 #' This plotting function generates a ggplot2 heatmap of TSS or TSR signal
-#'   surrounding annotated TSSs of genes or transcripts.
+#'   surrounding the annotated TSSs of genes or transcripts.
 #' Whether genes or transcripts are used depends on the feature type chosen
 #'   when annotating the TSSs with the 'annotate_features' function. 
 #'
@@ -99,15 +99,13 @@
 #'   'upstream' and 'downstream', which should be positive integers.
 #'
 #' A set of arguments to control data structure for plotting are included.
-#' 'use_normalized' will use the CPM normalized scores as opposed to raw read counts.
-#' 'threshold' will define the minimum number of reads a TSS or TSR
+#' 'use_normalized' will use the normalized scores as opposed to raw read counts.
+#' 'threshold' definites the minimum number of reads a TSS or TSR
 #'  must have to be considered.
 #' 'dominant' specifies whether only the dominant TSS or TSR is considered 
 #'   from the 'mark_dominant' function.
 #' For TSSs this can be either dominant per TSR or gene, and for TSRs
 #'   it is just the dominant TSR per gene.
-#' 'data_conditions' allows for the advanced filtering, ordering, and grouping
-#'   of data.
 #'
 #' A set of arguments for data conditions are supplied seperatly from
 #'   the 'conditionals' function used in many other core functions.
@@ -140,13 +138,12 @@
 #' data(TSSs_reduced)
 #' annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
 #'
-#' tsre <- TSSs %>%
+#' exp <- TSSs %>%
 #'   tsr_explorer(genome_annotation=annotation) %>%
 #'   format_counts(data_type="tss") %>%
 #'   annotate_features(data_type="tss")
 #'
-#' # TSS heatmap.
-#' p <- plot_heatmap(tsre, data_type="tss")
+#' p <- plot_heatmap(exp, data_type="tss")
 #'
 #' @export
 

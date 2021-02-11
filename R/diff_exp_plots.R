@@ -1,11 +1,11 @@
 #' MA Plot
 #'
 #' @description
-#' Generate an MA plot for differential TSSs, TSRs, or genes/transcripts.
+#' Generate an MA plot for differential TSSs or TSRs.
 #'
 #' @inheritParams common_params
+#' @param data_type Whether to plot differential TSSs ('tss') or TSRs ('tsr').
 #' @param de_comparisons Character vector of differential expression comparisons to plot.
-#' @param data_type Either 'tss' or 'tsr'.
 #' @param ... Arguments passed to geom_point.
 #'
 #' @details
@@ -14,8 +14,8 @@
 #'
 #' 'de_comparisons' are the names given to the comparisons from the 'comparison_name'
 #'   argument of the 'differential_expression' function.
-#' 'log2fc_cutoff' and 'fdr_cutoff' are the Log2 Fold Change and FDR cutoffs used
-#'   for consideration of significance in the plot.
+#' 'log2fc_cutoff' and 'fdr_cutoff' are the log2(fold change) and FDR cutoffs used
+#'   for coloring of features as significantly altered in the plot.
 #'
 #' @return ggplot2 object of MA plot.
 #'
@@ -34,19 +34,18 @@
 #'   condition=c(rep("Diamide", 3), rep("Untreated", 3))
 #' )
 #'
-#' tsre <- TSSs %>%
+#' exp <- TSSs %>%
 #'   tsr_explorer(sample_sheet=sample_sheet) %>%
 #'   format_counts(data_type="tss")
 #'
-#' # Differential TSS MA plot.
-#' diff_tss <- tsre %>%
+#' diff_tss <- exp %>%
 #'   fit_de_model(data_type="tss", formula= ~condition, method="edgeR") %>%
 #'   differential_expression(
-#'     data_type="tss",
-#'     comparison_name="Diamide_vs_Untreated",
-#'     comparison_type="coef",
-#'     comparison=2
-#'   )
+#'   exp, data_type="tss", 
+#'   comparison_name="Diamide_vs_Untreated",
+#'   comparison_type="coef",
+#'   comparison=2)
+#' 
 #' p <- plot_ma(diff_tss, data_type="tss")
 #'
 #' @export
@@ -95,13 +94,13 @@ plot_ma <- function(
   return(p)
 }
 
-#' DE Volcano Plot
+#' Volcano Plot
 #'
 #' @description
 #' Generate a volcano plot for differential TSSs or TSRs.
 #'
 #' @inheritParams common_params
-#' @param data_type either 'tss' or 'tsr'.
+#' @param data_type Whether to plot differential TSSs ('tss') or TSRs ('tsr').
 #' @param de_comparisons Character vector of differential expression comparisons to plot.
 #' @param ... Arguments passed to geom_point.
 #'
@@ -111,9 +110,9 @@ plot_ma <- function(
 #'
 #' 'de_comparisons' are the names given to the comparisons from the 'comparison_name'
 #'   argument of the 'differential_expression' function.
-#' 'log2fc_cutoff' and 'fdr_cutoff' are the Log2 Fold Change and FDR cutoffs used
-#'   for consideration of significance in the plot.
-#'
+#' 'log2fc_cutoff' and 'fdr_cutoff' are the log2(fold change) and FDR cutoffs used
+#'   for coloring of features as significantly altered in the plot.
+#'   
 #' @return ggplot2 object of the volcano plot.
 #'
 #' @seealso
@@ -131,19 +130,18 @@ plot_ma <- function(
 #'   condition=c(rep("Diamide", 3), rep("Untreated", 3))
 #' )
 #'
-#' tsre <- TSSs %>%
+#' exp <- TSSs %>%
 #'   tsr_explorer(sample_sheet=sample_sheet) %>%
 #'   format_counts(data_type="tss")
 #'
-#' # Differential TSS volcano plot.
-#' diff_tss <- tsre %>%
-#'   fit_de_model(data_type="tss", formula= ~condition, method="edgeR") %>%
+#' diff_tss <- exp %>%
+#'   fit_de_model(data_type="tss", formula=~condition, method="edgeR") %>%
 #'   differential_expression(
-#'     data_type="tss",
-#'     comparison_name="Diamide_vs_Untreated",
-#'     comparison_type="coef",
-#'     comparison=2
-#'   )
+#'   exp, data_type="tss", 
+#'   comparison_name="Diamide_vs_Untreated",
+#'   comparison_type="coef",
+#'   comparison=2)
+#'  
 #' p <- plot_volcano(diff_tss, data_type="tss")
 #'
 #' @export
@@ -203,8 +201,8 @@ plot_volcano <- function(
 #' Export differential features for use in clusterProfiler term enrichment.
 #'
 #' @inheritParams common_params
-#' @param data_type Whether to export genes associated with differential TSSs or
-#'   TSRs.
+#' @param data_type Whether to export genes associated with differential TSSs ('tss') or
+#'   TSRs ('tsr').
 #' @param de_comparisons Character vector of differential expression comparisons to export.
 #' @param keep_unchanged Logical for inclusion of genes not significantly changed in
 #'   the exported list.
@@ -212,22 +210,21 @@ plot_volcano <- function(
 #'   If NULL no filtering by annotation type occurs.
 #'
 #' @details
-#' This function outputs a data.frame that is formatted for use in the 'compateCluster'
+#' This function outputs a data.frame that is formatted for use with the 'compareCluster'
 #'   function of the clusterProfiler library.
-#' Importantly, the 'geneId', 'sample', and 'de_status' columns can be used in the formula
-#'   notation 'geneId ~ sample + de_status'.
+#' The 'geneId', 'sample', and 'de_status' columns can be used in the formula
+#'    'geneId ~ sample + de_status'.
 #'
 #' 'de_comparisons' are the names given to the comparisons from the 'comparison_name'
 #'   argument of the 'differential_expression' function.
-#' 'log2fc_cutoff' and 'fdr_cutoff' are the Log2 Fold Change and FDR cutoffs used
-#'   for consideration of significance in the plot.
+#' 'log2fc_cutoff' and 'fdr_cutoff' are the log2(fold change) and FDR cutoffs used
+#'   for determination of significance.
 #'
 #' 'keep_unchanged' controls whether genes with the category of 'unchanged'
-#'   (not differentially expressed) are returned in the table also.
+#'   (not differentially expressed) are returned in the table.
 #' Additionally, genes can be returned based on whether they have differential
 #'   features within a certain relative genomic location, such as promoter.
-#' This is controlled by providing a vector annotation types to 'anno_types'
-#'   which will be kept.
+#' This is controlled by providing a vector of annotation types to 'anno_types'.
 #'
 #' @return data.frame of genes and differential expression status of TSSs or TSRs.
 #'
@@ -247,20 +244,19 @@ plot_volcano <- function(
 #'   condition=c(rep("Diamide", 3), rep("Untreated", 3))
 #' )
 #'
-#' tsre <- TSSs %>%
+#' exp <- TSSs %>%
 #'   tsr_explorer(sample_sheet=sample_sheet, genome_annotation=annotation) %>%
 #'   format_counts(data_type="tss") %>%
 #'   annotate_features(data_type="tss")
 #'
-#' # Differential TSS table.
-#' diff_tss <- tsre %>%
-#'   fit_de_model(data_type="tss", formula= ~condition, method="edgeR") %>%
+#' diff_tss <- exp %>%
+#'   fit_de_model(data_type="tss", formula=~condition, method="edgeR") %>%
 #'   differential_expression(
-#'     data_type="tss",
-#'     comparison_name="Diamide_vs_Untreated",
-#'     comparison_type="coef",
-#'     comparison=2
-#'   )
+#'   exp, data_type="tss", 
+#'   comparison_name="Diamide_vs_Untreated",
+#'   comparison_type="coef",
+#'   comparison=2)
+#'   
 #' diff_tss <- export_for_enrichment(diff_tss, data_type="tss")
 #'
 #' @export
@@ -317,7 +313,7 @@ export_for_enrichment <- function(
 #' Stacked barplot of the number of differential TSSs or TSRs per comparison.
 #'
 #' @inheritParams common_params
-#' @param data_type Either 'tss' or 'tsr'.
+#' @param data_type Whether to plot numbers of differential TSSs ('tss') or TSRs ('tsr').
 #' @param de_comparisons Character vector of differential expression comparisons to plot.
 #' @param keep_unchanged Whether to include (TRUE) unchanged features in the plot.
 #' @param ... Additional arguments passed to geom_col.
@@ -327,12 +323,12 @@ export_for_enrichment <- function(
 #'
 #' 'de_comparisons' are the names given to the comparisons from the 'comparison_name'
 #'   argument of the 'differential_expression' function.
-#' 'log2fc_cutoff' and 'fdr_cutoff' are the Log2 Fold Change and FDR cutoffs used
-#'   for consideration of significance in the plot.
-#' 'keep_unchaged' controls whether non-significant feature numbers are included in the plot.
+#' 'log2fc_cutoff' and 'fdr_cutoff' are the log2(fold change) and FDR cutoffs used
+#'   for determination of significance in the plot.
+#' 'keep_unchanged' controls whether non-significant feature numbers are included in the plot.
 #'
-#' If 'keep_unchaged' is TRUE, a table with the numbers is returned instead of the ggplot.
-#' This may be useful if exact numbers underlying the plot are required.
+#' If 'keep_unchanged' is TRUE, a table with the numbers is returned instead of the ggplot.
+#' This may be useful if the exact numbers underlying the plot are required.
 #'
 #' @return ggplot2 object of stacked barplot.
 #'   If 'return_table' is TRUE, a data.frame with differentially expressed TSS/TSR numbers
@@ -353,19 +349,18 @@ export_for_enrichment <- function(
 #'   condition=c(rep("Diamide", 3), rep("Untreated", 3))
 #' )
 #'
-#' tsre <- TSSs %>%
+#' exp <- TSSs %>%
 #'   tsr_explorer(sample_sheet=sample_sheet) %>%
 #'   format_counts(data_type="tss")
 #'
-#' # Differential TSS quantities plot.
-#' diff_tss <- tsre %>%
+#' diff_tss <- exp %>%
 #'   fit_de_model(data_type="tss", formula= ~condition, method="edgeR") %>%
 #'   differential_expression(
-#'     data_type="tss",
-#'     comparison_name="Diamide_vs_Untreated",
-#'     comparison_type="coef",
-#'     comparison=2
-#'   )
+#'   exp, data_type="tss", 
+#'   comparison_name="Diamide_vs_Untreated",
+#'   comparison_type="coef",
+#'   comparison=2)
+#'   
 #' p <- plot_num_de(diff_tss, data_type="tss")
 #'
 #' @export
