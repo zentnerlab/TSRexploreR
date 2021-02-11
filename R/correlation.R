@@ -39,9 +39,9 @@
 #' exp <- TSSs[1] %>%
 #'   tsr_explorer %>%
 #'   format_counts(data_type="tss") %>%
-#'   normalize_counts(data_type="tss", method="DESeq2")
+#'   normalize_counts(data_type="tss", method="CPM")
 #'
-#' p <- plot_correlation(exp, data_type="tss", use_normalized=TRUE)
+#' p <- plot_correlation(exp, data_type="tss")
 #'
 #' @seealso \code{\link{normalize_counts}} for TSS and TSR normalization.
 #'
