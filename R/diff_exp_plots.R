@@ -250,12 +250,12 @@ plot_volcano <- function(
 #'   annotate_features(data_type="tss")
 #'
 #' diff_tss <- exp %>%
-#'   fit_de_model(data_type="tss", formula= ~condition, method="DESeq2") %>%
+#'   fit_de_model(data_type="tss", formula= ~condition, method="edgeR") %>%
 #'   differential_expression(
-#'   exp, data_type = "tsr", 
+#'   exp, data_type = "tss", 
 #'   comparison_name = "Diamide_vs_Untreated",
-#'   comparison_type = "contrast",
-#'   comparison = c("condition", "Diamide", "Untreated"))
+#'   comparison_type = "coef",
+#'   comparison = 2)
 #'   
 #' diff_tss <- export_for_enrichment(diff_tss, data_type="tss")
 #'
