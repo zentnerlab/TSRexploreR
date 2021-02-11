@@ -11,7 +11,7 @@
 #' @param samples A vector of sample names to analyze.
 #' @param use_normalized Whether to use the normalized (TRUE) or raw (FALSE) counts.
 #' @param ncol Integer specifying the number of columns to arrange multiple plots.
-#' @param log2fc_cutoff Differential features not meeting this log2(fold change) threshold will not be considered.
+#' @param log2fc_cutoff Differential features not meeting this |log2(fold change)| threshold will not be considered.
 #' @param fdr_cutoff Differential features not meeting this significance threshold will not be considered.
 #' @param dominant If TRUE, will only consider the highest-scoring TSS per gene, transcript, or TSR or 
 #'   highest-scoring TSR per gene or transcript.

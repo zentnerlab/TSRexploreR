@@ -36,7 +36,7 @@
 #'   format_counts(data_type="tss") %>%
 #'   annotate_features(data_type="tss")
 #'
-#' plot_detected_features(exp, data_type="tss")
+#' p <- plot_detected_features(exp, data_type="tss")
 #'
 #' @export
 

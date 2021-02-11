@@ -35,7 +35,7 @@
 #'   tsr_explorer(sample_sheet=sample_sheet) %>%
 #'   format_counts(data_type="tss")
 #'
-#' exp <- fit_de_model(exp, data_type="tss", formula=~condition, method="DESeq2")
+#' exp <- fit_de_model(exp, data_type="tss", formula=~condition, method="edgeR")
 #'
 #' @export
 
@@ -222,13 +222,13 @@ fit_de_model <- function(
 #'   format_counts(data_type="tss")
 #'
 #' # Differential TSSs with DESeq2.
-#' exp <- fit_de_model(exp, data_type = "tsr", formula = ~condition, method = "deseq2")
+#' exp <- fit_de_model(exp, data_type="tss", formula=~condition, method="edgeR")
 #' 
 #' exp <- differential_expression(
-#'   exp, data_type = "tsr", 
-#'   comparison_name = "Diamide_vs_Untreated",
-#'   comparison_type = "contrast",
-#'   comparison = c("condition", "Diamide", "Untreated"))
+#'   exp, data_type="tss", 
+#'   comparison_name="Diamide_vs_Untreated",
+#'   comparison_type="coef",
+#'   comparison=2)
 #'
 #' @export
 

@@ -31,9 +31,9 @@
 #' exp <- TSSs[seq_len(2)] %>%
 #'   tsr_explorer(sample_sheet=samples) %>%
 #'   format_counts(data_type="tss") %>%
-#'   normalize_counts(method="DESeq2")
+#'   normalize_counts(method="CPM")
 #'
-#' plot_reduction(exp, data_type="tss")
+#' p <- plot_reduction(exp, data_type="tss")
 #'
 #' @export
 
