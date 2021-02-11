@@ -31,10 +31,11 @@ sample_sheet <- data.frame(
   )
 )
 
-tsre <- TSSs \%>\%
+exp <- TSSs \%>\%
   tsr_explorer(sample_sheet=sample_sheet) \%>\%
   format_counts(data_type="tss") \%>\%
   fit_de_model(~condition, data_type="tss", method="edgeR")
-tsre <- get_diff_model(tsre, data_type="tss")
+
+dm <- get_diff_model(exp, data_type="tss")
 
 }

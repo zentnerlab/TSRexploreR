@@ -21,7 +21,7 @@ plot_detected_features(
 
 \item{samples}{A vector of sample names to analyze.}
 
-\item{data_type}{Whether TSSs or TSRs should be analyzed.}
+\item{data_type}{Whether TSSs ('tss') or TSRs ('tsr') should be analyzed.}
 
 \item{threshold}{TSSs or TSRs with a score below this value will not be considered.}
 
@@ -54,20 +54,19 @@ will use  normalized scores, which only matters if 'consider_score' is TRUE.
 considered. dominant' specifies whether only the dominant TSS or TSR (determined
 using the 'mark_dominant' function) is considered. For TSSs, this can be either 
 dominant TSS per TSR or gene/transcript, and for TSRs it is the dominant TSR 
-per gene/transcript. 'data_conditionals' can be used to filter, quantile, order, 
+per gene/transcript. 'data_conditions' can be used to filter, quantile, order, 
 and/or group data for plotting.
 }
 \examples{
 data(TSSs_reduced)
 annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
 
-tsre <- TSSs \%>\%
+exp <- TSSs \%>\%
   tsr_explorer(genome_annotation=annotation) \%>\%
   format_counts(data_type="tss") \%>\%
   annotate_features(data_type="tss")
 
-# Detected features with TSSs plot.
-p <- plot_detected_features(tsre, data_type="tss")
+p <- plot_detected_features(exp, data_type="tss")
 
 }
 \seealso{

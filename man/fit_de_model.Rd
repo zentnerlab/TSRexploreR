@@ -2,7 +2,7 @@
 % Please edit documentation in R/diff_expression.R
 \name{fit_de_model}
 \alias{fit_de_model}
-\title{Model for differential feature analysis}
+\title{Differential feature analysis}
 \usage{
 fit_de_model(
   experiment,
@@ -15,13 +15,13 @@ fit_de_model(
 \arguments{
 \item{experiment}{TSRexploreR object.}
 
-\item{formula}{DE formula.}
+\item{formula}{Formula for differenatial feature analysis.}
 
-\item{data_type}{Whether TSS, TSR, or gene/transcript counts should be analyzed.}
+\item{data_type}{Whether TSSs ('tss') or TSRs ('tsr') should be analyzed}
 
 \item{samples}{A vector of sample names to analyze.}
 
-\item{method}{Either 'DESeq2' or 'edgeR.}
+\item{method}{Build DE model using either 'DESeq2' or 'edgeR'.}
 }
 \value{
 TSRexploreR object with stored DE model.
@@ -30,8 +30,7 @@ TSRexploreR object with stored DE model.
 Find differential TSSs or TSRs.
 }
 \details{
-This function uses either DESeq2 or edgeR depending on what is specified in 'method'
-  to find differential TSSs or TSRs.
+This function uses either DESeq2 or edgeR to find differential TSSs or TSRs.
 'formula' should be a valid R formula in any form accepted by DESeq2 or edgeR,
   where the formula components are any columns present in the sample sheet.
 }
@@ -49,12 +48,11 @@ sample_sheet <- data.frame(
   )
 )
 
-tsre <- TSSs \%>\%
+exp <- TSSs \%>\%
   tsr_explorer(sample_sheet=sample_sheet) \%>\%
   format_counts(data_type="tss")
 
-# DESeq2 model for differential TSSs.
-tsre <- fit_de_model(tsre, ~condition, data_type="tss", method="edgeR")
+exp <- fit_de_model(exp, data_type="tss", formula=~condition, method="edgeR")
 
 }
 \seealso{

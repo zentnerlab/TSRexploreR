@@ -18,7 +18,7 @@ merge_samples(
 \arguments{
 \item{experiment}{TSRexploreR object.}
 
-\item{data_type}{Either 'tss' or 'tsr'.}
+\item{data_type}{Merge TSSs ('tss') or TSRs ('tsr').}
 
 \item{threshold}{TSSs or TSRs with a score below this value will not be considered.}
 
@@ -46,12 +46,12 @@ Merge TSSs or TSRs by group or select samples.
 }
 \details{
 This function will merge overlapping TSSs or TSRs from different samples
-  using either the sample sheet, or a named list.
+  using either the sample sheet or a named list.
 If 'merge_group' is specified, the new merged TSS/TSR set will be the
   factor level in the column, and all TSS/TSR sets sharing that factor level
   will be merged.
-If 'merge_list' is specified instead,
-  The new TSS/TSR set will be the name of the list element,
+If 'merge_list' is specified,
+  the new TSS/TSR set will be the name of the list element,
   and the samples to merge will be a character vector as the list element.
 
 'merge_distance' is provided for TSRs, and will merge TSRs within a certain
@@ -66,11 +66,10 @@ sample_sheet <- data.frame(
 )
 assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
 
-tsre <- TSSs \%>\%
+exp <- TSSs \%>\%
   tsr_explorer(sample_sheet=sample_sheet, genome_assembly=assembly) \%>\%
   format_counts(data_type="tss")
 
-# Merge TSSs by condition column.
-tsre <- merge_samples(tsre, data_type="tss", merge_group="condition")
+exp <- merge_samples(exp, data_type="tss", merge_group="condition")
 
 }

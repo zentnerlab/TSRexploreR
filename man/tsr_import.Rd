@@ -40,14 +40,14 @@ first be run up to the 'determineTSR' step.
 \dontrun{
 data(TSSs_reduced)
 
-# Export bed as example data.
-tsre <- TSSs \%>\%
+# Export BED as example data.
+exp <- TSSs \%>\%
   tsr_explorer \%>\%
   format_counts(data_type="tss") \%>\%
   tss_clustering(threshold=3)
-tsr_export(tsre)
+tsr_export(exp)
 
-# Import the previously created bed.
+# Import the previously created BED.
 samples <- data.frame(
   sample_name="S288C_D_1",
   file_1="S288C_D_1.bed",

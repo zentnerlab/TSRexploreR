@@ -15,7 +15,7 @@ normalize_counts(
 \arguments{
 \item{experiment}{TSRexploreR object.}
 
-\item{data_type}{Whether TSS or gene/transcript counts should be normalized.}
+\item{data_type}{Whether TSS ('tss') or gene/transcript counts (in development) should be normalized.}
 
 \item{method}{Either 'edgeR', 'DESeq2', or 'CPM'.}
 
@@ -28,7 +28,7 @@ in this number of samples.}
 TSRexploreR object with normalized counts.
 }
 \description{
-edgeR, DESeq2, or CPM normalization of TSSs or gene/transcript counts.
+edgeR, DESeq2, or CPM normalization of TSS counts
 }
 \details{
 This function performs one of three normalizations on TSS or gene/transcript counts. The
@@ -60,11 +60,10 @@ sample_sheet <- data.frame(
   )
 )
 
-tsre <- TSSs \%>\%
+exp <- TSSs \%>\%
   tsr_explorer(sample_sheet=sample_sheet) \%>\%
   format_counts(data_type="tss")
 
-# CPM normalization
-tsre <- normalize_counts(tsre, method="CPM")
+exp <- normalize_counts(exp, method="CPM")
 
 }

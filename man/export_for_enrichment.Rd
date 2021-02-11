@@ -17,12 +17,12 @@ export_for_enrichment(
 \arguments{
 \item{experiment}{TSRexploreR object.}
 
-\item{data_type}{Whether to export genes associated with differential TSSs or
-TSRs.}
+\item{data_type}{Whether to export genes associated with differential TSSs ('tss') or
+TSRs ('tsr').}
 
 \item{de_comparisons}{Character vector of differential expression comparisons to export.}
 
-\item{log2fc_cutoff}{Differential features not meeting this |Log2 FC| threshold will not be considered.}
+\item{log2fc_cutoff}{Differential features not meeting this |log2(fold change)| threshold will not be considered.}
 
 \item{fdr_cutoff}{Differential features not meeting this significance threshold will not be considered.}
 
@@ -39,22 +39,21 @@ data.frame of genes and differential expression status of TSSs or TSRs.
 Export differential features for use in clusterProfiler term enrichment.
 }
 \details{
-This function outputs a data.frame that is formatted for use in the 'compateCluster'
+This function outputs a data.frame that is formatted for use with the 'compareCluster'
   function of the clusterProfiler library.
-Importantly, the 'geneId', 'sample', and 'de_status' columns can be used in the formula
-  notation 'geneId ~ sample + de_status'.
+The 'geneId', 'sample', and 'de_status' columns can be used in the formula
+   'geneId ~ sample + de_status'.
 
 'de_comparisons' are the names given to the comparisons from the 'comparison_name'
   argument of the 'differential_expression' function.
-'log2fc_cutoff' and 'fdr_cutoff' are the Log2 Fold Change and FDR cutoffs used
-  for consideration of significance in the plot.
+'log2fc_cutoff' and 'fdr_cutoff' are the log2(fold change) and FDR cutoffs used
+  for determination of significance.
 
 'keep_unchanged' controls whether genes with the category of 'unchanged'
-  (not differentially expressed) are returned in the table also.
+  (not differentially expressed) are returned in the table.
 Additionally, genes can be returned based on whether they have differential
   features within a certain relative genomic location, such as promoter.
-This is controlled by providing a vector annotation types to 'anno_types'
-  which will be kept.
+This is controlled by providing a vector of annotation types to 'anno_types'.
 }
 \examples{
 data(TSSs)
@@ -68,20 +67,19 @@ sample_sheet <- data.frame(
   condition=c(rep("Diamide", 3), rep("Untreated", 3))
 )
 
-tsre <- TSSs \%>\%
+exp <- TSSs \%>\%
   tsr_explorer(sample_sheet=sample_sheet, genome_annotation=annotation) \%>\%
   format_counts(data_type="tss") \%>\%
   annotate_features(data_type="tss")
 
-# Differential TSS table.
-diff_tss <- tsre \%>\%
-  fit_de_model(data_type="tss", formula= ~condition, method="edgeR") \%>\%
+diff_tss <- exp \%>\%
+  fit_de_model(data_type="tss", formula=~condition, method="edgeR") \%>\%
   differential_expression(
-    data_type="tss",
-    comparison_name="Diamide_vs_Untreated",
-    comparison_type="coef",
-    comparison=2
-  )
+  data_type="tss", 
+  comparison_name="Diamide_vs_Untreated",
+  comparison_type="coef",
+  comparison=2)
+  
 diff_tss <- export_for_enrichment(diff_tss, data_type="tss")
 
 }

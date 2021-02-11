@@ -21,7 +21,7 @@
 
 \item{annotated_data}{Annotated sample data.}
 
-\item{ordering}{Symbol/name specifying the column to order by.}
+\item{ordering}{Symbol/name specifying the column by which to order.}
 
 \item{order_fun}{Function to aggregate variable by before ordering.}
 

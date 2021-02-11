@@ -15,9 +15,9 @@
 \arguments{
 \item{experiment}{TSRexploreR object.}
 
-\item{max_threshold}{Thresholds from 1 to max_threshold will be explored}
+\item{max_threshold}{Thresholds from 1 to max_threshold will be explored.}
 
-\item{steps}{Steps to get the threshold values}
+\item{steps}{Steps to get the threshold values.}
 
 \item{samples}{A vector of sample names to analyze.}
 
@@ -30,13 +30,14 @@ data.frame containing information for each threshold and sample
 Explore raw read count thresholds thresholds.
 }
 \details{
-All TSS mapping technologies have some degree of spurious background reads.
-tsr_explorer allows for basic thresholding of data by requiring
-  a minimum number of reads for a TSS to be considered.
+All TSS mapping technologies have some degree of background reads.
+TSRexplroeR allows for basic thresholding of data by requiring
+  a minimum number of reads for a TSS to be considered in downstream
+  analyses.
 
 An easy way to pick a threshold is with the threshold plot generated
   by 'plot_exploration_threshold'.
-This plot shows the proportion TSS positions that are promoter-proximal when
+This plot shows the proportion of TSS positions that are promoter-proximal when
   various threshold values are tested.
 'max_threshold' defines the maximum threshold value that will be analyzed.
 }

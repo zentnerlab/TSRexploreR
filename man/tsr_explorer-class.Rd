@@ -39,19 +39,19 @@ start regions (TSRs).
 \section{Slots}{
 
 \describe{
-\item{\code{experiment}}{Named lists containing GRanges of TSSs and/or TSRs}
+\item{\code{experiment}}{Named lists containing GRanges of TSSs and/or TSRs.}
 
-\item{\code{counts}}{Named lists of TMM and CPM normalized TSSs and/or TSRs}
+\item{\code{counts}}{Named lists of normalized TSSs and/or TSRs.}
 
-\item{\code{correlation}}{Named lists of correlation values for TSS and/or TSR sets}
+\item{\code{correlation}}{Named lists of correlation values for TSS and/or TSR sets.}
 
-\item{\code{diff_features}}{Differential features}
+\item{\code{diff_features}}{Differential features.}
 
-\item{\code{shifting}}{TSS shifting data}
+\item{\code{shifting}}{TSS shifting data.}
 
-\item{\code{settings}}{Storage location for arguments used in various functions}
+\item{\code{settings}}{Storage location for arguments used in various functions.}
 
-\item{\code{meta_data}}{Storage for meta_data (what metadata? qq)}
+\item{\code{meta_data}}{Storage for experiment metadata.}
 }}
 
 \examples{

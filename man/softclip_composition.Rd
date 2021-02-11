@@ -2,7 +2,7 @@
 % Please edit documentation in R/softclip_analysis.R
 \name{softclip_composition}
 \alias{softclip_composition}
-\title{Composition of Softclipped Bases}
+\title{Composition of Soft-clipped Bases}
 \usage{
 softclip_composition(
   experiment,
@@ -18,34 +18,33 @@ softclip_composition(
 
 \item{samples}{A vector of sample names to analyze.}
 
-\item{n_bases}{Number of bases from -1 position to keep}
+\item{n_bases}{Number of bases from -1 position to keep.}
 
 \item{ncol}{Integer specifying the number of columns to arrange multiple plots.}
 
 \item{return_table}{Return a table of results instead of a plot.}
 
-\item{...}{Arguments passed to geom_col}
+\item{...}{Arguments passed to geom_col.}
 }
 \value{
 A ggplot2 stacked barplot of softclip base composition.
   If 'return_table' is TRUE a data.frame is returned instead.
 }
 \description{
-Stacked barplot of base composition of softclipped bases
-  upstream and adjacent to the TSS.
+Stacked barplot of base composition of soft-clipped bases
+  adjacent to TSSs.
 }
 \details{
-Cap trapping and TSRT based 5' mapping methods have shown
-  a preponderance of softclipped Gs immediatly upstream and
-  adjacent to TSSs.
+Cap-trapping and TSRT-based 5' mapping methods have shown
+  a preponderance of softclipped Gs immediately upstream of TSSs.
 The source of this extra G is hypothesized to be reverse
-  transcription of the 5' cap to a C.
-In addition to this extra base, TSRT based methods have been
-  shown to add in upwards of 2-4 additional bases.
+  transcription of the 5' cap to a C in the first-strand cDNA.
+In addition to this extra base, TSRT has been
+  shown to add up to 3-4 additional bases.
 
 This function generates a stacked barplot for each position
   upstream of the TSS that gives the relative base composition of
-  each softclipped base if present.
+  each soft-clipped position, if present.
 'n_bases' determines how far upstream of the TSS is checked for
   sofclipped bases.
 
@@ -57,13 +56,14 @@ bam_file <- system.file("extdata", "S288C.bam", package="TSRexploreR")
 assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
 samples <- data.frame(sample_name="S288C", file_1=bam_file, file_2=NA)
 
-tsre <- tsr_explorer(sample_sheet=samples, genome_assembly=assembly) \%>\%
+exp <- tsr_explorer(sample_sheet=samples, genome_assembly=assembly) \%>\%
   import_bams(paired=TRUE)
-p <- softclip_composition(tsre)
+  
+p <- softclip_composition(exp)
 
 }
 \seealso{
 \code{\link{import_bams}} to import BAMs.
 \code{\link{G_correction}} to correct for incidentally templated 
-  spurrious 5' Gs.
+  spurious 5' Gs.
 }

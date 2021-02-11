@@ -12,12 +12,12 @@ conditionals(
 )
 }
 \arguments{
-\item{data_filters}{Logical statements to filter data by columns.}
+\item{data_filters}{Logical statements by which to filter data.}
 
-\item{data_ordering}{Ordering object with order settings.
+\item{data_ordering}{Order object with order settings.
 See ?ordering for more information.}
 
-\item{data_quantiling}{Quantiling object with quantile settings.
+\item{data_quantiling}{Quantile object with quantile settings.
 See ?quantiling for more information.}
 
 \item{data_grouping}{If quantiles not set,
@@ -28,8 +28,8 @@ split data by the specified categorical variable.}
   'data_conditions' argument in select functions.
 }
 \description{
-This function allows advanced filtering, ordering, quantilihng,
-  and/or grouping of data for plotting.
+This function allows  filtering, ordering, quantiling,
+  and grouping of data for plotting.
 }
 \details{
 It may be desirable to analyze certain subsets of TSSs or TSRs, or split the data 
@@ -37,41 +37,41 @@ based on various categorical variables. This function extends the flexibility of
 various other functions by adding the ability to filter, quantile, order, and/or 
 group data prior to downstream analysis.
 
-'data_filters' should be a logical statement to filter TSSs or TSRs
+'data_filters' takes logical statements to filter TSSs or TSRs
   by any column stored in the data.
 'data_ordering' takes an 'ordering' object as input,
   which allows ordering of data by one or more columns.
 'data_quantiling' takes a 'quantiling' object as input,
   and will split plots by the given number of quantiles.
-'data_grouping' will split a splot by the given column if
+'data_grouping' will split a plot by the given column if
   quantiling is not set.
 }
 \examples{
 data(TSSs)
 assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
 
-tsre <- TSSs[1] \%>\%
+exp <- TSSs[1] \%>\%
   tsr_explorer(genome_assembly=assembly) \%>\%
   format_counts(data_type="tss") \%>\%
   tss_clustering(threshold=3) \%>\%
   associate_with_tsr \%>\%
   tsr_metrics
 
-# Sequence logo of TSSs from peaked TSRs.
+# Sequence logo of TSSs from peaked TSRs
 conditions <- conditionals(shape_class == "peaked")
-p <- plot_sequence_logo(tsre, data_conditions=conditions)
+p <- plot_sequence_logo(exp, data_conditions=conditions)
 
-# Sequence base color plot sorted by descending score.
+# Sequence color map sorted by descending TSS score
 conditions <- conditionals(data_ordering=ordering(desc(score)))
-p <- plot_sequence_colormap(tsre, data_conditions=conditions)
+p <- plot_sequence_colormap(exp, data_conditions=conditions)
 
-# Sequence logo split by TSS score quantile.
+# Sequence logos split by TSS score quantile
 conditions <- conditionals(data_quantiling=quantiling(score, n=5))
-p <- plot_sequence_logo(tsre, data_conditions=conditions)
+p <- plot_sequence_logo(exp, data_conditions=conditions)
 
-# Sequence logo split by class of TSR.
+# Sequence logo split by TSR shape class
 conditions <- conditionals(data_grouping=shape_class)
-p <- plot_sequence_logo(tsre, data_conditions=conditions)
+p <- plot_sequence_logo(exp, data_conditions=conditions)
 
 }
 \seealso{

@@ -17,8 +17,9 @@ Extract the genome annotation.
 }
 \examples{
 annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
-tsre <- tsr_explorer(genome_annotation=annotation)
-get_annotation(tsre)
+exp <- tsr_explorer(genome_annotation=annotation)
+
+get_annotation(exp)
 
 }
 \seealso{

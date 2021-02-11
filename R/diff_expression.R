@@ -228,7 +228,8 @@ fit_de_model <- function(
 #'   exp, data_type="tss", 
 #'   comparison_name="Diamide_vs_Untreated",
 #'   comparison_type="coef",
-#'   comparison=2)
+#'   comparison=2
+#' )
 #'
 #' @export
 

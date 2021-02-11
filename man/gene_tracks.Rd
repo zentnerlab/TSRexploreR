@@ -25,7 +25,7 @@ gene_tracks(
 \arguments{
 \item{experiment}{TSRexploreR object.}
 
-\item{feature_name}{Name of gene or transcript to plot.}
+\item{feature_name}{Name of gene or transcript to visualize}
 
 \item{genome_annotation}{Genome annotation in GTF, GFF3, or TxDb format.}
 
@@ -59,11 +59,11 @@ Either 'top' or 'bottom'.}
 GViz gene track plot.
 }
 \description{
-Generate gene tracks in GViz by gene name.
+Generate gene tracks with GViz.
 }
 \details{
 This function generates a GViz gene track of either the promoter region,
-  or the gene or transcript and surrounding region.
+  or the specified gene or transcript and surrounding region.
 The gene or transcript name should be supplied to 'feature_name'.
 'promoter_only' controls whether the plot is of the feature promoter
   or the entire gene.
@@ -74,7 +74,7 @@ The gene or transcript name should be supplied to 'feature_name'.
 data(TSSs_reduced)
 annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
 
-tsre <- TSSs \%>\%
+exp <- TSSs \%>\%
   tsr_explorer(genome_annotation=annotation) \%>\%
   format_counts(data_type="tss") \%>\%
   tss_clustering(threshold=3)

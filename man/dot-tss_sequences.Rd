@@ -26,7 +26,7 @@
 
 \item{use_normalized}{Whether to use the normalized (TRUE) or raw (FALSE) counts.}
 
-\item{distance}{Bases to add on each side of eacg TSS}
+\item{distance}{Bases to add on each side of each TSS.}
 
 \item{dominant}{If TRUE, will only consider the highest-scoring TSS per gene, transcript, or TSR or 
 highest-scoring TSR per gene or transcript.}
@@ -34,5 +34,5 @@ highest-scoring TSR per gene or transcript.}
 \item{data_conditions}{Apply advanced conditions to the data.}
 }
 \description{
-Retrieve sequences surrounding TSSs for further plotting
+Retrieve sequences surrounding TSSs for further plotting.
 }

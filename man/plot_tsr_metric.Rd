@@ -21,9 +21,9 @@ plot_tsr_metric(
 \arguments{
 \item{experiment}{TSRexploreR object.}
 
-\item{tsr_metrics}{Names of metrics in TSRexploreR TSR GRanges to plot.}
+\item{tsr_metrics}{Names of metrics in TSRexploreR to plot.}
 
-\item{plot_type}{Output either a 'violin', 'jitter', 'box', or 'boxjitter' plot.}
+\item{plot_type}{Output a 'violin', 'jitter', 'box', or 'boxjitter' plot.}
 
 \item{samples}{A vector of sample names to analyze.}
 
@@ -49,10 +49,10 @@ ggplot2 object with TSR matrix plotted.
 Plot selected TSR metrics.
 }
 \details{
-Plot any TSR metrics contained within the counts data.table.
+Plot any TSR metric contained within the counts data.table.
 Metrics can be supplied as a character vector to 'tsr_metrics',
-  and will be optionally Log2 transformed if 'log2_transform' is TRUE.
-Valid plot types that can be supplied to 'plot_type' include
+  and will be optionally log2 transformed if 'log2_transform' is TRUE.
+Valid plot types that can be supplied to 'plot_type' are
   'violin', 'box', 'jitter', and 'boxjitter' (a combination of boxplot and jitterplot).
 
 A set of functions to control data structure for plotting are included. 'use_normalized' 
@@ -61,17 +61,18 @@ will use  normalized scores, which only matters if 'consider_score' is TRUE.
 considered. dominant' specifies whether only the dominant TSS or TSR (determined
 using the 'mark_dominant' function) is considered. For TSSs, this can be either 
 dominant TSS per TSR or gene/transcript, and for TSRs it is the dominant TSR 
-per gene/transcript. 'data_conditionals' can be used to filter, quantile, order, 
+per gene/transcript. 'data_conditions' can be used to filter, quantile, order, 
 and/or group data for plotting.
 }
 \examples{
 data(TSSs_reduced)
 
-tsre <- TSSs \%>\%
+exp <- TSSs \%>\%
   tsr_explorer \%>\%
   format_counts(data_type="tss") \%>\%
   tss_clustering(threshold=3)
-p <- plot_tsr_metric(tsre, "width")
+
+p <- plot_tsr_metric(exp, "width")
 
 }
 \seealso{
