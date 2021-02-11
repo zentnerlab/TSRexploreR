@@ -41,7 +41,7 @@
 #'   format_counts(data_type="tss") %>%
 #'   normalize_counts(data_type="tss", method="DESeq2")
 #'
-#' plot_correlation(exp, data_type="tss", use_normalized=TRUE)
+#' p <- plot_correlation(exp, data_type="tss", use_normalized=TRUE)
 #'
 #' @seealso \code{\link{normalize_counts}} for TSS and TSR normalization.
 #'
