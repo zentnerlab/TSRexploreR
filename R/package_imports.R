@@ -1,4 +1,6 @@
 #' @import data.table
+#' @importFrom stats as.formula cor ecdf median modle.matrix
+#'   p.adjust rbinom
 
 NULL
 
