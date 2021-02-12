@@ -22,7 +22,7 @@ conda update -n base -y -c defaults conda
 
 conda create -n TSRexploreR -y -c conda-forge -c bioconda \
 qpdf \
-r-base >= 4.0.0 \
+r-base>=4.0.0 \
 r-tidyverse \
 r-data.table \
 r-devtools \
@@ -70,9 +70,14 @@ conda clean -y --all
 
 export PATH=/opt/conda/envs/TSRexploreR/bin:$PATH
 
+## Download a C compiler.
+
+apt-get -y update
+apt-get -y install build-essential
+
 ## Install latest build of tsrexplorer
 
-R --slave -e 'Sys.setenv(TAR="/bin/tar");devtools::install_github("zentnerlab/TSRexploreR",ref="main")'
+R --slave -e 'Sys.setenv("R_REMOTES_NO_ERRORS_FROM_WARNINGS"="true");Sys.setenv(TAR="/bin/tar");devtools::install_github("zentnerlab/TSRexploreR",ref="main")'
 
 %environment
 
