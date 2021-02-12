@@ -237,7 +237,8 @@ Normalized TSR counts are determined by summing the normalized counts of all ass
 
 ```{r message=FALSE, fig.align="center", fig.height=4, fig.width=5}
 plot_correlation(
-  exp, data_type="tsr", font_size=12,
+  exp, data_type="tsr", n_samples=1,
+  threshold=3, font_size=12,
   heatmap_colors=viridis::viridis(100)
 )
 ```
