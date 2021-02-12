@@ -9,3 +9,7 @@ proj$
 ^inst/singularity
 ^doc$
 ^Meta$
+^\.github$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$

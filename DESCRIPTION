@@ -41,7 +41,17 @@ Imports:
     GenomeInfoDb,
     Cairo,
     rlang,
-    BSgenome
+    BSgenome,
+    Gviz,
+    PCAtools,
+    DESeq2,
+    edgeR,
+    ggrastr,
+    ChIPseeker,
+    ggseqlogo,
+    cowplot,
+    ComplexHeatmap,
+    GenomicAlignments
 Depends:
     R (>= 3.5.0)
 Suggests:
@@ -52,17 +62,7 @@ Suggests:
     CAGEr,
     TxDb.Scerevisiae.UCSC.sacCer3.sgdGene,
     BSgenome.Scerevisiae.UCSC.sacCer3,
-    Gviz,
-    PCAtools,
-    DESeq2,
-    edgeR,
     apeglm,
-    ggrastr,
-    ChIPseeker,
-    ggseqlogo,
-    cowplot,
-    ComplexHeatmap,
-    GenomicAlignments,
     knitr,
     rmarkdown
 RoxygenNote: 7.1.1
