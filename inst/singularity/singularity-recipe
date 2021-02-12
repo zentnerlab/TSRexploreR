@@ -20,24 +20,47 @@ conda update -n base -y -c defaults conda
 
 ## Create environment.
 
-conda create -n tsrexplorer -y -c conda-forge -c bioconda \
+conda create -n TSRexploreR -y -c conda-forge -c bioconda \
+qpdf \
+r-base >= 4.0.0 \
 r-tidyverse \
+r-data.table \
 r-devtools \
 r-ggseqlogo \
-r-ggally \
 r-cowplot \
+r-rcpp \
+r-assertthat \
+r-testthat \
+r-cairo \
+r-ggrastr \
+r-pkgdown \
+bioconductor-apeglm \
 bioconductor-genomicranges \
 bioconductor-genomicfeatures \
+bioconductor-genomicalignments \
 bioconductor-biostrings \
 bioconductor-rsamtools \
 bioconductor-chipseeker \
 bioconductor-edger \
-bioconductor-clusterprofiler \
-bioconductor-complexheatmap
+bioconductor-deseq2 \
+bioconductor-clusterProfiler \
+bioconductor-complexheatmap \
+bioconductor-cager \
+bioconductor-tsrchitect \
+bioconductor-gviz \
+bioconductor-rtracklayer \
+bioconductor-biocgenerics \
+bioconductor-plyranges \
+bioconductor-pcatools \
+bioconductor-genomeinfodb \
+bioconductor-bsgenome \
+bioconductor-bioccheck \
+bioconductor-bsgenome.scerevisiae.ucsc.saccer3 \
+bioconductor-txdb.scerevisiae.ucsc.saccer3.sgdgene
 
 ## Update environment.
 
-conda update -n tsrexplorer -y -c conda-forge -c bioconda --all
+conda update -n TSRexploreR -y -c conda-forge -c bioconda --all
 
 ## Clean up extra files.
 
@@ -45,14 +68,14 @@ conda clean -y --all
 
 ## Add tsrexplorer software to path
 
-export PATH=/opt/conda/envs/tsrexplorer/bin:$PATH
+export PATH=/opt/conda/envs/TSRexploreR/bin:$PATH
 
 ## Install latest build of tsrexplorer
 
-R --slave -e 'Sys.setenv(TAR="/bin/tar");devtools::install_github("rpolicastro/tsrexplorer",ref="master")'
+R --slave -e 'Sys.setenv(TAR="/bin/tar");devtools::install_github("zentnerlab/TSRexploreR",ref="main")'
 
 %environment
 
 ## Add software to environment
 
-export PATH=/opt/conda/envs/tsrexplorer/bin:$PATH
+export PATH=/opt/conda/envs/TSRexploreR/bin:$PATH
