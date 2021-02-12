@@ -15,6 +15,7 @@
 #' @param heatmap_colors Vector of colors for heatmap.
 #' @param show_values Logical for whether to show correlation values on the heatmap.
 #' @param return_matrix Return the correlation matrix without plotting correlation heatmap.
+#' @param n_samples Number of samples with TSSs or TSRs above threshold
 #' @param ... Additional arguments passed to ComplexHeatmap::Heatmap.
 #'
 #' @details
@@ -53,6 +54,7 @@ plot_correlation <- function(
   samples="all",
   correlation_metric="pearson",
   threshold=NULL,
+  n_samples=1,
   use_normalized=TRUE,
   font_size=12,
   cluster_samples=FALSE,
@@ -86,13 +88,21 @@ plot_correlation <- function(
     (is.numeric(threshold) && threshold > 0)
   )
   assert_that(is.flag(return_matrix))
+  assert_that(is.count(n_samples))
 
   ## Get data from proper slot.
   normalized_counts <- experiment %>%
     extract_counts(data_type, samples) %>%
-    .count_matrix("tss", use_normalized)
+    .count_matrix(data_type, use_normalized)
   
   sample_names <- colnames(normalized_counts)
+
+  ## Filter data if required.
+  if (!is.null(threshold)) {
+    normalized_counts <- normalized_counts[
+      rowSums(normalized_counts >= threshold) >= n_samples,
+    ]
+  }
 
   ## Define default color palette.
   color_palette <- switch(

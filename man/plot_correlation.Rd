@@ -10,6 +10,7 @@ plot_correlation(
   samples = "all",
   correlation_metric = "pearson",
   threshold = NULL,
+  n_samples = 1,
   use_normalized = TRUE,
   font_size = 12,
   cluster_samples = FALSE,
@@ -29,6 +30,8 @@ plot_correlation(
 \item{correlation_metric}{Whether to use 'spearman' or 'pearson' correlation.}
 
 \item{threshold}{TSSs or TSRs with a score below this value will not be considered.}
+
+\item{n_samples}{Number of samples with TSSs or TSRs above threshold}
 
 \item{use_normalized}{Whether to use the normalized (TRUE) or raw (FALSE) counts.}
 
