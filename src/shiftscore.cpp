@@ -8,7 +8,7 @@ double ShiftScoreFast(arma::vec x, arma::vec y, int k, int xn, int yn, arma::uve
   // This is a utility function to avoid repetitive calculations
   arma::vec px = x / xn;
   arma::vec py = y / yn;
-  
+
   arma::vec weighted = (px - py) % w;
   double ans = arma::sum(weighted) / k;
   return(ans);
@@ -22,7 +22,7 @@ arma::vec ShiftScore(arma::sp_mat x, arma::sp_mat y, int calcP, int nresamp){
   double yn = accu(y);
   // arma::sp_mat _x = x;
   // arma::sp_mat _y = y;
-  
+
   x /= xn;
   y /= yn;
   
@@ -30,12 +30,12 @@ arma::vec ShiftScore(arma::sp_mat x, arma::sp_mat y, int calcP, int nresamp){
   arma::vec dense_weights = arma::nonzeros(w);
   arma::uvec pos = arma::find(w);
   pos += 1;
-  
+
   arma::vec out = dense_weights % pos;
   arma::vec ans(2);
   ans.zeros();
-  ans(0) += accu(out) / y.n_elem;
-  
+  ans(0) += accu(out) / y.n_elem; // divide by number of bins
+
   if(calcP){
     double pp = 0.0;
     arma::sp_mat pxy = (x*xn + y*yn) / (xn + yn);
@@ -46,7 +46,7 @@ arma::vec ShiftScore(arma::sp_mat x, arma::sp_mat y, int calcP, int nresamp){
     arma::ivec simx(k);
     arma::ivec simy(k);
     double sim = 0.0;
-  
+
     RNGScope scope;
     for(int i = 0; i < nresamp; i++){
       rmultinom(xn, dense_probs.begin(), k, simx.begin());
@@ -59,17 +59,17 @@ arma::vec ShiftScore(arma::sp_mat x, arma::sp_mat y, int calcP, int nresamp){
     }
     ans(1) += pp / nresamp;
   }
-  
-  
+
+
   return(ans);
 }
 
 
 // [[Rcpp::export]]
-arma::mat allTheShiftScores(CharacterVector fhash, arma::uvec dists, arma::vec scores, 
+arma::mat allTheShiftScores(CharacterVector fhash, arma::uvec dists, arma::vec scores,
                             arma::vec sample, int calcP, int nresamp, int ntests){
   arma::mat ans(2,ntests);
-  
+
   // loop to find the sequence starts
   int startix = 0;
   int endix = 0;
@@ -101,7 +101,7 @@ arma::mat allTheShiftScores(CharacterVector fhash, arma::uvec dists, arma::vec s
       arma::sp_mat x(locx, vals.elem(samp1), nsp, 1);
       arma::sp_mat y(locy, vals.elem(samp0), nsp, 1);
       // Rcout << y << std::endl;
-      
+
       ans.col(ntest) = ShiftScore(x, y, calcP, nresamp);
       ntest++;
       startix = it;
