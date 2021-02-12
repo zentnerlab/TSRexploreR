@@ -22,6 +22,7 @@ conda update -n base -y -c defaults conda
 
 conda create -n TSRexploreR -y -c conda-forge -c bioconda \
 qpdf \
+libgomp \
 r-base>=4.0.0 \
 r-tidyverse \
 r-data.table \
