@@ -74,13 +74,13 @@ The gene or transcript name should be supplied to 'feature_name'.
 data(TSSs_reduced)
 annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
 
-exp <- TSSs \%>\%
+exp <- TSSs_reduced \%>\%
   tsr_explorer(genome_annotation=annotation) \%>\%
   format_counts(data_type="tss") \%>\%
   tss_clustering(threshold=3)
 
 \dontrun{
-gene_tracks(tsre, "YDR418W", samples=c(TSS="S288C_D_1", TSR="S288C_D_1"))
+gene_tracks(exp, "YDR418W", samples=c(TSS="S288C_D_1", TSR="S288C_D_1"))
 }
 
 }

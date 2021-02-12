@@ -53,7 +53,7 @@ If 'diff_tss' is TRUE, only differential TSSs will be output.
 data(TSSs_reduced)
 
 \dontrun{
-exp <- TSSs[1] \%>\%
+exp <- TSSs_reduced \%>\%
   tsr_explorer \%>\%
   format_counts(data_type="tss")
 tss_export(exp)

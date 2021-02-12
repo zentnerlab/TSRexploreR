@@ -27,7 +27,7 @@
 #' data(TSSs_reduced)
 #' annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
 #'
-#' exp <- TSSs %>%
+#' exp <- TSSs_reduced %>%
 #'   tsr_explorer(genome_annotation=annotation) %>%
 #'   format_counts(data_type="tss")
 #'
@@ -105,11 +105,11 @@ annotate_features <- function(
   return(experiment)
 }
 
-#' Annotate Features
-#'
-#' @inheritParams annotate_features
-#' @param sample_table Sample table
-#' @param annotation_data Genome annotation.
+## Annotate Features
+##
+## @inheritParams annotate_features
+## @param sample_table Sample table
+## @param annotation_data Genome annotation.
 
 .annotate <- function(
   sample_table,

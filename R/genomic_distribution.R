@@ -33,7 +33,7 @@
 #' data(TSSs_reduced)
 #' annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
 #'
-#' exp <- TSSs %>%
+#' exp <- TSSs_reduced %>%
 #'   tsr_explorer(genome_annotation=annotation) %>%
 #'   format_counts(data_type="tss") %>%
 #'   annotate_features(data_type="tss")
@@ -116,10 +116,10 @@ plot_genomic_distribution <- function(
 
 }
 
-#' Calculate Genomic Distribution
-#'
-#' @param selected_samples Samples to analyze.
-#' @param grouping_status Whether data is grouped.
+## Calculate Genomic Distribution
+##
+## @param selected_samples Samples to analyze.
+## @param grouping_status Whether data is grouped.
 
 .calculate_distribution <- function(selected_samples, grouping_status) {
 

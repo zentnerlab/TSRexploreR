@@ -34,7 +34,7 @@
 #' data(TSSs_reduced)
 #'
 #' \dontrun{
-#' exp <- TSSs[1] %>%
+#' exp <- TSSs_reduced %>%
 #'   tsr_explorer %>%
 #'   format_counts(data_type="tss")
 #' tss_export(exp)
@@ -180,7 +180,7 @@ tss_export <- function(
 #' \dontrun{
 #' data(TSSs_reduced)
 #'
-#' exp <- TSSs %>%
+#' exp <- TSSs_reduced %>%
 #'   tsr_explorer %>%
 #'   format_counts(data_type="tss") %>%
 #'   tss_clustering(threshold=3)

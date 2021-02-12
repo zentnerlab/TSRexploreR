@@ -91,7 +91,7 @@ The plot can be rasterized using ggrastr using 'rasterize',
 data(TSSs_reduced)
 assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
 
-exp <- TSSs \%>\%
+exp <- TSSs_reduced \%>\%
   tsr_explorer(genome_assembly=assembly) \%>\%
   format_counts(data_type="tss")
 

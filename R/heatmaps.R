@@ -1,41 +1,10 @@
-#' TSS Heatmap Count Matrix
-#'
-#' @description
-#' Generate count matrix to make TSS heatmap.
-#'
-#' @include TSRexplore.R
-#' @include annotate.R
-#'
-#' @param annotated_data Annotated data.table
-#' @param upstream Bases upstream of plot center
-#' @param downstream Bases downstream of plot center
-#'
-#' @details
-#' This function makes a count matrix for each gene or transcript with detected features
-#'   relative to the annotated TSS.
-#' Whether genes or transripts are used depends on the feature type chosen
-#'   when annotating the TSSs with the 'annotate_features' function.
-#' The count matrix is used for plotting a heatmap using the 'plot_heatmap' function.
-#'
-#' The region around the annotated TSS used for plotting is controlled by
-#'   'upstream' and 'downstream', which should be positive integers.
-#'
-#' A set of arguments to control data structure for plotting are included.
-#' 'use_normalized' will use the CPM normalized scores as opposed to raw read counts.
-#' 'threshold' will define the minimum number of reads a TSS or TSR
-#'  must have to be considered.
-#' 'dominant' specifies whether only the dominant TSS or TSR is considered 
-#'   from the 'mark_dominant' function.
-#' For TSSs this can be either dominant per TSR or gene, and for TSRs
-#'   it is just the dominant TSR per gene.
-#' 'data_conditions' allows for the advanced filtering, ordering, and grouping
-#'   of data.
-#'
-#' @return DataFrame of counts for each gene/transcript and position
-#'
-#' @seealso
-#' \code{\link{annotate_features}} to annotate the TSSs or TSRs.
-#' \code{\link{plot_heatmap}} to plot the heatmap.
+## TSS Heatmap Count Matrix
+##
+## Generate count matrix to make TSS heatmap.
+##
+## @param annotated_data Annotated data.table
+## @param upstream Bases upstream of plot center
+## @param downstream Bases downstream of plot center
 
 .tss_heatmap <- function(
   annotated_data,
@@ -138,7 +107,7 @@
 #' data(TSSs_reduced)
 #' annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
 #'
-#' exp <- TSSs %>%
+#' exp <- TSSs_reduced %>%
 #'   tsr_explorer(genome_annotation=annotation) %>%
 #'   format_counts(data_type="tss") %>%
 #'   annotate_features(data_type="tss")
@@ -369,18 +338,13 @@ plot_heatmap <- function(
 
 }
 
-#' TSR Heatmap Count Matrix
-#'
-#' Generate count matrix to make TSR heatmap
-#'
-#' @include TSRexplore.R
-#' @include annotate.R
-#'
-#' @param annotated_data Annotated data.table
-#' @param upstream Bases upstream to consider
-#' @param downstream bases downstream to consider
-#'
-#' @return Matrix of counts for each gene/transcript and position
+## TSR Heatmap Count Matrix
+##
+## Generate count matrix to make TSR heatmap
+##
+## @param annotated_data Annotated data.table
+## @param upstream Bases upstream to consider
+## @param downstream bases downstream to consider
 
 .tsr_heatmap <- function(
   annotated_data,
@@ -416,10 +380,10 @@ plot_heatmap <- function(
   return(new_ranges)
 }
 
-#' Filter Heatmap.
-#'
-#' @param sample_list List of sample data.
-#' @param filtering Quosure of filters.
+## Filter Heatmap.
+##
+## @param sample_list List of sample data.
+## @param filtering Quosure of filters.
 
 .filter_heatmap <- function(
   sample_list,
@@ -429,12 +393,12 @@ plot_heatmap <- function(
   return(sample_list)
 }
 
-#' Order Heatmap.
-#'
-#' @inheritParams plot_heatmap
-#' @param count_data data.table of sample data.
-#' @param annotated_data Annotated sample data.
-#' @param data_type Either 'tss' or 'tsr'.
+## Order Heatmap.
+##
+## @inheritParams plot_heatmap
+## @param count_data data.table of sample data.
+## @param annotated_data Annotated sample data.
+## @param data_type Either 'tss' or 'tsr'.
 
 .order_heatmap <- function(
   count_data,
@@ -482,11 +446,11 @@ plot_heatmap <- function(
   return(merged)
 }
 
-#' Quantile Heatmap
-#'
-#' @inheritParams plot_heatmap
-#' @param count_data data.table of sample data.
-#' @param annotated_data Annotated data.
+## Quantile Heatmap
+##
+## @inheritParams plot_heatmap
+## @param count_data data.table of sample data.
+## @param annotated_data Annotated data.
 
 .quantile_heatmap <- function(
   count_data,
@@ -530,10 +494,10 @@ plot_heatmap <- function(
 
 }
 
-#' Split Heatmap
-#'
-#' @inheritParams plot_heatmap
-#' @param count_mat Count matrix.
+## Split Heatmap
+##
+## @inheritParams plot_heatmap
+## @param count_mat Count matrix.
 
 .split_heatmap <- function(
   count_mat,
@@ -541,7 +505,7 @@ plot_heatmap <- function(
 ) {
 
   ## Change list to data.table if list provided.
-  if (!is(split_by, "data.frame")) {
+  if (!is.data.frame(split_by)) {
     split_by <- map(split_by, ~data.table(feature=.x))
     split_by <- rbindlist(split_by, idcol="split_group")
   } else {

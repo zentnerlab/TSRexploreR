@@ -13,9 +13,9 @@
 #' \code{\link{get_counts}} to get TSS or TSR counts data.frame.
 #'
 #' @examples
-#' data(TSSs)
+#' data(TSSs_reduced)
 #'
-#' exp <- tsr_explorer(TSSs[1])
+#' exp <- tsr_explorer(TSSs_reduced)
 #' 
 #' gr <- get_granges(exp)
 #'
@@ -68,9 +68,9 @@ get_granges <- function(
 #' \code{\link{get_granges}} to get TSS or TSR GRanges.
 #'
 #' @examples
-#' data(TSSs)
+#' data(TSSs_reduced)
 #'
-#' exp <- tsr_explorer(TSSs[1]) %>%
+#' exp <- tsr_explorer(TSSs_reduced) %>%
 #'   format_counts(data_type="tss")
 #' 
 #' cts <- get_counts(exp)

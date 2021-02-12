@@ -47,11 +47,11 @@ The clustered TSSs cannot encompass more than 'max_width' bases.
   A global singlet threshold can be applied using 'singlet_threshold'.
 }
 \examples{
-data(TSSs)
+data(TSSs_reduced)
 
-tsre <- TSSs[1] \%>\%
+exp <- TSSs_reduced \%>\%
   tsr_explorer \%>\%
   format_counts(data_type="tss")
-tsre <- tss_clustering(tsre, threshold=3)
+exp <- tss_clustering(exp, threshold=3)
 
 }

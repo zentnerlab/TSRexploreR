@@ -107,11 +107,11 @@ fit_de_model <- function(
   return(experiment)
 }
 
-#' edgeR Differential Expression Model
-#'
-#' @inheritParams common_params
-#' @param count_data Count matrix.
-#' @param formula Differential expression formula.
+## edgeR Differential Expression Model
+##
+## @inheritParams common_params
+## @param count_data Count matrix.
+## @param formula Differential expression formula.
 
 .edger_model <- function(
   count_data,
@@ -146,11 +146,11 @@ fit_de_model <- function(
 
 }
 
-#' DESeq2 Differential Expression Model
-#'
-#' @inheritParams common_params
-#' @param count_data Count matrix.
-#' @param formula Differential expression formula.
+## DESeq2 Differential Expression Model
+##
+## @inheritParams common_params
+## @param count_data Count matrix.
+## @param formula Differential expression formula.
 
 .deseq2_model <- function(
   count_data,

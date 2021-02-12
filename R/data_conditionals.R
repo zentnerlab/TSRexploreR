@@ -305,10 +305,10 @@ condition_data <- function(
   return(signal_data)
 }
 
-#' Filtering
-#'
-#' @param signal_data List of TSSs or TSRs
-#' @param filters Quosure containing filters
+## Filtering
+##
+## @param signal_data List of TSSs or TSRs
+## @param filters Quosure containing filters
 
 .filter_data <- function(
   signal_data,
@@ -318,10 +318,10 @@ condition_data <- function(
   return(signal_data)
 }
 
-#' Ordering
-#'
-#' @param signal_data List of TSSs or TSRs
-#' @param ordering List of ordering parameters
+## Ordering
+##
+## @param signal_data List of TSSs or TSRs
+## @param ordering List of ordering parameters
 
 .order_data <- function(
   signal_data,
@@ -355,10 +355,10 @@ condition_data <- function(
   
 }
 
-#' Quantiling
-#'
-#' @param signal_data List of TSSs or TSRs
-#' @param quantiling List of quantiling parameters
+## Quantiling
+##
+## @param signal_data List of TSSs or TSRs
+## @param quantiling List of quantiling parameters
 
 .quantile_data <- function(
   signal_data,
@@ -395,10 +395,10 @@ condition_data <- function(
 
 }
 
-#' Group Data
-#'
-#' @param signal_data TSS or TSR data
-#' @param grouping Grouping variable
+## Group Data
+##
+## @param signal_data TSS or TSR data
+## @param grouping Grouping variable
 
 .group_data <- function(
   signal_data,
@@ -409,10 +409,10 @@ condition_data <- function(
   })
 }
 
-#' Create Consensus Ranges
-#'
-#' @param signal_data TSS or TSR data
-#' @param conditionals Either ordering or quantiling conditions
+## Create Consensus Ranges
+##
+## @param signal_data TSS or TSR data
+## @param conditionals Either ordering or quantiling conditions
 
 .create_consensus <- function(
   signal_data,
@@ -442,7 +442,7 @@ condition_data <- function(
   ) := NULL]
 
   ## Aggregate numeric features.
-  numeric_cols <- colnames(ord)[purrr::map_lgl(ord, is.numeric)]
+  numeric_cols <- colnames(ord)[map_lgl(ord, is.numeric)]
 
   ord <- ord[,
     lapply(.SD, conditionals$aggr_fun),

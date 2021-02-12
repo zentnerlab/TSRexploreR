@@ -43,7 +43,7 @@ must first be run up to the 'processTSS' step.
 data(TSSs_reduced)
 
 # Export bedGraphs as example data.
-exp <- TSSs \%>\%
+exp <- TSSs_reduced \%>\%
   tsr_explorer \%>\%
   format_counts(data_type="tss")
 tss_export(exp)

@@ -65,9 +65,9 @@ of a roughly linear relationship between the ranks, rather than the specific val
 of each feature.
 }
 \examples{
-data(TSSs_reduced)
+data(TSSs)
 
-exp <- TSSs[1] \%>\%
+exp <- TSSs \%>\%
   tsr_explorer \%>\%
   format_counts(data_type="tss") \%>\%
   normalize_counts(data_type="tss", method="CPM")

@@ -34,7 +34,7 @@
 #' data(TSSs_reduced)
 #'
 #' # Export bedGraphs as example data.
-#' exp <- TSSs %>%
+#' exp <- TSSs_reduced %>%
 #'   tsr_explorer %>%
 #'   format_counts(data_type="tss")
 #' tss_export(exp)
@@ -135,10 +135,10 @@ tss_import <- function(
   return(experiment)
 }
 
-#' Import tables
-#'
-#' @inheritParams common_params
-#' @param delim Delimiter for table.
+## Import tables
+##
+## @inheritParams common_params
+## @param delim Delimiter for table.
 
 .import_tables <- function(sample_sheet, delim) {
   samples <- sample_sheet[, .(sample_name, file_1)] %>%
@@ -155,9 +155,9 @@ tss_import <- function(
   return(samples)
 }
 
-#' Import TSS Bedgraphs
-#'
-#' @inheritParams common_params
+## Import TSS Bedgraphs
+##
+## @inheritParams common_params
 
 .import_bedgraphs <- function(sample_sheet) {
   samples <- sample_sheet[, .(sample_name, file_1, file_2)] %>%
@@ -185,9 +185,9 @@ tss_import <- function(
   return(samples)
 }
 
-#' Import TSS bigwigs.
-#'
-#' @inheritParams common_params
+## Import TSS bigwigs.
+##
+## @inheritParams common_params
 
 .import_bigwigs <- function(sample_sheet) {
   samples <- sample_sheet[, .(sample_name, file_1, file_2)] %>%
@@ -215,9 +215,9 @@ tss_import <- function(
   return(samples)
 }
 
-#' Import CTSSs
-#'
-#' @inheritParams common_params
+## Import CTSSs
+##
+## @inheritParams common_params
 
 .import_ctss <- function(sample_sheet) {
   samples <- sample_sheet[, .(sample_name, file_1)] %>%
@@ -273,7 +273,7 @@ tss_import <- function(
 #' data(TSSs_reduced)
 #'
 #' # Export BED as example data.
-#' exp <- TSSs %>%
+#' exp <- TSSs_reduced %>%
 #'   tsr_explorer %>%
 #'   format_counts(data_type="tss") %>%
 #'   tss_clustering(threshold=3)
@@ -372,9 +372,9 @@ tsr_import <- function(
 
 }
 
-#' Import BEDs.
-#'
-#' @inheritParams common_params
+## Import BEDs.
+##
+## @inheritParams common_params
 
 .import_beds <- function(sample_sheet) {
 

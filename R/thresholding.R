@@ -1,29 +1,10 @@
-#' Threshold Exploration
-#'
-#' Explore raw read count thresholds thresholds.
-#'
-#' @importFrom purrr map_df
-#'
-#' @inheritParams common_params
-#' @param max_threshold Thresholds from 1 to max_threshold will be explored.
-#' @param steps Steps to get the threshold values.
-
-#' @details
-#' All TSS mapping technologies have some degree of background reads.
-#' TSRexplroeR allows for basic thresholding of data by requiring
-#'   a minimum number of reads for a TSS to be considered in downstream
-#'   analyses.
-#'
-#' An easy way to pick a threshold is with the threshold plot generated
-#'   by 'plot_exploration_threshold'.
-#' This plot shows the proportion of TSS positions that are promoter-proximal when
-#'   various threshold values are tested.
-#' 'max_threshold' defines the maximum threshold value that will be analyzed.
-#'
-#' @return data.frame containing information for each threshold and sample
-#'
-#' @seealso
-#' \code{\link{plot_threshold_exploration}} to plot the results.
+## Threshold Exploration
+##
+## Explore raw read count thresholds thresholds.
+##
+## @inheritParams common_params
+## @param max_threshold Thresholds from 1 to max_threshold will be explored.
+## @param steps Steps to get the threshold values.
 
 .explore_thresholds <- function(
   experiment,
@@ -132,7 +113,7 @@
 #' data(TSSs_reduced)
 #' annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
 #'
-#' exp <- TSSs %>%
+#' exp <- TSSs_reduced %>%
 #'   tsr_explorer(genome_annotation=annotation) %>%
 #'   format_counts(data_type="tss") %>%
 #'   annotate_features(data_type="tss")
@@ -213,10 +194,10 @@ plot_threshold_exploration <- function(
 #'   promoter proximal TSSs, and absolute number of detected genes.
 #'
 #' @examples
-#' data(TSSs)
+#' data(TSSs_reduced)
 #' annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
 #'
-#' exp <- TSSs[1] %>%
+#' exp <- TSSs_reduced %>%
 #'   tsr_explorer(genome_annotation=annotation) %>%
 #'   format_counts(data_type="tss")
 #'   

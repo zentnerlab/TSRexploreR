@@ -29,7 +29,7 @@ TSRexploreR allows for the calculation of various common TSR shape indicators
 \examples{
 data(TSSs_reduced)
 
-exp <- TSSs \%>\%
+exp <- TSSs_reduced \%>\%
   tsr_explorer \%>\%
   format_counts(data_type="tss") \%>\%
   tss_clustering(threshold=3) \%>\%
