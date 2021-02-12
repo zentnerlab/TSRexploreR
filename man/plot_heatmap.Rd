@@ -144,7 +144,7 @@ An option to rasterize the heatmaps using ggrastr is provided with the 'rasteriz
 data(TSSs_reduced)
 annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
 
-exp <- TSSs \%>\%
+exp <- TSSs_reduced \%>\%
   tsr_explorer(genome_annotation=annotation) \%>\%
   format_counts(data_type="tss") \%>\%
   annotate_features(data_type="tss")

@@ -41,5 +41,4 @@ exp <- G_correction(exp, assembly=assembly)
 }
 \seealso{
 \code{\link{import_bams}} to import BAMs.
-\code{\link{softclip_analysis}} to remove soft-clipped bases at 5' read ends.
 }

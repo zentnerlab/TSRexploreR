@@ -40,12 +40,12 @@
 #' data(TSSs_reduced)
 #' annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
 #'
-#' exp <- TSSs %>%
+#' exp <- TSSs_reduced %>%
 #'   tsr_explorer(genome_annotation=annotation) %>%
 #'   format_counts(data_type="tss") %>%
 #'   annotate_features(data_type="tss")
 #'
-#' p <- plot_density(tsre, data_type="tss")
+#' p <- plot_density(exp, data_type="tss")
 #'
 #' @seealso
 #' \code{\link{annotate_features}} to annotate TSSs or TSRs.

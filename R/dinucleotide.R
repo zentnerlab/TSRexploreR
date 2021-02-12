@@ -33,7 +33,7 @@
 #' data(TSSs_reduced)
 #' assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
 #'
-#' exp <- TSSs %>%
+#' exp <- TSSs_reduced %>%
 #'   tsr_explorer(genome_assembly=assembly) %>%
 #'   format_counts(data_type="tss")
 #'
@@ -150,10 +150,10 @@ plot_dinucleotide_frequencies <- function(
 
 }
 
-#' Internal DinucleotideFrequency Calculation
-#'
-#' @param seqs Dinucleotide sequences
-#' @param grouping_status Whether there is quantiling or grouping.
+## Internal DinucleotideFrequency Calculation
+##
+## @param seqs Dinucleotide sequences
+## @param grouping_status Whether there is quantiling or grouping.
 
 .calculate_freqs <- function(seqs, grouping_status) {
 

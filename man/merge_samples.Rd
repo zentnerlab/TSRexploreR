@@ -66,7 +66,7 @@ sample_sheet <- data.frame(
 )
 assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
 
-exp <- TSSs \%>\%
+exp <- TSSs[seq_len(2)] \%>\%
   tsr_explorer(sample_sheet=sample_sheet, genome_assembly=assembly) \%>\%
   format_counts(data_type="tss")
 

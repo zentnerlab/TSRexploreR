@@ -41,7 +41,7 @@ first be run up to the 'determineTSR' step.
 data(TSSs_reduced)
 
 # Export BED as example data.
-exp <- TSSs \%>\%
+exp <- TSSs_reduced \%>\%
   tsr_explorer \%>\%
   format_counts(data_type="tss") \%>\%
   tss_clustering(threshold=3)

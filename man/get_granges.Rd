@@ -20,9 +20,9 @@ List of TSS or TSR GRanges.
 Extract the TSS or TSR GRanges from the 'experiment' slot.
 }
 \examples{
-data(TSSs)
+data(TSSs_reduced)
 
-exp <- tsr_explorer(TSSs[1])
+exp <- tsr_explorer(TSSs_reduced)
 
 gr <- get_granges(exp)
 

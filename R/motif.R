@@ -1,14 +1,9 @@
-#' Retrieve Sequences Near TSSs
-#'
-#' @description
-#' Retrieve sequences surrounding TSSs for further plotting.
-#'
-#' @include TSRexplore.R
-#'
-#' @importFrom tools file_ext
-#'
-#' @inheritParams common_params
-#' @param distance Bases to add on each side of each TSS.
+## Retrieve Sequences Near TSSs
+##
+## Retrieve sequences surrounding TSSs for further plotting.
+##
+## @inheritParams common_params
+## @param distance Bases to add on each side of each TSS.
 
 .tss_sequences <- function(
   experiment,
@@ -144,7 +139,7 @@
 #' data(TSSs_reduced)
 #' assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
 #'
-#' exp <- TSSs %>%
+#' exp <- TSSs_reduced %>%
 #'   tsr_explorer(genome_assembly=assembly) %>%
 #'   format_counts(data_type="tss")
 #' 
@@ -312,7 +307,7 @@ plot_sequence_logo <- function(
 #' data(TSSs_reduced)
 #' assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
 #'
-#' exp <- TSSs %>%
+#' exp <- TSSs_reduced %>%
 #'   tsr_explorer(genome_assembly=assembly) %>%
 #'   format_counts(data_type="tss")
 #' 

@@ -33,10 +33,10 @@ This function will remove TSSs from the TSS data.table if no sample has
  at least 'threshold' number of reads in at least 'n_samples' number of samples.
 }
 \examples{
-data(TSSs)
+data(TSSs_reduced)
 annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
 
-exp <- TSSs[1] \%>\%
+exp <- TSSs_reduced \%>\%
   tsr_explorer(genome_annotation=annotation) \%>\%
   format_counts(data_type="tss")
   

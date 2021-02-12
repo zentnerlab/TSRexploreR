@@ -23,12 +23,12 @@
 #' @return TSRexploreR object with TSRs added to GRanges and data.table counts.
 #'
 #' @examples
-#' data(TSSs)
+#' data(TSSs_reduced)
 #'
-#' tsre <- TSSs[1] %>%
+#' exp <- TSSs_reduced %>%
 #'   tsr_explorer %>%
 #'   format_counts(data_type="tss")
-#' tsre <- tss_clustering(tsre, threshold=3)
+#' exp <- tss_clustering(exp, threshold=3)
 #'
 #' @export
 
@@ -115,12 +115,12 @@ tss_clustering <- function(
 
 }
 
-#' Aggregate Scores
-#'
-#' @param granges GRanges.
-#' @param maxdist Maximum distance to cluster.
-#' @param sthresh Singlet threshold.
-#' @param maxwidth Maximum allowable TSR width.
+## Aggregate Scores
+##
+## @param granges GRanges.
+## @param maxdist Maximum distance to cluster.
+## @param sthresh Singlet threshold.
+## @param maxwidth Maximum allowable TSR width.
 
 .aggr_scores <- function(granges, maxdist, maxwidth, sthresh) {
 

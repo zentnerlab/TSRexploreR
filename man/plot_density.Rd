@@ -84,12 +84,12 @@ and/or group data for plotting. Finally, 'exclude_antisense' removes anti-sense 
 data(TSSs_reduced)
 annotation <- system.file("extdata", "S288C_Annotation.gtf", package="TSRexploreR")
 
-exp <- TSSs \%>\%
+exp <- TSSs_reduced \%>\%
   tsr_explorer(genome_annotation=annotation) \%>\%
   format_counts(data_type="tss") \%>\%
   annotate_features(data_type="tss")
 
-p <- plot_density(tsre, data_type="tss")
+p <- plot_density(exp, data_type="tss")
 
 }
 \seealso{

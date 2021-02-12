@@ -41,7 +41,7 @@
 #' )
 #' assembly <- system.file("extdata", "S288C_Assembly.fasta", package="TSRexploreR")
 #'
-#' exp <- TSSs %>%
+#' exp <- TSSs[seq_len(2)] %>%
 #'   tsr_explorer(sample_sheet=sample_sheet, genome_assembly=assembly) %>%
 #'   format_counts(data_type="tss")
 #'
@@ -150,10 +150,10 @@ merge_samples <- function(
   return(experiment)
 }
 
-#' Merge Overlapping TSSs
-#'
-#' @param samples Sample data
-#' @param norm_status Whether there is a normalized score column.
+## Merge Overlapping TSSs
+##
+## @param samples Sample data
+## @param norm_status Whether there is a normalized score column.
 
 .merge_overlapping_TSSs <- function(
   samples,
@@ -177,12 +177,12 @@ merge_samples <- function(
   return(samples)
 }
 
-#' Merge Overlapping TSRs
-#'
-#' @inheritParams common_params
-#' @param samples Sample data.
-#' @param norm_status Whether there is a normalized score column.
-#' @param max_distance Maximum distance of TSRs to be merged.
+## Merge Overlapping TSRs
+##
+## @inheritParams common_params
+## @param samples Sample data.
+## @param norm_status Whether there is a normalized score column.
+## @param max_distance Maximum distance of TSRs to be merged.
 
 .merge_overlapping_TSRs <- function(
   samples,

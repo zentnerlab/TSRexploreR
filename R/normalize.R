@@ -133,9 +133,9 @@ normalize_counts <- function(
   return(experiment)
 }
 
-#' edgeR Normalization
-#'
-#' @param count_matrix count matrix
+## edgeR Normalization
+##
+## @param count_matrix count matrix
 
 .edger_normalize <- function(count_matrix) {
   
@@ -151,10 +151,10 @@ normalize_counts <- function(
   return(normalized_counts)   
 }
 
-#' DESeq2 Normalization
-#'
-#' @param count_matrix count matrix.
-#' @param coldata column data.
+## DESeq2 Normalization
+##
+## @param count_matrix count matrix.
+## @param coldata column data.
 
 .deseq2_normalize <- function(count_matrix, coldata) {
 

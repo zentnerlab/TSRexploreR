@@ -20,7 +20,7 @@
 #' @examples
 #' data(TSSs_reduced)
 #'
-#' exp <- TSSs %>%
+#' exp <- TSSs_reduced %>%
 #'   tsr_explorer %>%
 #'   format_counts(data_type="tss") %>%
 #'   tss_clustering(threshold=3) %>%
@@ -122,11 +122,11 @@ tsr_metrics <- function(
   return(experiment)
 }
 
-#' Shape Index
-#'
-#' Calculate shape index.
-#'
-#' @param tss_table data.table of TSSs
+## Shape Index
+##
+## Calculate shape index.
+##
+## @param tss_table data.table of TSSs
 
 shape_index <- function(tss_table) {
   
@@ -146,11 +146,11 @@ shape_index <- function(tss_table) {
   return(copy(si_results)) 
 }
 
-#' Peak Concentration
-#'
-#' Calculate peak concentration.
-#'
-#' @param tss_table data.table of TSSs
+## Peak Concentration
+##
+## Calculate peak concentration.
+##
+## @param tss_table data.table of TSSs
 
 peak_concentration <- function(tss_table) {
   
@@ -165,11 +165,11 @@ peak_concentration <- function(tss_table) {
   return(copy(pc_results))
 }
 
-#' Peak Balance
-#'
-#' Calculate peak balance.
-#'
-#' @param tss_table data.table of TSSs
+## Peak Balance
+##
+## Calculate peak balance.
+##
+## @param tss_table data.table of TSSs
 
 peak_balance <- function(tss_table) {
 
@@ -195,12 +195,12 @@ peak_balance <- function(tss_table) {
 
 }
 
-#' Interquartile Range
-#'
-#' Calculate IQR.
-#'
-#' @param tss_table data.table of TSSs
-#' @inheritParams tsr_metrics
+## Interquartile Range
+##
+## Calculate IQR.
+##
+## @param tss_table data.table of TSSs
+## @inheritParams tsr_metrics
 
 iq_range <- function(tss_table, iqr_upper, iqr_lower) {
   
@@ -242,11 +242,11 @@ iq_range <- function(tss_table, iqr_upper, iqr_lower) {
 
 }
 
-#' ECDF Function
-#'
-#' Return ECDF values.
-#'
-#' @param tss_vector Vector of values to compute ECDF values
+## ECDF Function
+##
+## Return ECDF values.
+##
+## @param tss_vector Vector of values to compute ECDF values
 
 ecdf_function <- function(tss_vector) {
   ecdf_func <- ecdf(tss_vector)

@@ -20,9 +20,9 @@ List of TSS or TSR count data.frame.
 Extract the TSS or TSR count tables from the 'counts' slot.
 }
 \examples{
-data(TSSs)
+data(TSSs_reduced)
 
-exp <- tsr_explorer(TSSs[1]) \%>\%
+exp <- tsr_explorer(TSSs_reduced) \%>\%
   format_counts(data_type="tss")
 
 cts <- get_counts(exp)

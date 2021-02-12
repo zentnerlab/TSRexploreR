@@ -34,9 +34,9 @@
 #'   or correlation matrix if 'return_matrix' is TRUE.
 #'
 #' @examples
-#' data(TSSs_reduced)
+#' data(TSSs)
 #'
-#' exp <- TSSs[1] %>%
+#' exp <- TSSs %>%
 #'   tsr_explorer %>%
 #'   format_counts(data_type="tss") %>%
 #'   normalize_counts(data_type="tss", method="CPM")
