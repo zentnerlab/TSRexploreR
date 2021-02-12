@@ -8,11 +8,13 @@ Authors@R:
            email = "rpolicas@indiana.edu",
            comment = c(ORCID = "YOUR-ORCID-ID"))
 Description: This package analyzes STRIPE-seq data by generating various plots and statistics related to TSSs and TSRs.
+biocViews: Sequencing
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Imports:
     tools,
+    stats,
     GenomicRanges,
     BiocGenerics,
     circlize,
@@ -52,19 +54,19 @@ Suggests:
     CAGEr,
     TxDb.Scerevisiae.UCSC.sacCer3.sgdGene,
     BSgenome.Scerevisiae.UCSC.sacCer3,
+    apeglm,
+    knitr,
+    rmarkdown,
     Gviz,
     PCAtools,
     DESeq2,
     edgeR,
-    apeglm,
     ggrastr,
     ChIPseeker,
     ggseqlogo,
     cowplot,
     ComplexHeatmap,
-    GenomicAlignments,
-    knitr,
-    rmarkdown
+    GenomicAlignments
 RoxygenNote: 7.1.1
 Collate: 
     'RcppExports.R'
