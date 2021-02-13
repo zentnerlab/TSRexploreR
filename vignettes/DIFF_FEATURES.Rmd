@@ -1,6 +1,7 @@
 ---
 title: Differential Feature Analysis
-output: rmarkdown::html_vignette
+output: rmarkdown::pdf_document
+linkcolor: blue
 vignette: >
   %\VignetteIndexEntry{Differential Feature Analysis}
   %\VignetteEngine{knitr::rmarkdown}

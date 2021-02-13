@@ -1,6 +1,7 @@
 ---
 title: BAM Processing
-output: rmarkdown::html_vignette
+output: rmarkdown::pdf_document
+linkcolor: blue
 vignette: >
   %\VignetteIndexEntry{BAM Processing}
   %\VignetteEngine{knitr::rmarkdown}
