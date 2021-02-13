@@ -17,14 +17,14 @@ and lies on a scale from -1 to 1, indicating upstream and downstream shifts resp
 
 TSRexploreR can be installed wholly from github (with or without a conda environment), or entirely contained within a singularity container.
 
-### Github
+#### Github
 
 ```
 Sys.setenv("R_REMOTES_NO_ERRORS_FROM_WARNINGS"="true")
 devtools::install_github("zentnerlab/TSRexploreR")
 ```
 
-### Github and Conda
+#### Github and Conda
 
 Conda can be optionally used before the above github installation step to download most of the package dependencies.
 This also has the benefit of creating an R environment separate from your main software environment,
@@ -60,7 +60,7 @@ Sys.setenv("R_REMOTES_NO_ERRORS_FROM_WARNINGS"="true")
 devtools::install_github("zentnerlab/TSRexploreR")
 ```
 
-### Singularity.
+#### Singularity.
 
 The TSRexploreR singularity container is akin to a box that contains TSRexploreR and all required depndencies to run.
 The advantage of containerized software is that they require no installation (beyond the main container software),
