@@ -1,6 +1,7 @@
 ---
 title: Standard Analysis
-output: rmarkdown::html_vignette
+output: rmarkdown::pdf_document
+linkcolor: blue
 vignette: >
   %\VignetteIndexEntry{Standard Analysis}
   %\VignetteEngine{knitr::rmarkdown}
@@ -108,7 +109,8 @@ For correlation analysis, MOR- or TMM-normalized should be used. By default, Pea
 
 ```{r message=FALSE, fig.align="center", fig.height=4, fig.width=5}
 plot_correlation(
-  exp, data_type="tss", font_size=12,
+  exp, data_type="tss",
+  use_normalized=TRUE, font_size=12,
   heatmap_colors=viridis::viridis(100)
 )
 ```
@@ -238,7 +240,7 @@ Normalized TSR counts are determined by summing the normalized counts of all ass
 ```{r message=FALSE, fig.align="center", fig.height=4, fig.width=5}
 plot_correlation(
   exp, data_type="tsr", n_samples=1,
-  threshold=3, font_size=12,
+  threshold=3, use_normalized=TRUE, font_size=12, 
   heatmap_colors=viridis::viridis(100)
 )
 ```

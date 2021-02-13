@@ -1,6 +1,7 @@
 ---
-title: "Data Conditioning"
-output: rmarkdown::html_vignette
+title: Data Conditioning
+output: rmarkdown::pdf_document
+linkcolor: blue
 vignette: >
   %\VignetteIndexEntry{Data Conditioning}
   %\VignetteEngine{knitr::rmarkdown}

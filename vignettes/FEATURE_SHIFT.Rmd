@@ -1,6 +1,7 @@
 ---
 title: TSS Shifting
-output: rmarkdown::html_vignette
+output: rmarkdown::pdf_document
+linkcolor: blue
 vignette: >
   %\VignetteIndexEntry{TSS Shifting}
   %\VignetteEngine{knitr::rmarkdown}
