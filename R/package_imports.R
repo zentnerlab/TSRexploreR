@@ -25,7 +25,7 @@ NULL
 #'   geom_density geom_point geom_col geom_vline geom_tile geom_line
 #'   geom_violin geom_boxplot geom_jitter geom_raster geom_histogram
 #'   geom_bar geom_hline
-#' @importFrom forcats fct_rev fct_inorder fct_reorder fct_relevel
+#' @importFrom forcats fct_rev fct_inorder fct_reorder fct_relevel fct_recode
 #' @importFrom dplyr pull case_when desc
 #' @importFrom assertthat
 #'   assert_that is.count is.flag is.string has_name has_attr
