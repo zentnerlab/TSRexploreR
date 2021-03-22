@@ -310,3 +310,13 @@ gene_tracks(
   samples=c(TSS="S288C_WT_1", TSR="S288C_WT_1")
 )
 ```
+
+## Data Access
+
+TSRexploreR provides various convenience functions to access or export data stored in the objects.
+Below is an overview of the available functions.
+
+- `tss_export`: Export TSSs as bigWigs, bedgraphs, or as a tabular file.
+- `tsr_export`: Export TSRs as bed or tabular file.
+- `extract_counts`: Get TSS or TSR table from object including additional analysis such as annotations, normalized counts, and computed metrics. Also used to extract TSR shift table.
+- `extract_de`: Get table of differential TSSs or TSRs.
