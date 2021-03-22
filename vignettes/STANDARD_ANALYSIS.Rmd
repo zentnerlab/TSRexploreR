@@ -88,6 +88,10 @@ exp <- annotate_features(exp, data_type="tss", feature_type="transcript")
 All TSS mapping methods contain some degree of background in the form of low-count TSSs, particularly within gene bodies.
 This background can complicate downstream analysis, but it can largely be removed via a simple thresholding approach wherein TSSs below a certain number of counts are removed from further consideration. If a genome annotation is available, a thresholding plot may help in picking this count threshold. In this approach, the fraction of TSSs that are promoter-proximal is plotted against a range of read thresholds. The number of features (genes or transcripts) with at least one unique TSS position at each threshold is also indicated graphically.
 
+We note that most plotting functions in TSRexploreR return ggplot objects.
+This will be explicity stated under the 'Value' section of the function help documentation (e.g. `?plot_threshold_exploration`).
+ggplot objects can be customized beyond a select few style arguments in the plotting functions with standard ggplot2 syntax as demonstrated below.
+
 ```{r fig.align="center", fig.width=4, fig.height=3}
 plot_threshold_exploration(exp, samples="S288C_WT_1", point_size=1) +
   scale_color_viridis_c() 
@@ -308,3 +312,13 @@ gene_tracks(
   samples=c(TSS="S288C_WT_1", TSR="S288C_WT_1")
 )
 ```
+
+## Data Access
+
+TSRexploreR provides various convenience functions to access or export data stored in the objects.
+Below is an overview of the available functions.
+
+- `tss_export`: Export TSSs as bigWigs, bedgraphs, or as a tabular file.
+- `tsr_export`: Export TSRs as bed or tabular file.
+- `extract_counts`: Get TSS or TSR table from object including additional analysis such as annotations, normalized counts, and computed metrics. Also used to extract TSR shift table.
+- `extract_de`: Get table of differential TSSs or TSRs.
