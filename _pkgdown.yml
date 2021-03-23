@@ -1,0 +1,92 @@
+reference:
+- subtitle: "General Functions"
+  desc: "Functions for general processing workflow."
+- contents:
+  - tsr_explorer
+  - format_counts
+  - annotate_features
+  - plot_threshold_exploration
+  - apply_threshold
+  - merge_samples
+  - normalize_counts
+  - tss_clustering
+- subtitle: "TSS/TSR Metrics"
+  desc: "Functions to explore TSS and/or TSR metrics."
+- contents:
+  - associate_with_tsr
+  - mark_dominant
+  - tsr_metrics
+  - plot_tsr_metric
+- subtitle: "BAM Processing"
+  desc: "Functions to import and process BAM files."
+- contents:
+  - G_correction
+  - import_bams
+  - starts_with("softclip")
+  - tss_aggregate
+- subtitle: "TSS/TSR Import and Export"
+  desc: "Functions to import and export TSSs and TSRs."
+- contents:
+  - tss_import
+  - tsr_import
+  - tss_export
+  - tsr_export
+- subtitle: "Accessor Functions"
+  desc: "Functions to access data within TSRexploreR object."
+- contents:
+  - starts_with("get")
+- subtitle: "TSR Shifting"
+  desc: "Functions specific to TSR shifting analysis."
+- contents:
+  - tss_shift
+  - plot_shift_rank
+  - plot_shift_count
+- subtitle: "TSS/TSR Plotting Functions"
+  desc: "Plotting functions for TSS and TSR data."
+- contents:
+  - gene_tracks
+  - plot_correlation
+  - plot_density
+  - plot_detected_features
+  - plot_genomic_distribution
+  - plot_heatmap
+  - plot_reduction
+- subtitle: "TSS Specific Plots"
+  desc: "Plotting functions specific to TSS data."
+- contents:
+  - plot_dinucleotide_frequencies
+  - plot_sequence_colormap
+  - plot_sequence_logo
+- subtitle: "Differential TSSs/TSRs"
+  desc: "Functions for differential TSS/TSR analysis and plotting."
+- contents:
+  - fit_de_model
+  - differential_expression
+  - export_for_enrichment
+  - plot_ma
+  - plot_num_de
+  - plot_volcano
+- subtitle: "Data Conditionals"
+  desc: "Accessory functions to condition data for plotting"
+- contents:
+  - conditionals
+  - ordering
+  - quantiling
+- subtitle: "Datasets"
+  desc: "Internal datasets."
+- contents:
+  - TSSs
+  - TSSs_reduced
+- subtitle: "Internal Functions"
+  desc: "Internal functions that should be ignored by end user"
+- contents:
+  - ShiftScores
+  - common_params
+  - matches("^\\.")
+  - condition_data
+  - starts_with("extract")
+  - preliminary_filter
+  - retrieve_seqs
+  - set_count_slot
+  - tsr_experiment
+  - tss_experiment
