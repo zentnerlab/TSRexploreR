@@ -240,12 +240,12 @@ plot_sequence_logo <- function(
 
   ## Make sequence logo.
   if (grouping_status == "none") {
-    p <- ggseqlogo::ggseqlogo(sequences, ncol=ncol, ...) +
+    p <- ggseqlogo::ggseqlogo(sequences, ncol=ncol, seq_type="dna", ...) +
       theme(text=element_text(size=font_size))
   } else {
     p <- sequences %>%
       map(function(x) {
-        ggseqlogo::ggseqlogo(x, ncol=ncol, ...) +
+        ggseqlogo::ggseqlogo(x, ncol=ncol, seq_type="dna", ...) +
           theme(text=element_text(size=font_size))
       })
 
