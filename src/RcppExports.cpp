@@ -7,7 +7,7 @@
 using namespace Rcpp;
 
 // allTheShiftScores
-arma::mat allTheShiftScores(CharacterVector fhash, arma::uvec dists, arma::vec scores, arma::vec sample, int calcP, int nresamp, int ntests);
+List allTheShiftScores(CharacterVector fhash, arma::uvec dists, arma::vec scores, arma::vec sample, int calcP, int nresamp, int ntests);
 RcppExport SEXP _TSRexploreR_allTheShiftScores(SEXP fhashSEXP, SEXP distsSEXP, SEXP scoresSEXP, SEXP sampleSEXP, SEXP calcPSEXP, SEXP nresampSEXP, SEXP ntestsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;

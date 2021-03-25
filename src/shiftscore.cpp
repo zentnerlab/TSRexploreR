@@ -9,7 +9,7 @@ double ShiftScoreFast(arma::vec x, arma::vec y, int k, int xn, int yn, arma::uve
   arma::vec px = x / xn;
   arma::vec py = y / yn;
 
-  arma::vec weighted = (px - py) % w;
+  arma::vec weighted = (py - px) % w;
   double ans = arma::sum(weighted) / k;
   return(ans);
 }
@@ -26,15 +26,20 @@ arma::vec ShiftScore(arma::sp_mat x, arma::sp_mat y, int calcP, int nresamp){
   x /= xn;
   y /= yn;
   
-  arma::sp_mat w = (x - y);
+  arma::sp_mat w = (y - x);
   arma::vec dense_weights = arma::nonzeros(w);
   arma::uvec pos = arma::find(w);
   pos += 1;
 
   arma::vec out = dense_weights % pos;
-  arma::vec ans(2);
+  arma::vec ans(4);
   ans.zeros();
-  ans(0) += accu(out) / y.n_elem; // divide by number of bins
+  ans(0) += arma::accu(out) / y.n_elem; // divide by number of bins, EMS
+  
+  arma::vec big = arma::clamp(out, 0, out.max());
+  arma::vec small = arma::clamp(out, out.min(), 0);
+  ans(2) += arma::accu(big) / y.n_elem;
+  ans(3) += arma::accu(small) / y.n_elem;
 
   if(calcP){
     double pp = 0.0;
@@ -66,9 +71,13 @@ arma::vec ShiftScore(arma::sp_mat x, arma::sp_mat y, int calcP, int nresamp){
 
 
 // [[Rcpp::export]]
-arma::mat allTheShiftScores(CharacterVector fhash, arma::uvec dists, arma::vec scores,
+List allTheShiftScores(CharacterVector fhash, arma::uvec dists, arma::vec scores,
                             arma::vec sample, int calcP, int nresamp, int ntests){
-  arma::mat ans(2,ntests);
+  arma::vec ems(ntests);
+  arma::vec pval(ntests);
+  arma::vec big(ntests);
+  arma::vec small(ntests);
+  arma::vec ans(4);
 
   // loop to find the sequence starts
   int startix = 0;
@@ -102,10 +111,21 @@ arma::mat allTheShiftScores(CharacterVector fhash, arma::uvec dists, arma::vec s
       arma::sp_mat y(locy, vals.elem(samp0), nsp, 1);
       // Rcout << y << std::endl;
 
-      ans.col(ntest) = ShiftScore(x, y, calcP, nresamp);
+      ans = ShiftScore(x, y, calcP, nresamp);
+      ems(ntest) = ans(0);
+      pval(ntest) = ans(1);
+      big(ntest) = ans(2);
+      small(ntest) = ans(3);
+      
       ntest++;
       startix = it;
     }
   }
-  return(ans);
+  List out = List::create(
+    _["ems"] = ems,
+    _["p_value"] = pval,
+    _["positive_contribution"] = big,
+    _["negative_contribution"] = small
+    );
+  return(out);
 }
