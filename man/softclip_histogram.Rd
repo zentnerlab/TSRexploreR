@@ -4,7 +4,13 @@
 \alias{softclip_histogram}
 \title{Number of soft-clipped bases.}
 \usage{
-softclip_histogram(experiment, samples = "all", n_bases = NULL, ncol = 3)
+softclip_histogram(
+  experiment,
+  samples = "all",
+  n_bases = NULL,
+  ncol = 3,
+  return_table = FALSE
+)
 }
 \arguments{
 \item{experiment}{TSRexploreR object.}
@@ -14,9 +20,12 @@ softclip_histogram(experiment, samples = "all", n_bases = NULL, ncol = 3)
 \item{n_bases}{Number of bases to plot.}
 
 \item{ncol}{Integer specifying the number of columns to arrange multiple plots.}
+
+\item{return_table}{Return a table of results instead of a plot.}
 }
 \value{
 ggplot2 histogram of soft-clipped base numbers.
+  Instead returns a table of underlying values if return_tables is TRUE.
 }
 \description{
 Histogram of the number of soft-clipped bases adjacent to

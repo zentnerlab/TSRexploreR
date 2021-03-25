@@ -316,9 +316,10 @@ gene_tracks(
 ## Data Access
 
 TSRexploreR provides various convenience functions to access or export data stored in the objects.
-Below is an overview of the available functions.
+Below is an overview of some of the available functions.
 
 - `tss_export`: Export TSSs as bigWigs, bedgraphs, or as a tabular file.
 - `tsr_export`: Export TSRs as bed or tabular file.
-- `extract_counts`: Get TSS or TSR table from object including additional analysis such as annotations, normalized counts, and computed metrics. Also used to extract TSR shift table.
-- `extract_de`: Get table of differential TSSs or TSRs.
+- `get_counts`: Get TSS or TSR table from object including additional analysis such as annotations, normalized counts, and computed metrics.
+- `get_diff_results`: Get table of differential TSSs or TSRs.
+- `get_shifting_results`: Get table of TSR shifting results.
