@@ -13,3 +13,4 @@ proj$
 ^_pkgdown\.yml$
 ^docs$
 ^pkgdown$
+^.*\.Rproj$

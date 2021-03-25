@@ -3,8 +3,12 @@
 
 using namespace Rcpp;
 
+// [[Rcpp::export]]
 double ShiftScoreFast(arma::vec x, arma::vec y, int k, int xn, int yn, arma::uvec w){
-  // Inputs are unnormalized histograms, evenly spaced with 0 as necessary.
+  // x, y unnormalized histograms, evenly spaced with 0 as necessary.
+  // w are the original positions
+  // k is the number of nonzero locations
+  // xn, yn are the totals of x and y
   // This is a utility function to avoid repetitive calculations
   arma::vec px = x / xn;
   arma::vec py = y / yn;
@@ -14,7 +18,7 @@ double ShiftScoreFast(arma::vec x, arma::vec y, int k, int xn, int yn, arma::uve
   return(ans);
 }
 
-
+// [[Rcpp::export]]
 arma::vec ShiftScore(arma::sp_mat x, arma::sp_mat y, int calcP, int nresamp){
   // Inputs are sparse vectors of the same length with counts, unnormalized
 
@@ -46,6 +50,7 @@ arma::vec ShiftScore(arma::sp_mat x, arma::sp_mat y, int calcP, int nresamp){
     arma::sp_mat pxy = (x*xn + y*yn) / (xn + yn);
     arma::vec dense_probs = arma::nonzeros(pxy);
     arma::uvec pos_pxy = arma::find(pxy);
+    pos_pxy += 1;
 
     int k = dense_probs.n_elem;
     arma::ivec simx(k);
@@ -71,13 +76,9 @@ arma::vec ShiftScore(arma::sp_mat x, arma::sp_mat y, int calcP, int nresamp){
 
 
 // [[Rcpp::export]]
-List allTheShiftScores(CharacterVector fhash, arma::uvec dists, arma::vec scores,
+arma::mat allTheShiftScores(CharacterVector fhash, arma::uvec dists, arma::vec scores,
                             arma::vec sample, int calcP, int nresamp, int ntests){
-  arma::vec ems(ntests);
-  arma::vec pval(ntests);
-  arma::vec big(ntests);
-  arma::vec small(ntests);
-  arma::vec ans(4);
+  arma::mat out(4, ntests);
 
   // loop to find the sequence starts
   int startix = 0;
@@ -96,36 +97,33 @@ List allTheShiftScores(CharacterVector fhash, arma::uvec dists, arma::vec scores
       arma::uvec samp0 = arma::find(samps<0.5);
       arma::uvec dists_sub = dists.subvec(startix,endix);
       int nsp = dists_sub.max() + 1;
-      int n1 = samp1.size();
-      int n0 = samp0.size();
+      // int n1 = samp1.size();
+      // int n0 = samp0.size();
       // Rcout << "n1 = " << n1 << std::endl;
       // Rcout << "n0 = " << n0 << std::endl;
-      arma::umat locx(2,n1,arma::fill::zeros);
-      arma::umat locy(2,n0,arma::fill::zeros);
-      locx.row(0) = dists_sub.elem(samp1).t();
-      locy.row(0) = dists_sub.elem(samp0).t();
+      // arma::umat locx(2,n1,arma::fill::zeros);
+      // arma::umat locy(2,n0,arma::fill::zeros);
+      // locx.row(0) = dists_sub.elem(samp1).t();
+      // locy.row(0) = dists_sub.elem(samp0).t();
+      arma::uvec locx = dists_sub.elem(samp1);
+      arma::uvec locy = dists_sub.elem(samp0);
+      arma::uvec colptr(1, arma::fill::zeros);
       // Rcout << locy << std::endl;
       // Rcout << vals.elem(samp0) << std::endl;
       // Rcout << nsp << std::endl;
-      arma::sp_mat x(locx, vals.elem(samp1), nsp, 1);
-      arma::sp_mat y(locy, vals.elem(samp0), nsp, 1);
+      arma::sp_mat x(locx, colptr, vals.elem(samp1), nsp, 1);
+      arma::sp_mat y(locy, colptr, vals.elem(samp0), nsp, 1);
+      // arma::sp_mat x(locx, vals.elem(samp1), nsp, 1);
+      // arma::sp_mat y(locy, vals.elem(samp0), nsp, 1);
       // Rcout << y << std::endl;
 
-      ans = ShiftScore(x, y, calcP, nresamp);
-      ems(ntest) = ans(0);
-      pval(ntest) = ans(1);
-      big(ntest) = ans(2);
-      small(ntest) = ans(3);
+      out.col(ntest) = ShiftScore(x, y, calcP, nresamp);
+      
       
       ntest++;
       startix = it;
     }
   }
-  List out = List::create(
-    _["ems"] = ems,
-    _["p_value"] = pval,
-    _["positive_contribution"] = big,
-    _["negative_contribution"] = small
-    );
+  
   return(out);
 }
