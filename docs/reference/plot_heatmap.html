@@ -164,6 +164,7 @@
   n_quantiles <span class='op'>=</span> <span class='fl'>5</span>,
   quantile_samples <span class='op'>=</span> <span class='cn'>NULL</span>,
   split_by <span class='op'>=</span> <span class='cn'>NULL</span>,
+  diff_heatmap_list <span class='op'>=</span> <span class='cn'>NULL</span>,
   <span class='va'>...</span>
 <span class='op'>)</span></pre>
 
@@ -279,6 +280,11 @@ highest-scoring TSR per gene or transcript.</p></td>
       <th>split_by</th>
       <td><p>Named list with split group as name and vector of genes,
 or data.frame with columns 'feature' and 'split_group'.</p></td>
+    </tr>
+    <tr>
+      <th>diff_heatmap_list</th>
+      <td><p>Named list samples.
+The name will be the comparison name,</p></td>
     </tr>
     <tr>
       <th>...</th>
