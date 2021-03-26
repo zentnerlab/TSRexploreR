@@ -6,6 +6,36 @@
 
 using namespace Rcpp;
 
+// ShiftScoreFast
+double ShiftScoreFast(arma::vec x, arma::vec y, int k, int xn, int yn, arma::uvec w);
+RcppExport SEXP _TSRexploreR_ShiftScoreFast(SEXP xSEXP, SEXP ySEXP, SEXP kSEXP, SEXP xnSEXP, SEXP ynSEXP, SEXP wSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::vec >::type x(xSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type y(ySEXP);
+    Rcpp::traits::input_parameter< int >::type k(kSEXP);
+    Rcpp::traits::input_parameter< int >::type xn(xnSEXP);
+    Rcpp::traits::input_parameter< int >::type yn(ynSEXP);
+    Rcpp::traits::input_parameter< arma::uvec >::type w(wSEXP);
+    rcpp_result_gen = Rcpp::wrap(ShiftScoreFast(x, y, k, xn, yn, w));
+    return rcpp_result_gen;
+END_RCPP
+}
+// ShiftScore
+arma::vec ShiftScore(arma::sp_mat x, arma::sp_mat y, int calcP, int nresamp);
+RcppExport SEXP _TSRexploreR_ShiftScore(SEXP xSEXP, SEXP ySEXP, SEXP calcPSEXP, SEXP nresampSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::sp_mat >::type x(xSEXP);
+    Rcpp::traits::input_parameter< arma::sp_mat >::type y(ySEXP);
+    Rcpp::traits::input_parameter< int >::type calcP(calcPSEXP);
+    Rcpp::traits::input_parameter< int >::type nresamp(nresampSEXP);
+    rcpp_result_gen = Rcpp::wrap(ShiftScore(x, y, calcP, nresamp));
+    return rcpp_result_gen;
+END_RCPP
+}
 // allTheShiftScores
 arma::mat allTheShiftScores(CharacterVector fhash, arma::uvec dists, arma::vec scores, arma::vec sample, int calcP, int nresamp, int ntests);
 RcppExport SEXP _TSRexploreR_allTheShiftScores(SEXP fhashSEXP, SEXP distsSEXP, SEXP scoresSEXP, SEXP sampleSEXP, SEXP calcPSEXP, SEXP nresampSEXP, SEXP ntestsSEXP) {
@@ -25,6 +55,8 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_TSRexploreR_ShiftScoreFast", (DL_FUNC) &_TSRexploreR_ShiftScoreFast, 6},
+    {"_TSRexploreR_ShiftScore", (DL_FUNC) &_TSRexploreR_ShiftScore, 4},
     {"_TSRexploreR_allTheShiftScores", (DL_FUNC) &_TSRexploreR_allTheShiftScores, 7},
     {NULL, NULL, 0}
 };
