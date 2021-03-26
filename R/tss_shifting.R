@@ -154,10 +154,6 @@ tss_shift <- function(
   shifts[, FDR := p.adjust(pval, "fdr")]
   shifts <- shifts[order(FDR)]
 
-  ## Switch signs on shifting score so upstream is negative and
-  ## downstream is positive.
-  shifts[, shift_score := shift_score * -1]
-
   ## Filter out non-significant results.
   shifts <- shifts[FDR < fdr_cutoff]
 
