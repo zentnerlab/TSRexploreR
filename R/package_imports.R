@@ -24,7 +24,7 @@ NULL
 #'   theme element_text element_blank unit margin element_rect
 #'   geom_density geom_point geom_col geom_vline geom_tile geom_line
 #'   geom_violin geom_boxplot geom_jitter geom_raster geom_histogram
-#'   geom_bar geom_hline
+#'   geom_bar geom_hline scale_fill_gradient2 scale_color_gradient2
 #' @importFrom forcats fct_rev fct_inorder fct_reorder fct_relevel fct_recode
 #' @importFrom dplyr pull case_when desc
 #' @importFrom assertthat
