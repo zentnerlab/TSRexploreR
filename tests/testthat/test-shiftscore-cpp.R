@@ -48,6 +48,20 @@ test_that("shift-score works", {
   expect_equal(length(cpp_ss), 4)
   expect_equal(cpp_ss, c(ss,0,ssp,ssn))
   
+})
+
+
+test_that("allTheShiftScores works", {
+  a <- c(10,4,3,2,1)
+  da <- tibble::tibble(
+    scores = c(a, rev(a), a, rev(a), a, rev(a)),
+    distances = c(0:4, 5:9, 0:4, 7:11, 0:4, 5:9),
+    samp = rep(c(0,1,0,1,0,1), each = 5),
+    fhash = rep(letters[1:3], each = 10))
   
+  t1 <- with(da, 
+             allTheShiftScores(fhash, distances, scores, samp, 0L, 10L, 3L))
+  expect_equal(t1[1,], colSums(t1[3:4,]))
+  expect_equal(t1[1,], c(-.7, -.75, -.7))
   
 })
