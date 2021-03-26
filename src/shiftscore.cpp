@@ -85,11 +85,11 @@ arma::mat allTheShiftScores(CharacterVector fhash, arma::uvec dists, arma::vec s
   int endix = 0;
   int n = fhash.length();
   int ntest = 0;
-  for(int it = 1; it < n; it++){
+  for (int it = 1; it < n; it++) {
     // Rcout << "it = " << it << std::endl;
-    if(fhash(it-1) != fhash(it) || it == n-1){
+    if (fhash(it-1) != fhash(it) || it == n-1) {
       // Rcout << "startix = " << startix << std::endl;
-      endix = it - 1;
+      endix = it - 1 + (it == n-1);
       // Rcout << "endix = " << endix << std::endl;
       arma::vec samps = sample.subvec(startix,endix);
       arma::vec vals = scores.subvec(startix,endix);
@@ -107,7 +107,8 @@ arma::mat allTheShiftScores(CharacterVector fhash, arma::uvec dists, arma::vec s
       // locy.row(0) = dists_sub.elem(samp0).t();
       arma::uvec locx = dists_sub.elem(samp1);
       arma::uvec locy = dists_sub.elem(samp0);
-      arma::uvec colptr(1, arma::fill::zeros);
+      arma::uvec colptr(2, arma::fill::zeros);
+      colptr(1) = nsp;
       // Rcout << locy << std::endl;
       // Rcout << vals.elem(samp0) << std::endl;
       // Rcout << nsp << std::endl;
