@@ -154,10 +154,6 @@ tss_shift <- function(
   shifts[, FDR := p.adjust(pval, "fdr")]
   shifts <- shifts[order(FDR)]
 
-  ## Switch signs on shifting score so upstream is negative and
-  ## downstream is positive.
-  shifts[, shift_score := shift_score * -1]
-
   ## Filter out non-significant results.
   shifts <- shifts[FDR < fdr_cutoff]
 
@@ -237,17 +233,13 @@ ShiftScores <- function(
     )
   )
 
-  ## Add the coordinates back to the shift score.
-  
-  ## Altered to avoid warning message on naming.
-  out <- t(out)
-  colnames(out) <- c("shift_score", "pval")
-  outdf <- as_tibble(out)
-
-  outdf <- dat %>%
-     dplyr::distinct(fhash) %>%
-     dplyr::bind_cols(outdf) %>%
-     tidyr::separate(fhash, into=c("seqnames", "start", "end", "strand"), sep=":")
-
+  ## Change output to data.frame and add the coordinates back.
+  outdf <- out %>%
+    t %>%
+    `colnames<-`(c("shift_score", "pval", "pos_component", "neg_component")) %>%
+    as_tibble %>%
+    dplyr::bind_cols(dplyr::distinct(dat, fhash)) %>%
+    tidyr::separate(fhash, into=c("seqnames", "start", "end", "strand"), sep=":")
+    
   return(outdf)
 }
