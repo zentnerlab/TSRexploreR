@@ -57,9 +57,9 @@
 #' @param split_by Named list with split group as name and vector of genes,
 #'   or data.frame with columns 'feature' and 'split_group'.
 #' @param data_type Plot TSS ('tss') or TSR ('tsr') scores.
-#' @param diff_heatmap_list Named list samples.
+#' @param diff_heatmap_list Named list if sample pairs.
 #'   The name will be the comparison name,
-#"   and each list element should be two samples to compare.
+#"   and each list element should be the two samples to compare.
 #'
 #' @details
 #' This plotting function generates a ggplot2 heatmap of TSS or TSR signal
@@ -100,6 +100,10 @@
 #'
 #' An option to rasterize the heatmaps using ggrastr is provided with the 'rasterize' argument,
 #'   and the DPI (resolution) is controlled by 'raster_dpi'.
+#'
+#' If diff_heatmap_list is given, the heatmaps will represent the subtracted
+#'   score between the sample pairs provided in the list.
+#' If this argument is given the only data conditionals that will work are ordering related.
 #'
 #' @return ggplot2 object of TSS or TSR heatmap
 #'
