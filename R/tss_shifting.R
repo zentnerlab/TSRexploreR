@@ -151,11 +151,23 @@ tss_shift <- function(
 
   ## p-value correction for multiple comparisons.
   setDT(shifts)
-  shifts[, FDR := p.adjust(pval, "fdr")]
-  shifts <- shifts[order(FDR)]
+  shifts <- melt(
+    shifts, measure.vars=c("shift_score_pval", "emd_pval"),
+    variable.name="analysis", value.name="pval"
+  )
+  shifts[, c("FDR", "analysis") := list(
+    p.adjust(pval, "fdr"),
+    stringr::str_replace(analysis, "_pval$", "")
+  )]
+  shifts <- pivot_wider(
+    shifts, names_from=analysis, values_from=c(pval, FDR),
+    names_glue="{analysis}_{.value}"
+  )
+  setDT(shifts)
+  shifts <- shifts[order(shift_score_FDR)]
 
   ## Filter out non-significant results.
-  shifts <- shifts[FDR < fdr_cutoff]
+  shifts <- shifts[shift_score_FDR < fdr_cutoff | emd_FDR < fdr_cutoff]
 
   ## Add results to TSRexploreR object.
   shifts[, c("start", "end") := list(as.numeric(start), as.numeric(end))]
@@ -236,8 +248,10 @@ ShiftScores <- function(
   ## Change output to data.frame and add the coordinates back.
   outdf <- out %>%
     t %>%
-    `colnames<-`(c("shift_score", "pos_component", "neg_component", "emd",
-                   "shift_score_p_value","emd_p_value")) %>%
+    `colnames<-`(c(
+      "shift_score", "pos_component", "neg_component",
+      "emd", "shift_score_pval","emd_pval"
+    )) %>%
     as_tibble %>%
     dplyr::bind_cols(dplyr::distinct(dat, fhash)) %>%
     tidyr::separate(fhash, into=c("seqnames", "start", "end", "strand"), sep=":")
