@@ -236,7 +236,8 @@ ShiftScores <- function(
   ## Change output to data.frame and add the coordinates back.
   outdf <- out %>%
     t %>%
-    `colnames<-`(c("shift_score", "pval", "pos_component", "neg_component")) %>%
+    `colnames<-`(c("shift_score", "pos_component", "neg_component", "emd",
+                   "shift_score_p_value","emd_p_value")) %>%
     as_tibble %>%
     dplyr::bind_cols(dplyr::distinct(dat, fhash)) %>%
     tidyr::separate(fhash, into=c("seqnames", "start", "end", "strand"), sep=":")
