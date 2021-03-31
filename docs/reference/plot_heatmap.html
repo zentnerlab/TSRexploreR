@@ -283,7 +283,7 @@ or data.frame with columns 'feature' and 'split_group'.</p></td>
     </tr>
     <tr>
       <th>diff_heatmap_list</th>
-      <td><p>Named list samples.
+      <td><p>Named list if sample pairs.
 The name will be the comparison name,</p></td>
     </tr>
     <tr>
@@ -331,6 +331,9 @@ Finally, 'split_by' can be given either a two column data.frame ('feature' and '
   a vector of genes.</p>
 <p>An option to rasterize the heatmaps using ggrastr is provided with the 'rasterize' argument,
   and the DPI (resolution) is controlled by 'raster_dpi'.</p>
+<p>If diff_heatmap_list is given, the heatmaps will represent the subtracted
+  score between the sample pairs provided in the list.
+If this argument is given the only data conditionals that will work are ordering related.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p><code><a href='annotate_features.html'>annotate_features</a></code> to annotate the TSSs or TSRs.</p></div>
