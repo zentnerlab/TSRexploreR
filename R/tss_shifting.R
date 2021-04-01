@@ -165,6 +165,11 @@ tss_shift <- function(
   )
   setDT(shifts)
   shifts <- shifts[order(shift_score_FDR)]
+  setcolorder(test, c(
+    "seqnames", "start", "end", "strand", "pos_component",
+    "neg_component", "shift_score", "shift_score_pval", "shift_score_FDR",
+    "emd", "emd_pval", "emd_FDR"
+  ))
 
   ## Filter out non-significant results.
   shifts <- shifts[shift_score_FDR < fdr_cutoff | emd_FDR < fdr_cutoff]
