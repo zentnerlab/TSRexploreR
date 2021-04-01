@@ -1,5 +1,3 @@
-library(Matrix)
-
 ssr <- function(x, y) {
   stopifnot(dim(x) == dim(y))
   stopifnot(length(x) > 1)
@@ -48,7 +46,6 @@ test_that("shift-score works", {
   # positives and negatives
   x <- matrix(c(8,4,3,2,0,0,6, rep(0,5)))
   y <- matrix(c(5,4,8,1,0,4, rep(0,6)))
-  ssr(x,y)
   
   ss <- ShiftScore(x, y, 0L, 1000L)[1:4]
   expect_equal(ss, ssr(x,y))
@@ -67,8 +64,7 @@ test_that("allTheShiftScores works", {
              allTheShiftScores(fhash, distances, scores, samp, 1L, 1000L, 3L))
   expect_equal(t1[1,], colSums(t1[2:3,]))
   expect_equal(t1[4,], t1[2,] - t1[3,])
-  expect_equal(t1[1,], c(-.7, -.75, -.7))
-  expect_gt(t1[5:6,3], 0)
+  expect_true(all(t1[5:6,3] > 0.1))
   x <- matrix(c(10,4:1,rep(0,5)), ncol = 1)
   y <- matrix(c(rep(0,5),1:4,10), ncol = 1)
   expect_equal(t1[1:4,1], ssr(y,x))

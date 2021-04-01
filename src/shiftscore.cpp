@@ -4,7 +4,7 @@
 using namespace Rcpp;
 
 // [[Rcpp::export]]
-arma::vec ShiftScoreFast(arma::mat x, arma::mat y, int xn, int yn){
+arma::vec ShiftScoreFast(arma::mat x, arma::mat y, double xn, double yn){
   x /= xn;
   y /= yn;
   
@@ -31,8 +31,8 @@ arma::vec ShiftScoreFast(arma::mat x, arma::mat y, int xn, int yn){
 arma::vec ShiftScore(arma::mat x, arma::mat y, int calcP, int nresamp){
   // Inputs are sparse vectors of the same length with counts, unnormalized
 
-  int xn = arma::accu(x);
-  int yn = arma::accu(y);
+  double xn = arma::accu(x);
+  double yn = arma::accu(y);
   
   arma::vec ans(6, arma::fill::zeros);
   ans.head(4) += ShiftScoreFast(x, y, xn, yn);
@@ -49,9 +49,11 @@ arma::vec ShiftScore(arma::mat x, arma::mat y, int calcP, int nresamp){
     arma::vec sim;
 
     RNGScope scope;
+    int xnint = floor(xn);
+    int ynint = floor(yn);
     for (int i = 0; i < nresamp; i++) {
-      rmultinom(xn, pxy.begin(), k, simx.begin());
-      rmultinom(yn, pxy.begin(), k, simy.begin());
+      rmultinom(xnint, pxy.begin(), k, simx.begin());
+      rmultinom(ynint, pxy.begin(), k, simy.begin());
       arma::mat sx = arma::conv_to<arma::mat>::from(simx);
       arma::mat sy = arma::conv_to<arma::mat>::from(simy);
       
