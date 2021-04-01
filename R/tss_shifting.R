@@ -174,6 +174,16 @@ tss_shift <- function(
   ## Filter out non-significant results.
   shifts <- shifts[shift_score_FDR < fdr_cutoff | emd_FDR < fdr_cutoff]
 
+  ## Annotate results.
+  shifts[, c("shift_status", "emd_status") := list(
+    case_when(
+      shift_score > 0 & shift_score_FDR < fdr_cutoff ~ "downstream",
+      shift_score < 0 & shift_score_FDR < fdr_cutoff ~ "upstream",
+      TRUE ~ "unshifted"
+    ),
+    ifelse(emd_FDR < fdr_cutoff, "changed", "unchanged")
+  )]
+
   ## Add results to TSRexploreR object.
   shifts[, c("start", "end") := list(as.numeric(start), as.numeric(end))]
   experiment@shifting$results[[comparison_name]] <- shifts

@@ -70,6 +70,8 @@ plot_shift_rank <- function(
 
   select_samples <- rbindlist(select_samples, idcol="comparison")
 
+  ## Filter out samples below FDR threshold.
+
   ## Order features by selected order.
   select_samples[, FID := as.character(seq_len(nrow(select_samples)))]
 
