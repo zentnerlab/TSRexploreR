@@ -179,9 +179,10 @@ tss_shift <- function(
     case_when(
       shift_score > 0 & shift_score_FDR < fdr_cutoff ~ "downstream",
       shift_score < 0 & shift_score_FDR < fdr_cutoff ~ "upstream",
-      TRUE ~ "unshifted"
+      shift_score == 0 & shift_score_FDR < fdr_cutoff ~ "balanced",
+      TRUE ~ "n.s."
     ),
-    ifelse(emd_FDR < fdr_cutoff, "changed", "unchanged")
+    ifelse(emd_FDR < fdr_cutoff, "changed", "n.s.")
   )]
 
   ## Add results to TSRexploreR object.
