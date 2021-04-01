@@ -7,15 +7,15 @@
 using namespace Rcpp;
 
 // ShiftScoreFast
-arma::vec ShiftScoreFast(arma::mat x, arma::mat y, int xn, int yn);
+arma::vec ShiftScoreFast(arma::mat x, arma::mat y, double xn, double yn);
 RcppExport SEXP _TSRexploreR_ShiftScoreFast(SEXP xSEXP, SEXP ySEXP, SEXP xnSEXP, SEXP ynSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< arma::mat >::type x(xSEXP);
     Rcpp::traits::input_parameter< arma::mat >::type y(ySEXP);
-    Rcpp::traits::input_parameter< int >::type xn(xnSEXP);
-    Rcpp::traits::input_parameter< int >::type yn(ynSEXP);
+    Rcpp::traits::input_parameter< double >::type xn(xnSEXP);
+    Rcpp::traits::input_parameter< double >::type yn(ynSEXP);
     rcpp_result_gen = Rcpp::wrap(ShiftScoreFast(x, y, xn, yn));
     return rcpp_result_gen;
 END_RCPP
