@@ -159,13 +159,13 @@ tss_shift <- function(
     p.adjust(pval, "fdr"),
     stringr::str_replace(analysis, "_pval$", "")
   )]
-  shifts <- pivot_wider(
+  shifts <- tidyr::pivot_wider(
     shifts, names_from=analysis, values_from=c(pval, FDR),
     names_glue="{analysis}_{.value}"
   )
   setDT(shifts)
   shifts <- shifts[order(shift_score_FDR)]
-  setcolorder(test, c(
+  setcolorder(shifts, c(
     "seqnames", "start", "end", "strand", "pos_component",
     "neg_component", "shift_score", "shift_score_pval", "shift_score_FDR",
     "emd", "emd_pval", "emd_FDR"
