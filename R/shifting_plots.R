@@ -70,6 +70,9 @@ plot_shift_rank <- function(
 
   select_samples <- rbindlist(select_samples, idcol="comparison")
 
+  ## Filter out unchanged samples.
+  select_samples <- select_samples[shift_status != "n.s."]
+
   ## Order features by selected order.
   select_samples[, FID := as.character(seq_len(nrow(select_samples)))]
 
@@ -170,12 +173,8 @@ plot_shift_count <- function(
 
   select_samples <- rbindlist(select_samples, idcol="comparison")
 
-  ## Annotate shifting status.
-  select_samples[, shift_status := case_when(
-    shift_score < 0 ~ "upstream",
-    shift_score > 0 ~ "downstream",
-    TRUE ~ "n.s."
-  )]
+  ## Filter out insignificant shifts.
+  select_samples <- select_samples[shift_status != "n.s."]
 
   ## Get number of shifts per shifting status.
   shift_count <- select_samples[, .(count=.N), by=.(shift_status, comparison)]
