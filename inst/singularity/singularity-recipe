@@ -83,6 +83,10 @@ apt-get -y install build-essential
 
 R --slave -e 'Sys.setenv("R_REMOTES_NO_ERRORS_FROM_WARNINGS"="true");Sys.setenv(TAR="/bin/tar");devtools::install_github("zentnerlab/TSRexploreR",ref="main",upgrade="never")'
 
+### Install DO.db to resolve ChIPseeker error.
+
+R --slave -e 'Sys.setenv("R_REMOTES_NO_ERRORS_FROM_WARNINGS"="true");Sys.setenv(TAR="/bin/tar");BiocManager::install("DO.db", update=FALSE)'
+
 %environment
 
 ## Add software to environment
