@@ -48,7 +48,7 @@ Analyze TSS shifts between samples within a consensus TSR set.
 }
 \details{
 This function assesses the difference between TSS distributions from two distinct samples
-in a set of consensus TSRs by calculating a signed version of the earth mover's distance
+in a set of consensus TSRs by calculating a signed version of the earth mover's distance (EMD)
 that we term earth mover's score (EMS). For this approach, we imagine that the two TSS 
 distributions in questions are piles of dirt, and ask how much dirt from one pile we would 
 need to move, how far, and in which direction, to mimic the distribution of the other sample.
@@ -56,6 +56,13 @@ The resulting EMS is between -1 and 1, with larger magnitudes indicating larger 
 the sign indicating direction (negative values indicate upstream shifts and positive values 
 indicate downstream shifts). The function also calculates a p-value for the null hypothesis 
 that there is no difference betwen the two samples, based on a permutation test.
+
+In addition to the EMS test, a test for EMD is also performed.
+Unlike EMS, EMD does not test for a particular shift direction,
+but rather how much "mass" has been moved between two distributions.
+This may be useful for the detection of "balanced" shifts wherein equal mass is moved upstream and downstream,
+such as TSR splitting/merging or a change in shape (e.g. broad to peaked).
+These will generally be marked by a low EMS, large but balanced positive and negative scores, and a high EMD.
 
 'sample_1' and 'sample_2' should be the names of the two samples to compare. 'sample_1' should 
 be the control and 'sample_2' the treatment sample.

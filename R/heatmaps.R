@@ -57,6 +57,9 @@
 #' @param split_by Named list with split group as name and vector of genes,
 #'   or data.frame with columns 'feature' and 'split_group'.
 #' @param data_type Plot TSS ('tss') or TSR ('tsr') scores.
+#' @param diff_heatmap_list Named list if sample pairs.
+#'   The name will be the comparison name,
+#"   and each list element should be the two samples to compare.
 #'
 #' @details
 #' This plotting function generates a ggplot2 heatmap of TSS or TSR signal
@@ -97,6 +100,10 @@
 #'
 #' An option to rasterize the heatmaps using ggrastr is provided with the 'rasterize' argument,
 #'   and the DPI (resolution) is controlled by 'raster_dpi'.
+#'
+#' If diff_heatmap_list is given, the heatmaps will represent the subtracted
+#'   score between the sample pairs provided in the list.
+#' If this argument is given the only data conditionals that will work are ordering related.
 #'
 #' @return ggplot2 object of TSS or TSR heatmap
 #'
@@ -144,6 +151,7 @@ plot_heatmap <- function(
   n_quantiles=5,
   quantile_samples=NULL,
   split_by=NULL,
+  diff_heatmap_list=NULL,
   ...
 ) {
 
@@ -176,6 +184,12 @@ plot_heatmap <- function(
     is.null(split_by) ||
     (is.list(split_by) && has_attr(split_by, "names")) ||
     (is.data.frame(split_by) && colnames(split_by) %in% c("feature", "split_group"))
+  )
+  assert_that(
+    is.null(diff_heatmap_list) ||
+    (is.list(diff_heatmap_list) &&
+    has_attr(diff_heatmap_list, "names") &&
+    all(lengths(diff_heatmap_list) == 2))
   )
 
   ## Check if ggrastr is installed if rasterization requested.
@@ -221,20 +235,44 @@ plot_heatmap <- function(
     "tsr"=.tsr_heatmap(annotated, upstream, downstream)
   )
 
+  ## Log2+1 transform counts if requested and if making a diff heatmap.
+  if (!is.null(diff_heatmap_list) & log2_transform) {
+    count_mat[, score := log2(score + 1)]
+  }
+
+  ## Generate differential heatmap if set.
+  if (!is.null(diff_heatmap_list)) {
+    count_mat <- map(diff_heatmap_list, function(x) {
+      mat <- count_mat[sample %in% x]
+      mat <- mat[, .(sample, score, distanceToTSS, feature)]
+      mat <- dcast(mat, ... ~ sample, value.var="score")
+      mat[, score := get(x[2]) - get(x[1])]
+      mat[, c(x) := NULL]
+      return(mat)
+    })
+    count_mat <- rbindlist(count_mat, idcol="sample")
+  }
+
   ## Quantile and/or order if required.
 
   # Apply ordering if set.
-  if (!quo_is_null(enquo(ordering))) {
+  if (!quo_is_null(enquo(ordering)) & is.null(diff_heatmap_list)) {
     ordering <- enquo(ordering)
     count_mat <- .order_heatmap(
       count_mat, data_type, annotated,
       ordering, order_fun, order_descending,
       order_samples
     )
+  } else if (!quo_is_null(enquo(ordering)) & !is.null(diff_heatmap_list)) {
+    ordering <- enquo(ordering)
+    count_mat <- .order_diff_heatmap(
+      count_mat, data_type, order_fun,
+      order_descending, order_samples
+    )
   }
 
   # Apply quantiling if set.
-  if (!quo_is_null(enquo(quantiling))) {
+  if (!quo_is_null(enquo(quantiling)) & is.null(diff_heatmap_list)) {
     quantiling <- enquo(quantiling)
     count_mat <- .quantile_heatmap(
       count_mat, data_type, annotated,
@@ -249,16 +287,20 @@ plot_heatmap <- function(
   }
 
   ## Use custom gene groups if set.
-  if (!is.null(split_by)) {
+  if (!is.null(split_by) & is.null(diff_heatmap_list)) {
     count_mat <- .split_heatmap(count_mat, split_by)
   }
 
   ## Log2 + 1 transform data if set.
-  count_mat[, score := log2(score + 1)]
+  if (is.null(diff_heatmap_list) & log2_transform) {
+    count_mat[, score := log2(score + 1)]
+  }
 
   ## Set sample order if required.
-  if (!all(samples == "all")) {
+  if (!all(samples == "all") & is.null(diff_heatmap_list)) {
     count_mat[, sample := factor(sample, levels=samples)]
+  } else if (!all(samples == "all") & !is.null(diff_heatmap_list)) {
+    count_mat[, sample := factor(sample, levels=names(diff_heatmap_list))]
   }
 
   ## Create heatmap.
@@ -281,26 +323,33 @@ plot_heatmap <- function(
       labels=seq(-upstream, downstream, 1) %>% keep(~ (./x_axis_breaks) %% 1 == 0)
     )
 
+  # If diff_heatmap is set, set min value to be min value in heatmap.
+  if (!is.null(diff_heatmap_list)) {
+    min_value <- min(count_mat[["score"]])
+  } else {
+    min_value <- 0
+  }
+
   # Truncate scale if max_value is set.
-  if (!is.null(max_value)) {
+  if (!is.null(max_value) & is.null(diff_heatmap_list)) {
     p <- p +
       scale_fill_continuous(
-        limits=c(0, max_value),
-        breaks=seq(0, max_value, 1),
-        labels=c(seq(0, max_value - 1, 1), paste0(">=", max_value)),
+        limits=c(min_value, max_value),
+        breaks=seq(min_value, max_value, 1),
+        labels=c(seq(min_value, max_value - 1, 1), paste0(">=", max_value)),
         name="Log2(Score)",
         low=low_color,
         high=high_color
       ) +
       scale_color_continuous(
-        limits=c(0, max_value),
-        breaks=seq(0, max_value, 1),
-        labels=c(seq(0, max_value - 1, 1), paste0(">=", max_value)),
+        limits=c(min_value, max_value),
+        breaks=seq(min_value, max_value, 1),
+        labels=c(seq(min_value, max_value - 1, 1), paste0(">=", max_value)),
         name="Log2(Score)",
         low=low_color,
         high=high_color
       )
-  } else {
+  } else if (is.null(max_value) & is.null(diff_heatmap_list)) {
     p <- p +
       scale_fill_continuous(
         name="Log2(Score)",
@@ -311,6 +360,44 @@ plot_heatmap <- function(
         name="Log2(Score)",
         low=low_color,
         high=high_color
+      )
+  } else if (!is.null(max_value) & !is.null(diff_heatmap_list)) {
+    p <- p +
+      scale_fill_gradient2(
+        limits=c(min_value, max_value),
+        breaks=seq(min_value, max_value, 1),
+        labels=c(seq(min_value, max_value - 1, 1), paste0(">=", max_value)),
+        name="Log2(Score)",
+        low=low_color,
+        high=high_color,
+        mid="white",
+        midpoint=0
+      ) +
+      scale_color_gradient2(
+        limits=c(min_value, max_value),
+        breaks=seq(min_value, max_value, 1),
+        labels=c(seq(min_value, max_value - 1, 1), paste0(">=", max_value)),
+        name="Log2(Score)",
+        low=low_color,
+        high=high_color,
+        mid="white",
+        midpoint=0
+      )
+  } else if (is.null(max_value) & !is.null(diff_heatmap_list)) {
+    p <- p +
+      scale_fill_gradient2(
+        name="Log2(Score)",
+        low=low_color,
+        high=high_color,
+        mid="white",
+        midpoint=0
+      ) +
+      scale_color_gradient2(
+        name="Log2(Score)",
+        low=low_color,
+        high=high_color,
+        mid="white",
+        midpoint=0
       )
   }
 
@@ -518,3 +605,50 @@ plot_heatmap <- function(
 
   return(count_mat)
 }
+
+## Order Diff Heatmap.
+##
+## @inheritParams plot_heatmap
+## @param count_data data.table of sample data.
+## @param annotated_data Annotated sample data.
+## @param data_type Either 'tss' or 'tsr'.
+
+.order_diff_heatmap <- function(
+  count_data,
+  data_type,
+  order_fun,
+  order_descending,
+  order_samples
+) {
+
+  if (data_type == "tss") {
+    merged <- copy(count_data)
+  } else if (data_type == "tsr") {
+    merged <- copy(count_data)
+    merged[, distanceToTSS := NULL]
+    merged <- unique(merged)
+  }
+
+  if (!is.null(order_samples)) {
+    merged <- merged[sample %in% order_samples]
+  }
+
+  merged <- merged %>%
+    dplyr::group_by(feature) %>%
+    dplyr::summarize(aggr_var=order_fun(score))
+
+  setDT(merged)
+  if (order_descending) {
+    merged <- merged[order(-aggr_var)]
+  } else {
+    merged <- merged[order(aggr_var)]
+  }
+
+  merged[, row_order := .I]
+  merged[, aggr_var := NULL]
+
+  merged <- merge(count_data, merged, by="feature")
+
+  return(merged)
+}
+

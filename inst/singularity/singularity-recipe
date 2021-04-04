@@ -15,12 +15,16 @@ export PATH=$PATH:/opt/conda/bin
 
 conda update -n base -y -c defaults conda
 
+## Install mamba.
+
+conda install -n base -c conda-forge mamba
+
 ## Install Conda Environment
 ## ----------
 
 ## Create environment.
 
-conda create -n TSRexploreR -y -c conda-forge -c bioconda \
+mamba create -n TSRexploreR -y -c conda-forge -c bioconda \
 qpdf \
 r-base>=4.0.0 \
 r-tidyverse \
@@ -60,11 +64,11 @@ bioconductor-txdb.scerevisiae.ucsc.saccer3.sgdgene
 
 ## Update environment.
 
-conda update -n TSRexploreR -y -c conda-forge -c bioconda --all
+mamba update -n TSRexploreR -y -c conda-forge -c bioconda --all
 
 ## Clean up extra files.
 
-conda clean -y --all
+mamba clean -y --all
 
 ## Add tsrexplorer software to path
 
@@ -77,7 +81,11 @@ apt-get -y install build-essential
 
 ## Install latest build of tsrexplorer
 
-R --slave -e 'Sys.setenv("R_REMOTES_NO_ERRORS_FROM_WARNINGS"="true");Sys.setenv(TAR="/bin/tar");devtools::install_github("rpolicastro/TSRexploreR",ref="dev")'
+R --slave -e 'Sys.setenv("R_REMOTES_NO_ERRORS_FROM_WARNINGS"="true");Sys.setenv(TAR="/bin/tar");devtools::install_github("zentnerlab/TSRexploreR",ref="main",upgrade="never")'
+
+### Install DO.db to resolve ChIPseeker error.
+
+R --slave -e 'Sys.setenv("R_REMOTES_NO_ERRORS_FROM_WARNINGS"="true");Sys.setenv(TAR="/bin/tar");BiocManager::install("DO.db", update=FALSE)'
 
 %environment
 

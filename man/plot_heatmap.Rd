@@ -32,6 +32,7 @@ plot_heatmap(
   n_quantiles = 5,
   quantile_samples = NULL,
   split_by = NULL,
+  diff_heatmap_list = NULL,
   ...
 )
 }
@@ -92,6 +93,9 @@ highest-scoring TSR per gene or transcript.}
 \item{split_by}{Named list with split group as name and vector of genes,
 or data.frame with columns 'feature' and 'split_group'.}
 
+\item{diff_heatmap_list}{Named list if sample pairs.
+The name will be the comparison name,}
+
 \item{...}{Additional arguments passed to Heatmap}
 }
 \value{
@@ -139,6 +143,10 @@ Finally, 'split_by' can be given either a two column data.frame ('feature' and '
 
 An option to rasterize the heatmaps using ggrastr is provided with the 'rasterize' argument,
   and the DPI (resolution) is controlled by 'raster_dpi'.
+
+If diff_heatmap_list is given, the heatmaps will represent the subtracted
+  score between the sample pairs provided in the list.
+If this argument is given the only data conditionals that will work are ordering related.
 }
 \examples{
 data(TSSs_reduced)

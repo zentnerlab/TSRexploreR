@@ -152,6 +152,7 @@ softclip_composition <- function(
 #'   the TSS, up to 'n_bases'.
 #'
 #' @return ggplot2 histogram of soft-clipped base numbers.
+#'   Instead returns a table of underlying values if return_tables is TRUE.
 #'
 #' @seealso
 #' \code{\link{import_bams}} to import BAMs.
@@ -174,7 +175,8 @@ softclip_histogram <- function(
   experiment,
   samples="all",
   n_bases=NULL,
-  ncol=3
+  ncol=3,
+  return_table=FALSE
 ) {
 
   ## Check inputs.
@@ -182,6 +184,7 @@ softclip_histogram <- function(
   assert_that(is.character(samples))
   assert_that(is.null(n_bases) || is.count(n_bases))
   assert_that(is.count(ncol))
+  assert_that(is.flag(return_table))
 
   ## Get samples.
   if (all(samples == "all")) {
@@ -197,6 +200,12 @@ softclip_histogram <- function(
   select_samples[,
     c("seqnames", "start", "end", "strand", "width", "seq_soft") := NULL
   ]
+
+  ## Return a table if requested.
+  if (return_table) {
+    select_samples <- select_samples[, .(total=.N), by=.(sample, n_soft)]
+    return(as.data.frame(select_samples))
+  }
 
   ## Set sample order if requested.
   if (!all(samples == "all")) {

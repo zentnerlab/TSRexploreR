@@ -19,7 +19,7 @@
 #'
 #' @details
 #' This function assesses the difference between TSS distributions from two distinct samples
-#' in a set of consensus TSRs by calculating a signed version of the earth mover's distance
+#' in a set of consensus TSRs by calculating a signed version of the earth mover's distance (EMD)
 #' that we term earth mover's score (EMS). For this approach, we imagine that the two TSS 
 #' distributions in questions are piles of dirt, and ask how much dirt from one pile we would 
 #' need to move, how far, and in which direction, to mimic the distribution of the other sample.
@@ -27,6 +27,13 @@
 #' the sign indicating direction (negative values indicate upstream shifts and positive values 
 #' indicate downstream shifts). The function also calculates a p-value for the null hypothesis 
 #' that there is no difference betwen the two samples, based on a permutation test.
+#'
+#' In addition to the EMS test, a test for EMD is also performed.
+#' Unlike EMS, EMD does not test for a particular shift direction,
+#' but rather how much "mass" has been moved between two distributions.
+#' This may be useful for the detection of "balanced" shifts wherein equal mass is moved upstream and downstream,
+#' such as TSR splitting/merging or a change in shape (e.g. broad to peaked).
+#' These will generally be marked by a low EMS, large but balanced positive and negative scores, and a high EMD.
 #'
 #' 'sample_1' and 'sample_2' should be the names of the two samples to compare. 'sample_1' should 
 #' be the control and 'sample_2' the treatment sample.
@@ -151,15 +158,39 @@ tss_shift <- function(
 
   ## p-value correction for multiple comparisons.
   setDT(shifts)
-  shifts[, FDR := p.adjust(pval, "fdr")]
-  shifts <- shifts[order(FDR)]
-
-  ## Switch signs on shifting score so upstream is negative and
-  ## downstream is positive.
-  shifts[, shift_score := shift_score * -1]
+  shifts <- melt(
+    shifts, measure.vars=c("shift_score_pval", "emd_pval"),
+    variable.name="analysis", value.name="pval"
+  )
+  shifts[, c("FDR", "analysis") := list(
+    p.adjust(pval, "fdr"),
+    stringr::str_replace(analysis, "_pval$", "")
+  )]
+  shifts <- tidyr::pivot_wider(
+    shifts, names_from=analysis, values_from=c(pval, FDR),
+    names_glue="{analysis}_{.value}"
+  )
+  setDT(shifts)
+  shifts <- shifts[order(shift_score_FDR)]
+  setcolorder(shifts, c(
+    "seqnames", "start", "end", "strand", "pos_component",
+    "neg_component", "shift_score", "shift_score_pval", "shift_score_FDR",
+    "emd", "emd_pval", "emd_FDR"
+  ))
 
   ## Filter out non-significant results.
-  shifts <- shifts[FDR < fdr_cutoff]
+  shifts <- shifts[shift_score_FDR < fdr_cutoff | emd_FDR < fdr_cutoff]
+
+  ## Annotate results.
+  shifts[, c("shift_status", "emd_status") := list(
+    case_when(
+      shift_score > 0 & shift_score_FDR < fdr_cutoff ~ "downstream",
+      shift_score < 0 & shift_score_FDR < fdr_cutoff ~ "upstream",
+      shift_score == 0 & shift_score_FDR < fdr_cutoff ~ "balanced",
+      TRUE ~ "n.s."
+    ),
+    ifelse(emd_FDR < fdr_cutoff, "changed", "n.s.")
+  )]
 
   ## Add results to TSRexploreR object.
   shifts[, c("start", "end") := list(as.numeric(start), as.numeric(end))]
@@ -237,17 +268,16 @@ ShiftScores <- function(
     )
   )
 
-  ## Add the coordinates back to the shift score.
-  
-  ## Altered to avoid warning message on naming.
-  out <- t(out)
-  colnames(out) <- c("shift_score", "pval")
-  outdf <- as_tibble(out)
-
-  outdf <- dat %>%
-     dplyr::distinct(fhash) %>%
-     dplyr::bind_cols(outdf) %>%
-     tidyr::separate(fhash, into=c("seqnames", "start", "end", "strand"), sep=":")
-
+  ## Change output to data.frame and add the coordinates back.
+  outdf <- out %>%
+    t %>%
+    `colnames<-`(c(
+      "shift_score", "pos_component", "neg_component",
+      "emd", "shift_score_pval","emd_pval"
+    )) %>%
+    as_tibble %>%
+    dplyr::bind_cols(dplyr::distinct(dat, fhash)) %>%
+    tidyr::separate(fhash, into=c("seqnames", "start", "end", "strand"), sep=":")
+    
   return(outdf)
 }
