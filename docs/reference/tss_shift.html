@@ -206,14 +206,16 @@ distributions in questions are piles of dirt, and ask how much dirt from one pil
 need to move, how far, and in which direction, to mimic the distribution of the other sample.
 The resulting EMS is between -1 and 1, with larger magnitudes indicating larger shifts and 
 the sign indicating direction (negative values indicate upstream shifts and positive values 
-indicate downstream shifts). The function also calculates a p-value for the null hypothesis 
-that there is no difference betwen the two samples, based on a permutation test.</p>
-<p>In addition to the EMS test, a test for EMD is also performed.
-Unlike EMS, EMD does not test for a particular shift direction,
-but rather how much "mass" has been moved between two distributions.
-This may be useful for the detection of "balanced" shifts wherein equal mass is moved upstream and downstream,
-such as TSR splitting/merging or a change in shape (e.g. broad to peaked).
-These will generally be marked by a low EMS, large but balanced positive and negative scores, and a high EMD.</p>
+indicate downstream shifts). The positive and negative components of the EMS are also reported.
+Lastly, the function calculates a p-value for the null hypothesis that there is no difference 
+between the two samples using a permutation test and an FDR-corrected p-value calculated by the 
+Benjamini-Hochberg procedure.</p>
+<p>This function also calculates unsigned EMD, which indicates how much TSS "mass" has been moved 
+between two distributions without regard to direction. This is useful in the detection of "balanced" 
+shifts, wherein approximately equal mass is moved upstream and downstream. Examples of this are 
+TSR splitting or merging and a change in TSR shape (e.g., peaked to broad). These will generally 
+be marked by a low EMS, balanced positive and negative scores, and a high EMD. As for EMS, raw and 
+FDR-corrected p-values are reported for EMD.</p>
 <p>'sample_1' and 'sample_2' should be the names of the two samples to compare. 'sample_1' should 
 be the control and 'sample_2' the treatment sample.
 The results will be stored back in the TSRexploreR object with the name given by
