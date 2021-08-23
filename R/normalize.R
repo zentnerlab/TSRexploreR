@@ -118,6 +118,7 @@ normalize_counts <- function(
 
   sample_tables <- experiment %>%
     extract_counts(data_type, "all") %>%
+    lapply(function(x) x[,!c("normalized_score")]) %>% 
     rbindlist(idcol="sample") %>%
     {merge(normalized_counts, ., by=c("sample", "FHASH"), all.y=TRUE)} %>%
     as_granges %>%

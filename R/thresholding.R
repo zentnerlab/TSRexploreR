@@ -3,7 +3,8 @@
 ## Explore raw read count thresholds thresholds.
 ##
 ## @inheritParams common_params
-## @param max_threshold Thresholds from 1 to max_threshold will be explored.
+## @param max_threshold Thresholds from min_count to max_threshold will be explored.
+## @param min_threshold Thresholds from min_count to max_threshold will be explored.
 ## @param steps Steps to get the threshold values.
 
 .explore_thresholds <- function(
@@ -11,7 +12,8 @@
   max_threshold=25,
   steps=0.5,
   samples="all",
-  use_normalized=FALSE
+  use_normalized=FALSE,
+  min_threshold=1
 ) {
 
   ## Check inputs.
@@ -30,7 +32,7 @@
   select_samples <- rbindlist(select_samples, idcol="sample")
 
   ## Get information needed for threshold plot.
-  summarized_data <- map_df(seq(1, max_threshold, steps), function(x) {
+  summarized_data <- map_df(seq(min_count, max_threshold, steps), function(x) {
     filtered <- select_samples[score >= x]
     filtered[,
       promoter_proximity := ifelse(
@@ -78,7 +80,8 @@
 #' Make a plot to explore threshold values.
 #'
 #' @inheritParams common_params
-#' @param max_threshold Thresholds from 1 to max_threshold will be explored.
+#' @param max_threshold Thresholds from min_count to max_threshold will be explored.
+#' @param min_threshold Thresholds from min_count to max_threshold will be explored.
 #' @param steps Steps to get the threshold values.
 #' @param point_size The size of the points on the plot.
 #' @param ... Arguments passed to geom_point.
@@ -131,6 +134,7 @@ plot_threshold_exploration <- function(
   ncol=1,
   point_size=1,
   return_table=FALSE,
+  min_threshold=1
   ...
 ) {
 
@@ -139,6 +143,7 @@ plot_threshold_exploration <- function(
   assert_that(is.numeric(point_size) && point_size > 0)
   assert_that(is(experiment, "tsr_explorer"))
   assert_that(is.numeric(max_threshold) && max_threshold >= 5)
+  assert_that(is.numeric(min_threshold) && max_threshold > min_threshold+steps)
   assert_that(is.character(samples))
   assert_that(is.numeric(steps) && steps >= 0.1)
   assert_that(is.flag(use_normalized))
@@ -150,7 +155,8 @@ plot_threshold_exploration <- function(
     max_threshold,
     steps,
     samples,
-    use_normalized
+    use_normalized,
+    min_threshold
   ) 
 
   ## Return table if requested.

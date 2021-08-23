@@ -162,7 +162,7 @@ merge_samples <- function(
 
   if (norm_status) {
     samples <- samples[,
-      .(score=sum(score), normalized_score=sum(normalied_score)),
+      .(score=sum(score), normalized_score=sum(normalized_score)),
       by=.(seqnames, start, end, strand)
     ]
   } else {
