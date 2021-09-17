@@ -134,7 +134,7 @@ plot_threshold_exploration <- function(
   ncol=1,
   point_size=1,
   return_table=FALSE,
-  min_threshold=1
+  min_threshold=1,
   ...
 ) {
 
