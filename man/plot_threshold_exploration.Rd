@@ -13,13 +13,14 @@ plot_threshold_exploration(
   ncol = 1,
   point_size = 1,
   return_table = FALSE,
+  min_threshold = 1,
   ...
 )
 }
 \arguments{
 \item{experiment}{TSRexploreR object.}
 
-\item{max_threshold}{Thresholds from 1 to max_threshold will be explored.}
+\item{max_threshold}{Thresholds from min_count to max_threshold will be explored.}
 
 \item{steps}{Steps to get the threshold values.}
 
@@ -32,6 +33,8 @@ plot_threshold_exploration(
 \item{point_size}{The size of the points on the plot.}
 
 \item{return_table}{Return a table of results instead of a plot.}
+
+\item{min_threshold}{Thresholds from min_count to max_threshold will be explored.}
 
 \item{...}{Arguments passed to geom_point.}
 }
