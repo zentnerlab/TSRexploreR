@@ -95,6 +95,7 @@ plot_shift_count(exp) +
 To facilitate further analysis of the shifted regions, they can be annotated relative to known features.
 
 ```{r message=FALSE}
+library("ChIPseeker")
 exp <- annotate_features(exp, data_type="shift", feature_type="transcript")
 ```
 

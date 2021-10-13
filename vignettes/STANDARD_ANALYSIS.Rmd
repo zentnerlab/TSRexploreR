@@ -80,6 +80,7 @@ The example below uses a 'GTF' file from Ensembl (R64-1-1 Release 99) and annota
 start of the nearest gene.
 
 ```{r message=FALSE, warning=FALSE}
+library("ChIPseeker")
 exp <- annotate_features(exp, data_type="tss", feature_type="transcript")
 ```
 
