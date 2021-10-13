@@ -25,7 +25,7 @@ First, create the conda environment.
 
 ```
 conda create -n TSRexploreR -y -c conda-forge -c bioconda \
-qpdf r-base>=4.0.0 r-tidyverse r-data.table r-devtools r-ggseqlogo r-cowplot r-rcpp \
+qpdf r-base r-tidyverse r-data.table r-devtools r-ggseqlogo r-cowplot r-rcpp r-rvcheck==0.1.8 \
 r-assertthat r-testthat r-cairo r-ggrastr r-pkgdown \
 bioconductor-apeglm bioconductor-genomicranges bioconductor-genomicfeatures \
 bioconductor-genomicalignments bioconductor-biostrings bioconductor-rsamtools \
@@ -33,7 +33,8 @@ bioconductor-chipseeker bioconductor-edger bioconductor-deseq2 bioconductor-clus
 bioconductor-complexheatmap bioconductor-cager bioconductor-tsrchitect bioconductor-gviz \
 bioconductor-rtracklayer bioconductor-biocgenerics bioconductor-plyranges \
 bioconductor-pcatools bioconductor-genomeinfodb bioconductor-bsgenome bioconductor-bioccheck \
-bioconductor-bsgenome.scerevisiae.ucsc.saccer3 bioconductor-txdb.scerevisiae.ucsc.saccer3.sgdgene
+bioconductor-bsgenome.scerevisiae.ucsc.saccer3 bioconductor-txdb.scerevisiae.ucsc.saccer3.sgdgene \
+bioconductor-org.sc.sgd.db
 ```
 
 After the environment has been created, it must be activated prior to use.

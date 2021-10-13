@@ -96,6 +96,7 @@ exp <- differential_expression(
 The next step is to annotate the differential features.
 
 ```{r message=FALSE}
+library("ChIPseeker")
 exp <- annotate_features(exp, data_type="tsr_diff", feature_type="transcript", upstream=250, downstream=100)
 ```
 
